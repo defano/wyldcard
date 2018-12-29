@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.model.SpeakingVoice;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.google.inject.Singleton;
 import marytts.LocalMaryInterface;
 import marytts.exceptions.MaryConfigurationException;
 import marytts.exceptions.SynthesisException;
@@ -15,13 +16,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class SpeechPlaybackExecutor extends ThreadPoolExecutor {
+@Singleton
+public class DefaultSpeechPlaybackManager extends ThreadPoolExecutor implements SpeechPlaybackManager {
 
-    private final static SpeechPlaybackExecutor instance = new SpeechPlaybackExecutor();
     private LocalMaryInterface mary;
     private String theSpeech = "done";
 
-    private SpeechPlaybackExecutor() {
+    public DefaultSpeechPlaybackManager() {
         super(1, 1, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 
         try {
@@ -31,10 +32,7 @@ public class SpeechPlaybackExecutor extends ThreadPoolExecutor {
         }
     }
 
-    public static SpeechPlaybackExecutor getInstance() {
-        return instance;
-    }
-
+    @Override
     public Value getTheSpeech() {
         if (getActiveCount() == 0 && getQueue().size() == 0) {
             return new Value("done");
@@ -43,6 +41,7 @@ public class SpeechPlaybackExecutor extends ThreadPoolExecutor {
         return new Value(theSpeech);
     }
 
+    @Override
     public void speak(String text, SpeakingVoice voice) throws HtException {
         if (mary == null) {
             throw new HtSemanticException("Sorry, speaking is not supported on this system.");

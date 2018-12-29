@@ -14,13 +14,11 @@ import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -159,9 +157,9 @@ public class StackPart implements Part, PropertyChangeObserver {
      */
     @RunOnDispatch
     public CardPart gotoPopCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
-        if (!WyldCard.getInstance().getBackstack().isEmpty()) {
+        if (!WyldCard.getInstance().getStackManager().getBackstack().isEmpty()) {
             try {
-                Destination poppedDestination = WyldCard.getInstance().getBackstack().pop();
+                Destination poppedDestination = WyldCard.getInstance().getStackManager().getBackstack().pop();
                 CardModel model = (CardModel) poppedDestination.getStack().findPart(context, new PartIdSpecifier(Owner.STACK, PartType.CARD, poppedDestination.getCardId()));
                 return gotoCard(context, getStackModel().getIndexOfCard(model), visualEffect, false);
             } catch (PartException e) {
@@ -201,7 +199,7 @@ public class StackPart implements Part, PropertyChangeObserver {
     @RunOnDispatch
     public CardPart deleteCard(ExecutionContext context) {
         if (canDeleteCard(context)) {
-            ToolsContext.getInstance().setIsEditingBackground(false);
+            WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
             int deletedCardIndex = stackModel.getCurrentCardIndex();
             stackModel.deleteCardModel();
@@ -224,7 +222,7 @@ public class StackPart implements Part, PropertyChangeObserver {
      */
     @RunOnDispatch
     public CardPart newBackground(ExecutionContext context) {
-        ToolsContext.getInstance().setIsEditingBackground(false);
+        WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
         stackModel.newCardWithNewBackground();
         cardCountProvider.onNext(stackModel.getCardCount());
@@ -242,7 +240,7 @@ public class StackPart implements Part, PropertyChangeObserver {
      */
     @RunOnDispatch
     public CardPart newCard(ExecutionContext context) {
-        ToolsContext.getInstance().setIsEditingBackground(false);
+        WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
         stackModel.newCard(currentCard.getCardModel().getBackgroundId());
         cardCountProvider.onNext(stackModel.getCardCount());
@@ -282,7 +280,7 @@ public class StackPart implements Part, PropertyChangeObserver {
     @RunOnDispatch
     public void pasteCard(ExecutionContext context) {
         if (cardClipboardProvider.blockingFirst().isPresent()) {
-            ToolsContext.getInstance().setIsEditingBackground(false);
+            WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
             CardModel card = cardClipboardProvider.blockingFirst().get().getCardModel().copyOf();
             card.relinkParentPartModel(getStackModel());
@@ -386,10 +384,10 @@ public class StackPart implements Part, PropertyChangeObserver {
      */
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case StackModel.PROP_NAME:
-                fireOnStackNameChanged(newValue.stringValue());
+                fireOnStackNameChanged(newValue.toString());
                 break;
 
             case StackModel.PROP_HEIGHT:
@@ -402,7 +400,7 @@ public class StackPart implements Part, PropertyChangeObserver {
                 break;
 
             case StackModel.PROP_RESIZABLE:
-                WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).setAllowResizing(newValue.booleanValue());
+                WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).setAllowResizing(newValue.booleanValue());
                 break;
         }
     }
@@ -463,15 +461,15 @@ public class StackPart implements Part, PropertyChangeObserver {
         CardPart displayedCard = getDisplayedCard();
 
         // Deactivate paint tool before doing anything (to commit in-fight changes)
-        ToolsContext.getInstance().getPaintTool().deactivate();
+        WyldCard.getInstance().getToolsManager().getPaintTool().deactivate();
 
         // Stop editing background when card changes
-        ToolsContext.getInstance().setIsEditingBackground(false);
+        WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
         // When requested, push the current card onto the backstack
         if (push) {
             Destination destination = new Destination(this.getStackModel(), displayedCard.getId(context));
-            WyldCard.getInstance().getBackstack().push(destination);
+            WyldCard.getInstance().getStackManager().getBackstack().push(destination);
         }
 
         // Notify observers that current card is going away
@@ -499,7 +497,7 @@ public class StackPart implements Part, PropertyChangeObserver {
             fireOnCardOpened(currentCard);
 
             // Reactivate paint tool on new card's canvas
-            ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
+            WyldCard.getInstance().getToolsManager().reactivateTool(currentCard.getCanvas());
 
             return currentCard;
 

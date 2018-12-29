@@ -1,8 +1,9 @@
 package com.defano.wyldcard.menubar.main;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
-import com.defano.wyldcard.runtime.context.FontContext;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.hypertalk.ast.model.Value;
 
 import java.awt.*;
@@ -20,8 +21,8 @@ public class FontMenu extends HyperCardMenu {
         for (String thisFamily : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
             MenuItemBuilder.ofCheckType()
                     .named(thisFamily)
-                    .withAction(e -> FontContext.getInstance().setSelectedFontFamily(thisFamily))
-                    .withCheckmarkProvider(FontContext.getInstance().getFocusedFontFamilyProvider().map(f -> f.contains(new Value(thisFamily))))
+                    .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontFamily(thisFamily))
+                    .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedFontFamilyProvider().map(f -> f.contains(new Value(thisFamily))))
                     .fontFamily(thisFamily)
                     .build(this);
         }

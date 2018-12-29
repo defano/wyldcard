@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
@@ -160,16 +161,16 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
             });
         }
 
-        // Notify the WindowManager when a new window is opened or closed
+        // Notify the DefaultWindowManager when a new window is opened or closed
         this.window.getWindow().addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                WindowManager.getInstance().notifyWindowVisibilityChanged();
+                WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
             }
 
             @Override
             public void windowOpened(WindowEvent e) {
-                WindowManager.getInstance().notifyWindowVisibilityChanged();
+                WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
             }
         });
 

@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.field;
 
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.hypertalk.utils.Range;
 
@@ -9,7 +10,7 @@ import java.util.Set;
 /**
  * An observer of changes to properties of a field that are not modeled as addressable HyperTalk properties (and
  * therefore are not observed using the more typical
- * {@link com.defano.wyldcard.parts.model.PropertiesModel#addPropertyChangedObserver(PropertyChangeObserver)}.
+ * {@link DefaultPropertiesModel#addPropertyChangedObserver(PropertyChangeObserver)}.
  */
 public interface FieldModelObserver {
     /**

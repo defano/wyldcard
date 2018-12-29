@@ -28,7 +28,7 @@ public enum HyperCardCursor {
 
     public static HyperCardCursor fromHyperTalkName(Value identifier) {
         for (HyperCardCursor thisCursor : values()) {
-            if (thisCursor.hyperTalkName.equalsIgnoreCase(identifier.stringValue())) {
+            if (thisCursor.hyperTalkName.equalsIgnoreCase(identifier.toString())) {
                 return thisCursor;
             }
         }

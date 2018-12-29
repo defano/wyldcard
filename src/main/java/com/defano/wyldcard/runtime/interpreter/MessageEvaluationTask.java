@@ -31,7 +31,7 @@ public class MessageEvaluationTask implements Callable<String> {
             context.pushStackFrame();
         }
 
-        context.setTarget(WyldCard.getInstance().getFocusedCard().getCardModel().getPartSpecifier(context));
+        context.setTarget(WyldCard.getInstance().getStackManager().getFocusedCard().getCardModel().getPartSpecifier(context));
 
         try {
             statements.execute(context);
@@ -44,17 +44,17 @@ public class MessageEvaluationTask implements Callable<String> {
         // Special case: If last statement was an unknown literal (interpreted as a message), then return the variable-
         // evaluation of that literal
         if (lastStatement instanceof MessageCmd) {
-            return context.getVariable(lastStatement.getToken().getText()).stringValue();
+            return context.getVariable(lastStatement.getToken().getText()).toString();
         }
 
         // When the last statement is an expression, return the result of evaluating the expression
         else if (lastStatement instanceof ExpressionStatement) {
-            return context.getIt().stringValue();
+            return context.getIt().toString();
         }
 
         // Special case: Command entered into the message provided a result; treat as error
         else if (!context.getResult().isEmpty()) {
-            String resultError = context.getResult().stringValue();
+            String resultError = context.getResult().toString();
             context.setResult(new Value());
             throw new HtSemanticException(resultError);
         }

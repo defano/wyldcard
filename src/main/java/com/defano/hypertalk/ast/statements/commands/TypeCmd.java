@@ -21,7 +21,7 @@ public class TypeCmd extends Command {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
-        String stringToType = expression.evaluate(context).stringValue();
+        String stringToType = expression.evaluate(context).toString();
         RoboticTypist.getInstance().type(stringToType, withCommandKey);
     }
 }

@@ -23,6 +23,6 @@ public class DivideCmd extends Command {
 
     public void onExecute(ExecutionContext context) throws HtException {
         ContainerExp factor = container.factor(context, ContainerExp.class, new HtSemanticException("Can't divide that."));
-        factor.putValue(context, factor.evaluate(context).divide(expression.evaluate(context)), Preposition.INTO);
+        factor.putValue(context, factor.evaluate(context).dividedBy(expression.evaluate(context)), Preposition.INTO);
     }
 }

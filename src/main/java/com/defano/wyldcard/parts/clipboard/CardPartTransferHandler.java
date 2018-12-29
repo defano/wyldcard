@@ -2,9 +2,7 @@ package com.defano.wyldcard.parts.clipboard;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.awt.MouseManager;
+import com.defano.wyldcard.runtime.context.DefaultPartToolManager;
 import com.defano.wyldcard.parts.*;
 import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.card.CardLayerPart;
@@ -31,7 +29,7 @@ public class CardPartTransferHandler extends TransferHandler {
 
     @Override
     protected Transferable createTransferable(JComponent c) {
-        return TransferablePart.from(PartToolContext.getInstance().getSelectedPart());
+        return TransferablePart.from(WyldCard.getInstance().getPartToolManager().getSelectedPart());
     }
 
     @Override
@@ -42,7 +40,7 @@ public class CardPartTransferHandler extends TransferHandler {
     @Override
     protected void exportDone(JComponent c, Transferable data, int action) {
         if (action == MOVE) {
-            PartToolContext.getInstance().deleteSelectedPart();
+            WyldCard.getInstance().getPartToolManager().deleteSelectedPart();
         }
     }
 
@@ -51,19 +49,19 @@ public class CardPartTransferHandler extends TransferHandler {
         try {
             ToolEditablePart part = (ToolEditablePart) info.getTransferable().getTransferData(TransferablePart.partFlavor);
             CardLayer layer = CardLayerPart.getActivePartLayer();
-            CardPart focusedCard = WyldCard.getInstance().getFocusedCard();
+            CardPart focusedCard = WyldCard.getInstance().getStackManager().getFocusedCard();
             ToolEditablePart importedPart = (ToolEditablePart) focusedCard.importPart(new ExecutionContext(), part, layer);
 
             // Position pasted part over the mouse cursor
-            Point mouseLoc = MouseManager.getInstance().getMouseLoc(new ExecutionContext());
+            Point mouseLoc = WyldCard.getInstance().getMouseManager().getMouseLoc(new ExecutionContext());
             if (focusedCard.getBounds().contains(mouseLoc)) {
                 importedPart.getPartModel().setKnownProperty(new ExecutionContext(), PartModel.PROP_LOC, new Value(mouseLoc));
             }
 
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected
-                ToolsContext.getInstance().forceToolSelection(importedPart.getEditTool(), false);
-                PartToolContext.getInstance().setSelectedPart(importedPart);
+                WyldCard.getInstance().getToolsManager().forceToolSelection(importedPart.getEditTool(), false);
+                WyldCard.getInstance().getPartToolManager().setSelectedPart(importedPart);
             });
 
             return true;

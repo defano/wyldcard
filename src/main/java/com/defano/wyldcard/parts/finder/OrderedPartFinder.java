@@ -1,11 +1,11 @@
 package com.defano.wyldcard.parts.finder;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Ordinal;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.specifiers.*;
@@ -66,7 +66,7 @@ public interface OrderedPartFinder {
         } else if (ps instanceof PartOrdinalSpecifier) {
             foundPart = findPartByOrdinal(context, (PartOrdinalSpecifier) ps, parts);
         } else if (ps instanceof PartMessageSpecifier) {
-            foundPart = WindowManager.getInstance().getMessageWindow().getPartModel();
+            foundPart = WyldCard.getInstance().getWindowManager().getMessageWindow().getPartModel();
         } else if (ps instanceof CompositePartSpecifier) {
             throw new PartException("Can't find that.");
         } else {

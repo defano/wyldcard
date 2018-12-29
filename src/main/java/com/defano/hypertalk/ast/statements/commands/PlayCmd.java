@@ -1,14 +1,19 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.sound.SoundPlayer;
+import com.defano.wyldcard.sound.DefaultSoundManager;
 import com.defano.hypertalk.ast.model.MusicalScore;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.sound.SoundManager;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PlayCmd extends Command {
+
+    @Inject
+    private SoundManager soundManager;
 
     private final MusicalScore music;
 
@@ -23,6 +28,6 @@ public class PlayCmd extends Command {
         Value notes = music.notes == null ? new Value() : music.notes.evaluate(context);
         Value tempo = music.tempo == null ? new Value() : music.tempo.evaluate(context);
 
-        SoundPlayer.play(instrument, notes, tempo);
+        soundManager.play(instrument, notes, tempo);
     }
 }

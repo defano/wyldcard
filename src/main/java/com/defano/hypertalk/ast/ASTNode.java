@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.Breadcrumb;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.exception.HtException;
@@ -16,6 +17,11 @@ public abstract class ASTNode {
 
     public ASTNode(ParserRuleContext context) {
         this.context = context;
+
+        // Inject Guice dependencies into the AST
+        if (WyldCard.getInjector() != null) {
+            WyldCard.getInjector().injectMembers(this);
+        }
     }
 
     /**

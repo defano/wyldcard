@@ -60,9 +60,9 @@ public class MarkCmd extends Command {
 
             SearchType searchType = strategyExpr == null ?
                     SearchType.WHOLE :
-                    SearchType.fromHyperTalk(strategyExpr.evaluate(context).stringValue());
+                    SearchType.fromHyperTalk(strategyExpr.evaluate(context).toString());
 
-            String searchTerm = textExpr.evaluate(context).stringValue();
+            String searchTerm = textExpr.evaluate(context).toString();
 
             SearchQuery query = new SearchQuery(searchType, searchTerm, searchField);
             setCardsMark(context, findsCardsBySearchResults(context, query), mark);

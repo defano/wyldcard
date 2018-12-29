@@ -20,10 +20,10 @@ public class CharToNumFunc extends Expression {
     public Value onEvaluate(ExecutionContext context) throws HtException {
         Value evaluated = expression.evaluate(context);
 
-        if (evaluated.stringValue().length() == 0) {
+        if (evaluated.toString().length() == 0) {
             throw new HtSemanticException("charToNum expects a string value, but got empty.");
         }
 
-        return new Value((int)evaluated.stringValue().charAt(0));
+        return new Value((int) evaluated.toString().charAt(0));
     }
 }

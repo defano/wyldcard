@@ -4,20 +4,20 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.field.AddressableSelection;
 import com.defano.wyldcard.parts.field.SelectableTextModel;
 import com.defano.wyldcard.parts.model.DispatchComputedGetter;
 import com.defano.wyldcard.parts.model.WindowProxyPartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WindowManager;
 
 import javax.swing.text.JTextComponent;
 
 public class MsgBoxModel extends WindowProxyPartModel implements AddressableSelection, SelectableTextModel {
 
     public MsgBoxModel() {
-        super(WindowManager.getInstance().getMessageWindow());
+        super(WyldCard.getInstance().getWindowManager().getMessageWindow());
 
         defineProperty(PROP_CONTENTS, new Value(), false);
         defineComputedGetterProperty(PROP_CONTENTS, (DispatchComputedGetter) (context, model, propertyName) -> new Value(getText(context)));
@@ -36,7 +36,7 @@ public class MsgBoxModel extends WindowProxyPartModel implements AddressableSele
      */
     @Override
     public void setSelection(ExecutionContext context, Range selection) {
-        JTextComponent messageBox = WindowManager.getInstance().getMessageWindow().getTextComponent();
+        JTextComponent messageBox = WyldCard.getInstance().getWindowManager().getMessageWindow().getTextComponent();
         messageBox.setSelectionStart(selection.start);
         messageBox.setSelectionEnd(selection.end);
     }
@@ -47,7 +47,7 @@ public class MsgBoxModel extends WindowProxyPartModel implements AddressableSele
      */
     @Override
     public Range getSelection(ExecutionContext context) {
-        JTextComponent messageBox = WindowManager.getInstance().getMessageWindow().getTextComponent();
+        JTextComponent messageBox = WyldCard.getInstance().getWindowManager().getMessageWindow().getTextComponent();
         return Range.ofMarkAndDot(messageBox.getSelectionStart(), messageBox.getSelectionEnd());
     }
 
@@ -58,7 +58,7 @@ public class MsgBoxModel extends WindowProxyPartModel implements AddressableSele
     @Override
     @RunOnDispatch
     public String getText(ExecutionContext context) {
-        JTextComponent messageBox = WindowManager.getInstance().getMessageWindow().getTextComponent();
+        JTextComponent messageBox = WyldCard.getInstance().getWindowManager().getMessageWindow().getTextComponent();
         return messageBox.getText();
     }
 

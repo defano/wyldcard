@@ -3,6 +3,7 @@ package com.defano.wyldcard.window.layouts;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.editor.EditorStatus;
@@ -10,10 +11,10 @@ import com.defano.wyldcard.editor.HyperTalkTextEditor;
 import com.defano.wyldcard.editor.SyntaxParserDelegate;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.menubar.script.ScriptEditorMenuBar;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.HandlerComboBox;
 import com.defano.wyldcard.util.StringUtils;
@@ -66,9 +67,9 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
         editor.addBreakpointToggleObserver(breakpoints -> saveBreakpoints());
 
         editor.getScriptField().setFont(FontUtils.getFontByNameStyleSize(
-                HyperCardProperties.getInstance().getKnownProperty(new ExecutionContext(), HyperCardProperties.PROP_SCRIPTTEXTFONT).stringValue(),
+                WyldCard.getInstance().getWyldCardProperties().getKnownProperty(new ExecutionContext(), DefaultWyldCardProperties.PROP_SCRIPTTEXTFONT).toString(),
                 Font.PLAIN,
-                HyperCardProperties.getInstance().getKnownProperty(new ExecutionContext(), HyperCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
+                WyldCard.getInstance().getWyldCardProperties().getKnownProperty(new ExecutionContext(), DefaultWyldCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
         ));
 
         textArea.add(editor);
@@ -210,7 +211,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
                     JOptionPane.YES_NO_OPTION);
 
             if (dialogResult == JOptionPane.YES_OPTION) {
-                editor.getScriptField().setText(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue());
+                editor.getScriptField().setText(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).toString());
             }
         }
     }
@@ -402,7 +403,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
 
     @RunOnDispatch
     private boolean isDirty() {
-        return !editor.getScriptField().getText().equals(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue());
+        return !editor.getScriptField().getText().equals(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).toString());
     }
 
     @RunOnDispatch
@@ -543,7 +544,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
     }
 
     @Override
-    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property.toLowerCase()) {
 
             // Special case: Script text was programatically changed
@@ -561,7 +562,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
      */
     @RunOnDispatch
     private void applyScriptToEditor() {
-        String script = this.model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue();
+        String script = this.model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).toString();
         editor.getScriptField().setText(script);
         editor.getScriptField().forceReparsing(0);
 

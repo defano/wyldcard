@@ -27,7 +27,7 @@ public class IconCreator extends WyldCardDialog<BufferedImage> {
                 iconImage = ButtonIcon.scaleToIconSize(iconImage);
             }
 
-            WyldCard.getInstance().getFocusedStack().getStackModel().createIcon(iconName.getText(), iconImage);
+            WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel().createIcon(iconName.getText(), iconImage);
         });
     }
 

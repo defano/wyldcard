@@ -2,8 +2,8 @@ package com.defano.wyldcard.awt;
 
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.WindowManager;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -26,7 +26,7 @@ public class RoboticTypist {
     private Robot robot;
 
     private RoboticTypist() {
-        commandKey = WindowManager.getInstance().isMacOsTheme() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
+        commandKey = WyldCard.getInstance().getWindowManager().isMacOsTheme() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
 
         for (int i = (int) '0'; i <= (int) '9'; i++) {
             keystrokeMap.put((char) i, new KeyStroke(i, false));

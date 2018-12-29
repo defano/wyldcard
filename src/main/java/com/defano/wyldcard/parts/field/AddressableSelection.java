@@ -1,9 +1,9 @@
 package com.defano.wyldcard.parts.field;
 
-import com.defano.wyldcard.parts.model.PropertiesModel;
-import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.SelectionContext;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
@@ -58,7 +58,7 @@ public interface AddressableSelection {
         int lineEnd = getLineAtCharPosition(context, getSelectableTextModel().getSelection(context).end - 1);
 
         // No selection; selected line is empty
-        if (getSelectedText(context).stringValue().length() == 0) {
+        if (getSelectedText(context).toString().length() == 0) {
             return new Value();
         }
 
@@ -171,16 +171,16 @@ public interface AddressableSelection {
      * @param isSystemSelection True if this selection qualifies as the global, "system" selection. That is, when
 *                          true, this selection is addressable as 'the selection'; when false, the selection
      */
-    default void updateSelectionContext(ExecutionContext context, Range selection, PropertiesModel model, boolean isSystemSelection) {
+    default void updateSelectionContext(ExecutionContext context, Range selection, DefaultPropertiesModel model, boolean isSystemSelection) {
         getSelectableTextModel().onViewDidUpdateSelection(selection);
 
         if (isSystemSelection) {
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(context), true);
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(context), true);
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedFieldExpression(context), true);
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(context), true);
+            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_SELECTEDTEXT, getSelectedText(context), true);
+            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(context), true);
+            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_SELECTEDFIELD, getSelectedFieldExpression(context), true);
+            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(context), true);
 
-            SelectionContext.getInstance().setSelection(getPartSpecifier(context), getSelectableTextModel().getSelection(context));
+            WyldCard.getInstance().getSelectionManager().setSelection(getPartSpecifier(context), getSelectableTextModel().getSelection(context));
         }
     }
 }

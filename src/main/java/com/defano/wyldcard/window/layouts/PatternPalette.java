@@ -1,10 +1,10 @@
 package com.defano.wyldcard.window.layouts;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.patterns.PatternPaletteButton;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
-import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WyldCardWindow;
 import io.reactivex.functions.Consumer;
 
@@ -75,9 +75,9 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
         redrawPatternButtons();
         attachButtonActions();
 
-        ToolsContext.getInstance().getFillPatternProvider().subscribe(this);
-        ToolsContext.getInstance().getBackgroundColorProvider().subscribe(this);
-        ToolsContext.getInstance().getForegroundColorProvider().subscribe(this);
+        WyldCard.getInstance().getToolsManager().getFillPatternProvider().subscribe(this);
+        WyldCard.getInstance().getToolsManager().getBackgroundColorProvider().subscribe(this);
+        WyldCard.getInstance().getToolsManager().getForegroundColorProvider().subscribe(this);
 
         WyldCardPatternFactory.getInstance().addPatternInvalidationObserver(() -> redrawPatternButtons());
     }
@@ -99,13 +99,13 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
             allPatterns[index].addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    ToolsContext.getInstance().setPattern(i);
+                    WyldCard.getInstance().getToolsManager().setPattern(i);
                 }
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 2) {
-                        WindowManager.getInstance().showPatternEditor();
+                        WyldCard.getInstance().getWindowManager().showPatternEditor();
                     }
                 }
             });
@@ -138,7 +138,7 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
                 }
             } else if (newValue instanceof Color) {
                 redrawPatternButtons();
-                ToolsContext.getInstance().setPattern(ToolsContext.getInstance().getFillPatternProvider().blockingFirst());
+                WyldCard.getInstance().getToolsManager().setPattern(WyldCard.getInstance().getToolsManager().getFillPatternProvider().blockingFirst());
             }
         });
     }

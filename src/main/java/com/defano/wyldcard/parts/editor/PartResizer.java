@@ -1,9 +1,8 @@
 package com.defano.wyldcard.parts.editor;
 
-import com.defano.wyldcard.awt.MouseManager;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
@@ -50,8 +49,8 @@ public class PartResizer {
                 SwingUtilities.convertPointFromScreen(mouseLoc, withinInst);
                 Point partLoc = originalBounds.getLocation();
 
-                int newWidth = KeyboardManager.getInstance().isShiftDown() ? ((mouseLoc.x / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) - partLoc.x : mouseLoc.x - partLoc.x;
-                int newHeight = KeyboardManager.getInstance().isShiftDown() ? ((mouseLoc.y / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) - partLoc.y : mouseLoc.y - partLoc.y;
+                int newWidth = WyldCard.getInstance().getKeyboardManager().isShiftDown() ? ((mouseLoc.x / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) - partLoc.x : mouseLoc.x - partLoc.x;
+                int newHeight = WyldCard.getInstance().getKeyboardManager().isShiftDown() ? ((mouseLoc.y / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) - partLoc.y : mouseLoc.y - partLoc.y;
 
                 try {
                     if (newWidth >= MIN_WIDTH)
@@ -76,7 +75,7 @@ public class PartResizer {
         this.within = new WeakReference<>(within);
         this.originalBounds = new Rectangle(part.getRect(new ExecutionContext()));
 
-        MouseManager.getInstance().notifyOnMouseReleased(() -> done = true);
+        WyldCard.getInstance().getMouseManager().notifyOnMouseReleased(() -> done = true);
         executor.schedule(new ResizerTask(), 0, TimeUnit.MILLISECONDS);
     }
 }

@@ -1,16 +1,16 @@
 package com.defano.wyldcard.parts.field;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.wyldcard.parts.model.DispatchComputedSetter;
 import com.defano.wyldcard.parts.model.LogicalLinkObserver;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.SelectionContext;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
@@ -43,7 +43,7 @@ import java.util.*;
  * Third: TextAlign is a separate, managed property of the field and not of the document model because Java's
  * RTFEditorKit doesn't support saving text alignment. Ugh! That's okay though, because HyperCard supports only a
  * single alignment per field, which we can model as a standard read/writable property in the
- * {@link com.defano.wyldcard.parts.model.PropertiesModel}.
+ * {@link DefaultPropertiesModel}.
  * <p>
  * Fourth: Changes to the field's DOM can originate from the UI (i.e., a user typing into the field) or from HyperTalk.
  * Because changes can originate in the view ({@link HyperCardTextField}, this
@@ -51,7 +51,7 @@ import java.util.*;
  * the model for changes...
  * <p>
  * Four-and-a-half: Not only do the view and the model need to observe one another, but some aspects of the model (like
- * rich-text data and selection ranges) are not readily modeled in the PropertiesModel, so they require their own
+ * rich-text data and selection ranges) are not readily modeled in the DefaultPropertiesModel, so they require their own
  * observation API, {@link FieldModelObserver}.
  * <p>
  * Fifth: When dealing with background fields whose text is not shared across all cards, we have to know which card
@@ -127,7 +127,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         super.initialize();
 
         defineComputedGetterProperty(PROP_TEXT, (context, model, propertyName) -> new Value(getText(context)));
-        defineComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (context, model, propertyName, value) -> replaceText(context, value.stringValue()));
+        defineComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (context, model, propertyName, value) -> replaceText(context, value.toString()));
 
         defineComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(getTextFontFamily(context, 0, getText(context).length() + 1)));
         defineComputedSetterProperty(PROP_TEXTFONT, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontFamily(context, 0, getText(context).length() + 1, value));
@@ -151,7 +151,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * should always be the field view object, {@link HyperCardTextField}.
      *
      * In most every other case, a special observer interface is not required because observable attributes are modeled
-     * by {@link com.defano.wyldcard.parts.model.PropertiesModel}. Unfortunately, this technique requires properties
+     * by {@link DefaultPropertiesModel}. Unfortunately, this technique requires properties
      * to be modeled as a HyperTalk {@link Value}. Coercing a byte array into and out of a Value would be ugly.
      *
      * @param observer The observer of DOM changes.
@@ -253,7 +253,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         StyledDocument document = getStyledDocument(context);
 
         AttributeSet style = document.getLength() == 0 ?
-                FontContext.getInstance().getFocusedTextStyle().toAttributeSet() :
+                WyldCard.getInstance().getFontManager().getFocusedTextStyle().toAttributeSet() :
                 document.getCharacterElement(0).getAttributes();
 
         try {
@@ -328,14 +328,14 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         // Special case; zero-length document does not persist prev style, replace with focused style
         if (doc.getLength() == 0) {
-            TextStyleSpecifier tss = FontContext.getInstance().getFocusedTextStyle();
-            tss.setFontFamily(fontFamily.stringValue());
+            TextStyleSpecifier tss = WyldCard.getInstance().getFontManager().getFocusedTextStyle();
+            tss.setFontFamily(fontFamily.toString());
             doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), true);
         }
 
         // Apply font family to document
         else {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromFontFamily(fontFamily.stringValue());
+            TextStyleSpecifier tss = TextStyleSpecifier.fromFontFamily(fontFamily.toString());
             doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
         }
 
@@ -356,7 +356,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         // Special case; zero-length document does not persist prev style, replace with focused style
         if (doc.getLength() == 0) {
-            TextStyleSpecifier tss = FontContext.getInstance().getFocusedTextStyle();
+            TextStyleSpecifier tss = WyldCard.getInstance().getFontManager().getFocusedTextStyle();
             tss.setFontSize(fontSize.integerValue());
             doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), true);
         }
@@ -385,7 +385,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         // Special case; zero-length document does not persist prev style, replace with focused style
         if (doc.getLength() == 0) {
-            TextStyleSpecifier tss = FontContext.getInstance().getFocusedTextStyle();
+            TextStyleSpecifier tss = WyldCard.getInstance().getFontManager().getFocusedTextStyle();
             tss.setFontStyle(fontStyle);
             doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), true);
         }
@@ -651,7 +651,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     private void fireSelectionChange(ExecutionContext context, Range selection) {
         // Update 'the selection' HyperCard property
-        SelectionContext.getInstance().setSelection(getPartSpecifier(context), selection);
+        WyldCard.getInstance().getSelectionManager().setSelection(getPartSpecifier(context), selection);
 
         if (observer != null && getCurrentCardIdOrNull() == context.getCurrentCard().getId(context)) {
             SwingUtilities.invokeLater(() -> observer.onSelectionChange(selection));

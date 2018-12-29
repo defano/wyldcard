@@ -15,6 +15,6 @@ public class LessThanOp extends BinaryOperatorExp {
 
     @Override
     protected Value onEvaluate(ExecutionContext context) throws HtException {
-        return lhs(context).lessThan(rhs(context));
+        return lhs(context).isLessThan(rhs(context));
     }
 }

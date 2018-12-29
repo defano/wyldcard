@@ -1,14 +1,13 @@
 package com.defano.wyldcard.parts.field;
 
-import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.Styleable;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.*;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
 import io.reactivex.disposables.Disposable;
@@ -51,7 +50,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
             MarchingAnts.getInstance().addObserver(this);
 
             // TODO: Focus style only reflects first char; should reflect entire field
-            FontContext.getInstance().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle(context)));
+            WyldCard.getInstance().getFontManager().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle(context)));
         } else {
             MarchingAnts.getInstance().removeObserver(this);
         }
@@ -108,8 +107,8 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
         fieldComponent.partOpened(context);
 
         getPartModel().addPropertyChangedObserver(fieldComponent);
-        toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
-        KeyboardManager.getInstance().addGlobalKeyListener(this);
+        toolModeSubscription = WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolModeObserver);
+        WyldCard.getInstance().getKeyboardManager().addGlobalKeyListener(this);
     }
 
     @Override
@@ -117,7 +116,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
         fieldComponent.partClosed(context);
 
         getPartModel().removePropertyChangedObserver(fieldComponent);
-        KeyboardManager.getInstance().removeGlobalKeyListener(this);
+        WyldCard.getInstance().getKeyboardManager().removeGlobalKeyListener(this);
         toolModeSubscription.dispose();
     }
 

@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FileContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
@@ -18,6 +18,6 @@ public class OpenCmd extends Command {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
-        FileContext.getInstance().open(file.evaluate(context).stringValue());
+        WyldCard.getInstance().getFileManager().open(file.evaluate(context).toString());
     }
 }

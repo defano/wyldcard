@@ -169,7 +169,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
     }
 
     public String getShortName(ExecutionContext context) {
-        return getKnownProperty(context, PROP_NAME).stringValue();
+        return getKnownProperty(context, PROP_NAME).toString();
     }
 
     public String getAbbrevName(ExecutionContext context) {

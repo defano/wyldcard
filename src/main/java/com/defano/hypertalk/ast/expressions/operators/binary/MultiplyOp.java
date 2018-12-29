@@ -15,6 +15,6 @@ public class MultiplyOp extends BinaryOperatorExp {
 
     @Override
     protected Value onEvaluate(ExecutionContext context) throws HtException {
-        return lhs(context).multiply(rhs(context));
+        return lhs(context).multipliedBy(rhs(context));
     }
 }

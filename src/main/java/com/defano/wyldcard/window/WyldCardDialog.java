@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window;
 
+import com.defano.wyldcard.WyldCard;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
@@ -80,7 +81,7 @@ public abstract class WyldCardDialog<ModelType> extends JDialog implements WyldC
     @Override
     public void setVisible(boolean isVisible) {
         super.setVisible(isVisible);
-        WindowManager.getInstance().notifyWindowVisibilityChanged();
+        WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
     }
 
     @Override

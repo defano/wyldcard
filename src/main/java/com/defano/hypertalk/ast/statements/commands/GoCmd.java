@@ -22,7 +22,6 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -55,7 +54,7 @@ public class GoCmd extends Command {
         // Case 1: Navigate to a stack ('go to stack "My Stack"')
         StackPartExp stackPartExp = destinationExp.factor(context, StackPartExp.class);
         if (stackPartExp != null) {
-            StackModel model = WyldCard.getInstance().findStack(context, (StackPartSpecifier) stackPartExp.evaluateAsSpecifier(context), navigationOptions);
+            StackModel model = WyldCard.getInstance().getStackManager().findStack(context, (StackPartSpecifier) stackPartExp.evaluateAsSpecifier(context), navigationOptions);
             Destination destination = getDestination(context, model);
 
             if (destination != null) {
@@ -104,7 +103,7 @@ public class GoCmd extends Command {
             if (rps instanceof StackPartSpecifier) {
 
                 // Try to locate (or prompt to locate) requested stack
-                StackModel model = WyldCard.getInstance().findStack(context, (StackPartSpecifier) rps, navigationOptions);
+                StackModel model = WyldCard.getInstance().getStackManager().findStack(context, (StackPartSpecifier) rps, navigationOptions);
                 if (model == null) {
                     context.setResult(new Value("No such stack."));
                     return;
@@ -137,7 +136,7 @@ public class GoCmd extends Command {
     private CardPart goToDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) throws HtSemanticException {
         // This code needs to run on the Swing dispatch thread
         return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
-            StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(destination.getStack());
+            StackWindow stackWindow = WyldCard.getInstance().getWindowManager().findWindowForStack(destination.getStack());
             context.bind(stackWindow.getStack());
             stackWindow.setVisible(true);
             stackWindow.requestFocus();

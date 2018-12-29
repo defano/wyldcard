@@ -8,10 +8,8 @@ import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.parts.clipboard.CardActionListener;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.IconCreator;
 import com.l2fprod.common.swing.JFontChooser;
 
@@ -31,21 +29,21 @@ public class EditMenu extends HyperCardMenu {
         super("Edit");
 
         // Routes cut/copy/paste actions to the correct canvas
-        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener(() -> WyldCard.getInstance().getFocusedCard().getCanvas());
+        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener(() -> WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas());
         CardActionListener cardActionListener = new CardActionListener();
 
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
                 .withShortcut('Z')
-                .withAction(e -> WyldCard.getInstance().getFocusedCard().getCanvas().undo())
-                .withEnabledProvider(WyldCard.getInstance().getIsUndoableProvider())
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().undo())
+                .withEnabledProvider(WyldCard.getInstance().getStackManager().getIsUndoableProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Redo")
                 .withShiftShortcut('Z')
-                .withAction(e -> WyldCard.getInstance().getFocusedCard().getCanvas().redo())
-                .withEnabledProvider(WyldCard.getInstance().getIsRedoableProvider())
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().redo())
+                .withEnabledProvider(WyldCard.getInstance().getStackManager().getIsRedoableProvider())
                 .build(this);
 
         this.addSeparator();
@@ -76,62 +74,62 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Clear")
-                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).deleteSelection())
-                .withDisabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Objects::isNull))
+                .withAction(e -> ((AbstractSelectionTool) WyldCard.getInstance().getToolsManager().getPaintTool()).deleteSelection())
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getSelectedImageProvider().map(Objects::isNull))
                 .build(this);
 
         this.addSeparator();
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Card")
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().newCard(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().newCard(new ExecutionContext()))
                 .withShortcut('N')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Delete Card")
-                .withDisabledProvider(WyldCard.getInstance().getFocusedStackCardCountProvider().map(c -> c < 2))
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().deleteCard(new ExecutionContext()))
+                .withDisabledProvider(WyldCard.getInstance().getStackManager().getFocusedStackCardCountProvider().map(c -> c < 2))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().deleteCard(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Cut Card")
-                .withDisabledProvider(WyldCard.getInstance().getFocusedStackCardCountProvider().map(c -> c < 2))
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().cutCard(new ExecutionContext()))
+                .withDisabledProvider(WyldCard.getInstance().getStackManager().getFocusedStackCardCountProvider().map(c -> c < 2))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().cutCard(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Copy Card")
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().copyCard())
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().copyCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Paste Card")
-                .withEnabledProvider(WyldCard.getInstance().getFocusedStackCardClipboardProvider().map(Optional::isPresent))
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().pasteCard(new ExecutionContext()))
+                .withEnabledProvider(WyldCard.getInstance().getStackManager().getFocusedStackCardClipboardProvider().map(Optional::isPresent))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().pasteCard(new ExecutionContext()))
                 .build(this);
 
         this.addSeparator();
 
         MenuItemBuilder.ofDefaultType()
                 .named("Text Style...")
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
-                .withAction(e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getInstance().getFocusedStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
+                .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFont(JFontChooser.showDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow(), "Choose Font", WyldCard.getInstance().getFontManager().getFocusedTextStyle().toFont())))
                 .withShortcut('T')
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Background")
-                .withCheckmarkProvider(ToolsContext.getInstance().isEditingBackgroundProvider())
-                .withAction(e -> ToolsContext.getInstance().toggleIsEditingBackground())
+                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().isEditingBackgroundProvider())
+                .withAction(e -> WyldCard.getInstance().getToolsManager().toggleIsEditingBackground())
                 .withShortcut('B')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Create Icon...")
-                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
+                .withEnabledProvider(WyldCard.getInstance().getToolsManager().getSelectedImageProvider().map(Optional::isPresent))
                 .withAction(e -> new WindowBuilder<>(new IconCreator())
-                        .withModel(ToolsContext.getInstance().getSelectedImage())
+                        .withModel(WyldCard.getInstance().getToolsManager().getSelectedImage())
                         .resizeable(false)
                         .withTitle("Create Icon")
                         .asModal()
@@ -161,8 +159,8 @@ public class EditMenu extends HyperCardMenu {
 
             MenuItemBuilder.ofCheckType()
                     .named(thisLaf.getName())
-                    .withAction(a -> WindowManager.getInstance().setTheme(thisLaf.getClassName()))
-                    .withCheckmarkProvider(WindowManager.getInstance().getThemeProvider().map(value -> thisLaf.getName().equalsIgnoreCase(value)))
+                    .withAction(a -> WyldCard.getInstance().getWindowManager().setTheme(thisLaf.getClassName()))
+                    .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getThemeProvider().map(value -> thisLaf.getName().equalsIgnoreCase(value)))
                     .build(laf);
         }
     }

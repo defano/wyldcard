@@ -304,7 +304,7 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
 
     @Override
     public String getShortName(ExecutionContext context) {
-        return getKnownProperty(context, PROP_NAME).stringValue();
+        return getKnownProperty(context, PROP_NAME).toString();
     }
 
     @Override

@@ -1,11 +1,11 @@
 package com.defano.wyldcard.menubar.main;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layouts.FontSizePicker;
 
@@ -23,74 +23,74 @@ public class StyleMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Align Left")
-                .withAction(e -> FontContext.getInstance().setSelectedFontAlign(new Value("left")))
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedLeftAlignProvider())
+                .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontAlign(new Value("left")))
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedLeftAlignProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Align Center")
-                .withAction(e -> FontContext.getInstance().setSelectedFontAlign(new Value("center")))
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedCenterAlignProvider())
+                .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontAlign(new Value("center")))
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedCenterAlignProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Align Right")
-                .withAction(e -> FontContext.getInstance().setSelectedFontAlign(new Value("right")))
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedRightAlignProvider())
+                .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontAlign(new Value("right")))
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedRightAlignProvider())
                 .build(this);
 
         addSeparator();
 
         MenuItemBuilder.ofCheckType()
                 .named("Plain")
-                .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("plain")))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedPlainProvider())
+                .withAction(e -> WyldCard.getInstance().getFontManager().toggleSelectedFontStyle(new Value("plain")))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedPlainProvider())
                 .fontStyle(Font.PLAIN)
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Bold")
-                .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("bold")))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedBoldProvider())
+                .withAction(e -> WyldCard.getInstance().getFontManager().toggleSelectedFontStyle(new Value("bold")))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedBoldProvider())
                 .fontStyle(Font.BOLD)
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Italic")
-                .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("italic")))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedItalicProvider())
+                .withAction(e -> WyldCard.getInstance().getFontManager().toggleSelectedFontStyle(new Value("italic")))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedItalicProvider())
                 .fontStyle(Font.ITALIC)
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Underline")
-                .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("underline")))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedUnderlineProvider())
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withAction(e -> WyldCard.getInstance().getFontManager().toggleSelectedFontStyle(new Value("underline")))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedUnderlineProvider())
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Strikethrough")
-                .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("strikethrough")))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedStrikethroughProvider())
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withAction(e -> WyldCard.getInstance().getFontManager().toggleSelectedFontStyle(new Value("strikethrough")))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedStrikethroughProvider())
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Superscript")
-                .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("superscript")))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedSuperscriptProvider())
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withAction(e -> WyldCard.getInstance().getFontManager().toggleSelectedFontStyle(new Value("superscript")))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedSuperscriptProvider())
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Subscript")
-                .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("subscript")))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedSubscriptProvider())
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withAction(e -> WyldCard.getInstance().getFontManager().toggleSelectedFontStyle(new Value("subscript")))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedSubscriptProvider())
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -107,45 +107,45 @@ public class StyleMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("9")
-                .withAction(e -> FontContext.getInstance().setSelectedFontSize(9))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> e.contains(new Value(9))))
+                .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontSize(9))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedFontSizeProvider().map(e -> e.contains(new Value(9))))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("10")
-                .withAction(e -> FontContext.getInstance().setSelectedFontSize(10))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> e.contains(new Value(10))))
+                .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontSize(10))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedFontSizeProvider().map(e -> e.contains(new Value(10))))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("12")
-                .withAction(e -> FontContext.getInstance().setSelectedFontSize(12))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> e.contains(new Value(12))))
+                .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontSize(12))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedFontSizeProvider().map(e -> e.contains(new Value(12))))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("14")
-                .withAction(e -> FontContext.getInstance().setSelectedFontSize(14))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> e.contains(new Value(14))))
+                .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontSize(14))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedFontSizeProvider().map(e -> e.contains(new Value(14))))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("18")
-                .withAction(e -> FontContext.getInstance().setSelectedFontSize(18))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> e.contains(new Value(18))))
+                .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontSize(18))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedFontSizeProvider().map(e -> e.contains(new Value(18))))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("24")
-                .withAction(e -> FontContext.getInstance().setSelectedFontSize(24))
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> e.contains(new Value(24))))
+                .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontSize(24))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedFontSizeProvider().map(e -> e.contains(new Value(24))))
                 .build(this);
 
         this.addSeparator();
 
         MenuItemBuilder.ofCheckType()
                 .named("Other...")
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
                 .withAction(e ->
                         new WindowBuilder<>(new FontSizePicker())
                                 .withModel(null)

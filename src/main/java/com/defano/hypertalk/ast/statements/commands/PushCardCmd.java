@@ -61,6 +61,6 @@ public class PushCardCmd extends Command {
     }
 
     private void push(Destination destination) {
-        WyldCard.getInstance().getBackstack().push(destination);
+        WyldCard.getInstance().getStackManager().getBackstack().push(destination);
     }
 }

@@ -37,7 +37,7 @@ public class PartNameExp extends PartExp {
         if (evaluatedName.isInteger() && !evaluatedName.isQuotedLiteral()) {
             return new PartNumberSpecifier(layer, type, evaluatedName.integerValue());
         } else {
-            return new PartNameSpecifier(layer, type, evaluatedName.stringValue());
+            return new PartNameSpecifier(layer, type, evaluatedName.toString());
         }
     }
 }

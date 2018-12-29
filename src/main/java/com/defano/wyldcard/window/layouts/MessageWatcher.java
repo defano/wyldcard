@@ -197,7 +197,7 @@ public class MessageWatcher extends WyldCardWindow<Object> {
 
                 // Append arguments
                 for (int index = 0; index < invocation.getArguments().size(); index++) {
-                    String argument = invocation.getArguments().get(index).stringValue();
+                    String argument = invocation.getArguments().get(index).toString();
 
                     message.append(" ");
 

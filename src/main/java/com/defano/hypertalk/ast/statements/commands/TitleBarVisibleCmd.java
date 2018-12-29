@@ -2,14 +2,18 @@ package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.window.WindowManager;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.swing.*;
 
 public class TitleBarVisibleCmd extends Command {
+
+    @Inject
+    private WindowManager windowManager;
 
     private final boolean visibility;
 
@@ -21,7 +25,7 @@ public class TitleBarVisibleCmd extends Command {
     @Override
     protected void onExecute(ExecutionContext context) throws HtException, Preemption {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow();
+            JFrame frame = windowManager.getWindowForStack(context, context.getCurrentStack()).getWindow();
 
             frame.dispose();
             frame.setUndecorated(!visibility);

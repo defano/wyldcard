@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
+import com.defano.wyldcard.WyldCard;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
@@ -18,6 +18,6 @@ public class CreateMenuCmd extends Command {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
-        HyperCardMenuBar.getInstance().createMenu(menuName.evaluate(context).stringValue());
+        WyldCard.getInstance().getWyldCardMenuBar().createMenu(menuName.evaluate(context).toString());
     }
 }

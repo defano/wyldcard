@@ -130,18 +130,18 @@ public class VariableWatcher extends WyldCardWindow<Object> implements SymbolObs
     private void invalidateTable() {
         tableModel.setRowCount(0);
         for (String variableName : variables.getSymbols()) {
-            tableModel.addRow(new Object[]{variableName, variables.get(variableName).stringValue()});
+            tableModel.addRow(new Object[]{variableName, variables.get(variableName).toString()});
         }
     }
 
     @RunOnDispatch
     private void invalidateRow(String variable, Value oldValue, Value newValue) {
         if (oldValue == null) {
-            tableModel.addRow(new Object[]{variable, newValue.stringValue()});
+            tableModel.addRow(new Object[]{variable, newValue.toString()});
         } else {
             for (int index = 0; index < tableModel.getRowCount(); index++) {
                 if (tableModel.getValueAt(index, 0).toString().equalsIgnoreCase(variable)) {
-                    tableModel.setValueAt(newValue.stringValue(), index, 1);
+                    tableModel.setValueAt(newValue.toString(), index, 1);
                 }
             }
         }

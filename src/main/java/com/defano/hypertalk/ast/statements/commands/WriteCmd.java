@@ -1,7 +1,8 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FileContext;
+import com.defano.wyldcard.runtime.context.DefaultFileManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
@@ -40,8 +41,8 @@ public class WriteCmd extends Command {
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
         try {
-            String filename = file.evaluate(context).stringValue();
-            FileContext.FileHandle handle = FileContext.getInstance().getFileHandle(filename);
+            String filename = file.evaluate(context).toString();
+            DefaultFileManager.FileHandle handle = WyldCard.getInstance().getFileManager().getFileHandle(filename);
 
             if (handle == null) {
                 throw new HtSemanticException("Cannot write to file " + file + " because it is not open.");
@@ -49,17 +50,17 @@ public class WriteCmd extends Command {
 
             // 'write x to file y at end'
             if (append) {
-                handle.writeAtTail(data.evaluate(context).stringValue(), true);
+                handle.writeAtTail(data.evaluate(context).toString(), true);
             }
 
             // 'write x to file y'
             else if (at == null) {
-                handle.write(data.evaluate(context).stringValue(), true);
+                handle.write(data.evaluate(context).toString(), true);
             }
 
             // 'write x to file y at z'
             else {
-                handle.writeAt(data.evaluate(context).stringValue(), at.evaluate(context).integerValue(), true);
+                handle.writeAt(data.evaluate(context).toString(), at.evaluate(context).integerValue(), true);
             }
 
             context.setResult(new Value());

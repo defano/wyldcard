@@ -1,6 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.specifiers.PropertySpecifier;
@@ -29,7 +30,7 @@ public class SetCmd extends Command {
             
             // Setting the property of HyperCard
             if (propertySpec.isGlobalPropertySpecifier(context)) {
-                HyperCardProperties.getInstance().setProperty(context, propertySpec.getProperty(), expression.evaluate(context));
+                WyldCard.getInstance().getWyldCardProperties().setProperty(context, propertySpec.getProperty(), expression.evaluate(context));
             }
 
             // Setting the property of menu / menu item

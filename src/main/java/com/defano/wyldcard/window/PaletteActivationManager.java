@@ -1,5 +1,7 @@
 package com.defano.wyldcard.window;
 
+import com.defano.wyldcard.WyldCard;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -11,13 +13,13 @@ public class PaletteActivationManager extends WindowAdapter {
 
     @Override
     public void windowActivated(WindowEvent e) {
-        WindowManager.getInstance().getPalettes(true).forEach(wyldCardFrame -> wyldCardFrame.getWindow().setAlwaysOnTop(true));
+        WyldCard.getInstance().getWindowManager().getPalettes(true).forEach(wyldCardFrame -> wyldCardFrame.getWindow().setAlwaysOnTop(true));
     }
 
     @Override
     public void windowDeactivated(WindowEvent e) {
         if (e.getOppositeWindow() == null) {
-            WindowManager.getInstance().getPalettes(true).forEach(wyldCardFrame -> {
+            WyldCard.getInstance().getWindowManager().getPalettes(true).forEach(wyldCardFrame -> {
                 wyldCardFrame.getWindow().setAlwaysOnTop(false);
                 wyldCardFrame.getWindow().toBack();
             });

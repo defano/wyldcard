@@ -1,7 +1,7 @@
 package com.defano.wyldcard.parts.button;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.Styleable;
 import com.defano.wyldcard.parts.ToolEditablePart;
@@ -9,8 +9,7 @@ import com.defano.wyldcard.parts.button.styles.*;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
@@ -60,7 +59,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
         if (beingEdited) {
             MarchingAnts.getInstance().addObserver(this);
-            FontContext.getInstance().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle(context)));
+            WyldCard.getInstance().getFontManager().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle(context)));
         } else {
             MarchingAnts.getInstance().removeObserver(this);
         }
@@ -177,15 +176,15 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     public void partOpened(ExecutionContext context) {
         getPartModel().addPropertyChangedObserver(buttonComponent);
         getPartModel().notifyPropertyChangedObserver(context, buttonComponent);
-        toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
-        KeyboardManager.getInstance().addGlobalKeyListener(this);
+        toolModeSubscription = WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolModeObserver);
+        WyldCard.getInstance().getKeyboardManager().addGlobalKeyListener(this);
     }
 
     @Override
     @RunOnDispatch
     public void partClosed(ExecutionContext context) {
         getPartModel().removePropertyChangedObserver(buttonComponent);
-        KeyboardManager.getInstance().removeGlobalKeyListener(this);
+        WyldCard.getInstance().getKeyboardManager().removeGlobalKeyListener(this);
         toolModeSubscription.dispose();
     }
 

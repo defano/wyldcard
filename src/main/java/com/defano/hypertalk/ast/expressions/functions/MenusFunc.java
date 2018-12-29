@@ -1,15 +1,19 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.menubar.main.WyldCardMenuBar;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
  * Implementation of a HyperTalk function that returns the number of menus in the menu bar.
  */
 public class MenusFunc extends Expression {
+
+    @Inject
+    private WyldCardMenuBar wyldCardMenuBar;
 
     public MenusFunc(ParserRuleContext context) {
         super(context);
@@ -18,10 +22,10 @@ public class MenusFunc extends Expression {
     @Override
     public Value onEvaluate(ExecutionContext context) {
         StringBuilder builder = new StringBuilder();
-        for (int menuIndex = 0; menuIndex < HyperCardMenuBar.getInstance().getMenuCount(); menuIndex++) {
-            builder.append(HyperCardMenuBar.getInstance().getMenu(menuIndex).getText());
+        for (int menuIndex = 0; menuIndex < wyldCardMenuBar.getMenuCount(); menuIndex++) {
+            builder.append(wyldCardMenuBar.getMenu(menuIndex).getText());
 
-            if (menuIndex < HyperCardMenuBar.getInstance().getMenuCount() - 1) {
+            if (menuIndex < wyldCardMenuBar.getMenuCount() - 1) {
                 builder.append("\n");
             }
         }

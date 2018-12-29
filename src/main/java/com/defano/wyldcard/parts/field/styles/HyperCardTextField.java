@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.field.styles;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.KeyListenable;
 import com.defano.wyldcard.awt.MouseListenable;
@@ -11,11 +12,9 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldModelObserver;
-import com.defano.wyldcard.parts.model.PropertiesModel;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.util.Throttle;
 import com.defano.hypertalk.ast.model.Value;
@@ -136,7 +135,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
      */
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_DONTWRAP:
                 textPane.setWrapText(!newValue.booleanValue());
@@ -188,12 +187,12 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
 
         // Get notified when field tool is selected
-        toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
+        toolModeSubscription = WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolModeObserver);
 
-        fontAlignSubscription = FontContext.getInstance().getSelectedTextAlignProvider().subscribe(fontAlignObserver);
-        fontFamilySubscription = FontContext.getInstance().getSelectedFontFamilyProvider().subscribe(fontFamilyObserver);
-        fontStyleSubscription = FontContext.getInstance().getSelectedFontStyleProvider().subscribe(fontStyleObserver);
-        fontSizeSubscription = FontContext.getInstance().getSelectedFontSizeProvider().subscribe(fontSizeObserver);
+        fontAlignSubscription = WyldCard.getInstance().getFontManager().getSelectedTextAlignProvider().subscribe(fontAlignObserver);
+        fontFamilySubscription = WyldCard.getInstance().getFontManager().getSelectedFontFamilyProvider().subscribe(fontFamilyObserver);
+        fontStyleSubscription = WyldCard.getInstance().getFontManager().getSelectedFontStyleProvider().subscribe(fontStyleObserver);
+        fontSizeSubscription = WyldCard.getInstance().getFontManager().getSelectedFontSizeProvider().subscribe(fontSizeObserver);
 
         // React to scripted changes to the field model
         ((FieldModel) toolEditablePart.getPartModel()).setDocumentObserver(this);
@@ -214,7 +213,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
 
         // Initialize font to system font selection if document is empty
         if (textPane.getText().length() == 0) {
-            textPane.setCharacterAttributes(FontContext.getInstance().getFocusedTextStyle().toAttributeSet(), true);
+            textPane.setCharacterAttributes(WyldCard.getInstance().getFontManager().getFocusedTextStyle().toAttributeSet(), true);
         }
 
         // And auto-select any
@@ -354,7 +353,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         // Apply change to field
         if (selection.length() == 0) {
             TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getCharacterAttributes());
-            tss.setFontFamily(fontFamily.stringValue());
+            tss.setFontFamily(fontFamily.toString());
             textPane.setCharacterAttributes(tss.toAttributeSet(), true);
         }
 
@@ -362,7 +361,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         else {
             for (int index = selection.start; index < selection.start + selection.length(); index++) {
                 TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
-                tss.setFontFamily(fontFamily.stringValue());
+                tss.setFontFamily(fontFamily.toString());
                 doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
             }
         }
@@ -479,10 +478,10 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
                 }
             }
 
-            FontContext.getInstance().getFocusedFontFamilyProvider().onNext(families);
-            FontContext.getInstance().getFocusedFontSizeProvider().onNext(sizes);
-            FontContext.getInstance().setFocusedHyperTalkFontStyles(styles);
-            FontContext.getInstance().setFocusedTextAlign(alignment);
+            WyldCard.getInstance().getFontManager().getFocusedFontFamilyProvider().onNext(families);
+            WyldCard.getInstance().getFontManager().getFocusedFontSizeProvider().onNext(sizes);
+            WyldCard.getInstance().getFontManager().setFocusedHyperTalkFontStyles(styles);
+            WyldCard.getInstance().getFontManager().setFocusedTextAlign(alignment);
         });
     }
 

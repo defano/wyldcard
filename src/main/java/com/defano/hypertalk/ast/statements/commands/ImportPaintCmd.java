@@ -20,6 +20,6 @@ public class ImportPaintCmd extends Command {
 
     @Override
     protected void onExecute(ExecutionContext context) throws HtException {
-        ArtVandelay.importPaint(new File(fileExpression.evaluate(context).stringValue()));
+        ArtVandelay.importPaint(new File(fileExpression.evaluate(context).toString()));
     }
 }

@@ -7,7 +7,7 @@ import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.SharedHilight;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.fonts.FontUtils;
-import com.defano.wyldcard.parts.model.PropertiesModel;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
@@ -37,12 +37,12 @@ public class CheckboxButton extends JCheckBox implements SharedHilight, HyperCar
     }
 
     @Override
-    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:
                 boolean showName = toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_SHOWNAME).booleanValue();
-                CheckboxButton.super.setText(showName ? toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_NAME).stringValue() : "");
+                CheckboxButton.super.setText(showName ? toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_NAME).toString() : "");
                 break;
 
             case ButtonModel.PROP_HILITE:
@@ -57,7 +57,7 @@ public class CheckboxButton extends JCheckBox implements SharedHilight, HyperCar
                 break;
 
             case ButtonModel.PROP_TEXTFONT:
-                setFont(FontUtils.getFontByNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
+                setFont(FontUtils.getFontByNameStyleSize(newValue.toString(), getFont().getStyle(), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:

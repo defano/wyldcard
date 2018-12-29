@@ -50,7 +50,7 @@ public class PatternEditor extends WyldCardDialog<Integer> {
         });
 
         saveButton.addActionListener(e -> {
-            StackModel focusedStack = WyldCard.getInstance().getFocusedStack().getStackModel();
+            StackModel focusedStack = WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel();
             focusedStack.setUserPattern(patternId, patternCanvas.getCanvasImage());
             dispose();
         });

@@ -26,8 +26,8 @@ public class ChunkPropertiesDelegate {
 
         FieldModel fieldModel = (FieldModel) partModel;
         Range range = (chunk instanceof CompositeChunk) ?
-                RangeUtils.getRange(context, partModel.getValue(context).stringValue(), (CompositeChunk) chunk) :
-                RangeUtils.getRange(context, partModel.getValue(context).stringValue(), chunk);
+                RangeUtils.getRange(context, partModel.getValue(context).toString(), (CompositeChunk) chunk) :
+                RangeUtils.getRange(context, partModel.getValue(context).toString(), chunk);
 
         switch (property.toLowerCase()) {
             case PROP_TEXTSIZE:
@@ -51,13 +51,13 @@ public class ChunkPropertiesDelegate {
 
         FieldModel fieldModel = (FieldModel) partModel;
         Range range = (chunk instanceof CompositeChunk) ?
-                RangeUtils.getRange(context, partModel.getValue(context).stringValue(), (CompositeChunk) chunk) :
-                RangeUtils.getRange(context, partModel.getValue(context).stringValue(), chunk);
+                RangeUtils.getRange(context, partModel.getValue(context).toString(), (CompositeChunk) chunk) :
+                RangeUtils.getRange(context, partModel.getValue(context).toString(), chunk);
 
         switch (property.toLowerCase()) {
             case PROP_TEXTSIZE:
                 if (!value.isInteger()) {
-                    throw new HtSemanticException("The value '" + value.stringValue() + "' is not a valid font size.");
+                    throw new HtSemanticException("The value '" + value.toString() + "' is not a valid font size.");
                 }
                 fieldModel.setTextFontSize(context, range.start, range.length(), value);
                 break;

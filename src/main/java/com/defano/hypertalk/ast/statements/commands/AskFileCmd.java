@@ -7,12 +7,16 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WindowManager;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.awt.*;
 import java.io.File;
 
 public class AskFileCmd extends Command {
+
+    @Inject
+    private WindowManager windowManager;
 
     private final Expression promptExpression;
     private final Expression fileExpression;
@@ -29,11 +33,11 @@ public class AskFileCmd extends Command {
 
     @Override
     protected void onExecute(ExecutionContext context) throws HtException {
-        String prompt = promptExpression.evaluate(context).stringValue();
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow(), prompt, FileDialog.SAVE);
+        String prompt = promptExpression.evaluate(context).toString();
+        FileDialog fd = new FileDialog(windowManager.getWindowForStack(context, context.getCurrentStack()).getWindow(), prompt, FileDialog.SAVE);
 
         if (fileExpression != null) {
-            fd.setFile(fileExpression.evaluate(context).stringValue());
+            fd.setFile(fileExpression.evaluate(context).toString());
         }
 
         fd.setVisible(true);

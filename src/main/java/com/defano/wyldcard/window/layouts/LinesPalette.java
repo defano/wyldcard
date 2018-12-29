@@ -1,7 +1,8 @@
 package com.defano.wyldcard.window.layouts;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -31,7 +32,7 @@ public class LinesPalette extends WyldCardDialog<Object> implements Consumer<Str
         px6.addActionListener(l -> select(6));
 
         allLines = new JButton[]{px1, px2, px3, px4, px5, px6};
-        ToolsContext.getInstance().getLineStrokeProvider().subscribe(this);
+        WyldCard.getInstance().getToolsManager().getLineStrokeProvider().subscribe(this);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class LinesPalette extends WyldCardDialog<Object> implements Consumer<Str
     }
 
     private void select(int width) {
-        ToolsContext.getInstance().setLineWidth(width);
+        WyldCard.getInstance().getToolsManager().setLineWidth(width);
     }
 
     private JButton getButtonForWidth(int width) {

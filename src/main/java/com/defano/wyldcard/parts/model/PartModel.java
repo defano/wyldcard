@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.model;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.Messagable;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardLayer;
@@ -10,7 +11,6 @@ import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.ButtonPropertyEditor;
 import com.defano.wyldcard.window.layouts.FieldPropertyEditor;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * A base model object for all HyperCard "parts" that Defines properties common to all part objects.
  */
-public abstract class PartModel extends PropertiesModel implements Messagable {
+public abstract class PartModel extends DefaultPropertiesModel implements Messagable {
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";
@@ -106,7 +106,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                 model.setKnownProperty(context, PROP_HEIGHT, new Value(value.getItemAt(context, 3).longValue() - value.getItemAt(context, 1).longValue()));
                 model.setKnownProperty(context, PROP_WIDTH, new Value(value.getItemAt(context, 2).longValue() - value.getItemAt(context, 0).longValue()));
             } else {
-                throw new HtSemanticException("Expected a rectangle, but got " + value.stringValue());
+                throw new HtSemanticException("Expected a rectangle, but got " + value.toString());
             }
         });
 
@@ -140,7 +140,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                 model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
                 model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
             } else {
-                throw new HtSemanticException("Expected a point, but got " + value.stringValue());
+                throw new HtSemanticException("Expected a point, but got " + value.toString());
             }
         });
 
@@ -153,7 +153,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue()));
                 model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue()));
             } else {
-                throw new HtSemanticException("Expected a point, but got " + value.stringValue());
+                throw new HtSemanticException("Expected a point, but got " + value.toString());
             }
         });
         definePropertyAlias(PROP_BOTTOMRIGHT, PROP_BOTRIGHT);
@@ -177,7 +177,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue() / 2));
                 model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue() / 2));
             } else {
-                throw new HtSemanticException("Expected a point, but got " + value.stringValue());
+                throw new HtSemanticException("Expected a point, but got " + value.toString());
             }
         });
 
@@ -243,7 +243,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
     private void precompile(ExecutionContext context) {
         if (hasProperty(PROP_SCRIPTTEXT)) {
-            Interpreter.asyncCompile(CompilationUnit.SCRIPT, getKnownProperty(context, PROP_SCRIPTTEXT).stringValue(), (scriptText, compiledScript, generatedError) -> {
+            Interpreter.asyncCompile(CompilationUnit.SCRIPT, getKnownProperty(context, PROP_SCRIPTTEXT).toString(), (scriptText, compiledScript, generatedError) -> {
                 if (generatedError == null) {
                     script = (Script) compiledScript;
                     script.applyBreakpoints(getBreakpoints());
@@ -265,7 +265,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     }
 
     public String getScriptText(ExecutionContext context) {
-        return getKnownProperty(context, PROP_SCRIPTTEXT).stringValue();
+        return getKnownProperty(context, PROP_SCRIPTTEXT).toString();
     }
 
     public Owner getOwner() {
@@ -292,7 +292,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     }
 
     public String getName(ExecutionContext context) {
-        return getKnownProperty(context, PROP_NAME).stringValue();
+        return getKnownProperty(context, PROP_NAME).toString();
     }
 
     public PartSpecifier getPartSpecifier(ExecutionContext context) {
@@ -410,7 +410,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * @param caretPosition The location where the caret should be positioned in the text or null to use the last saved
      */
     public ScriptEditor editScript(ExecutionContext context, Integer caretPosition) {
-        ScriptEditor editor = WindowManager.getInstance().findScriptEditorForPart(this);
+        ScriptEditor editor = WyldCard.getInstance().getWindowManager().findScriptEditorForPart(this);
 
         // Existing script editor for this part; show it
         if (editor != null) {
@@ -437,7 +437,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                         .withTitle("Script of " + getName(context))
                         .ownsMenubar()
                         .resizeable(true)
-                        .withLocationStaggeredOver(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                        .withLocationStaggeredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                         .build();
             });
 
@@ -461,7 +461,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                             .withModel((FieldModel) this)
                             .asModal()
                             .withTitle(getName(context))
-                            .withLocationCenteredOver(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                             .resizeable(false)
                             .build();
                 } else {
@@ -469,7 +469,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                             .withModel((ButtonModel) this)
                             .asModal()
                             .withTitle(getName(context))
-                            .withLocationCenteredOver(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                             .resizeable(false)
                             .build();
                 }

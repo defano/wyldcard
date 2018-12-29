@@ -23,6 +23,6 @@ public class MultiplyCmd extends Command {
 
     public void onExecute(ExecutionContext context) throws HtException {
         ContainerExp factor = container.factor(context, ContainerExp.class, new HtSemanticException("Cannot multiply that."));
-        factor.putValue(context, factor.evaluate(context).multiply(expression.evaluate(context)), Preposition.INTO);
+        factor.putValue(context, factor.evaluate(context).multipliedBy(expression.evaluate(context)), Preposition.INTO);
     }
 }

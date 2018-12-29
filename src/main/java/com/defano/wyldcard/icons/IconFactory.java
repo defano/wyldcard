@@ -25,7 +25,7 @@ public class IconFactory {
     }
 
     public static List<ButtonIcon> getStackIcons() {
-        return WyldCard.getInstance().getFocusedStack().getStackModel().getUserIcons();
+        return WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel().getUserIcons();
     }
 
     public static ButtonIcon findIconForValue(Value value) {
@@ -37,7 +37,7 @@ public class IconFactory {
             return findIconById(value.integerValue(), icons);
         }
 
-        return findIconByName(value.stringValue(), icons);
+        return findIconByName(value.toString(), icons);
     }
 
     public static ButtonIcon findIconByName(String name, List<ButtonIcon> icons) {

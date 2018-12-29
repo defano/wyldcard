@@ -1,17 +1,21 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.awt.MouseManager;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.awt.*;
 
 public class DragCmd extends Command {
+
+    @Inject
+    private MouseManager mouseManager;
 
     private final Expression from;
     private final Expression to;
@@ -51,11 +55,11 @@ public class DragCmd extends Command {
         Value to = this.to.evaluate(context);
 
         if (!from.isPoint()) {
-            throw new HtSemanticException(from.stringValue() + " is not a valid location.");
+            throw new HtSemanticException(from.toString() + " is not a valid location.");
         }
 
         if (!to.isPoint()) {
-            throw new HtSemanticException(to.stringValue() + " is not a valid location.");
+            throw new HtSemanticException(to.toString() + " is not a valid location.");
         }
 
         int x1 = from.getItems(context).get(0).integerValue();
@@ -63,6 +67,6 @@ public class DragCmd extends Command {
         int x2 = to.getItems(context).get(0).integerValue();
         int y2 = to.getItems(context).get(1).integerValue();
 
-        MouseManager.getInstance().dragFrom(new Point(x1, y1), new Point(x2, y2), withShift, withOption, withCommand);
+        mouseManager.dragFrom(new Point(x1, y1), new Point(x2, y2), withShift, withOption, withCommand);
     }
 }

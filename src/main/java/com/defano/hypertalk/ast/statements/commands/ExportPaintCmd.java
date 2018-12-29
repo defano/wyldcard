@@ -20,6 +20,6 @@ public class ExportPaintCmd extends Command {
 
     @Override
     protected void onExecute(ExecutionContext context) throws HtException {
-        ArtVandelay.exportPaint(new File(fileExpression.evaluate(context).stringValue()));
+        ArtVandelay.exportPaint(new File(fileExpression.evaluate(context).toString()));
     }
 }

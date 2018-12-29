@@ -16,11 +16,15 @@ import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.window.WyldCardFrame;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class NumberOfPartFunc extends Expression {
+
+    @Inject
+    private WindowManager windowManager;
 
     private final Expression partExpression;
 
@@ -52,7 +56,7 @@ public class NumberOfPartFunc extends Expression {
         }
 
         if (part instanceof MsgBoxModel) {
-            return getNumberOfWindow(WindowManager.getInstance().getMessageWindow());
+            return getNumberOfWindow(windowManager.getMessageWindow());
         }
 
         if (part instanceof WindowProxyPartModel) {
@@ -63,8 +67,8 @@ public class NumberOfPartFunc extends Expression {
     }
 
     private Value getNumberOfWindow(WyldCardFrame window) throws HtSemanticException {
-        for (int windowNumber = 1; windowNumber <= WindowManager.getInstance().getFrames(false).size(); windowNumber++) {
-            if (window == WindowManager.getInstance().getFrames(false).get(windowNumber - 1)) {
+        for (int windowNumber = 1; windowNumber <= windowManager.getFrames(false).size(); windowNumber++) {
+            if (window == windowManager.getFrames(false).get(windowNumber - 1)) {
                 return new Value(windowNumber);
             }
         }

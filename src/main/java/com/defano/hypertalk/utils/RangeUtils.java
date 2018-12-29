@@ -93,9 +93,9 @@ public class RangeUtils {
         if (c.end != null)
             endVal = c.end.evaluate(context);
 
-        if (!startVal.isNatural() && !Ordinal.reservedValue(startVal.integerValue()))
+        if (!startVal.isNatural() && !Ordinal.isReservedValue(startVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + startVal + "' instead");
-        if (endVal != null && !endVal.isNatural() && !Ordinal.reservedValue(endVal.integerValue()))
+        if (endVal != null && !endVal.isNatural() && !Ordinal.isReservedValue(endVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + endVal + "' instead");
 
         if (endVal != null)
@@ -107,12 +107,12 @@ public class RangeUtils {
     private static Range getRange(ExecutionContext context, String value, CompositeChunk c, Range in) throws HtException {
         Range s = getRange(context, value, (Chunk) c, in);
 
-        value = new Value(value).getChunk(context, new Chunk(c.type, c.start, c.end)).stringValue();
+        value = new Value(value).getChunk(context, new Chunk(c.type, c.start, c.end)).toString();
         s = getRange(context, value, c.chunkOf, s);
 
         if (c.chunkOf instanceof CompositeChunk) {
             Chunk next = ((CompositeChunk) c.chunkOf).chunkOf;
-            value = new Value(value).getChunk(context, new Chunk(c.chunkOf.type, c.chunkOf.start, c.chunkOf.end)).stringValue();
+            value = new Value(value).getChunk(context, new Chunk(c.chunkOf.type, c.chunkOf.start, c.chunkOf.end)).toString();
 
             if (next instanceof CompositeChunk) {
                 return getRange(context, value, (CompositeChunk) next, s);

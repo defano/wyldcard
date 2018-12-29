@@ -1,8 +1,9 @@
 package com.defano.wyldcard.parts.field.styles;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.ToolEditablePart;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +28,7 @@ public class TransparentField extends HyperCardTextField {
     public void paint(Graphics g) {
         super.paint(g);
 
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD) {
+        if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD) {
             ((Graphics2D) g).setPaint(Color.GRAY);
             g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
         }

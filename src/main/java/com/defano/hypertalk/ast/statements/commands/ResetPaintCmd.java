@@ -1,9 +1,9 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.PaintBrush;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
@@ -18,16 +18,16 @@ public class ResetPaintCmd extends Command {
 
     @Override
     protected void onExecute(ExecutionContext context) throws HtException, Preemption {
-        ToolsContext.getInstance().setSelectedBrush(PaintBrush.ROUND_12X12);
-        HyperCardProperties.getInstance().setKnownProperty(context, HyperCardProperties.PROP_CENTERED, new Value(false));
-        HyperCardProperties.getInstance().setKnownProperty(context, HyperCardProperties.PROP_FILLED, new Value(false));
-        HyperCardProperties.getInstance().setKnownProperty(context, HyperCardProperties.PROP_GRID, new Value(false));
-        HyperCardProperties.getInstance().setKnownProperty(context, HyperCardProperties.PROP_LINESIZE, new Value(1));
-        HyperCardProperties.getInstance().setKnownProperty(context, HyperCardProperties.PROP_MULTIPLE, new Value(false));
-        HyperCardProperties.getInstance().setKnownProperty(context, HyperCardProperties.PROP_PATTERN, new Value(12));
-        HyperCardProperties.getInstance().setKnownProperty(context, HyperCardProperties.PROP_POLYSIDES, new Value(4));
-        HyperCardProperties.getInstance().setKnownProperty(context, HyperCardProperties.PROP_TEXTFONT, new Value("Geneva"));
-        HyperCardProperties.getInstance().setKnownProperty(context, HyperCardProperties.PROP_TEXTSIZE, new Value(12));
-        HyperCardProperties.getInstance().setKnownProperty(context, HyperCardProperties.PROP_TEXTSTYLE, new Value("plain"));
+        WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.ROUND_12X12);
+        WyldCard.getInstance().getWyldCardProperties().setKnownProperty(context, DefaultWyldCardProperties.PROP_CENTERED, new Value(false));
+        WyldCard.getInstance().getWyldCardProperties().setKnownProperty(context, DefaultWyldCardProperties.PROP_FILLED, new Value(false));
+        WyldCard.getInstance().getWyldCardProperties().setKnownProperty(context, DefaultWyldCardProperties.PROP_GRID, new Value(false));
+        WyldCard.getInstance().getWyldCardProperties().setKnownProperty(context, DefaultWyldCardProperties.PROP_LINESIZE, new Value(1));
+        WyldCard.getInstance().getWyldCardProperties().setKnownProperty(context, DefaultWyldCardProperties.PROP_MULTIPLE, new Value(false));
+        WyldCard.getInstance().getWyldCardProperties().setKnownProperty(context, DefaultWyldCardProperties.PROP_PATTERN, new Value(12));
+        WyldCard.getInstance().getWyldCardProperties().setKnownProperty(context, DefaultWyldCardProperties.PROP_POLYSIDES, new Value(4));
+        WyldCard.getInstance().getWyldCardProperties().setKnownProperty(context, DefaultWyldCardProperties.PROP_TEXTFONT, new Value("Geneva"));
+        WyldCard.getInstance().getWyldCardProperties().setKnownProperty(context, DefaultWyldCardProperties.PROP_TEXTSIZE, new Value(12));
+        WyldCard.getInstance().getWyldCardProperties().setKnownProperty(context, DefaultWyldCardProperties.PROP_TEXTSTYLE, new Value("plain"));
     }
 }

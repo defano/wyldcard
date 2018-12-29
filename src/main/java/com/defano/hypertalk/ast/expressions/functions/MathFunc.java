@@ -24,7 +24,7 @@ public class MathFunc extends Expression {
         Value operand = expression.evaluate(context);
 
         if (!operand.isNumber()) {
-            throw new HtSemanticException("Function " + function + " expects a numerical operand, but got " + operand.stringValue() + " instead.");
+            throw new HtSemanticException("Function " + function + " expects a numerical operand, but got " + operand.toString() + " instead.");
         }
 
         switch (function) {

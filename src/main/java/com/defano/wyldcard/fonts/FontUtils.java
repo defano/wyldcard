@@ -13,7 +13,7 @@ import java.awt.*;
 public class FontUtils {
 
     public static int getAlignmentStyleForValue(Value v) {
-        switch (v.stringValue().trim().toLowerCase()) {
+        switch (v.toString().trim().toLowerCase()) {
             case "left":
                 return StyleConstants.ALIGN_LEFT;
             case "right":
@@ -26,7 +26,7 @@ public class FontUtils {
     }
 
     public static int getAlignmentForValue(Value v) {
-        switch (v.stringValue().trim().toLowerCase()) {
+        switch (v.toString().trim().toLowerCase()) {
             case "left":
                 return SwingConstants.LEFT;
             case "right":
@@ -42,7 +42,7 @@ public class FontUtils {
         int style = Font.PLAIN;
 
         for (Value thisValue : v.getItems(context)) {
-            switch (thisValue.stringValue().trim().toLowerCase()) {
+            switch (thisValue.toString().trim().toLowerCase()) {
                 case "plain":
                     style = Font.PLAIN;
                     break;

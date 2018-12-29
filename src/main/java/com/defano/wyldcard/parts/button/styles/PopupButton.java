@@ -6,7 +6,7 @@ import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.HyperCardButton;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.PropertiesModel;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
@@ -56,7 +56,7 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
     }
 
     @Override
-    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case PartModel.PROP_CONTENTS:
                 int lastSelection = model.getKnownProperty(context, ButtonModel.PROP_SELECTEDITEM).integerValue();
@@ -69,7 +69,7 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
                 break;
 
             case ButtonModel.PROP_TEXTFONT:
-                setFont(FontUtils.getFontByNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
+                setFont(FontUtils.getFontByNameStyleSize(newValue.toString(), getFont().getStyle(), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
@@ -93,7 +93,7 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
         }
 
         for (Value thisItem : items) {
-            menuItems.addElement(thisItem.stringValue());
+            menuItems.addElement(thisItem.toString());
         }
 
         // Convert item list to line list

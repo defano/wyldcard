@@ -15,6 +15,6 @@ public class IsNotWithinOp extends BinaryOperatorExp {
 
     @Override
     protected Value onEvaluate(ExecutionContext context) throws HtException {
-        return lhs(context).within(context, rhs(context)).not();
+        return lhs(context).isWithin(rhs(context)).not();
     }
 }

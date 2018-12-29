@@ -1,8 +1,9 @@
 package com.defano.wyldcard.parts.field.styles;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.parts.field.highlighters.AutoSelectionHighlighterPainter;
 import com.defano.wyldcard.parts.field.highlighters.FoundSelectionHighlightPainter;
 import com.defano.wyldcard.parts.util.FieldUtilities;
@@ -49,7 +50,7 @@ public class HyperCardTextPane extends JTextPane {
         super.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && isEditable() && isEnabled()) {
+                if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BROWSE && isEditable() && isEnabled()) {
                     expandContentsToClickLoc(e);
                 }
             }

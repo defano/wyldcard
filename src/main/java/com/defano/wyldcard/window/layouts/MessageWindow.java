@@ -3,7 +3,7 @@ package com.defano.wyldcard.window.layouts;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.parts.model.PropertiesModel;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.msgbox.MsgBoxModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -54,10 +54,10 @@ public class MessageWindow extends WyldCardWindow<Object> implements PropertyCha
 
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case MsgBoxModel.PROP_CONTENTS:
-                getTextComponent().setText(newValue.stringValue());
+                getTextComponent().setText(newValue.toString());
                 break;
         }
     }

@@ -18,11 +18,11 @@ public interface DispatchComputedSetter extends ComputedSetter {
      * call to set the property is not.
      *
      * @param context The execution context.
-     * @param model        The {@link PropertiesModel} whose property is being set.
+     * @param model        The {@link DefaultPropertiesModel} whose property is being set.
      * @param propertyName The name of the property which is to be set.
      * @param value        The requested value to be set; this method is responsible for transforming this value as
      */
     @Override
     @RunOnDispatch
-    void setComputedValue(ExecutionContext context, PropertiesModel model, String propertyName, Value value);
+    void setComputedValue(ExecutionContext context, DefaultPropertiesModel model, String propertyName, Value value);
 }

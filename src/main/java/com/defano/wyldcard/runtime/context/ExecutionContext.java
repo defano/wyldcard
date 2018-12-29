@@ -8,14 +8,12 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
-import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
@@ -76,7 +74,7 @@ public class ExecutionContext {
      * backgrounds or stacks should use {@link #ExecutionContext(Part)}.
      */
     public ExecutionContext() {
-        this.stack = WyldCard.getInstance().getFocusedStack();
+        this.stack = WyldCard.getInstance().getStackManager().getFocusedStack();
     }
 
     /**
@@ -149,7 +147,7 @@ public class ExecutionContext {
         StackModel stackModel = partModel.getParentStackModel();
 
         if (stackModel != null) {
-            return bind(WyldCard.getInstance().getOpenStack(stackModel));
+            return bind(WyldCard.getInstance().getStackManager().getOpenStack(stackModel));
         } else {
             throw new IllegalStateException("Attempt to bind execution context to a part not connected to a stack.");
         }
@@ -283,9 +281,9 @@ public class ExecutionContext {
 
         // Operating on a chunk of the existing value
         if (chunk != null)
-            mutable = Value.setChunk(this, mutable, preposition, chunk, value);
+            mutable = Value.ofMutatedChunk(this, mutable, preposition, chunk, value);
         else
-            mutable = Value.setValue(mutable, preposition, value);
+            mutable = Value.ofValue(mutable, preposition, value);
 
         setVariable(symbol, mutable);
     }
@@ -332,7 +330,7 @@ public class ExecutionContext {
      * @return True if script should be aborted, false otherwise
      */
     public boolean didAbort() {
-        Long breakTime = KeyboardManager.getInstance().getBreakTime();
+        Long breakTime = WyldCard.getInstance().getKeyboardManager().getBreakTime();
         long startTime = getStackFrame().getCreationTimeMs();
 
         return breakTime != null && breakTime > startTime;
@@ -362,7 +360,7 @@ public class ExecutionContext {
      */
     public Value getProperty(String property, PartSpecifier ps) throws NoSuchPropertyException, PartException {
         if (ps == null) {
-            return HyperCardProperties.getInstance().getProperty(this, property);
+            return WyldCard.getInstance().getWyldCardProperties().getProperty(this, property);
         } else {
             return getPart(ps).getProperty(this, property);
         }
@@ -383,13 +381,13 @@ public class ExecutionContext {
         Value mutable = getProperty(property, ps);
 
         if (chunk != null) {
-            mutable = Value.setChunk(this, mutable, preposition, chunk, value);
+            mutable = Value.ofMutatedChunk(this, mutable, preposition, chunk, value);
         } else {
-            mutable = Value.setValue(mutable, preposition, value);
+            mutable = Value.ofValue(mutable, preposition, value);
         }
 
         if (ps == null) {
-            HyperCardProperties.getInstance().setProperty(this, property, mutable);
+            WyldCard.getInstance().getWyldCardProperties().setProperty(this, property, mutable);
         } else {
             getPart(ps).setProperty(this, property, mutable);
         }
@@ -438,7 +436,7 @@ public class ExecutionContext {
      * @return The stack that is in scope for this execution.
      */
     public StackPart getCurrentStack() {
-        return this.stack == null ? WyldCard.getInstance().getFocusedStack() : this.stack;
+        return this.stack == null ? WyldCard.getInstance().getStackManager().getFocusedStack() : this.stack;
     }
 
     /**

@@ -3,8 +3,7 @@ package com.defano.wyldcard.window.layouts;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.KeyboardManager;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -33,10 +32,10 @@ public class MagnificationPalette extends WyldCardDialog<Object> {
         map.put(32, new JLabel("32x"));
         slider1.setLabelTable(map);
 
-        magnifierButton.addActionListener(e -> ToolsContext.getInstance().forceToolSelection(ToolType.MAGNIFIER, false));
-        ToolsContext.getInstance().getPaintToolProvider().subscribe(tool -> magnifierButton.setEnabled(tool.getToolType() != PaintToolType.MAGNIFIER));
+        magnifierButton.addActionListener(e -> WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.MAGNIFIER, false));
+        WyldCard.getInstance().getToolsManager().getPaintToolProvider().subscribe(tool -> magnifierButton.setEnabled(tool.getToolType() != PaintToolType.MAGNIFIER));
 
-        KeyboardManager.getInstance().addGlobalKeyListener(new KeyAdapter() {
+        WyldCard.getInstance().getKeyboardManager().addGlobalKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.isShiftDown()) {
@@ -52,10 +51,10 @@ public class MagnificationPalette extends WyldCardDialog<Object> {
             }
         });
 
-        WyldCard.getInstance().getScaleProvider().subscribe(aDouble -> slider1.setValue(WyldCard.getInstance().getScaleProvider().blockingFirst().intValue()));
+        WyldCard.getInstance().getStackManager().getScaleProvider().subscribe(aDouble -> slider1.setValue(WyldCard.getInstance().getStackManager().getScaleProvider().blockingFirst().intValue()));
 
-        slider1.setValue(WyldCard.getInstance().getScaleProvider().blockingFirst().intValue());
-        slider1.addChangeListener(e -> WyldCard.getInstance().getFocusedCard().getCanvas().setScale(slider1.getValue()));
+        slider1.setValue(WyldCard.getInstance().getStackManager().getScaleProvider().blockingFirst().intValue());
+        slider1.addChangeListener(e -> WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().setScale(slider1.getValue()));
     }
 
     @Override

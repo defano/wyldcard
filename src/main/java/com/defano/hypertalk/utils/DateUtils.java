@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.model.LengthAdjective;
 import com.defano.hypertalk.ast.model.Value;
 
 import java.text.*;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtils {
@@ -42,13 +43,13 @@ public class DateUtils {
 
         ParsePosition position = new ParsePosition(0);
 
-        Date firstDate = dateOf(value.stringValue(), format.first, position);
+        Date firstDate = dateOf(value.toString(), format.first, position);
         if (firstDate == null) {
             return null;
         }
 
         if (format.second != null) {
-            Date secondDate = dateOf(value.stringValue(), format.second, position);
+            Date secondDate = dateOf(value.toString(), format.second, position);
             return mergeDates(firstDate, secondDate, format.second);
         } else {
             return firstDate;
@@ -56,7 +57,7 @@ public class DateUtils {
     }
 
     public static Date dateOf(Value value, ConvertibleDateFormat format) {
-        return dateOf(value.stringValue(), format, new ParsePosition(0));
+        return dateOf(value.toString(), format, new ParsePosition(0));
     }
 
     public static Date dateOf(String text, ConvertibleDateFormat format, ParsePosition parsePosition) {
@@ -115,6 +116,7 @@ public class DateUtils {
         }
 
         Date updated = new Date(first.getTime());
+        Calendar cal = Calendar.getInstance();
 
         switch (secondFormat) {
             case SECONDS:
@@ -127,14 +129,15 @@ public class DateUtils {
                 updated.setYear(second.getYear());
                 updated.setMonth(second.getMonth());
                 updated.setDate(second.getDate());
-                return updated;
 
             case LONG_TIME:
             case SHORT_TIME:
-                updated.setHours(second.getHours());
-                updated.setMinutes(second.getMinutes());
-                updated.setSeconds(second.getSeconds());
-                return updated;
+                cal.setTime(updated);
+                cal.set(Calendar.HOUR_OF_DAY, second.getHours());
+                cal.set(Calendar.MINUTE, second.getMinutes());
+                cal.set(Calendar.SECOND, second.getSeconds());
+                cal.set(Calendar.MILLISECOND, 0);
+                return cal.getTime();
         }
 
         throw new IllegalStateException("Bug! Unimplemented conversion format: " + secondFormat);

@@ -25,7 +25,7 @@ public class DiskSpaceFunc extends Expression {
 
     @Override
     public Value onEvaluate(ExecutionContext context) throws HtException {
-        File f = diskExpr == null ? new File(".") : new File(diskExpr.evaluate(context).stringValue());
+        File f = diskExpr == null ? new File(".") : new File(diskExpr.evaluate(context).toString());
 
         if (!f.exists()) {
             throw new HtSemanticException("That disk does not exist.");

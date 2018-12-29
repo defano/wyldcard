@@ -229,7 +229,7 @@ Each time WyldCard sends a message to a part (e.g., `mouseUp`) it attempts to ex
 
 ### Navigating between cards
 
-Cards in a stack may be referred to by name (`card "Accounting"`), by id (`card id 22`), by their position in the stack (`card 13`), or by relative position in their background (`the second card of the last background`).
+Cards in a stack may be referred to by name (`card "Accounting"`), by id (`card id 22`), by their position in the stack (`card 13`, `third card`), or by relative position in their background (`the second card of the last background`).
 
 Navigate between cards in the stack using commands in the "Go" menu ("First", "Next", "Prev" and "Last") or with the `go` command:
 

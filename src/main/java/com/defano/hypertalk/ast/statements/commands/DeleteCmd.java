@@ -14,7 +14,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -77,7 +77,7 @@ public class DeleteCmd extends Command {
             throw new HtSemanticException("Can't delete a chunk of a menu.");
         }
 
-        HyperCardMenuBar.getInstance().deleteMenu(menuExp.menu.getSpecifiedMenu(context));
+        WyldCard.getInstance().getWyldCardMenuBar().deleteMenu(menuExp.menu.getSpecifiedMenu(context));
     }
 
     private void deleteFromContainer(ExecutionContext context, ContainerExp container) throws HtException {

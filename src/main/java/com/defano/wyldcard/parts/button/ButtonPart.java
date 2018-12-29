@@ -1,13 +1,13 @@
 package com.defano.wyldcard.parts.button;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.PropertiesModel;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
@@ -91,7 +91,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
      * @throws Exception Thrown if an error occurs instantiating the button.
      */
     public static ButtonPart fromModel(ExecutionContext context, CardPart parent, ButtonModel partModel) throws HtException {
-        ButtonStyle style = ButtonStyle.fromName(partModel.getKnownProperty(context, ButtonModel.PROP_STYLE).stringValue());
+        ButtonStyle style = ButtonStyle.fromName(partModel.getKnownProperty(context, ButtonModel.PROP_STYLE).toString());
         ButtonPart button = new ButtonPart(style, parent, partModel.getOwner());
 
         button.partModel = partModel;
@@ -110,7 +110,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     public void partClosed(ExecutionContext context) {
         super.partClosed(context);
         partModel.removePropertyChangedObserver(this);
-        PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+        WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
     }
 
     @Override
@@ -182,7 +182,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER.messageName);
-            PeriodicMessageManager.getInstance().addWithin(getPartModel());
+            WyldCard.getInstance().getPeriodicMessageManager().addWithin(getPartModel());
         }
     }
 
@@ -193,7 +193,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE.messageName);
-            PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+            WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
         }
     }
 
@@ -208,10 +208,10 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_STYLE:
-                setStyle(context, ButtonStyle.fromName(newValue.stringValue()));
+                setStyle(context, ButtonStyle.fromName(newValue.toString()));
                 break;
             case ButtonModel.PROP_TOP:
             case ButtonModel.PROP_LEFT:

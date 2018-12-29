@@ -1,7 +1,8 @@
 package com.defano.wyldcard.parts.card;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.Value;
@@ -42,7 +43,7 @@ public interface CardLayerPart extends Part {
      * @return The part layer currently being edited.
      */
     static CardLayer getActivePartLayer() {
-        return ToolsContext.getInstance().isEditingBackground() ? CardLayer.BACKGROUND_PARTS : CardLayer.CARD_PARTS;
+        return WyldCard.getInstance().getToolsManager().isEditingBackground() ? CardLayer.BACKGROUND_PARTS : CardLayer.CARD_PARTS;
     }
 
     /**

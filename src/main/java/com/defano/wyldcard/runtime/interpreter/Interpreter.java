@@ -132,7 +132,7 @@ public class Interpreter {
         ThreadUtils.assertWorkerThread();
 
         try {
-            Statement statement = Interpreter.blockingCompile(CompilationUnit.SCRIPTLET, value.stringValue()).getStatements().list.get(0);
+            Statement statement = Interpreter.blockingCompile(CompilationUnit.SCRIPTLET, value.toString()).getStatements().list.get(0);
 
             // Simple case; statement matches requested type
             if (statement.getClass().isAssignableFrom(klass)) {

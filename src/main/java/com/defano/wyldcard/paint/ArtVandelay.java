@@ -1,8 +1,7 @@
 package com.defano.wyldcard.paint;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -25,7 +24,7 @@ public class ArtVandelay {
      * the card as the active selection.
      */
     public static void importPaint() {
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getFocusedStackWindow().getWindow(), "Import Paint", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow(), "Import Paint", FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> isFileSupportedForImporting(name));
         fd.setVisible(true);
@@ -40,7 +39,7 @@ public class ArtVandelay {
      * exists) to a file of the user's choosing. Displays a syntax error dialog if the export fails for any reason.
      */
     public static void exportPaint() {
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getFocusedStackWindow().getWindow(), "Export Paint", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow(), "Export Paint", FileDialog.SAVE);
         fd.setFile("Untitled.png");
         fd.setVisible(true);
 
@@ -62,9 +61,9 @@ public class ArtVandelay {
      */
     public static void exportPaint(File file) throws HtException {
         try {
-            BufferedImage exportImage = ToolsContext.getInstance().getSelectedImage() == null ?
-                    WyldCard.getInstance().getFocusedStack().getDisplayedCard().getScreenshot() :
-                    ToolsContext.getInstance().getSelectedImage();
+            BufferedImage exportImage = WyldCard.getInstance().getToolsManager().getSelectedImage() == null ?
+                    WyldCard.getInstance().getStackManager().getFocusedStack().getDisplayedCard().getScreenshot() :
+                    WyldCard.getInstance().getToolsManager().getSelectedImage();
             exportPaint(file, exportImage);
         } catch (IOException e) {
             throw new HtSemanticException("Couldn't export paint to that file.");
@@ -115,8 +114,8 @@ public class ArtVandelay {
             BufferedImage importedImage = ImageIO.read(file);
 
             if (importedImage != null) {
-                int cardHeight = WyldCard.getInstance().getFocusedCard().getHeight();
-                int cardWidth = WyldCard.getInstance().getFocusedCard().getWidth();
+                int cardHeight = WyldCard.getInstance().getStackManager().getFocusedCard().getHeight();
+                int cardWidth = WyldCard.getInstance().getStackManager().getFocusedCard().getWidth();
                 int cardCenterX = cardWidth / 2;
                 int cardCenterY = cardHeight / 2;
 
@@ -124,7 +123,7 @@ public class ArtVandelay {
                     importedImage = scaleImageToDimension(importedImage, cardWidth, cardHeight);
                 }
 
-                SelectionTool tool = (SelectionTool) ToolsContext.getInstance().forceToolSelection(ToolType.SELECT, false);
+                SelectionTool tool = (SelectionTool) WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.SELECT, false);
                 tool.createSelection(importedImage, new Point(cardCenterX - importedImage.getWidth() / 2, cardCenterY - importedImage.getHeight() / 2));
             }
         } catch (IOException e) {

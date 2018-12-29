@@ -4,20 +4,18 @@ import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.utils.Range;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.DeferredKeyEventComponent;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.card.CardPart;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.runtime.HyperCardProperties;
-import com.defano.wyldcard.runtime.PeriodicMessageManager;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.util.ThreadUtils;
 
 import javax.swing.*;
@@ -77,9 +75,9 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
         // Place the field in the center of the card
         newField.initProperties(context, rectangle, parent.getPartModel());
-        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTFONT, new Value(FontContext.getInstance().getFocusedTextStyle().getFontFamily()));
-        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSIZE, new Value(FontContext.getInstance().getFocusedTextStyle().getFontSize()));
-        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSTYLE, FontContext.getInstance().getFocusedTextStyle().getHyperTalkStyle());
+        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTFONT, new Value(WyldCard.getInstance().getFontManager().getFocusedTextStyle().getFontFamily()));
+        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSIZE, new Value(WyldCard.getInstance().getFontManager().getFocusedTextStyle().getFontSize()));
+        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSTYLE, WyldCard.getInstance().getFontManager().getFocusedTextStyle().getHyperTalkStyle());
 
         return newField;
     }
@@ -94,7 +92,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
      * @return The newly created field.
      */
     public static FieldPart fromModel(ExecutionContext context, CardPart parent, FieldModel model) {
-        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(context, FieldModel.PROP_STYLE).stringValue()), parent, model.getOwner());
+        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(context, FieldModel.PROP_STYLE).toString()), parent, model.getOwner());
 
         model.setCurrentCardId(parent.getId(context));
         field.partModel = model;
@@ -128,7 +126,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         partModel.removePropertyChangedObserver(this);
         getHyperCardTextPane().removeFocusListener(this);
 
-        PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+        WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
     }
 
     /** {@inheritDoc}
@@ -182,7 +180,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     /** {@inheritDoc} */
     @Override
     public boolean isPartToolActive() {
-        return ToolsContext.getInstance().getToolMode() == ToolMode.FIELD;
+        return WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD;
     }
 
     /** {@inheritDoc} */
@@ -224,7 +222,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER.messageName);
-            PeriodicMessageManager.getInstance().addWithin(getPartModel());
+            WyldCard.getInstance().getPeriodicMessageManager().addWithin(getPartModel());
         }
     }
 
@@ -235,7 +233,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE.messageName);
-            PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+            WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
         }
     }
 
@@ -276,10 +274,10 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
     /** {@inheritDoc} */
     @Override
-    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_STYLE:
-                setStyle(context, FieldStyle.fromName(newValue.stringValue()));
+                setStyle(context, FieldStyle.fromName(newValue.toString()));
                 break;
             case FieldModel.PROP_TOP:
             case FieldModel.PROP_LEFT:
@@ -305,7 +303,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
             int endWordIndex = Utilities.getWordEnd(getHyperCardTextPane(), clickIndex);
 
             String clickText = getHyperCardTextPane().getStyledDocument().getText(startWordIndex, endWordIndex - startWordIndex);
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_CLICKTEXT, new Value(clickText), true);
+            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_CLICKTEXT, new Value(clickText), true);
 
         } catch (BadLocationException e) {
             // Nothing to do

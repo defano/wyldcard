@@ -7,10 +7,8 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultPartToolManager;
 import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.BackgroundPropertyEditor;
 import com.defano.wyldcard.window.layouts.CardPropertyEditor;
 import com.defano.wyldcard.window.layouts.StackPropertyEditor;
@@ -29,47 +27,47 @@ public class ObjectsMenu extends HyperCardMenu {
 
         // Show this menu only when an object tool is active
         // Show this menu only when a paint tool is active
-        ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> ObjectsMenu.this.setVisible(ToolMode.PAINT != toolMode));
+        WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> ObjectsMenu.this.setVisible(ToolMode.PAINT != toolMode));
 
         MenuItemBuilder.ofDefaultType()
                 .named("Button Info...")
-                .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof ButtonPart))
-                .withAction(a -> PartToolContext.getInstance().getSelectedPart().getPartModel().editProperties(new ExecutionContext()))
+                .withEnabledProvider(WyldCard.getInstance().getPartToolManager().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof ButtonPart))
+                .withAction(a -> WyldCard.getInstance().getPartToolManager().getSelectedPart().getPartModel().editProperties(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Field Info...")
-                .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof FieldPart))
-                .withAction(a -> PartToolContext.getInstance().getSelectedPart().getPartModel().editProperties(new ExecutionContext()))
+                .withEnabledProvider(WyldCard.getInstance().getPartToolManager().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof FieldPart))
+                .withAction(a -> WyldCard.getInstance().getPartToolManager().getSelectedPart().getPartModel().editProperties(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Card Info...")
                 .withAction(e -> new WindowBuilder<>(new CardPropertyEditor())
-                        .withModel(WyldCard.getInstance().getFocusedCard())
+                        .withModel(WyldCard.getInstance().getStackManager().getFocusedCard())
                         .asModal()
                         .withTitle("Card Properties")
-                        .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
+                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Background Info...")
                 .withAction(e -> new WindowBuilder<>(new BackgroundPropertyEditor())
-                        .withModel(WyldCard.getInstance().getFocusedCard())
+                        .withModel(WyldCard.getInstance().getStackManager().getFocusedCard())
                         .withTitle("Background Properties")
                         .asModal()
-                        .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
+                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Stack Info...")
                 .withAction(e -> new WindowBuilder<>(new StackPropertyEditor())
-                        .withModel(WyldCard.getInstance().getFocusedStack().getStackModel())
+                        .withModel(WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel())
                         .withTitle("Stack Properties")
                         .asModal()
-                        .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
+                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);
 
@@ -77,15 +75,15 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Bring Closer")
-                .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(Optional::isPresent))
-                .withAction(a -> PartToolContext.getInstance().bringSelectedPartCloser())
+                .withEnabledProvider(WyldCard.getInstance().getPartToolManager().getSelectedPartProvider().map(Optional::isPresent))
+                .withAction(a -> WyldCard.getInstance().getPartToolManager().bringSelectedPartCloser())
                 .withShortcut('=')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Send Further")
-                .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(Optional::isPresent))
-                .withAction(a -> PartToolContext.getInstance().sendSelectedPartFurther())
+                .withEnabledProvider(WyldCard.getInstance().getPartToolManager().getSelectedPartProvider().map(Optional::isPresent))
+                .withAction(a -> WyldCard.getInstance().getPartToolManager().sendSelectedPartFurther())
                 .withShortcut('-')
                 .build(this);
 
@@ -93,17 +91,17 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Button")
-                .withAction(e -> WyldCard.getInstance().getFocusedCard().newButton(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().newButton(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Field")
-                .withAction(e -> WyldCard.getInstance().getFocusedCard().newField(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().newField(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Background")
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().newBackground(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().newBackground(new ExecutionContext()))
                 .build(this);
     }
 

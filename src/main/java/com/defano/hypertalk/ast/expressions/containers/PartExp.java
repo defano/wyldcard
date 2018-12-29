@@ -28,9 +28,9 @@ public abstract class PartExp extends ContainerExp {
 
         // Operating on a chunk of the existing value
         if (getChunk() != null)
-            destValue = Value.setChunk(context, destValue, preposition, getChunk(), value);
+            destValue = Value.ofMutatedChunk(context, destValue, preposition, getChunk(), value);
         else
-            destValue = Value.setValue(destValue, preposition, value);
+            destValue = Value.ofValue(destValue, preposition, value);
 
         context.getPart(evaluateAsSpecifier(context)).setValue(destValue, context);
         context.setIt(destValue);

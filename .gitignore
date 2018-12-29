@@ -12,5 +12,5 @@ bundles/
 *.log
 *.html
 *.jnlp
-*.jar
 *.class
+/wyldcard.jar

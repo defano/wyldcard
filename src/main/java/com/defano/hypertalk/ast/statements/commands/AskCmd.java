@@ -1,12 +1,13 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.window.WindowManager;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.swing.*;
@@ -15,6 +16,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class AskCmd extends Command {
+
+    @Inject
+    private WindowManager windowManager;
 
     private final Expression question;
     private final Expression suggestion;
@@ -46,7 +50,7 @@ public class AskCmd extends Command {
         AtomicReference<String> result = new AtomicReference<>();
         
         SwingUtilities.invokeLater(() -> {
-            Component parent = WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel();
+            Component parent = windowManager.getWindowForStack(context, context.getCurrentStack()).getWindowPanel();
 
             result.set((String) JOptionPane.showInputDialog(
                     parent,

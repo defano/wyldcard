@@ -50,7 +50,7 @@ public class TextStyleSpecifier {
         TextStyleSpecifier tss = new TextStyleSpecifier();
 
         tss.align = align.toString().toLowerCase();
-        tss.fontFamily = fontName.stringValue();
+        tss.fontFamily = fontName.toString();
         tss.fontSize = fontSize.integerValue();
         tss.setFontStyle(fontStyle);
 
@@ -208,7 +208,7 @@ public class TextStyleSpecifier {
     }
 
     public void toggleFontStyle(Value value) {
-        String v = value.stringValue().toLowerCase();
+        String v = value.toString().toLowerCase();
 
         if (v.contains("bold")) {
             isBold = !isBold;
@@ -242,7 +242,7 @@ public class TextStyleSpecifier {
     }
 
     public Value appendStyle(Value style) {
-        String v = style.stringValue().toLowerCase();
+        String v = style.toString().toLowerCase();
         isBold = v.contains("bold") || isBold;
         isItalic = v.contains("italic") || isItalic;
         isUnderline = v.contains("underline") || isUnderline;
@@ -254,7 +254,7 @@ public class TextStyleSpecifier {
     }
 
     public void setFontStyle(Value value) {
-        String v = value.stringValue().toLowerCase();
+        String v = value.toString().toLowerCase();
         isBold = v.contains("bold");
         isItalic = v.contains("italic");
         isUnderline = v.contains("underline");

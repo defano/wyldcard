@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.google.common.collect.Sets;
+import com.google.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
@@ -42,9 +43,8 @@ import java.util.Set;
  * (representing a choice made from a menu or font chooser dialog). Changes to the "selected" font styling update the
  * "focused" style, but changes to the "focused" style do not affect the "selected" style.
  */
-public class FontContext {
-
-    private final static FontContext instance = new FontContext();
+@Singleton
+public class DefaultFontManager implements FontManager {
 
     private final static String DEFAULT_FONT_FAMILY = "Arial";
     private final static String DEFAULT_FONT_STYLE = "plain";
@@ -72,7 +72,7 @@ public class FontContext {
     // For JMonet use only; components should listen for and react to font, style and size changes individually.
     private final Subject<Font> paintFontProvider = BehaviorSubject.createDefault(FontUtils.getFontByNameStyleSize(DEFAULT_FONT_FAMILY, DEFAULT_FONT_STYLE_CONST, DEFAULT_FONT_SIZE));
 
-    private FontContext() {
+    public DefaultFontManager() {
 
         // Change in selected font should always change focused font
         selectedFontFamilyProvider.subscribe(value -> focusedFontFamilyProvider.onNext(Sets.newHashSet(value)));
@@ -86,15 +86,7 @@ public class FontContext {
         selectedFontSizeProvider.subscribe(value -> paintFontProvider.onNext(FontUtils.getFontByNameStyleSize(getFocusedTextStyle().getFontFamily(), getFocusedTextStyle().getAwtFontStyle(), value.integerValue())));
     }
 
-    public static FontContext getInstance() {
-        return instance;
-    }
-
-    /**
-     * Convenience method to set the selected font context given an AWT font object.
-     *
-     * @param font The selected font.
-     */
+    @Override
     public void setSelectedFont(Font font) {
         if (font != null) {
             TextStyleSpecifier tss = TextStyleSpecifier.fromFont(font);
@@ -105,129 +97,134 @@ public class FontContext {
         }
     }
 
-    /**
-     * Toggle the given style from the current style selection, that is, add the style if it's not already part of the
-     * selection or remove it, if it is.
-     *
-     * @param style The (single) style to toggle.
-     */
+    @Override
     public void toggleSelectedFontStyle(Value style) {
         TextStyleSpecifier tss = TextStyleSpecifier.fromFontStyle(getFocusedHyperTalkFontStyle());
         tss.toggleFontStyle(style);
         selectedFontStyleProvider.onNext(tss.getHyperTalkStyle());
     }
 
+    @Override
     public void setSelectedFontAlign(Value align) {
         selectedTextAlignProvider.onNext(align);
     }
 
+    @Override
     public Observable<Value> getSelectedTextAlignProvider() {
         return selectedTextAlignProvider;
     }
 
+    @Override
     public Value getSelectedFontFamily() {
         return selectedFontFamilyProvider.blockingFirst();
     }
 
+    @Override
     public void setSelectedFontFamily(String fontName) {
         selectedFontFamilyProvider.onNext(new Value(fontName));
     }
 
+    @Override
     public Subject<Value> getSelectedFontFamilyProvider() {
         return selectedFontFamilyProvider;
     }
 
+    @Override
     public Subject<Value> getSelectedFontSizeProvider() {
         return selectedFontSizeProvider;
     }
 
+    @Override
     public Value getSelectedFontSize() {
         return selectedFontSizeProvider.blockingFirst();
     }
 
-    /**
-     * Sets the selected font size.
-     *
-     * @param size The font size.
-     */
+    @Override
     public void setSelectedFontSize(int size) {
         selectedFontSizeProvider.onNext(new Value(size));
     }
 
+    @Override
     public Subject<Value> getSelectedFontStyleProvider() {
         return selectedFontStyleProvider;
     }
 
+    @Override
     public Value getSelectedFontStyle() {
         return selectedFontStyleProvider.blockingFirst();
     }
 
+    @Override
     public void setSelectedFontStyle(Value style) {
         selectedFontStyleProvider.onNext(style);
     }
 
+    @Override
     public Subject<Font> getPaintFontProvider() {
         return paintFontProvider;
     }
 
+    @Override
     public Subject<Set<Value>> getFocusedFontFamilyProvider() {
         return focusedFontFamilyProvider;
     }
 
+    @Override
     public Subject<Set<Value>> getFocusedFontSizeProvider() {
         return focusedFontSizeProvider;
     }
 
+    @Override
     public Subject<Boolean> getFocusedBoldProvider() {
         return focusedBoldProvider;
     }
 
+    @Override
     public Subject<Boolean> getFocusedItalicProvider() {
         return focusedItalicProvider;
     }
 
+    @Override
     public Subject<Boolean> getFocusedUnderlineProvider() {
         return focusedUnderlineProvider;
     }
 
+    @Override
     public Subject<Boolean> getFocusedStrikethroughProvider() {
         return focusedStrikethroughProvider;
     }
 
+    @Override
     public Subject<Boolean> getFocusedSuperscriptProvider() {
         return focusedSuperscriptProvider;
     }
 
+    @Override
     public Subject<Boolean> getFocusedSubscriptProvider() {
         return focusedSubscriptProvider;
     }
 
+    @Override
     public Subject<Boolean> getFocusedPlainProvider() {
         return focusedPlainProvider;
     }
 
+    @Override
     public Observable<Boolean> getFocusedLeftAlignProvider() {
-        return focusedTextAlignProvider.map(value -> value.stringValue().equalsIgnoreCase("left"));
+        return focusedTextAlignProvider.map(value -> value.toString().equalsIgnoreCase("left"));
     }
 
+    @Override
     public Observable<Boolean> getFocusedRightAlignProvider() {
-        return focusedTextAlignProvider.map(value -> value.stringValue().equalsIgnoreCase("right"));
+        return focusedTextAlignProvider.map(value -> value.toString().equalsIgnoreCase("right"));
     }
 
+    @Override
     public Observable<Boolean> getFocusedCenterAlignProvider() {
-        return focusedTextAlignProvider.map(value -> value.stringValue().equalsIgnoreCase("center"));
+        return focusedTextAlignProvider.map(value -> value.toString().equalsIgnoreCase("center"));
     }
 
-    /**
-     * Gets a "single" text style representing the current focus. Careful: This method is inherently lossy. The current
-     * focused text may contain a mixture of fonts, sizes, and styles. The method reduces that selection to a single
-     * font family, size, and set of styles.
-     * <p>
-     * Useful for methods that need to reduce a composite style selection to a single value (for example, to be
-     * displayed as default selections in a font-picker).
-     *
-     * @return A lossy, single-style representation of the focused text style.
-     */
+    @Override
     public TextStyleSpecifier getFocusedTextStyle() {
         return TextStyleSpecifier.fromAlignNameStyleSize(
                 focusedTextAlignProvider.blockingFirst(),
@@ -237,11 +234,7 @@ public class FontContext {
         );
     }
 
-    /**
-     * Set the focused font context given a {@link TextStyleSpecifier} object.
-     *
-     * @param tss The text style specifier.
-     */
+    @Override
     public void setFocusedTextStyle(TextStyleSpecifier tss) {
         if (tss != null) {
             focusedTextAlignProvider.onNext(new Value(tss.getAlign()));
@@ -286,6 +279,7 @@ public class FontContext {
         focusedSubscriptProvider.onNext(tss.isSubscript());
     }
 
+    @Override
     public void setFocusedHyperTalkFontStyles(Collection<Value> values) {
         TextStyleSpecifier tss = TextStyleSpecifier.fromFontStyle(new Value("plain"));
         boolean includesPlain = false;
@@ -298,6 +292,7 @@ public class FontContext {
         setFocusedFontStyle(tss, includesPlain);
     }
 
+    @Override
     public void setFocusedTextAlign(Value align) {
         focusedTextAlignProvider.onNext(align);
     }
