@@ -35,7 +35,7 @@ public class DefaultPeriodicMessageManager implements PeriodicMessageManager {
         idleTimeExecutor.scheduleAtFixedRate(this, 0, IDLE_PERIOD_MS, TimeUnit.MILLISECONDS);
 
         // Stop tracking 'within' when card goes away
-        WyldCard.getInstance().getFocusedStackProvider().subscribe(stackPart -> stackPart.addNavigationObserver(DefaultPeriodicMessageManager.this));
+        WyldCard.getInstance().getStackManager().getFocusedStackProvider().subscribe(stackPart -> stackPart.addNavigationObserver(DefaultPeriodicMessageManager.this));
 
         // Stop tracking 'within' when not in browse mode
         WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> {

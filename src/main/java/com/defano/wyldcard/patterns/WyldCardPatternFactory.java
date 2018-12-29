@@ -81,8 +81,8 @@ public class WyldCardPatternFactory {
 
     private BufferedImage getPatternImage(int id) {
 
-        if (WyldCard.getInstance().getFocusedStack() != null) {
-            BufferedImage userPattern = WyldCard.getInstance().getFocusedStack().getStackModel().getUserPattern(id);
+        if (WyldCard.getInstance().getStackManager().getFocusedStack() != null) {
+            BufferedImage userPattern = WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel().getUserPattern(id);
             if (userPattern != null) {
                 return userPattern;
             }

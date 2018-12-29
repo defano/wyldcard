@@ -1,5 +1,6 @@
 package com.defano.hypertalk;
 
+import com.defano.wyldcard.StackManager;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
@@ -30,6 +31,7 @@ public class GuiceTest<T> {
     protected T uut;                    // The unit under test
 
     // Mock all managed WyldCard components
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected StackManager mockStackManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected MouseManager mockMouseManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected KeyboardManager mockKeyboardManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected WindowManager mockWindowManager;
@@ -93,6 +95,7 @@ public class GuiceTest<T> {
     private class TestAssembly extends AbstractModule {
         @Override
         protected void configure() {
+            bind(StackManager.class).toInstance(mockStackManager);
             bind(MouseManager.class).toInstance(mockMouseManager);
             bind(KeyboardManager.class).toInstance(mockKeyboardManager);
             bind(WindowManager.class).toInstance(mockWindowManager);

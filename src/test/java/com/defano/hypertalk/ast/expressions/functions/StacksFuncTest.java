@@ -23,14 +23,14 @@ public class StacksFuncTest extends GuiceTest<StacksFunc> {
         initialize(new StacksFunc(mockParserRuleContext));
     }
 
-    @Ignore
+    @Test
     public void testStacksFunc() throws HtException {
         // Setup
         final Value expectedResult = new Value("Stack 1\nStack 2");
 
         Mockito.when(mockStackPart1.getStackModel().getStackPath(mockExecutionContext)).thenReturn("Stack 1");
         Mockito.when(mockStackPart2.getStackModel().getStackPath(mockExecutionContext)).thenReturn("Stack 2");
-        Mockito.when(WyldCard.getInstance().getOpenStacks()).thenReturn(Lists.newArrayList(mockStackPart1, mockStackPart2));
+        Mockito.when(WyldCard.getInstance().getStackManager().getOpenStacks()).thenReturn(Lists.newArrayList(mockStackPart1, mockStackPart2));
 
         // Run the test
         final Value result = uut.onEvaluate(mockExecutionContext);

@@ -24,7 +24,7 @@ public class StacksFunc extends Expression {
     protected Value onEvaluate(ExecutionContext context) throws HtException {
         ArrayList<Value> stacks = new ArrayList<>();
 
-        for (StackPart thisStack : wyldCard.getOpenStacks()) {
+        for (StackPart thisStack : wyldCard.getStackManager().getOpenStacks()) {
             stacks.add(new Value(thisStack.getStackModel().getStackPath(context)));
         }
 

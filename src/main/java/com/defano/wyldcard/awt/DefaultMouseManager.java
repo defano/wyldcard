@@ -61,7 +61,7 @@ public class DefaultMouseManager implements MouseManager {
 
     public void dragFrom(Point p1, Point p2, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
 
-        Component cardComponent = WyldCard.getInstance().getFocusedCard();
+        Component cardComponent = WyldCard.getInstance().getStackManager().getFocusedCard();
         SwingUtilities.convertPointToScreen(p1, cardComponent);
         SwingUtilities.convertPointToScreen(p2, cardComponent);
 
@@ -91,7 +91,7 @@ public class DefaultMouseManager implements MouseManager {
 
     public void clickAt(Point p, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
 
-        SwingUtilities.convertPointToScreen(p, WyldCard.getInstance().getFocusedCard());
+        SwingUtilities.convertPointToScreen(p, WyldCard.getInstance().getStackManager().getFocusedCard());
 
         try {
             Robot r = new Robot();

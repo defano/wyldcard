@@ -177,7 +177,7 @@ public class DefaultWindowManager implements WindowManager {
     }
 
     public StackWindow getFocusedStackWindow() {
-        return getWindowForStack(new ExecutionContext(), WyldCard.getInstance().getFocusedStack());
+        return getWindowForStack(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack());
     }
 
     public MessageWindow getMessageWindow() {
@@ -283,7 +283,7 @@ public class DefaultWindowManager implements WindowManager {
         } else {
             return (StackWindow) new WindowBuilder<>(new StackWindow())
                     .withModel(stackPart)
-                    .withActionOnClose(window -> WyldCard.getInstance().closeStack(context, ((StackWindow) window).getStack()))
+                    .withActionOnClose(window -> WyldCard.getInstance().getStackManager().closeStack(context, ((StackWindow) window).getStack()))
                     .ownsMenubar()
                     .build();
         }

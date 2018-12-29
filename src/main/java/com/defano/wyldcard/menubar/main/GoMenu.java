@@ -17,7 +17,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().gotoPopCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().gotoPopCard(new ExecutionContext(), null))
                 .withShortcut('\\')
                 .build(this);
 
@@ -42,25 +42,25 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("First")
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().gotoFirstCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().gotoFirstCard(new ExecutionContext(), null))
                 .withShortcut('1')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Prev")
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().gotoPrevCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().gotoPrevCard(new ExecutionContext(), null))
                 .withShortcut('2')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next")
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().gotoNextCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().gotoNextCard(new ExecutionContext(), null))
                 .withShortcut('3')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Last")
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().gotoLastCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().gotoLastCard(new ExecutionContext(), null))
                 .withShortcut('4')
                 .build(this);
 

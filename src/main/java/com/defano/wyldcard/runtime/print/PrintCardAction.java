@@ -14,9 +14,9 @@ public class PrintCardAction extends PrintActionDelegate {
         StringBuilder jobNameBuilder = new StringBuilder();
 
         jobNameBuilder.append("Card ");
-        jobNameBuilder.append(WyldCard.getInstance().getFocusedCard().getCardModel().getCardIndexInStack() + 1);
+        jobNameBuilder.append(WyldCard.getInstance().getStackManager().getFocusedCard().getCardModel().getCardIndexInStack() + 1);
         jobNameBuilder.append(" in ");
-        jobNameBuilder.append(WyldCard.getInstance().getFocusedStack().getStackModel().getStackName(new ExecutionContext()));
+        jobNameBuilder.append(WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel().getStackName(new ExecutionContext()));
 
         super.jobName = jobNameBuilder.toString();
     }
@@ -32,7 +32,7 @@ public class PrintCardAction extends PrintActionDelegate {
         Graphics2D g2d = (Graphics2D)g;
         g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
-        WyldCard.getInstance().getFocusedCard().printAll(g);
+        WyldCard.getInstance().getStackManager().getFocusedCard().printAll(g);
 
         return PAGE_EXISTS;
     }

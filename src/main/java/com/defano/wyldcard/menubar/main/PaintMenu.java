@@ -31,7 +31,7 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Select")
                 .withShortcut('S')
-                .withEnabledProvider(WyldCard.getInstance().getIsSelectableProvider())
+                .withEnabledProvider(WyldCard.getInstance().getStackManager().getIsSelectableProvider())
                 .withAction(a -> WyldCard.getInstance().getToolsManager().select())
                 .build(this);
 

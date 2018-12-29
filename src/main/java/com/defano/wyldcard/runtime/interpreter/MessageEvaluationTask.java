@@ -31,7 +31,7 @@ public class MessageEvaluationTask implements Callable<String> {
             context.pushStackFrame();
         }
 
-        context.setTarget(WyldCard.getInstance().getFocusedCard().getCardModel().getPartSpecifier(context));
+        context.setTarget(WyldCard.getInstance().getStackManager().getFocusedCard().getCardModel().getPartSpecifier(context));
 
         try {
             statements.execute(context);

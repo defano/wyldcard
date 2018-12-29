@@ -54,12 +54,12 @@ public class DefaultPartToolManager implements PartToolManager {
     @Override
     public void deselectAllParts() {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            if (WyldCard.getInstance().getFocusedCard() != null) {
-                for (ButtonPart thisButton : WyldCard.getInstance().getFocusedCard().getButtons()) {
+            if (WyldCard.getInstance().getStackManager().getFocusedCard() != null) {
+                for (ButtonPart thisButton : WyldCard.getInstance().getStackManager().getFocusedCard().getButtons()) {
                     thisButton.setSelectedForEditing(new ExecutionContext(), false);
                 }
 
-                for (FieldPart thisField : WyldCard.getInstance().getFocusedCard().getFields()) {
+                for (FieldPart thisField : WyldCard.getInstance().getStackManager().getFocusedCard().getFields()) {
                     thisField.setSelectedForEditing(new ExecutionContext(), false);
                 }
             }
@@ -82,7 +82,7 @@ public class DefaultPartToolManager implements PartToolManager {
     public void deleteSelectedPart() {
         Optional<ToolEditablePart> selectedPart = this.selectedPart.blockingFirst();
         selectedPart.ifPresent(part -> {
-            WyldCard.getInstance().getFocusedCard().getCardModel().removePartModel(new ExecutionContext(), part.getPartModel());
+            WyldCard.getInstance().getStackManager().getFocusedCard().getCardModel().removePartModel(new ExecutionContext(), part.getPartModel());
             this.selectedPart.onNext(Optional.empty());
         });
     }

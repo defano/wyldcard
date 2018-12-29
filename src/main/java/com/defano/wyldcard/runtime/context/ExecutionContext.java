@@ -74,7 +74,7 @@ public class ExecutionContext {
      * backgrounds or stacks should use {@link #ExecutionContext(Part)}.
      */
     public ExecutionContext() {
-        this.stack = WyldCard.getInstance().getFocusedStack();
+        this.stack = WyldCard.getInstance().getStackManager().getFocusedStack();
     }
 
     /**
@@ -147,7 +147,7 @@ public class ExecutionContext {
         StackModel stackModel = partModel.getParentStackModel();
 
         if (stackModel != null) {
-            return bind(WyldCard.getInstance().getOpenStack(stackModel));
+            return bind(WyldCard.getInstance().getStackManager().getOpenStack(stackModel));
         } else {
             throw new IllegalStateException("Attempt to bind execution context to a part not connected to a stack.");
         }
@@ -436,7 +436,7 @@ public class ExecutionContext {
      * @return The stack that is in scope for this execution.
      */
     public StackPart getCurrentStack() {
-        return this.stack == null ? WyldCard.getInstance().getFocusedStack() : this.stack;
+        return this.stack == null ? WyldCard.getInstance().getStackManager().getFocusedStack() : this.stack;
     }
 
     /**

@@ -67,7 +67,7 @@ public class DefaultKeyboardManager implements KeyboardManager {
 
     public boolean isPeeking(ExecutionContext context) {
         return isAltOptionDown() && isCtrlCommandDown() &&
-                !WyldCard.getInstance().getFocusedStack()
+                !WyldCard.getInstance().getStackManager().getFocusedStack()
                     .getStackModel()
                     .getKnownProperty(context, StackModel.PROP_CANTPEEK)
                     .booleanValue();

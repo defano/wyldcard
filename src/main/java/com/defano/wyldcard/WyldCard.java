@@ -39,11 +39,12 @@ import javax.swing.*;
  * and reporting exceptions to the user.
  */
 @Singleton
-public class WyldCard extends StackManager implements PartFinder {
+public class WyldCard implements PartFinder {
 
     private static WyldCard instance;
     private static Injector injector;
 
+    @Inject private StackManager stackManager;
     @Inject private MouseManager mouseManager;
     @Inject private KeyboardManager keyboardManager;
     @Inject private WindowManager windowManager;
@@ -100,7 +101,7 @@ public class WyldCard extends StackManager implements PartFinder {
             cursorManager.start();                              // Mouse cursor assignment
             partToolManager.start();                            // Button and field tool selection state
 
-            newStack(new ExecutionContext());
+            stackManager.newStack(new ExecutionContext());
 
             // Need to have an open stack before showing the menu bar
             WyldCard.getInstance().getWyldCardMenuBar().reset();
@@ -188,6 +189,10 @@ public class WyldCard extends StackManager implements PartFinder {
         return speechPlaybackManager;
     }
 
+    public StackManager getStackManager() {
+        return stackManager;
+    }
+
     public WyldCardProperties getWyldCardProperties() {
         return wyldCardProperties;
     }
@@ -224,6 +229,7 @@ public class WyldCard extends StackManager implements PartFinder {
     private static class WyldCardAssembly extends AbstractModule {
         @Override
         protected void configure() {
+            bind(StackManager.class).to(DefaultStackManager.class);
             bind(MouseManager.class).to(DefaultMouseManager.class);
             bind(KeyboardManager.class).to(DefaultKeyboardManager.class);
             bind(WindowManager.class).to(DefaultWindowManager.class);

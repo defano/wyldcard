@@ -24,10 +24,10 @@ public class RecentCardsWindow extends WyldCardDialog<Object> {
     public RecentCardsWindow() {
 
         // Add call cards currently on the backstack
-        Set<Destination> recentCards = WyldCard.getInstance().getBackstack().asSet();
+        Set<Destination> recentCards = WyldCard.getInstance().getStackManager().getBackstack().asSet();
 
         // Add currently visible cards on all open stacks (which may not yet appear in the backstack)
-        for (StackPart thisOpenStack : WyldCard.getInstance().getOpenStacks()) {
+        for (StackPart thisOpenStack : WyldCard.getInstance().getStackManager().getOpenStacks()) {
             recentCards.add(new Destination(
                     thisOpenStack.getStackModel(),
                     thisOpenStack.getDisplayedCard().getId(new ExecutionContext())
@@ -36,8 +36,8 @@ public class RecentCardsWindow extends WyldCardDialog<Object> {
 
         // Which card currently has focus? (We'll focus the associated button)
         Destination focusedCard = new Destination(
-            WyldCard.getInstance().getFocusedStack().getStackModel(),
-            WyldCard.getInstance().getFocusedCard().getId(new ExecutionContext())
+            WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel(),
+            WyldCard.getInstance().getStackManager().getFocusedCard().getId(new ExecutionContext())
         );
 
         // Generate thumbnails for each card
@@ -62,7 +62,7 @@ public class RecentCardsWindow extends WyldCardDialog<Object> {
     }
 
     private void addDestinationThumbnail(Destination destination, boolean focused) {
-        StackPart stack = WyldCard.getInstance().getOpenStack(destination.getStack());
+        StackPart stack = WyldCard.getInstance().getStackManager().getOpenStack(destination.getStack());
         int cardNumber = stack.getStackModel().getIndexOfCardId(destination.getCardId());
 
         CardPart loadedCard = stack.loadCard(new ExecutionContext(), cardNumber);

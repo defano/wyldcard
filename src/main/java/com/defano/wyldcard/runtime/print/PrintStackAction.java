@@ -13,29 +13,29 @@ public class PrintStackAction extends PrintActionDelegate {
 
     @Override
     public void onPrintRequested() {
-        this.jobName = "Stack " + WyldCard.getInstance().getFocusedStack().getStackModel().getStackName(new ExecutionContext());
+        this.jobName = "Stack " + WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel().getStackName(new ExecutionContext());
     }
 
     @Override
     public void onPrintStarted() {
-        this.currentCard = WyldCard.getInstance().getFocusedCard().getCardModel().getCardIndexInStack();
+        this.currentCard = WyldCard.getInstance().getStackManager().getFocusedCard().getCardModel().getCardIndexInStack();
     }
 
     @Override
     protected void onPrintCompleted(boolean successfully) {
-        WyldCard.getInstance().getFocusedStack().gotoCard(new ExecutionContext(), currentCard, null, false);
+        WyldCard.getInstance().getStackManager().getFocusedStack().gotoCard(new ExecutionContext(), currentCard, null, false);
     }
 
     @Override
     public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
 
-        if (pageIndex < WyldCard.getInstance().getFocusedStack().getCardCountProvider().blockingFirst()) {
+        if (pageIndex < WyldCard.getInstance().getStackManager().getFocusedStack().getCardCountProvider().blockingFirst()) {
             // Translate printable content to top-left printable coordinate of the page
             Graphics2D g2d = (Graphics2D)g;
             g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
             // Need to transition to card in order to print it
-            WyldCard.getInstance().getFocusedStack().gotoCard(new ExecutionContext(), pageIndex, null, false).printAll(g);
+            WyldCard.getInstance().getStackManager().getFocusedStack().gotoCard(new ExecutionContext(), pageIndex, null, false).printAll(g);
 
             return PAGE_EXISTS;
         } else {

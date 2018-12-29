@@ -114,7 +114,7 @@ public interface Part {
      * yet been bound to a specific stack.
      */
     default StackPart getOwningStack() {
-        return WyldCard.getInstance().getOpenStack(getOwningStackModel());
+        return WyldCard.getInstance().getStackManager().getOpenStack(getOwningStackModel());
     }
 
     /**

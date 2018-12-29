@@ -117,7 +117,7 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
         getWindow().addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
-                WyldCard.getInstance().focusStack(stack);
+                WyldCard.getInstance().getStackManager().focusStack(stack);
             }
 
             @Override

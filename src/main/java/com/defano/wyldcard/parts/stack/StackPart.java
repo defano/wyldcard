@@ -157,9 +157,9 @@ public class StackPart implements Part, PropertyChangeObserver {
      */
     @RunOnDispatch
     public CardPart gotoPopCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
-        if (!WyldCard.getInstance().getBackstack().isEmpty()) {
+        if (!WyldCard.getInstance().getStackManager().getBackstack().isEmpty()) {
             try {
-                Destination poppedDestination = WyldCard.getInstance().getBackstack().pop();
+                Destination poppedDestination = WyldCard.getInstance().getStackManager().getBackstack().pop();
                 CardModel model = (CardModel) poppedDestination.getStack().findPart(context, new PartIdSpecifier(Owner.STACK, PartType.CARD, poppedDestination.getCardId()));
                 return gotoCard(context, getStackModel().getIndexOfCard(model), visualEffect, false);
             } catch (PartException e) {
@@ -469,7 +469,7 @@ public class StackPart implements Part, PropertyChangeObserver {
         // When requested, push the current card onto the backstack
         if (push) {
             Destination destination = new Destination(this.getStackModel(), displayedCard.getId(context));
-            WyldCard.getInstance().getBackstack().push(destination);
+            WyldCard.getInstance().getStackManager().getBackstack().push(destination);
         }
 
         // Notify observers that current card is going away

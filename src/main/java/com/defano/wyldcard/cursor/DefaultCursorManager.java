@@ -27,7 +27,7 @@ public class DefaultCursorManager implements CursorManager {
         WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> updateCursor());
 
         // ... or when the focused stack changes
-        WyldCard.getInstance().getFocusedStackProvider().subscribe(stackPart -> {
+        WyldCard.getInstance().getStackManager().getFocusedStackProvider().subscribe(stackPart -> {
             updateCursor();
 
             // ... or when the card of the focused stack changes

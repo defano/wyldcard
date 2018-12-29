@@ -89,8 +89,8 @@ public class CardPropertyEditor extends WyldCardDialog<CardPart> {
         long fieldCount = card.getCardModel().getPartCount(context, PartType.FIELD, Owner.CARD);
         long buttonCount = card.getCardModel().getPartCount(context, PartType.BUTTON, Owner.CARD);
 
-        int cardNumber = WyldCard.getInstance().getFocusedCard().getCardModel().getCardIndexInStack() + 1;
-        int cardCount = WyldCard.getInstance().getFocusedStack().getCardCountProvider().blockingFirst();
+        int cardNumber = WyldCard.getInstance().getStackManager().getFocusedCard().getCardModel().getCardIndexInStack() + 1;
+        int cardCount = WyldCard.getInstance().getStackManager().getFocusedStack().getCardCountProvider().blockingFirst();
 
         cardNumberLabel.setText(cardNumber + " out of " + cardCount);
         buttonCountLabel.setText(StringUtils.pluralize(buttonCount, "Contains %d card button.", "Contains %d card buttons."));

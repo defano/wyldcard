@@ -132,7 +132,7 @@ public class DefaultWyldCardProperties extends DefaultPropertiesModel implements
             switch (property.toLowerCase()) {
                 case PROP_LOCKSCREEN:
                     WyldCard.getInstance()
-                            .getFocusedStack()
+                            .getStackManager().getFocusedStack()
                             .getCurtainManager()
                             .setScreenLocked(new ExecutionContext(), newValue.booleanValue());
                     break;

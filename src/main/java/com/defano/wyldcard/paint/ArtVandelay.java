@@ -62,7 +62,7 @@ public class ArtVandelay {
     public static void exportPaint(File file) throws HtException {
         try {
             BufferedImage exportImage = WyldCard.getInstance().getToolsManager().getSelectedImage() == null ?
-                    WyldCard.getInstance().getFocusedStack().getDisplayedCard().getScreenshot() :
+                    WyldCard.getInstance().getStackManager().getFocusedStack().getDisplayedCard().getScreenshot() :
                     WyldCard.getInstance().getToolsManager().getSelectedImage();
             exportPaint(file, exportImage);
         } catch (IOException e) {
@@ -114,8 +114,8 @@ public class ArtVandelay {
             BufferedImage importedImage = ImageIO.read(file);
 
             if (importedImage != null) {
-                int cardHeight = WyldCard.getInstance().getFocusedCard().getHeight();
-                int cardWidth = WyldCard.getInstance().getFocusedCard().getWidth();
+                int cardHeight = WyldCard.getInstance().getStackManager().getFocusedCard().getHeight();
+                int cardWidth = WyldCard.getInstance().getStackManager().getFocusedCard().getWidth();
                 int cardCenterX = cardWidth / 2;
                 int cardCenterY = cardHeight / 2;
 
