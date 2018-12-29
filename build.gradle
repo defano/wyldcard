@@ -4,7 +4,6 @@ buildscript {
 	}
 	dependencies {
 		classpath "com.github.sedovalx.gradle:gradle-aspectj-binary:1.0.25"
-		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.1.0'
 	}
 }
 
@@ -16,7 +15,6 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'antlr'
 apply plugin: 'idea'
-apply plugin: 'org.junit.platform.gradle.plugin'
 
 allprojects {
 	apply plugin: 'java'
@@ -101,7 +99,9 @@ dependencies {
 }
 
 test {
-	useJUnitPlatform()
+	useJUnitPlatform {
+		includeEngines 'junit-jupiter', 'junit-vintage'
+	}
 }
 
 generateGrammarSource {
