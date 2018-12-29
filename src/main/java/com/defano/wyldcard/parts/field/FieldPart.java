@@ -11,10 +11,10 @@ import com.defano.wyldcard.parts.DeferredKeyEventComponent;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.card.CardPart;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 
@@ -274,7 +274,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
     /** {@inheritDoc} */
     @Override
-    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_STYLE:
                 setStyle(context, FieldStyle.fromName(newValue.toString()));
@@ -303,7 +303,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
             int endWordIndex = Utilities.getWordEnd(getHyperCardTextPane(), clickIndex);
 
             String clickText = getHyperCardTextPane().getStyledDocument().getText(startWordIndex, endWordIndex - startWordIndex);
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_CLICKTEXT, new Value(clickText), true);
+            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_CLICKTEXT, new Value(clickText), true);
 
         } catch (BadLocationException e) {
             // Nothing to do

@@ -1,18 +1,25 @@
 package com.defano.hypertalk.ast.model;
 
+import com.defano.hypertalk.GuiceTest;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.utils.TestChunkBuilder;
+import com.defano.wyldcard.runtime.WyldCardProperties;
+import com.google.common.collect.Lists;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ValueTest {
+public class ValueTest extends GuiceTest<Value> {
 
-    Value valueUnderTest;
+    @BeforeEach
+    public void setUp() {
+        initialize(new Value(mockParserRuleContext));
+    }
 
     @Test
     public void testIsInteger() {
@@ -27,7 +34,6 @@ public class ValueTest {
         assertFalse(new Value("1,2").isInteger());
         assertFalse(new Value("1,2,3,4").isInteger());
         assertFalse(new Value("abc123").isInteger());
-
     }
 
     @Test
@@ -231,603 +237,709 @@ public class ValueTest {
 
     @Test
     public void testRectangleValue() {
-        // Setup
-        final ExecutionContext context = null;
-        final Rectangle expectedResult = null;
-
-        // Run the test
-        final Rectangle result = valueUnderTest.rectangleValue(context);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(new Rectangle(1, 2, 2, 2), new Value("1,2,3,4").rectangleValue());
+        assertNotEquals(new Rectangle(1, 2, 2, 2), new Value("10,10,10,10").rectangleValue());
     }
 
     @Test
     public void testPointValue() {
-        // Setup
-        final ExecutionContext context = null;
-        final Point expectedResult = null;
-
-        // Run the test
-        final Point result = valueUnderTest.pointValue(context);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(new Point(1,2), new Value("1, 2").pointValue());
     }
 
     @Test
     public void testGetListItems() {
-        // Setup
-        final List<Value> expectedResult = Arrays.asList();
-
-        // Run the test
-        final List<Value> result = valueUnderTest.getListItems();
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertIterableEquals(Lists.newArrayList(), new Value().getListItems());
+        assertIterableEquals(Lists.newArrayList(new Value("1")), new Value("1").getListItems());
+        assertIterableEquals(Lists.newArrayList(new Value("1"), new Value("2")), new Value("1,2").getListItems());
     }
 
     @Test
     public void testGetItems() {
-        // Setup
-        final ExecutionContext context = null;
-        final List<Value> expectedResult = Arrays.asList();
+        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
+        assertIterableEquals(Lists.newArrayList(), new Value().getItems(mockExecutionContext));
+        assertIterableEquals(Lists.newArrayList(new Value("1")), new Value("1").getItems(mockExecutionContext));
+        assertIterableEquals(Lists.newArrayList(new Value("1"), new Value("2")), new Value("1,2").getItems(mockExecutionContext));
 
-        // Run the test
-        final List<Value> result = valueUnderTest.getItems(context);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value("-"));
+        assertIterableEquals(Lists.newArrayList(), new Value().getItems(mockExecutionContext));
+        assertIterableEquals(Lists.newArrayList(new Value("1")), new Value("1").getItems(mockExecutionContext));
+        assertIterableEquals(Lists.newArrayList(new Value("1"), new Value("2")), new Value("1-2").getItems(mockExecutionContext));
     }
 
     @Test
     public void testGetItemAt() {
-        // Setup
-        final ExecutionContext context = null;
-        final int index = 0;
-        final Value expectedResult = null;
-
-        // Run the test
-        final Value result = valueUnderTest.getItemAt(context, index);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
+        assertEquals(new Value(), new Value().getItemAt(mockExecutionContext, 0));
+        assertEquals(new Value("1"), new Value("1, 2, 3").getItemAt(mockExecutionContext, 0));
+        assertEquals(new Value("2"), new Value("1, 2, 3").getItemAt(mockExecutionContext, 1));
+        assertEquals(new Value("3"), new Value("1, 2, 3").getItemAt(mockExecutionContext, 2));
+        assertEquals(new Value(), new Value("1, 2, 3").getItemAt(mockExecutionContext, 3));
     }
 
     @Test
     public void testGetLines() {
-        // Setup
-        final ExecutionContext context = null;
-        final List<Value> expectedResult = Arrays.asList();
+        assertIterableEquals(Lists.newArrayList(
+                new Value(1), new Value(2), new Value(3)),
+                new Value("1\n2\n3").getLines(mockExecutionContext));
 
-        // Run the test
-        final List<Value> result = valueUnderTest.getLines(context);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertIterableEquals(Lists.newArrayList(), new Value().getLines(mockExecutionContext));
     }
 
     @Test
     public void testGetWords() {
-        // Setup
-        final ExecutionContext context = null;
-        final List<Value> expectedResult = Arrays.asList();
+        assertIterableEquals(Lists.newArrayList(
+                new Value("one"), new Value("two"), new Value("three"), new Value("four")),
+                new Value("one two   three\t\t\tfour").getWords(mockExecutionContext));
 
-        // Run the test
-        final List<Value> result = valueUnderTest.getWords(context);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertIterableEquals(Lists.newArrayList(),
+                new Value().getWords(mockExecutionContext));
     }
 
     @Test
     public void testGetChars() {
-        // Setup
-        final ExecutionContext context = null;
-        final List<Value> expectedResult = Arrays.asList();
+        assertIterableEquals(Lists.newArrayList(
+                new Value("A"), new Value("b"), new Value("c")),
+                new Value("Abc").getChars(mockExecutionContext));
 
-        // Run the test
-        final List<Value> result = valueUnderTest.getChars(context);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertIterableEquals(Lists.newArrayList(),
+                new Value().getChars(mockExecutionContext));
     }
 
     @Test
-    public void testGetChunks() {
-        // Setup
-        final ExecutionContext context = null;
-        final ChunkType type = null;
-        final List<Value> expectedResult = Arrays.asList();
+    public void testGetChunksGetsChars() {
 
-        // Run the test
-        final List<Value> result = valueUnderTest.getChunks(context, type);
+        // Chars
 
-        // Verify the results
-        assertEquals(expectedResult, result);
+        for (ChunkType charType : Lists.newArrayList(ChunkType.CHAR, ChunkType.CHARRANGE)) {
+            assertIterableEquals(Lists.newArrayList(),
+                    new Value().getChunks(mockExecutionContext, charType));
+
+            assertIterableEquals(Lists.newArrayList(
+                    new Value("a")),
+                    new Value("a").getChunks(mockExecutionContext, charType));
+
+            assertIterableEquals(Lists.newArrayList(
+                    new Value("a"), new Value(" "), new Value("c")),
+                    new Value("a c").getChunks(mockExecutionContext, charType));
+        }
+    }
+
+    @Test
+    public void testGetChunksGetsItems() {
+        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
+
+        for (ChunkType itemType : Lists.newArrayList(ChunkType.ITEM, ChunkType.ITEMRANGE)) {
+            assertIterableEquals(Lists.newArrayList(),
+                    new Value().getChunks(mockExecutionContext, itemType));
+
+            assertIterableEquals(Lists.newArrayList(
+                    new Value("a")),
+                    new Value("a").getChunks(mockExecutionContext, itemType));
+
+            assertIterableEquals(Lists.newArrayList(
+                    new Value("a"), new Value("c")),
+                    new Value("a,c").getChunks(mockExecutionContext, itemType));
+        }
+    }
+
+    @Test
+    public void testGetChunksGetsWords() {
+        for (ChunkType wordType : Lists.newArrayList(ChunkType.WORD, ChunkType.WORDRANGE)) {
+            assertIterableEquals(Lists.newArrayList(),
+                    new Value().getChunks(mockExecutionContext, wordType));
+
+            assertIterableEquals(Lists.newArrayList(
+                    new Value("one")),
+                    new Value("one").getChunks(mockExecutionContext, wordType));
+
+            assertIterableEquals(Lists.newArrayList(
+                    new Value("one"), new Value("two"), new Value("three")),
+                    new Value("one two three").getChunks(mockExecutionContext, wordType));
+        }
+    }
+
+    @Test
+    public void testGetChunksGetsLines() {
+        for (ChunkType lineType : Lists.newArrayList(ChunkType.LINE, ChunkType.LINERANGE)) {
+            assertIterableEquals(Lists.newArrayList(),
+                    new Value().getChunks(mockExecutionContext, lineType));
+
+            assertIterableEquals(Lists.newArrayList(
+                    new Value("one")),
+                    new Value("one").getChunks(mockExecutionContext, lineType));
+
+            assertIterableEquals(Lists.newArrayList(
+                    new Value("one"), new Value("two"), new Value("three")),
+                    new Value("one\ntwo\nthree").getChunks(mockExecutionContext, lineType));
+        }
     }
 
     @Test
     public void testItemCount() {
-        // Setup
-        final ExecutionContext context = null;
-        final int expectedResult = 0;
+        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
 
-        // Run the test
-        final int result = valueUnderTest.itemCount(context);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(0, new Value().itemCount(mockExecutionContext));
+        assertEquals(1, new Value("one").itemCount(mockExecutionContext));
+        assertEquals(2, new Value("one,two").itemCount(mockExecutionContext));
+        assertEquals(4, new Value(",,,").itemCount(mockExecutionContext));
+        assertEquals(5, new Value("one,,,four,").itemCount(mockExecutionContext));
     }
 
     @Test
     public void testWordCount() {
-        // Setup
-        final ExecutionContext context = null;
-        final int expectedResult = 0;
-
-        // Run the test
-        final int result = valueUnderTest.wordCount(context);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(0, new Value().wordCount(mockExecutionContext));
+        assertEquals(1, new Value("one").wordCount(mockExecutionContext));
+        assertEquals(2, new Value("one two").wordCount(mockExecutionContext));
+        assertEquals(3, new Value("one two      three").wordCount(mockExecutionContext));
     }
 
     @Test
     public void testCharCount() {
-        // Setup
-        final ExecutionContext context = null;
-        final int expectedResult = 0;
-
-        // Run the test
-        final int result = valueUnderTest.charCount(context);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(0, new Value().charCount(mockExecutionContext));
+        assertEquals(1, new Value("1").charCount(mockExecutionContext));
+        assertEquals(2, new Value("12").charCount(mockExecutionContext));
     }
 
     @Test
     public void testLineCount() {
-        // Setup
-        final ExecutionContext context = null;
-        final int expectedResult = 0;
-
-        // Run the test
-        final int result = valueUnderTest.lineCount(context);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(0, new Value().lineCount(mockExecutionContext));
+        assertEquals(1, new Value("1").lineCount(mockExecutionContext));
+        assertEquals(2, new Value("1\n2").lineCount(mockExecutionContext));
+        assertEquals(3, new Value("1\n2\n3").lineCount(mockExecutionContext));
+        assertEquals(6, new Value("1\n2\n3\n\n\n6").lineCount(mockExecutionContext));
     }
 
     @Test
-    public void testGetChunk() throws Exception {
-        // Setup
-        final ExecutionContext context = null;
-        final Chunk c = null;
-        final Value expectedResult = null;
-
-        // Run the test
-        final Value result = valueUnderTest.getChunk(context, c);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+    public void testGetChunkGetsChars() throws Exception {
+        assertThrows(HtSemanticException.class, () -> new Value().getChunk(mockExecutionContext, TestChunkBuilder.buildSingleChunk(ChunkType.CHAR, -1)));
+        assertThrows(HtSemanticException.class, () -> new Value().getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.CHARRANGE, -1, -1)));
+        assertThrows(HtSemanticException.class, () -> new Value("abc123").getChunk(mockExecutionContext, TestChunkBuilder.buildSingleChunk(ChunkType.CHAR, 0)));
+        assertEquals(new Value("a"), new Value("abc123").getChunk(mockExecutionContext, TestChunkBuilder.buildSingleChunk(ChunkType.CHAR, 1)));
+        assertEquals(new Value("abc"), new Value("abc123").getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.CHARRANGE, 1, 3)));
+        assertEquals(new Value("abc123"), new Value("abc123").getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.CHARRANGE, 1, 6)));
+        assertEquals(new Value("abc123"), new Value("abc123").getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.CHARRANGE, 1, 300)));
     }
+
+    @Test
+    public void testGetChunkGetsWords() throws Exception {
+        assertThrows(HtSemanticException.class, () -> new Value().getChunk(mockExecutionContext, TestChunkBuilder.buildSingleChunk(ChunkType.WORD, -1)));
+        assertThrows(HtSemanticException.class, () -> new Value().getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.WORDRANGE, -1, -1)));
+        assertThrows(HtSemanticException.class, () -> new Value("abc123").getChunk(mockExecutionContext, TestChunkBuilder.buildSingleChunk(ChunkType.WORD, 0)));
+        assertEquals(new Value("two"), new Value("one two three").getChunk(mockExecutionContext, TestChunkBuilder.buildSingleChunk(ChunkType.WORD, 2)));
+        assertEquals(new Value("one two"), new Value("one two three").getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.WORDRANGE, 1, 2)));
+        assertEquals(new Value("one two three"), new Value("one two three").getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.WORDRANGE, 1, 3)));
+        assertEquals(new Value("one two three"), new Value("one two three").getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.CHARRANGE, 1, 300)));
+    }
+
+    @Test
+    public void testGetChunkGetsItems() throws Exception {
+        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
+
+        assertThrows(HtSemanticException.class, () -> new Value().getChunk(mockExecutionContext, TestChunkBuilder.buildSingleChunk(ChunkType.ITEM, -1)));
+        assertThrows(HtSemanticException.class, () -> new Value().getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.ITEMRANGE, -1, -1)));
+        assertThrows(HtSemanticException.class, () -> new Value("abc123").getChunk(mockExecutionContext, TestChunkBuilder.buildSingleChunk(ChunkType.ITEM, 0)));
+        assertEquals(new Value(" two"), new Value("one, two, three").getChunk(mockExecutionContext, TestChunkBuilder.buildSingleChunk(ChunkType.ITEM, 2)));
+        assertEquals(new Value("one, two"), new Value("one, two, three").getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.ITEMRANGE, 1, 2)));
+        assertEquals(new Value("one, two, three"), new Value("one, two, three").getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.ITEMRANGE, 1, 3)));
+        assertEquals(new Value("one, two, three"), new Value("one, two, three").getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.ITEMRANGE, 1, 300)));
+    }
+
 
     @Test
     public void testIsEmpty() {
-        // Setup
-        final boolean expectedResult = false;
-
-        // Run the test
-        final boolean result = valueUnderTest.isEmpty();
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertTrue(new Value().isEmpty());
+        assertTrue(new Value("").isEmpty());
+        assertTrue(Value.ofQuotedLiteral("").isEmpty());
+        assertFalse(new Value(" ").isEmpty());
+        assertFalse(new Value("abc123").isEmpty());
+        assertFalse(new Value(1.2).isEmpty());
     }
 
     @Test
     public void testLessThan() {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
+        assertFalse(new Value(1).isLessThan(new Value(1)).booleanValue());
+        assertTrue(new Value(1).isLessThan(new Value(2)).booleanValue());
+        assertFalse(new Value(1.0).isLessThan(new Value(1.0)).booleanValue());
+        assertTrue(new Value(1.0).isLessThan(new Value(2.0)).booleanValue());
+        assertFalse(new Value(.01).isLessThan(new Value(.01)).booleanValue());
+        assertTrue(new Value(.01).isLessThan(new Value(.02)).booleanValue());
+        assertFalse(new Value(-1).isLessThan(new Value(-1)).booleanValue());
+        assertTrue(new Value(-2).isLessThan(new Value(-1)).booleanValue());
+        assertTrue(new Value(-2.0).isLessThan(new Value(-1.0)).booleanValue());
+        assertFalse(new Value(-1.0).isLessThan(new Value(-1.0)).booleanValue());
+        assertTrue(new Value(-.02).isLessThan(new Value(-.01)).booleanValue());
+        assertFalse(new Value(-.01).isLessThan(new Value(-.01)).booleanValue());
 
-        // Run the test
-        final Value result = valueUnderTest.isLessThan(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertTrue(new Value("a").isLessThan(new Value("b")).booleanValue());
+        assertFalse(new Value("a").isLessThan(new Value("a")).booleanValue());
+        assertTrue(new Value("apple").isLessThan(new Value("banana")).booleanValue());
+        assertFalse(new Value("apple").isLessThan(new Value("apple")).booleanValue());
+        assertTrue(new Value(10).isLessThan(new Value("apple")).booleanValue());            // Lexical compare
+        assertTrue(new Value(false).isLessThan(new Value(true)).booleanValue());            // Lexical compare
+        assertFalse(new Value(false).isLessThan(new Value(false)).booleanValue());
     }
 
     @Test
     public void testGreaterThan() {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
+        assertFalse(new Value(1).isGreaterThan(new Value(1)).booleanValue());
+        assertFalse(new Value(1).isGreaterThan(new Value(2)).booleanValue());
+        assertFalse(new Value(1.0).isGreaterThan(new Value(1.0)).booleanValue());
+        assertFalse(new Value(1.0).isGreaterThan(new Value(2.0)).booleanValue());
+        assertFalse(new Value(.01).isGreaterThan(new Value(.01)).booleanValue());
+        assertFalse(new Value(.01).isGreaterThan(new Value(.02)).booleanValue());
+        assertFalse(new Value(-1).isGreaterThan(new Value(-1)).booleanValue());
+        assertFalse(new Value(-2).isGreaterThan(new Value(-1)).booleanValue());
+        assertFalse(new Value(-2.0).isGreaterThan(new Value(-1.0)).booleanValue());
+        assertFalse(new Value(-1.0).isGreaterThan(new Value(-1.0)).booleanValue());
+        assertFalse(new Value(-.02).isGreaterThan(new Value(-.01)).booleanValue());
+        assertFalse(new Value(-.01).isGreaterThan(new Value(-.01)).booleanValue());
 
-        // Run the test
-        final Value result = valueUnderTest.isGreaterThan(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertFalse(new Value("a").isGreaterThan(new Value("b")).booleanValue());
+        assertFalse(new Value("a").isGreaterThan(new Value("a")).booleanValue());
+        assertFalse(new Value("apple").isGreaterThan(new Value("banana")).booleanValue());
+        assertFalse(new Value("apple").isGreaterThan(new Value("apple")).booleanValue());
+        assertFalse(new Value(10).isGreaterThan(new Value("apple")).booleanValue());            // Lexical compare
+        assertFalse(new Value(false).isGreaterThan(new Value(true)).booleanValue());            // Lexical compare
+        assertFalse(new Value(false).isGreaterThan(new Value(false)).booleanValue());
     }
 
     @Test
     public void testGreaterThanOrEqualTo() {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
+        assertTrue(new Value(1).isGreaterThanOrEqualTo(new Value(1)).booleanValue());
+        assertFalse(new Value(1).isGreaterThanOrEqualTo(new Value(2)).booleanValue());
+        assertTrue(new Value(1.0).isGreaterThanOrEqualTo(new Value(1.0)).booleanValue());
+        assertFalse(new Value(1.0).isGreaterThanOrEqualTo(new Value(2.0)).booleanValue());
+        assertTrue(new Value(.01).isGreaterThanOrEqualTo(new Value(.01)).booleanValue());
+        assertFalse(new Value(.01).isGreaterThanOrEqualTo(new Value(.02)).booleanValue());
+        assertTrue(new Value(-1).isGreaterThanOrEqualTo(new Value(-1)).booleanValue());
+        assertFalse(new Value(-2).isGreaterThanOrEqualTo(new Value(-1)).booleanValue());
+        assertFalse(new Value(-2.0).isGreaterThanOrEqualTo(new Value(-1.0)).booleanValue());
+        assertTrue(new Value(-1.0).isGreaterThanOrEqualTo(new Value(-1.0)).booleanValue());
+        assertFalse(new Value(-.02).isGreaterThanOrEqualTo(new Value(-.01)).booleanValue());
+        assertTrue(new Value(-.01).isGreaterThanOrEqualTo(new Value(-.01)).booleanValue());
 
-        // Run the test
-        final Value result = valueUnderTest.isGreaterThanOrEqualTo(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertFalse(new Value("a").isGreaterThanOrEqualTo(new Value("b")).booleanValue());
+        assertTrue(new Value("a").isGreaterThanOrEqualTo(new Value("a")).booleanValue());
+        assertFalse(new Value("apple").isGreaterThanOrEqualTo(new Value("banana")).booleanValue());
+        assertTrue(new Value("apple").isGreaterThanOrEqualTo(new Value("apple")).booleanValue());
+        assertFalse(new Value(10).isGreaterThanOrEqualTo(new Value("apple")).booleanValue());            // Lexical compare
+        assertFalse(new Value(false).isGreaterThanOrEqualTo(new Value(true)).booleanValue());            // Lexical compare
+        assertTrue(new Value(false).isGreaterThanOrEqualTo(new Value(false)).booleanValue());
     }
 
     @Test
     public void testLessThanOrEqualTo() {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
+        assertTrue(new Value(1).isLessThanOrEqualTo(new Value(1)).booleanValue());
+        assertTrue(new Value(1).isLessThanOrEqualTo(new Value(2)).booleanValue());
+        assertTrue(new Value(1.0).isLessThanOrEqualTo(new Value(1.0)).booleanValue());
+        assertTrue(new Value(1.0).isLessThanOrEqualTo(new Value(2.0)).booleanValue());
+        assertTrue(new Value(.01).isLessThanOrEqualTo(new Value(.01)).booleanValue());
+        assertTrue(new Value(.01).isLessThanOrEqualTo(new Value(.02)).booleanValue());
+        assertTrue(new Value(-1).isLessThanOrEqualTo(new Value(-1)).booleanValue());
+        assertTrue(new Value(-2).isLessThanOrEqualTo(new Value(-1)).booleanValue());
+        assertTrue(new Value(-2.0).isLessThanOrEqualTo(new Value(-1.0)).booleanValue());
+        assertTrue(new Value(-1.0).isLessThanOrEqualTo(new Value(-1.0)).booleanValue());
+        assertTrue(new Value(-.02).isLessThanOrEqualTo(new Value(-.01)).booleanValue());
+        assertTrue(new Value(-.01).isLessThanOrEqualTo(new Value(-.01)).booleanValue());
 
-        // Run the test
-        final Value result = valueUnderTest.isLessThanOrEqualTo(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertTrue(new Value("a").isLessThanOrEqualTo(new Value("b")).booleanValue());
+        assertTrue(new Value("a").isLessThanOrEqualTo(new Value("a")).booleanValue());
+        assertTrue(new Value("apple").isLessThanOrEqualTo(new Value("banana")).booleanValue());
+        assertTrue(new Value("apple").isLessThanOrEqualTo(new Value("apple")).booleanValue());
+        assertTrue(new Value(10).isLessThanOrEqualTo(new Value("apple")).booleanValue());            // Lexical compare
+        assertTrue(new Value(false).isLessThanOrEqualTo(new Value(true)).booleanValue());            // Lexical compare
+        assertTrue(new Value(false).isLessThanOrEqualTo(new Value(false)).booleanValue());
     }
 
     @Test
     public void testMultiply() throws Exception {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
+        assertEquals(new Value(200), new Value(10).multipliedBy(new Value(20)));
+        assertEquals(new Value(-200), new Value(-10).multipliedBy(new Value(20)));
+        assertEquals(new Value("200.0"), new Value(10.0).multipliedBy(new Value(20.0)));
 
-        // Run the test
-        final Value result = valueUnderTest.multiply(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertThrows(HtSemanticException.class, () -> new Value("a").multipliedBy(new Value("b")));
+        assertThrows(HtSemanticException.class, () -> new Value(true).multipliedBy(new Value(false)));
+        assertThrows(HtSemanticException.class, () -> new Value(new Point(1,2)).multipliedBy(new Value(new Point(3,4))));
+        assertThrows(HtSemanticException.class, () -> new Value(new Rectangle(1,2, 3, 4)).multipliedBy(new Value(new Rectangle(3,4, 5, 6))));
     }
 
     @Test
     public void testDivide() throws Exception {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
+        assertEquals(new Value(2), new Value(20).dividedBy(new Value(10)));
+        assertEquals(new Value(-.5), new Value(-10).dividedBy(new Value(20)));
+        assertEquals(new Value("0.5"), new Value(10.0).dividedBy(new Value(20.0)));
 
-        // Run the test
-        final Value result = valueUnderTest.divide(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertThrows(HtSemanticException.class, () -> new Value("a").dividedBy(new Value("b")));
+        assertThrows(HtSemanticException.class, () -> new Value(true).dividedBy(new Value(false)));
+        assertThrows(HtSemanticException.class, () -> new Value(new Point(1,2)).dividedBy(new Value(new Point(3,4))));
+        assertThrows(HtSemanticException.class, () -> new Value(new Rectangle(1,2, 3, 4)).dividedBy(new Value(new Rectangle(3,4, 5, 6))));
     }
 
     @Test
     public void testAdd() throws Exception {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
+        assertEquals(new Value(30), new Value(20).add(new Value(10)));
+        assertEquals(new Value(10), new Value(-10).add(new Value(20)));
+        assertEquals(new Value("30.0"), new Value(10.0).add(new Value(20.0)));
 
-        // Run the test
-        final Value result = valueUnderTest.add(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertThrows(HtSemanticException.class, () -> new Value("a").add(new Value("b")));
+        assertThrows(HtSemanticException.class, () -> new Value(true).add(new Value(false)));
+        assertThrows(HtSemanticException.class, () -> new Value(new Point(1,2)).add(new Value(new Point(3,4))));
+        assertThrows(HtSemanticException.class, () -> new Value(new Rectangle(1,2, 3, 4)).add(new Value(new Rectangle(3,4, 5, 6))));
     }
 
     @Test
     public void testSubtract() throws Exception {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
+        assertEquals(new Value(10), new Value(20).subtract(new Value(10)));
+        assertEquals(new Value(-30), new Value(-10).subtract(new Value(20)));
+        assertEquals(new Value("-10.0"), new Value(10.0).subtract(new Value(20.0)));
 
-        // Run the test
-        final Value result = valueUnderTest.subtract(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertThrows(HtSemanticException.class, () -> new Value("a").subtract(new Value("b")));
+        assertThrows(HtSemanticException.class, () -> new Value(true).subtract(new Value(false)));
+        assertThrows(HtSemanticException.class, () -> new Value(new Point(1,2)).subtract(new Value(new Point(3,4))));
+        assertThrows(HtSemanticException.class, () -> new Value(new Rectangle(1,2, 3, 4)).subtract(new Value(new Rectangle(3,4, 5, 6))));
     }
 
     @Test
     public void testExponentiate() throws Exception {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
+        assertEquals(new Value(256), new Value(2).exponentiate(new Value(8)));
+        assertEquals(new Value(256), new Value(-2).exponentiate(new Value(8)));
+        assertEquals(new Value("256.0"), new Value(2.0).exponentiate(new Value(8.0)));
 
-        // Run the test
-        final Value result = valueUnderTest.exponentiate(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertThrows(HtSemanticException.class, () -> new Value("a").exponentiate(new Value("b")));
+        assertThrows(HtSemanticException.class, () -> new Value(true).exponentiate(new Value(false)));
+        assertThrows(HtSemanticException.class, () -> new Value(new Point(1,2)).exponentiate(new Value(new Point(3,4))));
+        assertThrows(HtSemanticException.class, () -> new Value(new Rectangle(1,2, 3, 4)).exponentiate(new Value(new Rectangle(3,4, 5, 6))));
     }
 
     @Test
     public void testMod() throws Exception {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
+        assertEquals(new Value(1), new Value(10).mod(new Value(3)));
+        assertEquals(new Value(-1), new Value(-10).mod(new Value(3)));
+        assertEquals(new Value("1.0"), new Value(10.0).mod(new Value(3.0)));
 
-        // Run the test
-        final Value result = valueUnderTest.mod(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertThrows(HtSemanticException.class, () -> new Value("a").mod(new Value("b")));
+        assertThrows(HtSemanticException.class, () -> new Value(true).mod(new Value(false)));
+        assertThrows(HtSemanticException.class, () -> new Value(new Point(1,2)).mod(new Value(new Point(3,4))));
+        assertThrows(HtSemanticException.class, () -> new Value(new Rectangle(1,2, 3, 4)).mod(new Value(new Rectangle(3,4, 5, 6))));
     }
 
     @Test
     public void testNot() throws Exception {
-        // Setup
-        final Value expectedResult = null;
+        assertTrue(new Value(false).not().booleanValue());
+        assertFalse(new Value(true).not(). booleanValue());
 
-        // Run the test
-        final Value result = valueUnderTest.not();
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertThrows(HtSemanticException.class, () -> new Value(1).not());
+        assertThrows(HtSemanticException.class, () -> new Value("a").not());
+        assertThrows(HtSemanticException.class, () -> new Value(new Point(1,2)).not());
+        assertThrows(HtSemanticException.class, () -> new Value(new Rectangle(1,2, 3, 4)).not());
     }
 
     @Test
     public void testNegate() throws Exception {
-        // Setup
-        final Value expectedResult = null;
+        assertEquals(new Value(-10), new Value(10).negate());
+        assertEquals(new Value(20), new Value(-20).negate());
 
-        // Run the test
-        final Value result = valueUnderTest.negate();
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertThrows(HtSemanticException.class, () -> new Value(true).negate());
+        assertThrows(HtSemanticException.class, () -> new Value("a").negate());
+        assertThrows(HtSemanticException.class, () -> new Value(new Point(1,2)).negate());
+        assertThrows(HtSemanticException.class, () -> new Value(new Rectangle(1,2, 3, 4)).negate());
     }
 
     @Test
     public void testAnd() throws Exception {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
+        assertTrue(new Value(true).and(new Value(true)).booleanValue());
+        assertFalse(new Value(true).and(new Value(false)).booleanValue());
+        assertFalse(new Value(false).and(new Value(true)).booleanValue());
+        assertFalse(new Value(false).and(new Value(false)).booleanValue());
 
-        // Run the test
-        final Value result = valueUnderTest.and(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertThrows(HtSemanticException.class, () -> new Value(true).and(new Value("b")));
+        assertThrows(HtSemanticException.class, () -> new Value(true).and(new Value(10)));
+        assertThrows(HtSemanticException.class, () -> new Value(new Point(1,2)).and(new Value(false)));
+        assertThrows(HtSemanticException.class, () -> new Value(new Rectangle(1,2, 3, 4)).and(new Value(true)));
     }
 
     @Test
     public void testOr() throws Exception {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
+        assertTrue(new Value(true).or(new Value(true)).booleanValue());
+        assertTrue(new Value(true).or(new Value(false)).booleanValue());
+        assertTrue(new Value(false).or(new Value(true)).booleanValue());
+        assertFalse(new Value(false).or(new Value(false)).booleanValue());
 
-        // Run the test
-        final Value result = valueUnderTest.or(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertThrows(HtSemanticException.class, () -> new Value(true).or(new Value("b")));
+        assertThrows(HtSemanticException.class, () -> new Value(true).or(new Value(10)));
+        assertThrows(HtSemanticException.class, () -> new Value(new Point(1,2)).or(new Value(false)));
+        assertThrows(HtSemanticException.class, () -> new Value(new Rectangle(1,2, 3, 4)).or(new Value(true)));
     }
 
     @Test
     public void testConcat() {
-        // Setup
-        final Value v = null;
-        final Value expectedResult = null;
-
-        // Run the test
-        final Value result = valueUnderTest.concat(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(new Value("ab"), new Value("a").concat(new Value("b")));
+        assertEquals(new Value("12"), new Value(1).concat(new Value(2)));
+        assertEquals(new Value("truefalse"), new Value(true).concat(new Value(false)));
+        assertEquals(new Value("1,23,4"), new Value(new Point(1,2)).concat(new Value(new Point(3,4))));
     }
 
     @Test
     public void testWithin() throws Exception {
-        // Setup
-        final ExecutionContext context = null;
-        final Value v = null;
-        final Value expectedResult = null;
+        assertTrue(new Value(1,1).isWithin(new Value("1,1,2,2")).booleanValue());
+        assertTrue(new Value(10,10).isWithin(new Value("1,1,200,200")).booleanValue());
+        assertFalse(new Value(2,2).isWithin(new Value("1,1,2,2")).booleanValue());
+        assertFalse(new Value(-10,1).isWithin(new Value("1,1,2,2")).booleanValue());
 
-        // Run the test
-        final Value result = valueUnderTest.within(context, v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertThrows(HtSemanticException.class, () -> new Value("barf").isWithin(new Value("1,2,3,4")));
+        assertThrows(HtSemanticException.class, () -> new Value("barf").isWithin(new Value("1,2,3,4,5")));
+        assertThrows(HtSemanticException.class, () -> new Value("1,2").isWithin(new Value("barf")));
     }
 
     @Test
     public void testTrunc() throws Exception {
-        // Setup
-        final Value expectedResult = null;
+        assertEquals(new Value(1), new Value(1.234).trunc());
+        assertEquals(new Value(1), new Value(1).trunc());
+        assertEquals(new Value(0), new Value(.234).trunc());
+        assertEquals(new Value(-1), new Value(-1.234).trunc());
+        assertEquals(new Value(-1), new Value(-1).trunc());
+        assertEquals(new Value(0), new Value(-.234).trunc());
 
-        // Run the test
-        final Value result = valueUnderTest.trunc();
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertThrows(HtSemanticException.class, () -> new Value(true).trunc());
+        assertThrows(HtSemanticException.class, () -> new Value("barf").trunc());
     }
 
     @Test
-    public void testIsA() throws Exception {
-        // Setup
-        final Value val = null;
-        final Value expectedResult = null;
+    public void testIsALogical() throws Exception {
+        assertTrue(new Value(true).isA(new Value("logical")).booleanValue());
+        assertTrue(new Value(false).isA(new Value("bool")).booleanValue());
+        assertTrue(new Value("false").isA(new Value("boolean")).booleanValue());
 
-        // Run the test
-        final Value result = valueUnderTest.isA(val);
+        assertFalse(new Value(10).isA(new Value("bool")).booleanValue());
+        assertFalse(new Value("barf").isA(new Value("bool")).booleanValue());
+    }
 
-        // Verify the results
-        assertEquals(expectedResult, result);
+    @Test
+    public void testIsADate() throws Exception {
+        assertTrue(new Value("10/2/2036").isA(new Value("date")).booleanValue());                   // Short date
+        assertTrue(new Value("10/2/96").isA(new Value("date")).booleanValue());                     // Short date
+        assertTrue(new Value("239495838").isA(new Value("date")).booleanValue());                   // Seconds date
+        assertTrue(new Value("Monday, January 1, 1985").isA(new Value("date")).booleanValue());     // Long date
+        assertTrue(new Value("Mon, Jan 1, 1985").isA(new Value("date")).booleanValue());            // Abbrev date
+        assertTrue(new Value("10:30:14 am").isA(new Value("date")).booleanValue());                 // Long time
+        assertTrue(new Value("11:45 pm").isA(new Value("date")).booleanValue());                    // Short time
+        assertTrue(new Value("2018,1,2,11,45,00,2").isA(new Value("date")).booleanValue());         // Date items
+
+        assertFalse(new Value(1.25).isA(new Value("date")).booleanValue());
+        assertFalse(new Value(true).isA(new Value("date")).booleanValue());
+        assertFalse(new Value("barf").isA(new Value("date")).booleanValue());
+    }
+
+    @Test
+    public void testIsARectangle() throws Exception {
+        assertTrue(new Value(new Rectangle(1,2, 3, 4)).isA(new Value("rect")).booleanValue());
+        assertTrue(new Value("-10, 20, 30, 45").isA(new Value("rectangle")).booleanValue());
+
+        assertFalse(new Value("3.25, 2, 20, 30").isA(new Value("rect")).booleanValue());
+        assertFalse(new Value(0).isA(new Value("rect")).booleanValue());
+        assertFalse(new Value(1).isA(new Value("rect")).booleanValue());
+        assertFalse(new Value(-1).isA(new Value("rect")).booleanValue());
+        assertFalse(new Value(1.25).isA(new Value("rect")).booleanValue());
+        assertFalse(new Value(true).isA(new Value("rect")).booleanValue());
+        assertFalse(new Value("barf").isA(new Value("rect")).booleanValue());
+        assertFalse(new Value("10/2/2036").isA(new Value("rect")).booleanValue());
+    }
+
+    @Test
+    public void testIsAPoint() throws Exception {
+        assertTrue(new Value(new Point(1,2)).isA(new Value("point")).booleanValue());
+        assertTrue(new Value("-10, 20").isA(new Value("point")).booleanValue());
+
+        assertFalse(new Value("3.25, 7.66").isA(new Value("point")).booleanValue());
+        assertFalse(new Value(0).isA(new Value("point")).booleanValue());
+        assertFalse(new Value(1).isA(new Value("point")).booleanValue());
+        assertFalse(new Value(-1).isA(new Value("point")).booleanValue());
+        assertFalse(new Value(1.25).isA(new Value("point")).booleanValue());
+        assertFalse(new Value(true).isA(new Value("point")).booleanValue());
+        assertFalse(new Value("barf").isA(new Value("point")).booleanValue());
+        assertFalse(new Value(new Rectangle(1,2, 3, 4)).isA(new Value("point")).booleanValue());
+        assertFalse(new Value("10/2/2036").isA(new Value("point")).booleanValue());
+    }
+
+    @Test
+    public void testIsAnInteger() throws Exception {
+        assertTrue(new Value(0).isA(new Value("integer")).booleanValue());
+        assertTrue(new Value(1).isA(new Value("integer")).booleanValue());
+        assertTrue(new Value(-1).isA(new Value("integer")).booleanValue());
+
+        assertFalse(new Value(1.25).isA(new Value("integer")).booleanValue());
+        assertFalse(new Value(true).isA(new Value("number")).booleanValue());
+        assertFalse(new Value("barf").isA(new Value("number")).booleanValue());
+        assertFalse(new Value(new Point(1,2)).isA(new Value("number")).booleanValue());
+        assertFalse(new Value(new Rectangle(1,2, 3, 4)).isA(new Value("number")).booleanValue());
+        assertFalse(new Value("10/2/2036").isA(new Value("number")).booleanValue());
+    }
+
+    @Test
+    public void testIsANumber() throws Exception {
+        assertTrue(new Value(0).isA(new Value("number")).booleanValue());
+        assertTrue(new Value(1).isA(new Value("number")).booleanValue());
+        assertTrue(new Value(-1).isA(new Value("number")).booleanValue());
+        assertTrue(new Value(1.25).isA(new Value("number")).booleanValue());
+
+        assertFalse(new Value(true).isA(new Value("number")).booleanValue());
+        assertFalse(new Value("barf").isA(new Value("number")).booleanValue());
+        assertFalse(new Value(new Point(1,2)).isA(new Value("number")).booleanValue());
+        assertFalse(new Value(new Rectangle(1,2, 3, 4)).isA(new Value("number")).booleanValue());
+        assertFalse(new Value("10/2/2036").isA(new Value("number")).booleanValue());
     }
 
     @Test
     public void testContains() {
-        // Setup
-        final Value v = null;
-        final boolean expectedResult = false;
+        assertTrue(new Value().contains(new Value()));
+        assertTrue(new Value("one two").contains(new Value("e t")));
+        assertTrue(new Value("one two").contains(new Value("one two")));
 
-        // Run the test
-        final boolean result = valueUnderTest.contains(v);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertFalse(new Value("one two").contains(new Value("three")));
+        assertFalse(new Value(new Point(1,2)).contains(new Value(new Point(3, 4))));
     }
 
     @Test
     public void testToString() {
-        // Setup
-        final String expectedResult = "result";
+        assertEquals("", new Value().toString());
+        assertEquals("one", new Value("one").toString());
+        assertEquals("2.25", new Value(2.25).toString());
+        assertEquals("-0.57", new Value(-.57).toString());
+        assertEquals("false", new Value(false).toString());
+        assertEquals("true", new Value(true).toString());
+        assertEquals("1,2", new Value(new Point(1,2)).toString());
+        assertEquals("1,2,4,6", new Value(new Rectangle(1,2,3,4)).toString());
+    }
 
-        // Run the test
-        final String result = valueUnderTest.toString();
 
-        // Verify the results
-        assertEquals(expectedResult, result);
+    @Test
+    public void testIntegerCompareTo() {
+        assertEquals(0, new Value().compareTo(new Value()));
+        assertEquals(-1, new Value(1).compareTo(new Value(2)));
+        assertEquals(1, new Value(2).compareTo(new Value(1)));
+        assertEquals(0, new Value(2).compareTo(new Value(2)));
     }
 
     @Test
-    public void testEquals() {
-        // Setup
-        final Object o = null;
-        final boolean expectedResult = false;
-
-        // Run the test
-        final boolean result = valueUnderTest.equals(o);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+    public void testFloatingCompareTo() {
+        assertEquals(0, new Value().compareTo(new Value()));
+        assertEquals(-1, new Value(.25).compareTo(new Value(1.25)));
+        assertEquals(1, new Value(1.25).compareTo(new Value(.25)));
+        assertEquals(0, new Value(.25).compareTo(new Value(.25)));
     }
 
     @Test
-    public void testHashCode() {
-        // Setup
-        final int expectedResult = 0;
-
-        // Run the test
-        final int result = valueUnderTest.hashCode();
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+    public void testStringCompareTo() {
+        assertEquals(0, new Value().compareTo(new Value()));
+        assertEquals(-1, new Value("Apple").compareTo(new Value("Banana")));
+        assertEquals(1, new Value("Banana").compareTo(new Value("Apple")));
+        assertEquals(0, new Value("Apple").compareTo(new Value("Apple")));
     }
 
     @Test
-    public void testCompareTo() {
-        // Setup
-        final Value o = null;
-        final int expectedResult = 0;
+    public void testStringStyledCompare() {
+        assertEquals(0, new Value().compareTo(new Value(), SortStyle.TEXT));
+        assertEquals(-1, new Value("Apple").compareTo(new Value("Banana"), SortStyle.TEXT));
+        assertEquals(1, new Value("Banana").compareTo(new Value("Apple"), SortStyle.TEXT));
+        assertEquals(0, new Value("Apple").compareTo(new Value("Apple"), SortStyle.TEXT));
 
-        // Run the test
-        final int result = valueUnderTest.compareTo(o);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(0, new Value().compareTo(new Value(), SortStyle.INTERNATIONAL));
+        assertEquals(-1, new Value("Apple").compareTo(new Value("Banana"), SortStyle.INTERNATIONAL));
+        assertEquals(1, new Value("Banana").compareTo(new Value("Apple"), SortStyle.INTERNATIONAL));
+        assertEquals(0, new Value("Apple").compareTo(new Value("Apple"), SortStyle.INTERNATIONAL));
     }
 
     @Test
-    public void testCompareTo1() {
-        // Setup
-        final Value to = null;
-        final SortStyle style = null;
-        final int expectedResult = 0;
+    public void testNumericStyledCompare() {
+        assertEquals(0, new Value().compareTo(new Value(), SortStyle.NUMERIC));
+        assertEquals(-1, new Value(.25).compareTo(new Value(1.25), SortStyle.NUMERIC));
+        assertEquals(1, new Value(1.25).compareTo(new Value(.25), SortStyle.NUMERIC));
+        assertEquals(0, new Value(.25).compareTo(new Value(.25), SortStyle.NUMERIC));
+    }
 
-        // Run the test
-        final int result = valueUnderTest.compareTo(to, style);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+    @Test
+    public void testDateStyledCompare() {
+        assertEquals(0, new Value().compareTo(new Value(), SortStyle.DATE_TIME));
+        assertEquals(-1, new Value("1/1/900").compareTo(new Value("1/1/2000"), SortStyle.DATE_TIME));
+        assertEquals(1, new Value("Monday, January 1, 2000").compareTo(new Value("Monday, December 31, 1999"), SortStyle.DATE_TIME));
+        assertEquals(0, new Value("3:30 pm").compareTo(new Value("3:30:00 pm"), SortStyle.DATE_TIME));
     }
 
     @Test
     public void testOfQuotedLiteral() {
-        // Setup
-        final String literal = "literal";
-        final Value expectedResult = null;
-
-        // Run the test
-        final Value result = Value.ofQuotedLiteral(literal);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertTrue(Value.ofQuotedLiteral("blah").isQuotedLiteral());
+        assertFalse(new Value("blah").isQuotedLiteral());
     }
 
     @Test
     public void testOfLines() {
-        // Setup
-        final List<Value> lines = Arrays.asList();
-        final Value expectedResult = null;
-
-        // Run the test
-        final Value result = Value.ofLines(lines);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(new Value(), Value.ofLines(Lists.newArrayList()));
+        assertEquals(new Value("one"), Value.ofLines(Lists.newArrayList(new Value("one"))));
+        assertEquals(new Value("one\ntwo"), Value.ofLines(Lists.newArrayList(new Value("one"), new Value("two"))));
+        assertEquals(new Value("one\ntwo\n\nthree"), Value.ofLines(Lists.newArrayList(new Value("one"), new Value("two"), new Value(), new Value("three"))));
     }
 
     @Test
     public void testOfItems() {
-        // Setup
-        final List<Value> items = Arrays.asList();
-        final Value expectedResult = null;
-
-        // Run the test
-        final Value result = Value.ofItems(items);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(new Value(), Value.ofItems(Lists.newArrayList()));
+        assertEquals(new Value("one"), Value.ofItems(Lists.newArrayList(new Value("one"))));
+        assertEquals(new Value("one,two"), Value.ofItems(Lists.newArrayList(new Value("one"), new Value("two"))));
+        assertEquals(new Value("one,two,,three"), Value.ofItems(Lists.newArrayList(new Value("one"), new Value("two"), new Value(), new Value("three"))));
     }
 
     @Test
     public void testOfWords() {
-        // Setup
-        final List<Value> words = Arrays.asList();
-        final Value expectedResult = null;
-
-        // Run the test
-        final Value result = Value.ofWords(words);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(new Value(), Value.ofWords(Lists.newArrayList()));
+        assertEquals(new Value("one"), Value.ofWords(Lists.newArrayList(new Value("one"))));
+        assertEquals(new Value("one two"), Value.ofWords(Lists.newArrayList(new Value("one"), new Value("two"))));
+        assertEquals(new Value("one two  three"), Value.ofWords(Lists.newArrayList(new Value("one"), new Value("two"), new Value(), new Value("three"))));
     }
 
     @Test
     public void testOfChars() {
-        // Setup
-        final List<Value> chars = Arrays.asList();
-        final Value expectedResult = null;
-
-        // Run the test
-        final Value result = Value.ofChars(chars);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(new Value(), Value.ofChars(Lists.newArrayList()));
+        assertEquals(new Value("1"), Value.ofChars(Lists.newArrayList(new Value("1"))));
+        assertEquals(new Value("12"), Value.ofChars(Lists.newArrayList(new Value("1"), new Value("2"))));
+        assertEquals(new Value("123"), Value.ofChars(Lists.newArrayList(new Value("1"), new Value("2"), new Value(), new Value("3"))));
     }
 
     @Test
-    public void testSetChunk() throws Exception {
-        // Setup
-        final ExecutionContext context = null;
-        final Value mutable = null;
-        final Preposition p = null;
-        final Chunk c = null;
-        final Object mutator = null;
-        final Value expectedResult = null;
+    public void testOfMutatedChunk() throws Exception {
 
-        // Run the test
-        final Value result = Value.ofChunk(context, mutable, p, c, mutator);
+        assertEquals(new Value("one dos three"), Value.ofMutatedChunk(
+                mockExecutionContext,
+                new Value("one two three"),
+                Preposition.INTO,
+                TestChunkBuilder.buildSingleChunk(ChunkType.WORD, 2),
+                new Value("dos")));
 
-        // Verify the results
-        assertEquals(expectedResult, result);
+        assertEquals(new Value("onedos three"), Value.ofMutatedChunk(
+                mockExecutionContext,
+                new Value("one two three"),
+                Preposition.REPLACING,
+                TestChunkBuilder.buildSingleChunk(ChunkType.WORD, 2),
+                new Value("dos")));
+
+        assertEquals(new Value("one dos two three"), Value.ofMutatedChunk(
+                mockExecutionContext,
+                new Value("one two three"),
+                Preposition.BEFORE,
+                TestChunkBuilder.buildSingleChunk(ChunkType.WORD, 2),
+                new Value("dos")));
+
+        assertEquals(new Value("one two dos three"), Value.ofMutatedChunk(
+                mockExecutionContext,
+                new Value("one two three"),
+                Preposition.AFTER,
+                TestChunkBuilder.buildSingleChunk(ChunkType.WORD, 2),
+                new Value("dos")));
     }
 
     @Test
-    public void testSetValue() {
-        // Setup
-        final Value mutable = null;
-        final Preposition p = null;
-        final Value mutator = null;
-        final Value expectedResult = null;
-
-        // Run the test
-        final Value result = Value.ofValue(mutable, p, mutator);
-
-        // Verify the results
-        assertEquals(expectedResult, result);
+    public void testOfValue() {
+        assertEquals(new Value("that"), Value.ofValue(new Value("this"), Preposition.INTO, new Value("that")));
+        assertEquals(new Value("that"), Value.ofValue(new Value("this"), Preposition.REPLACING, new Value("that")));
+        assertEquals(new Value("thatthis"), Value.ofValue(new Value("this"), Preposition.BEFORE, new Value("that")));
+        assertEquals(new Value("thisthat"), Value.ofValue(new Value("this"), Preposition.AFTER, new Value("that")));
     }
 }

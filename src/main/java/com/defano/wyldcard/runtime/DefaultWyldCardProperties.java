@@ -2,63 +2,22 @@ package com.defano.wyldcard.runtime;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.cursor.HyperCardCursor;
-import com.defano.wyldcard.parts.model.PropertiesModel;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.google.inject.Singleton;
 
 /**
  * A model of global, HyperCard properties. Note that this model is not part of a stack and is therefore never saved.
  * Changes to these properties reset to their default on application startup (and some, like 'itemDelimiter' reset to
  * their default value whenever their are no scripts executing).
  */
-public class HyperCardProperties extends PropertiesModel {
+@Singleton
+public class DefaultWyldCardProperties extends DefaultPropertiesModel implements WyldCardProperties {
 
-    public final static String PROP_ITEMDELIMITER = "itemdelimiter";
-    public final static String PROP_SELECTEDTEXT = "selectedtext";
-    public final static String PROP_SELECTEDCHUNK = "selectedchunk";
-    public final static String PROP_SELECTEDFIELD = "selectedfield";
-    public final static String PROP_SELECTEDLINE = "selectedline";
-    public final static String PROP_CLICKTEXT = "clicktext";
-    public final static String PROP_LOCKSCREEN = "lockscreen";
-    public final static String PROP_MOUSEH = "mouseh";
-    public final static String PROP_MOUSEV = "mousev";
-    public final static String PROP_SCREENRECT = "screenrect";
-    public final static String PROP_CLICKLOC = "clickloc";
-    public final static String PROP_CLICKH = "clickh";
-    public final static String PROP_CLICKV = "clickv";
-    public final static String PROP_SOUND = "sound";
-    public final static String PROP_CURSOR = "cursor";
-    public final static String PROP_FILLED = "filled";
-    public final static String PROP_CENTERED = "centered";
-    public final static String PROP_MULTIPLE = "multiple";
-    public final static String PROP_GRID = "grid";
-    public final static String PROP_POLYSIDES = "polysides";
-    public final static String PROP_PATTERN = "pattern";
-    public final static String PROP_LINESIZE = "linesize";
-    public final static String PROP_BRUSH = "brush";
-    public final static String PROP_TEXTFONT = "textfont";
-    public final static String PROP_TEXTSIZE = "textsize";
-    public final static String PROP_TEXTSTYLE = "textstyle";
-    public final static String PROP_SCRIPTTEXTFONT = "scripttextfont";
-    public final static String PROP_SCRIPTTEXTSIZE = "scripttextsize";
-    public final static String PROP_SYSTEMVERSION = "systemversion";
-    public final static String PROP_FOUNDCHUNK = "foundchunk";
-    public final static String PROP_FOUNDFIELD = "foundfield";
-    public final static String PROP_FOUNDLINE = "foundline";
-    public final static String PROP_FOUNDTEXT = "foundtext";
-    public final static String PROP_LOCKMESSAGES = "lockmessages";
-    public final static String PROP_THEME = "theme";
-    public final static String PROP_THEMS = "themes";
-
-    private final static HyperCardProperties instance = new HyperCardProperties();
-
-    public static HyperCardProperties getInstance() {
-        return instance;
-    }
-
-    private HyperCardProperties() {
+    public DefaultWyldCardProperties() {
         super();
 
         defineProperty(PROP_ITEMDELIMITER, new Value(","), false);
@@ -181,6 +140,7 @@ public class HyperCardProperties extends PropertiesModel {
         });
     }
 
+    @Override
     public void resetProperties() {
         setKnownProperty(new ExecutionContext(), PROP_ITEMDELIMITER, new Value(","));
         setKnownProperty(new ExecutionContext(), PROP_LOCKSCREEN, new Value(false));

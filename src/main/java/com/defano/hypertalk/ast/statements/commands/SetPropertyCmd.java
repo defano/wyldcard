@@ -1,7 +1,8 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
@@ -32,7 +33,7 @@ public class SetPropertyCmd extends Command {
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
         if (this.part == null) {
-            HyperCardProperties.getInstance().setProperty(context, property, value);
+            WyldCard.getInstance().getWyldCardProperties().setProperty(context, property, value);
         } else {
             PartModel model = context.getPart(part.factor(context, PartExp.class, new HtSemanticException("Expected to find a part here.")).evaluateAsSpecifier(context));
 

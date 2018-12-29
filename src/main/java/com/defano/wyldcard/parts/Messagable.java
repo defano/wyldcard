@@ -7,7 +7,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.wyldcard.runtime.interpreter.MessageCompletionObserver;
@@ -80,7 +80,7 @@ public interface Messagable {
 
         // No messages are sent cmd-option is down; some messages not sent when 'lockMessages' is true
         if (WyldCard.getInstance().getKeyboardManager().isPeeking(context) ||
-                (SystemMessage.isLockable(message)) && HyperCardProperties.getInstance().getKnownProperty(context, HyperCardProperties.PROP_LOCKMESSAGES).booleanValue()) {
+                (SystemMessage.isLockable(message)) && WyldCard.getInstance().getWyldCardProperties().getKnownProperty(context, DefaultWyldCardProperties.PROP_LOCKMESSAGES).booleanValue()) {
             onCompletion.onMessagePassed(message, false, null);
             return;
         }

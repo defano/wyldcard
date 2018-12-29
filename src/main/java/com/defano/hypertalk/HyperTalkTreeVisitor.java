@@ -6,7 +6,7 @@ import com.defano.hypertalk.ast.expressions.operators.BinaryOperatorExp;
 import com.defano.hypertalk.ast.expressions.operators.UnaryOperator;
 import com.defano.hypertalk.ast.expressions.operators.UnaryOperatorExp;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.hypertalk.ast.expressions.*;
 import com.defano.hypertalk.ast.expressions.containers.*;
 import com.defano.hypertalk.ast.expressions.functions.*;
@@ -1083,7 +1083,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitLockScreenCmdStmt(HyperTalkParser.LockScreenCmdStmtContext ctx) {
-        return new SetPropertyCmd(ctx, HyperCardProperties.PROP_LOCKSCREEN, new Value(true));
+        return new SetPropertyCmd(ctx, DefaultWyldCardProperties.PROP_LOCKSCREEN, new Value(true));
     }
 
     @Override

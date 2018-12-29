@@ -15,9 +15,9 @@ public interface ComputedGetter {
      *
      *
      * @param context      The execution context
-     * @param model        The {@link PropertiesModel} whose property is being retrieved.
+     * @param model        The {@link DefaultPropertiesModel} whose property is being retrieved.
      * @param propertyName The name of the property which is to be calculated.
      * @return The value of the property to be returned to the requester.
      */
-    Value getComputedValue(ExecutionContext context, PropertiesModel model, String propertyName);
+    Value getComputedValue(ExecutionContext context, DefaultPropertiesModel model, String propertyName);
 }

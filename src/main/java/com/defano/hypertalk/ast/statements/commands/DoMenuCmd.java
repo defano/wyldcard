@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
+import com.defano.wyldcard.WyldCard;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
@@ -18,6 +18,6 @@ public class DoMenuCmd extends Statement {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
-        HyperCardMenuBar.getInstance().doMenu(context, theMenuItem.evaluate(context).toString());
+        WyldCard.getInstance().getWyldCardMenuBar().doMenu(context, theMenuItem.evaluate(context).toString());
     }
 }

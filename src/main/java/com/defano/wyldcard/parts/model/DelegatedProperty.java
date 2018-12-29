@@ -7,14 +7,14 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
  */
 public interface DelegatedProperty {
     /**
-     * Get the {@link PropertiesModel} that the given property should be delegated to. Get and set operations to this
-     * property will be forwarded to the returned PropertiesModel.
+     * Get the {@link DefaultPropertiesModel} that the given property should be delegated to. Get and set operations to this
+     * property will be forwarded to the returned DefaultPropertiesModel.
      *
      * Useful for properties which are inherited from another model. For example, a card's size property is inherited
      * from the stack model.
      *
      * @param property The name of the property being delegated
-     * @return The PropertiesModel to which to property should be delegated
+     * @return The DefaultPropertiesModel to which to property should be delegated
      */
-    PropertiesModel getDelegatedModel(ExecutionContext context, String property);
+    DefaultPropertiesModel getDelegatedModel(ExecutionContext context, String property);
 }

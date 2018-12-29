@@ -12,12 +12,11 @@ import com.defano.wyldcard.parts.clipboard.CardPartTransferHandler;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.PropertiesModel;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.PartsTable;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultPartToolManager;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.expressions.ListExp;
@@ -809,7 +808,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property.toLowerCase()) {
             case CardModel.PROP_SHOWPICT:
                 if (model == getCardModel()) {

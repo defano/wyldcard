@@ -12,7 +12,7 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldModelObserver;
-import com.defano.wyldcard.parts.model.PropertiesModel;
+import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
@@ -135,7 +135,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
      */
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_DONTWRAP:
                 textPane.setWrapText(!newValue.booleanValue());

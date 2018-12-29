@@ -3,7 +3,9 @@ package com.defano.hypertalk.utils;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
+import com.defano.wyldcard.runtime.WyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.google.common.collect.Lists;
 
@@ -63,7 +65,7 @@ public class ChunkUtils {
      */
     public static String putChunk(ExecutionContext context, ChunkType chunkType, Preposition preposition, String mutableString, int chunkNumber, int endChunkNumber, String mutatorString) throws HtSemanticException {
 
-        if (!Ordinal.reservedValue(chunkNumber)) {
+        if (!Ordinal.isReservedValue(chunkNumber)) {
 
             int chunksInContainer = getCount(context, chunkType, mutableString);
 
@@ -190,7 +192,7 @@ public class ChunkUtils {
     private static String getItemDelimiterRegex(ExecutionContext context) {
         List<Character> specialChars = Lists.charactersOf("[\\^$.|?*+()");
 
-        String itemDelimiter = HyperCardProperties.getInstance().getKnownProperty(context, HyperCardProperties.PROP_ITEMDELIMITER).toString();
+        String itemDelimiter = WyldCard.getInstance().getWyldCardProperties().getKnownProperty(context, WyldCardProperties.PROP_ITEMDELIMITER).toString();
         StringBuilder itemDelimiterRegex = new StringBuilder();
 
         for (char thisChar : itemDelimiter.toCharArray()) {
@@ -226,7 +228,7 @@ public class ChunkUtils {
                 return "\n";
             case ITEMRANGE:
             case ITEM:
-                return HyperCardProperties.getInstance().getKnownProperty(context, HyperCardProperties.PROP_ITEMDELIMITER).toString();
+                return WyldCard.getInstance().getWyldCardProperties().getKnownProperty(context, DefaultWyldCardProperties.PROP_ITEMDELIMITER).toString();
             default:
                 throw new RuntimeException("Bug! Not implemented: " + chunkType);
         }

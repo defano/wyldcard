@@ -15,6 +15,6 @@ public class DivideOp extends BinaryOperatorExp {
 
     @Override
     protected Value onEvaluate(ExecutionContext context) throws HtException {
-        return lhs(context).divide(rhs(context));
+        return lhs(context).dividedBy(rhs(context));
     }
 }

@@ -14,7 +14,6 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
-import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
@@ -282,7 +281,7 @@ public class ExecutionContext {
 
         // Operating on a chunk of the existing value
         if (chunk != null)
-            mutable = Value.ofChunk(this, mutable, preposition, chunk, value);
+            mutable = Value.ofMutatedChunk(this, mutable, preposition, chunk, value);
         else
             mutable = Value.ofValue(mutable, preposition, value);
 
@@ -361,7 +360,7 @@ public class ExecutionContext {
      */
     public Value getProperty(String property, PartSpecifier ps) throws NoSuchPropertyException, PartException {
         if (ps == null) {
-            return HyperCardProperties.getInstance().getProperty(this, property);
+            return WyldCard.getInstance().getWyldCardProperties().getProperty(this, property);
         } else {
             return getPart(ps).getProperty(this, property);
         }
@@ -382,13 +381,13 @@ public class ExecutionContext {
         Value mutable = getProperty(property, ps);
 
         if (chunk != null) {
-            mutable = Value.ofChunk(this, mutable, preposition, chunk, value);
+            mutable = Value.ofMutatedChunk(this, mutable, preposition, chunk, value);
         } else {
             mutable = Value.ofValue(mutable, preposition, value);
         }
 
         if (ps == null) {
-            HyperCardProperties.getInstance().setProperty(this, property, mutable);
+            WyldCard.getInstance().getWyldCardProperties().setProperty(this, property, mutable);
         } else {
             getPart(ps).setProperty(this, property, mutable);
         }

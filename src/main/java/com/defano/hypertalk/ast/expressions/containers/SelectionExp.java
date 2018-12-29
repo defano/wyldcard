@@ -33,12 +33,12 @@ public class SelectionExp extends ContainerExp {
         // Create the new selectedText
         Value newSelection;
         if (getChunk() != null)
-            newSelection = Value.ofChunk(context, oldSelection, preposition, getChunk(), value);
+            newSelection = Value.ofMutatedChunk(context, oldSelection, preposition, getChunk(), value);
         else
             newSelection = Value.ofValue(oldSelection, preposition, value);
 
         // Replace the current selection with the new selection
-        partModel.setValue(Value.ofChunk(context, partModel.getValue(context), Preposition.INTO, range.asChunk(), newSelection), context);
+        partModel.setValue(Value.ofMutatedChunk(context, partModel.getValue(context), Preposition.INTO, range.asChunk(), newSelection), context);
 
         // Select the new range of text in the destination
         int newSelectionLength = newSelection.toString().length();

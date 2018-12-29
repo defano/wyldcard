@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
-import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
+import com.defano.wyldcard.WyldCard;
 import com.defano.hypertalk.ast.model.Ordinal;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -32,10 +32,10 @@ public class MenuSpecifier {
             JMenu foundMenu;
             Value menuExprValue = menuExpr.evaluate(context);
 
-            foundMenu = HyperCardMenuBar.getInstance().findMenuByName(menuExprValue.toString());
+            foundMenu = WyldCard.getInstance().getWyldCardMenuBar().findMenuByName(menuExprValue.toString());
 
             if (foundMenu == null) {
-                foundMenu = HyperCardMenuBar.getInstance().findMenuByNumber(menuExprValue.integerValue() - 1);
+                foundMenu = WyldCard.getInstance().getWyldCardMenuBar().findMenuByNumber(menuExprValue.integerValue() - 1);
             }
 
             if (foundMenu == null) {
@@ -46,7 +46,7 @@ public class MenuSpecifier {
         }
 
         if (menuOrdinal != null) {
-            int menuCount = HyperCardMenuBar.getInstance().getMenuCount();
+            int menuCount = WyldCard.getInstance().getWyldCardMenuBar().getMenuCount();
             JMenu foundMenu;
 
             if (menuCount == 0) {
@@ -55,16 +55,16 @@ public class MenuSpecifier {
 
             switch (menuOrdinal) {
                 case LAST:
-                    foundMenu = HyperCardMenuBar.getInstance().findMenuByNumber(menuCount - 1);
+                    foundMenu = WyldCard.getInstance().getWyldCardMenuBar().findMenuByNumber(menuCount - 1);
                     break;
                 case MIDDLE:
-                    foundMenu = HyperCardMenuBar.getInstance().findMenuByNumber(menuCount / 2);
+                    foundMenu = WyldCard.getInstance().getWyldCardMenuBar().findMenuByNumber(menuCount / 2);
                     break;
                 case ANY:
-                    foundMenu = HyperCardMenuBar.getInstance().findMenuByNumber(new Random().nextInt(menuCount));
+                    foundMenu = WyldCard.getInstance().getWyldCardMenuBar().findMenuByNumber(new Random().nextInt(menuCount));
                     break;
                 default:
-                    foundMenu = HyperCardMenuBar.getInstance().findMenuByNumber(menuOrdinal.intValue() - 1);
+                    foundMenu = WyldCard.getInstance().getWyldCardMenuBar().findMenuByNumber(menuOrdinal.intValue() - 1);
                     break;
             }
 

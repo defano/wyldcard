@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.model.LengthAdjective;
 import com.defano.hypertalk.ast.model.Value;
 
 import java.text.*;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtils {
@@ -115,6 +116,7 @@ public class DateUtils {
         }
 
         Date updated = new Date(first.getTime());
+        Calendar cal = Calendar.getInstance();
 
         switch (secondFormat) {
             case SECONDS:
@@ -124,17 +126,20 @@ public class DateUtils {
             case LONG_DATE:
             case SHORT_DATE:
             case ABBREV_DATE:
-                updated.setYear(second.getYear());
-                updated.setMonth(second.getMonth());
-                updated.setDate(second.getDate());
-                return updated;
+                cal.setTime(updated);
+                cal.set(Calendar.YEAR, second.getYear());
+                cal.set(Calendar.MONTH, second.getMonth());
+                cal.set(Calendar.DATE, second.getDate());
+                return cal.getTime();
 
             case LONG_TIME:
             case SHORT_TIME:
-                updated.setHours(second.getHours());
-                updated.setMinutes(second.getMinutes());
-                updated.setSeconds(second.getSeconds());
-                return updated;
+                cal.setTime(updated);
+                cal.set(Calendar.HOUR_OF_DAY, second.getHours());
+                cal.set(Calendar.MINUTE, second.getMinutes());
+                cal.set(Calendar.SECOND, second.getSeconds());
+                cal.set(Calendar.MILLISECOND, 0);
+                return cal.getTime();
         }
 
         throw new IllegalStateException("Bug! Unimplemented conversion format: " + secondFormat);

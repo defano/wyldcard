@@ -8,13 +8,16 @@ import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.cursor.DefaultCursorManager;
-import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
+import com.defano.wyldcard.menubar.main.DefaultWyldCardMenuBar;
+import com.defano.wyldcard.menubar.main.WyldCardMenuBar;
 import com.defano.wyldcard.parts.editor.DefaultPartEditManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.parts.finder.PartFinder;
 import com.defano.wyldcard.patterns.DefaultPatternManager;
 import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.runtime.DefaultPeriodicMessageManager;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
+import com.defano.wyldcard.runtime.WyldCardProperties;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.*;
 import com.defano.wyldcard.search.DefaultSearchManager;
@@ -56,6 +59,8 @@ public class WyldCard extends StackManager implements PartFinder {
     @Inject private CursorManager cursorManager;
     @Inject private PartToolManager partToolManager;
     @Inject private SpeechPlaybackManager speechPlaybackManager;
+    @Inject private WyldCardMenuBar wyldCardMenuBar;
+    @Inject private WyldCardProperties wyldCardProperties;
 
     WyldCard() {}
 
@@ -98,7 +103,7 @@ public class WyldCard extends StackManager implements PartFinder {
             newStack(new ExecutionContext());
 
             // Need to have an open stack before showing the menu bar
-            HyperCardMenuBar.getInstance().reset();
+            WyldCard.getInstance().getWyldCardMenuBar().reset();
 
             // Apply default palette layout
             WyldCard.getInstance().getWindowManager().restoreDefaultLayout();
@@ -183,10 +188,39 @@ public class WyldCard extends StackManager implements PartFinder {
         return speechPlaybackManager;
     }
 
+    public WyldCardProperties getWyldCardProperties() {
+        return wyldCardProperties;
+    }
+
+    public WyldCardMenuBar getWyldCardMenuBar() {
+        return wyldCardMenuBar;
+    }
+
+    /**
+     * Returns the Google Guice injector used to assemble this object.
+     * @return The Guice injector
+     */
     public static Injector getInjector() {
         return injector;
     }
 
+    /**
+     * Sets the Guice Injector used to assemble this object, then creates the singleton instance using this Injector.
+     *
+     * Intended for test use to create a WyldCard instance injected with mock managed objects. Typically this method
+     * should only be invoked once, prior to executing any code which depends on the WyldCard singleton.
+     *
+     * @param injector The Google Guice injector to use when assembling this managed Singleton.
+     */
+    public static void setInjector(Injector injector) {
+        WyldCard.injector = injector;
+        WyldCard.instance = injector.getInstance(WyldCard.class);
+    }
+
+    /**
+     * The "normal" assembly of this managed singleton; binds manager classes and other managed singletons to their
+     * default implementations.
+     */
     private static class WyldCardAssembly extends AbstractModule {
         @Override
         protected void configure() {
@@ -205,6 +239,8 @@ public class WyldCard extends StackManager implements PartFinder {
             bind(CursorManager.class).to(DefaultCursorManager.class);
             bind(PartToolManager.class).to(DefaultPartToolManager.class);
             bind(SpeechPlaybackManager.class).to(DefaultSpeechPlaybackManager.class);
+            bind(WyldCardMenuBar.class).to(DefaultWyldCardMenuBar.class);
+            bind(WyldCardProperties.class).to(DefaultWyldCardProperties.class);
         }
     }
 }

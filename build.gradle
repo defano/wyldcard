@@ -4,6 +4,7 @@ buildscript {
 	}
 	dependencies {
 		classpath "com.github.sedovalx.gradle:gradle-aspectj-binary:1.0.25"
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.1.0'
 	}
 }
 
@@ -15,6 +16,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'antlr'
 apply plugin: 'idea'
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 allprojects {
 	apply plugin: 'java'
@@ -92,6 +94,14 @@ dependencies {
 	testCompile group: 'org.junit.vintage', name: 'junit-vintage-engine', version: '5.1.0'
 	testCompile group: 'commons-io', name: 'commons-io', version: '2.4'
 	testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+
+	testRuntime(
+			'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+	)
+}
+
+test {
+	useJUnitPlatform()
 }
 
 generateGrammarSource {

@@ -12,11 +12,13 @@ import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.exception.HtException;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+@Ignore
 public class TestGrammar {
 
     @Test

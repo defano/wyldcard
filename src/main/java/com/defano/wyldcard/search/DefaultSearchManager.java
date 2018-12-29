@@ -1,6 +1,7 @@
 package com.defano.wyldcard.search;
 
-import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -49,10 +50,10 @@ public class DefaultSearchManager implements SearchManager {
         clearSearchHighlights(new ExecutionContext());
         results.clear();
 
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDTEXT, new Value(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDFIELD, new Value(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDLINE, new Value(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDCHUNK, new Value(), true);
+        WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_FOUNDTEXT, new Value(), true);
+        WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_FOUNDFIELD, new Value(), true);
+        WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_FOUNDLINE, new Value(), true);
+        WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_FOUNDCHUNK, new Value(), true);
     }
 
     private void processSearchResult(ExecutionContext context, SearchResult result) {
@@ -60,10 +61,10 @@ public class DefaultSearchManager implements SearchManager {
             context.setResult(new Value("Not found"));
             Toolkit.getDefaultToolkit().beep();
         } else {
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDTEXT, new Value(result.getFoundText()), true);
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDFIELD, new Value(result.getFoundField(context)), true);
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDLINE, new Value(result.getFoundLine(context)), true);
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDCHUNK, new Value(result.getFoundChunk(context)), true);
+            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_FOUNDTEXT, new Value(result.getFoundText()), true);
+            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_FOUNDFIELD, new Value(result.getFoundField(context)), true);
+            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_FOUNDLINE, new Value(result.getFoundLine(context)), true);
+            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_FOUNDCHUNK, new Value(result.getFoundChunk(context)), true);
 
             highlightSearchResult(context, result);
         }

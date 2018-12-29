@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
@@ -64,7 +64,7 @@ public class NumberOfFunc extends Expression {
             case BKGND_FIELDS:
                 return new Value(getScopedLayeredPart(context).getPartCount(context, PartType.FIELD, Owner.BACKGROUND));
             case MENUS:
-                return new Value(HyperCardMenuBar.getInstance().getMenuCount());
+                return new Value(WyldCard.getInstance().getWyldCardMenuBar().getMenuCount());
             case CARDS:
                 return countCards(context);
             case MARKED_CARDS:

@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * A base model object for all HyperCard "parts" that Defines properties common to all part objects.
  */
-public abstract class PartModel extends PropertiesModel implements Messagable {
+public abstract class PartModel extends DefaultPropertiesModel implements Messagable {
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";

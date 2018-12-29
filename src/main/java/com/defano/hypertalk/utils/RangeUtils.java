@@ -93,9 +93,9 @@ public class RangeUtils {
         if (c.end != null)
             endVal = c.end.evaluate(context);
 
-        if (!startVal.isNatural() && !Ordinal.reservedValue(startVal.integerValue()))
+        if (!startVal.isNatural() && !Ordinal.isReservedValue(startVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + startVal + "' instead");
-        if (endVal != null && !endVal.isNatural() && !Ordinal.reservedValue(endVal.integerValue()))
+        if (endVal != null && !endVal.isNatural() && !Ordinal.isReservedValue(endVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + endVal + "' instead");
 
         if (endVal != null)

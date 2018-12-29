@@ -240,7 +240,7 @@ public class Value implements StyledComparable<Value> {
      * @throws HtException Thrown if an error occurs applying the chunk.
      */
     @SuppressWarnings("UnusedAssignment")
-    public static Value ofChunk(ExecutionContext context, Value mutable, Preposition p, Chunk c, Object mutator) throws HtException {
+    public static Value ofMutatedChunk(ExecutionContext context, Value mutable, Preposition p, Chunk c, Object mutator) throws HtException {
 
         if (c instanceof CompositeChunk) {
             return new Value(ChunkUtils.putCompositeChunk(context, (CompositeChunk) c, p, mutable.toString(), String.valueOf(mutator)));
@@ -260,9 +260,9 @@ public class Value implements StyledComparable<Value> {
         if (c.end != null)
             endVal = c.end.evaluate(context);
 
-        if (startVal == null || !startVal.isNatural() && !Ordinal.reservedValue(startVal.integerValue()))
+        if (startVal == null || !startVal.isNatural() && !Ordinal.isReservedValue(startVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + startVal + "' instead.");
-        if (endVal != null && !endVal.isNatural() && !Ordinal.reservedValue(endVal.integerValue()))
+        if (endVal != null && !endVal.isNatural() && !Ordinal.isReservedValue(endVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + endVal + "' instead.");
 
         startIdx = startVal.integerValue();
@@ -286,6 +286,7 @@ public class Value implements StyledComparable<Value> {
             case BEFORE:
                 return new Value(mutator.toString() + mutable.toString());
             case INTO:
+            case REPLACING:
                 return new Value(mutator.toString());
             case AFTER:
                 return new Value(mutable.toString() + mutator.toString());
@@ -506,16 +507,15 @@ public class Value implements StyledComparable<Value> {
     /**
      * Returns this value's representation as a rectangle.
      *
-     * @param context The execution context
      * @return This value's Rectangle representation, or an empty Rectangle (i.e., 0,0,0,0) if this value cannot be
      * interpreted as a Rectangle.
      */
-    public Rectangle rectangleValue(ExecutionContext context) {
+    public Rectangle rectangleValue() {
         if (isRect()) {
-            int left = getItemAt(context, 0).integerValue();
-            int top = getItemAt(context, 1).integerValue();
-            int height = getItemAt(context, 3).integerValue() - getItemAt(context, 1).integerValue();
-            int width = getItemAt(context, 2).integerValue() - getItemAt(context, 0).integerValue();
+            int left = getListItemAt(0).integerValue();
+            int top = getListItemAt(1).integerValue();
+            int height = getListItemAt(3).integerValue() - getListItemAt(1).integerValue();
+            int width = getListItemAt(2).integerValue() - getListItemAt(0).integerValue();
 
             return new Rectangle(left, top, width, height);
         }
@@ -526,14 +526,13 @@ public class Value implements StyledComparable<Value> {
     /**
      * Returns this value's representation as a Point (coordinate)
      *
-     * @param context The execution context
      * @return This value's Point representation, or an empty Point (i.e. 0,0) if this value cannot be interpreted as a
      * Point.
      */
-    public Point pointValue(ExecutionContext context) {
+    public Point pointValue() {
         if (isPoint()) {
-            int left = getItemAt(context, 0).integerValue();
-            int top = getItemAt(context, 1).integerValue();
+            int left = getListItemAt(0).integerValue();
+            int top = getListItemAt(1).integerValue();
 
             return new Point(left, top);
         }
@@ -543,16 +542,21 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Gets a list of comma-separated items contained in this value. This function ignores the itemDelimiter HyperCard
-     * property when splitting the value into items. Useful for parsing argument lists. See {@link #getItems(ExecutionContext)} for a
-     * method whose behavior respects the itemDelimiter.
+     * property when splitting the value into items. Useful for parsing argument lists.
+     *
+     * See {@link #getItems(ExecutionContext)} for a method whose behavior respects the itemDelimiter.
      *
      * @return A list of zero or
      */
     public List<Value> getListItems() {
         ArrayList<Value> items = new ArrayList<>();
-        for (String thisItem : value.split(",")) {
-            items.add(new Value(thisItem));
+
+        if (!value.isEmpty()) {
+            for (String thisItem : value.split(",")) {
+                items.add(new Value(thisItem));
+            }
         }
+
         return items;
     }
 
@@ -576,6 +580,22 @@ public class Value implements StyledComparable<Value> {
      */
     public Value getItemAt(ExecutionContext context, int index) {
         List<Value> items = getItems(context);
+        if (items.size() > index) {
+            return new Value(items.get(index));
+        } else {
+            return new Value();
+        }
+    }
+
+    /**
+     * Returns the comma-delimited item in this value (irrespective of what the itemDelimiter property is). Useful for
+     * parsing coordinates from points and rectangle values.
+     *
+     * @param index The zero-based index of the item to be retrieved.
+     * @return A new Value representing the requested item, or an empty Value if no such item exists.
+     */
+    public Value getListItemAt(int index) {
+        List<Value> items = getListItems();
         if (items.size() > index) {
             return new Value(items.get(index));
         } else {
@@ -694,9 +714,9 @@ public class Value implements StyledComparable<Value> {
         if (c.end != null)
             endVal = c.end.evaluate(context);
 
-        if (startVal == null || !startVal.isNatural() && !Ordinal.reservedValue(startVal.integerValue()))
+        if (startVal == null || !startVal.isNatural() && !Ordinal.isReservedValue(startVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + startVal + "' instead.");
-        if (endVal != null && !endVal.isNatural() && !Ordinal.reservedValue(endVal.integerValue()))
+        if (endVal != null && !endVal.isNatural() && !Ordinal.isReservedValue(endVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + endVal + "' instead.");
 
         startIdx = startVal.integerValue();
@@ -789,7 +809,7 @@ public class Value implements StyledComparable<Value> {
      * @throws HtSemanticException Thrown if either value is not a number, or if an overflow occurs while performing the
      * multiplication
      */
-    public Value multiply(Value v) throws HtSemanticException {
+    public Value multipliedBy(Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
             throw new HtSemanticException("The value '" + value + "' cannot be multiplied by '" + v + "'.");
         }
@@ -812,7 +832,7 @@ public class Value implements StyledComparable<Value> {
      * @return The resultant value
      * @throws HtSemanticException Thrown if either value is not a number, or if the divisor is zero.
      */
-    public Value divide(Value v) throws HtSemanticException {
+    public Value dividedBy(Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
             throw new HtSemanticException("The value '" + value + "' cannot be divided by " + v + '.');
         }
@@ -937,10 +957,6 @@ public class Value implements StyledComparable<Value> {
             throw new HtSemanticException("Expected a logical value here, but got '" + value + "'.");
         }
 
-        if (!booleanValue) {
-            return new Value(false);
-        }
-
         if (!v.isBoolean()) {
             throw new HtSemanticException("Expected a logical value here, but got '" + v + "'.");
         }
@@ -958,10 +974,6 @@ public class Value implements StyledComparable<Value> {
 
         if (!isBoolean()) {
             throw new HtSemanticException("Expected a logical value here, but got '" + value + "'.");
-        }
-
-        if (booleanValue) {
-            return new Value(true);
         }
 
         if (!v.isBoolean()) {
@@ -987,12 +999,12 @@ public class Value implements StyledComparable<Value> {
      * @return True if this value lies inside the specified rectangle value, false otherwise
      * @throws HtSemanticException Thrown if this value is not a point or if v is not a rectangle.
      */
-    public Value within(ExecutionContext context, Value v) throws HtSemanticException {
+    public Value isWithin(Value v) throws HtSemanticException {
         if (!isPoint() || !v.isRect()) {
             throw new HtSemanticException("Cannot determine if '" + value + "' is within the bounds of '" + v.toString() + "'.");
         }
 
-        return new Value(v.rectangleValue(context).contains(pointValue(context)));
+        return new Value(v.rectangleValue().contains(pointValue()));
     }
 
     /**
@@ -1135,11 +1147,16 @@ public class Value implements StyledComparable<Value> {
                 return Double.compare(this.doubleValue(), to.doubleValue());
             case DATE_TIME:
                 Date thisDate = DateUtils.dateOf(this);
+                Date toDateTime = DateUtils.dateOf(to);
+
+                if (thisDate == null && toDateTime == null) {
+                    return 0;
+                }
+
                 if (thisDate == null) {
                     return 1;
                 }
 
-                Date toDateTime = DateUtils.dateOf(to);
                 if (toDateTime == null) {
                     return -1;
                 }
