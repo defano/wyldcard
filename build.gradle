@@ -9,12 +9,14 @@ buildscript {
 
 plugins {
 	id "org.sonarqube" version "2.6"
+	id 'com.gradle.build-scan' version '1.16'
 }
 
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'antlr'
 apply plugin: 'idea'
+apply plugin: "jacoco"
 
 allprojects {
 	apply plugin: 'java'
@@ -65,6 +67,14 @@ idea {
 	}
 }
 
+jacocoTestReport {
+	afterEvaluate {
+		classDirectories = files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: 'com/defano/hypertalk/parser/**')
+		})
+	}
+}
+
 dependencies {
 	antlr "org.antlr:antlr4:4.7.1"
 
@@ -99,9 +109,12 @@ dependencies {
 }
 
 test {
-	useJUnitPlatform {
-		includeEngines 'junit-jupiter', 'junit-vintage'
-	}
+	useJUnitPlatform()
+}
+
+buildScan {
+	termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+	termsOfServiceAgree = 'yes'
 }
 
 generateGrammarSource {
