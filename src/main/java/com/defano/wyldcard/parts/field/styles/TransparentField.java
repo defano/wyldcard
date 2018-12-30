@@ -3,7 +3,6 @@ package com.defano.wyldcard.parts.field.styles;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.ToolEditablePart;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 
 import javax.swing.*;
 import java.awt.*;

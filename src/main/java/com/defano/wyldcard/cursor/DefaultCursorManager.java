@@ -3,7 +3,6 @@ package com.defano.wyldcard.cursor;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.ArrowTool;

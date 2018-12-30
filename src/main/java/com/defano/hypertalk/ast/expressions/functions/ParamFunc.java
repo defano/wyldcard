@@ -22,11 +22,18 @@ public class ParamFunc extends Expression {
         List<Value> params = context.getStackFrame().getParams();
         int evalParamNumber = theParamNumber.evaluate(context).integerValue();
 
+        // Param 0 refers to the message
         if (evalParamNumber == 0) {
             return new Value(context.getStackFrame().getMessage());
-        } else if (params.size() < evalParamNumber) {
+        }
+
+        // Return the empty string if param number is bogus
+        else if (params.size() < evalParamNumber) {
             return new Value();
-        } else {
+        }
+
+        // Normal case: Return bound parameter value
+        else {
             return params.get(evalParamNumber - 1);
         }
     }

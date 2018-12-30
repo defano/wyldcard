@@ -8,21 +8,18 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MenusFuncTest extends GuiceTest<MenusFunc> {
+public class ResultFuncTest extends GuiceTest<ResultFunc> {
 
     @BeforeEach
     public void setUp() {
-        initialize(new MenusFunc(mockParserRuleContext));
+        initialize(new ResultFunc(mockParserRuleContext));
     }
 
     @Test
     public void testOnEvaluate() {
         // Setup
-        final Value expectedResult = new Value("Menu 0\nMenu 1\nMenu 2");
-        Mockito.when(mockWyldCardMenuBar.getMenuCount()).thenReturn(3);
-        Mockito.when(mockWyldCardMenuBar.getMenu(0).getText()).thenReturn("Menu 0");
-        Mockito.when(mockWyldCardMenuBar.getMenu(1).getText()).thenReturn("Menu 1");
-        Mockito.when(mockWyldCardMenuBar.getMenu(2).getText()).thenReturn("Menu 2");
+        final Value expectedResult = new Value("The result");
+        Mockito.when(mockExecutionContext.getResult()).thenReturn(expectedResult);
 
         // Run the test
         final Value result = uut.onEvaluate(mockExecutionContext);

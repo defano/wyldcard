@@ -4,7 +4,6 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.layouts.*;
 import com.google.inject.Singleton;
 import io.reactivex.subjects.BehaviorSubject;

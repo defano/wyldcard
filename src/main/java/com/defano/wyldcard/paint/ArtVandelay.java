@@ -1,7 +1,6 @@
 package com.defano.wyldcard.paint;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;

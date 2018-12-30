@@ -11,7 +11,6 @@ import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 
 import javax.swing.*;
 
