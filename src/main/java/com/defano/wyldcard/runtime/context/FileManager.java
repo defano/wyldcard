@@ -14,7 +14,7 @@ public interface FileManager {
      *                 created when written to.
      * @return A FileHandle to the requested file. Never null.
      */
-    DefaultFileManager.FileHandle open(String filename);
+    FileHandle open(String filename);
 
     /**
      * Closes the file handle associated with filename. Physically closes the file on the filesystem if the handle
@@ -33,7 +33,7 @@ public interface FileManager {
      * @param filename The file name (or path) of the file whose FileHandle should be returned.
      * @return The open FileHandle associated with the requested file or null if the file is not open.
      */
-    DefaultFileManager.FileHandle getFileHandle(String filename);
+    FileHandle getFileHandle(String filename);
 
     /**
      * Closes all open file handles. Useful when closing a stack and intending to flush any open files. Does not report

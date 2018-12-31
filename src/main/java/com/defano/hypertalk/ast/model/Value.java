@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
  */
 public class Value implements StyledComparable<Value> {
 
-    private final String value;
+    private final String stringValue;
 
     // A flag to indicate value represents a quoted literal (useful when disambiguating 'card button 1' from 'card
     // button "1"'. The latter refers to a card button _named_ "1"; the former refers to card button number 1)
@@ -139,7 +139,7 @@ public class Value implements StyledComparable<Value> {
      * @param v The initial value.
      */
     public Value(String v) {
-        this.value = v == null ? "" : v;
+        this.stringValue = v == null ? "" : v;
 
         // Special case: empty string is a valid int and float
         if (v == null || v.trim().equals("")) {
@@ -384,7 +384,7 @@ public class Value implements StyledComparable<Value> {
      */
     private Long parseLong() {
         try {
-            longValue = Long.parseLong(value.trim());
+            longValue = Long.parseLong(stringValue.trim());
         } catch (NumberFormatException e) {
             longValue = null;
         }
@@ -399,7 +399,7 @@ public class Value implements StyledComparable<Value> {
      */
     private Double parseFloat() {
         try {
-            floatValue = Double.parseDouble(value.trim());
+            floatValue = Double.parseDouble(stringValue.trim());
         } catch (NumberFormatException e) {
             floatValue = null;
         }
@@ -413,9 +413,9 @@ public class Value implements StyledComparable<Value> {
      * @return The boolean representation of this value, or null, if it cannot be cast as a Boolean.
      */
     private Boolean parseBoolean() {
-        if (value.trim().equalsIgnoreCase("true")) {
+        if (stringValue.trim().equalsIgnoreCase("true")) {
             booleanValue = true;
-        } else if (value.trim().equalsIgnoreCase("false")) {
+        } else if (stringValue.trim().equalsIgnoreCase("false")) {
             booleanValue = false;
         } else {
             booleanValue = null;
@@ -551,8 +551,8 @@ public class Value implements StyledComparable<Value> {
     public List<Value> getListItems() {
         ArrayList<Value> items = new ArrayList<>();
 
-        if (!value.isEmpty()) {
-            for (String thisItem : value.split(",")) {
+        if (!stringValue.isEmpty()) {
+            for (String thisItem : stringValue.split(",")) {
                 items.add(new Value(thisItem));
             }
         }
@@ -642,7 +642,7 @@ public class Value implements StyledComparable<Value> {
      * @return A list of zero or more chunks of the requested type
      */
     public List<Value> getChunks(ExecutionContext context, ChunkType type) {
-        Matcher matcher = ChunkUtils.getRegexForChunkType(context, type).matcher(value);
+        Matcher matcher = ChunkUtils.getRegexForChunkType(context, type).matcher(stringValue);
         ArrayList<Value> chunks = new ArrayList<>();
 
         while (matcher.find()) {
@@ -659,7 +659,7 @@ public class Value implements StyledComparable<Value> {
      * @return The number of items held in this value.
      */
     public int itemCount(ExecutionContext context) {
-        return ChunkUtils.getCount(context, ChunkType.ITEM, value);
+        return ChunkUtils.getCount(context, ChunkType.ITEM, stringValue);
     }
 
     /**
@@ -669,7 +669,7 @@ public class Value implements StyledComparable<Value> {
      * @return The number of words held in this value.
      */
     public int wordCount(ExecutionContext context) {
-        return ChunkUtils.getCount(context, ChunkType.WORD, value);
+        return ChunkUtils.getCount(context, ChunkType.WORD, stringValue);
     }
 
     /**
@@ -679,7 +679,7 @@ public class Value implements StyledComparable<Value> {
      * @return The number of chars held in this value.
      */
     public int charCount(ExecutionContext context) {
-        return ChunkUtils.getCount(context, ChunkType.CHAR, value);
+        return ChunkUtils.getCount(context, ChunkType.CHAR, stringValue);
     }
 
     /**
@@ -689,7 +689,7 @@ public class Value implements StyledComparable<Value> {
      * @return The number of lines held in this value.
      */
     public int lineCount(ExecutionContext context) {
-        return ChunkUtils.getCount(context, ChunkType.LINE, value);
+        return ChunkUtils.getCount(context, ChunkType.LINE, stringValue);
     }
 
     /**
@@ -723,7 +723,7 @@ public class Value implements StyledComparable<Value> {
         if (endVal != null)
             endIdx = endVal.integerValue();
 
-        Value chunkValue = new Value(ChunkUtils.getChunk(context, c.type, value, startIdx, endIdx));
+        Value chunkValue = new Value(ChunkUtils.getChunk(context, c.type, stringValue, startIdx, endIdx));
 
         // If a composite chunk; evaluate right hand of the expression first
         if (c instanceof CompositeChunk) {
@@ -738,7 +738,7 @@ public class Value implements StyledComparable<Value> {
      * @return True if the value is empty, false otherwise.
      */
     public boolean isEmpty() {
-        return value.equals("");
+        return stringValue.equals("");
     }
 
     /**
@@ -811,7 +811,7 @@ public class Value implements StyledComparable<Value> {
      */
     public Value multipliedBy(Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
-            throw new HtSemanticException("The value '" + value + "' cannot be multiplied by '" + v + "'.");
+            throw new HtSemanticException("The value '" + stringValue + "' cannot be multiplied by '" + v + "'.");
         }
 
         try {
@@ -834,7 +834,7 @@ public class Value implements StyledComparable<Value> {
      */
     public Value dividedBy(Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
-            throw new HtSemanticException("The value '" + value + "' cannot be divided by " + v + '.');
+            throw new HtSemanticException("The value '" + stringValue + "' cannot be divided by " + v + '.');
         }
 
         try {
@@ -852,7 +852,7 @@ public class Value implements StyledComparable<Value> {
      */
     public Value add(Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
-            throw new HtSemanticException("The value '" + v + "' cannot be added to '" + value + "'.");
+            throw new HtSemanticException("The value '" + v + "' cannot be added to '" + stringValue + "'.");
         }
 
         try {
@@ -873,7 +873,7 @@ public class Value implements StyledComparable<Value> {
      */
     public Value subtract(Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
-            throw new HtSemanticException("The value '" + v + "' cannot be subtracted from '" + value + "'.");
+            throw new HtSemanticException("The value '" + v + "' cannot be subtracted from '" + stringValue + "'.");
         }
 
         try {
@@ -894,7 +894,7 @@ public class Value implements StyledComparable<Value> {
      */
     public Value exponentiate(Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
-            throw new HtSemanticException("The value '" + value + "' cannot be raised to the power of '" + v + "'.");
+            throw new HtSemanticException("The value '" + stringValue + "' cannot be raised to the power of '" + v + "'.");
         }
 
         return new Value(Math.pow(doubleValue(), v.doubleValue()));
@@ -908,7 +908,7 @@ public class Value implements StyledComparable<Value> {
      */
     public Value mod(Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
-            throw new HtSemanticException("The value '" + v + "' cannot be mod by '" + value + "'.");
+            throw new HtSemanticException("The value '" + v + "' cannot be mod by '" + stringValue + "'.");
         }
 
         if (isInteger() && v.isInteger())
@@ -924,7 +924,7 @@ public class Value implements StyledComparable<Value> {
      */
     public Value not() throws HtSemanticException {
         if (!isBoolean())
-            throw new HtSemanticException("Expected a logical value here, but got '" + value + "'.");
+            throw new HtSemanticException("Expected a logical value here, but got '" + stringValue + "'.");
 
         return new Value(!booleanValue());
     }
@@ -940,7 +940,7 @@ public class Value implements StyledComparable<Value> {
         else if (isNumber())
             return new Value(doubleValue() * -1);
         else {
-            throw new HtSemanticException("Expected a number here, but got '" + value + "'.");
+            throw new HtSemanticException("Expected a number here, but got '" + stringValue + "'.");
         }
     }
 
@@ -954,7 +954,7 @@ public class Value implements StyledComparable<Value> {
 
         // Allow for short circuit evaluation
         if (!isBoolean()) {
-            throw new HtSemanticException("Expected a logical value here, but got '" + value + "'.");
+            throw new HtSemanticException("Expected a logical value here, but got '" + stringValue + "'.");
         }
 
         if (!v.isBoolean()) {
@@ -973,7 +973,7 @@ public class Value implements StyledComparable<Value> {
     public Value or(Value v) throws HtSemanticException {
 
         if (!isBoolean()) {
-            throw new HtSemanticException("Expected a logical value here, but got '" + value + "'.");
+            throw new HtSemanticException("Expected a logical value here, but got '" + stringValue + "'.");
         }
 
         if (!v.isBoolean()) {
@@ -989,7 +989,7 @@ public class Value implements StyledComparable<Value> {
      * @return The resultant value
      */
     public Value concat(Value v) {
-        return new Value(value + v.toString());
+        return new Value(stringValue + v.toString());
     }
 
     /**
@@ -1001,7 +1001,7 @@ public class Value implements StyledComparable<Value> {
      */
     public Value isWithin(Value v) throws HtSemanticException {
         if (!isPoint() || !v.isRect()) {
-            throw new HtSemanticException("Cannot determine if '" + value + "' is within the bounds of '" + v.toString() + "'.");
+            throw new HtSemanticException("Cannot determine if '" + stringValue + "' is within the bounds of '" + v.toString() + "'.");
         }
 
         return new Value(v.rectangleValue().contains(pointValue()));
@@ -1058,7 +1058,7 @@ public class Value implements StyledComparable<Value> {
      * @return True if the given value can be found within this value
      */
     public boolean contains(Value v) {
-        return value.toLowerCase().contains(v.toString().toLowerCase());
+        return stringValue.toLowerCase().contains(v.toString().toLowerCase());
     }
 
     /**
@@ -1066,7 +1066,7 @@ public class Value implements StyledComparable<Value> {
      * @return The string representation of this value.
      */
     public String toString() {
-        return value;
+        return stringValue;
     }
 
     /**
@@ -1100,8 +1100,8 @@ public class Value implements StyledComparable<Value> {
         else if (isInteger() && otherValue.isInteger()) {
             // Weird special case: "" is a valid number (zero), but is not equal to 0
             // Thus, '2 * "" = 0', but '0 <> ""' -- don't believe me, try it in HyperCard!
-            if (value.equals("") || otherValue.value.equals("")) {
-                return value.equals(otherValue.value);
+            if (stringValue.equals("") || otherValue.stringValue.equals("")) {
+                return stringValue.equals(otherValue.stringValue);
             } else {
                 return this.integerValue() == otherValue.integerValue();
             }
@@ -1121,7 +1121,7 @@ public class Value implements StyledComparable<Value> {
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return stringValue.hashCode();
     }
 
     /** {@inheritDoc} */

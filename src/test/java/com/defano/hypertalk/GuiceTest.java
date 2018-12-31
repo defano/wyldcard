@@ -25,7 +25,7 @@ import org.mockito.Mockito;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class GuiceTest<T> {
+public class GuiceTest<T> implements TestDataGenerator {
 
     protected Injector injector;        // The Guice injector
     protected T uut;                    // The unit under test

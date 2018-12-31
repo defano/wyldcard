@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.preemptions;
 
 /**
- * Represents an interruption in the flow of a handler as a result of reaching a 'pass {handlerName}` command.
+ * Represents an interruption in the flow of a handler as a result of executing a 'pass {handlerName}` command.
  */
 public class PassPreemption extends TerminateHandlerPreemption {
 

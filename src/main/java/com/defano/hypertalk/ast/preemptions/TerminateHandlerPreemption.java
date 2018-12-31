@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.preemptions;
 
 /**
- * Represents an interruption to the flow of control in the current handler of function; causes control to exit the
+ * Represents an interruption to the flow of control in the current handler or function; causes control to exit the
  * current handler or function.
  */
 public class TerminateHandlerPreemption extends Preemption {
