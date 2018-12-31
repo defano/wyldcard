@@ -58,15 +58,15 @@ public class DefaultPeriodicMessageManager implements PeriodicMessageManager {
     @Override
     public void run() {
         try {
-            // Send 'within' message to any parts whose bounds the mouse is within
-            send(SystemMessage.MOUSE_WITHIN, withinParts.toArray(new PartModel[] {}));
-
             // Send 'idle' message to card if no other scripts are pending
             if (Interpreter.getPendingScriptCount() == 0) {
                 WyldCard.getInstance().getWyldCardProperties().resetProperties();
                 DebugContext.getInstance().resume();
                 send(SystemMessage.IDLE, new ExecutionContext().getCurrentCard().getCardModel());
             }
+
+            // Send 'within' message to any parts whose bounds the mouse is within
+            send(SystemMessage.MOUSE_WITHIN, withinParts.toArray(new PartModel[] {}));
 
             if (deferCycles > 0) {
                 --deferCycles;
