@@ -2,10 +2,10 @@ package com.defano.wyldcard.runtime.context;
 
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.ToolType;
-import com.defano.jmonet.algo.dither.Ditherer;
+import com.defano.jmonet.transform.dither.Ditherer;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.Interpolation;
-import com.defano.jmonet.tools.builder.PaintTool;
+import com.defano.jmonet.tools.base.Tool;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableImageSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
@@ -34,13 +34,13 @@ public interface ToolsManager {
 
     void reactivateTool(PaintCanvas canvas);
 
-    Subject<PaintTool> getPaintToolProvider();
+    Subject<Tool> getPaintToolProvider();
 
     Subject<ToolMode> getToolModeProvider();
 
     ToolMode getToolMode();
 
-    PaintTool getPaintTool();
+    Tool getPaintTool();
 
     void selectAll();
 
@@ -100,6 +100,10 @@ public interface ToolsManager {
 
     void setIntensity(double intensity);
 
+    boolean getPathInterpolation();
+
+    void setPathInterpolation(boolean enabled);
+
     Ditherer getDitherer();
 
     void setDitherer(Ditherer ditherer);
@@ -158,7 +162,7 @@ public interface ToolsManager {
      *                      the tool transition does not operate on a selection or does not support selection morphing.
      * @return The instance of the newly activated tool.
      */
-    PaintTool forceToolSelection(ToolType tool, boolean keepSelection);
+    Tool forceToolSelection(ToolType tool, boolean keepSelection);
 
     ToolType getSelectedTool();
 

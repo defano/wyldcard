@@ -1,12 +1,12 @@
 package com.defano.wyldcard.cursor;
 
+import com.defano.jmonet.tools.base.Tool;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.ArrowTool;
-import com.defano.jmonet.tools.builder.PaintTool;
 import com.google.inject.Singleton;
 
 import javax.swing.*;
@@ -56,7 +56,7 @@ public class DefaultCursorManager implements CursorManager {
 
     private void updateCursor() {
         ToolMode mode = WyldCard.getInstance().getToolsManager().getToolMode();
-        PaintTool tool = WyldCard.getInstance().getToolsManager().getPaintTool();
+        Tool tool = WyldCard.getInstance().getToolsManager().getPaintTool();
 
         Cursor effectiveCursor = mode == ToolMode.BROWSE ?
                 activeCursor.cursor :

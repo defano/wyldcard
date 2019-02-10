@@ -1,11 +1,11 @@
 package com.defano.wyldcard.menubar.main;
 
-import com.defano.jmonet.algo.dither.*;
-import com.defano.jmonet.algo.fill.DefaultFillFunction;
+import com.defano.jmonet.tools.attributes.FillFunction;
 import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableImageSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
+import com.defano.jmonet.transform.dither.NullDitherer;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
@@ -45,7 +45,7 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Fill")
                 .withEnabledProvider(WyldCard.getInstance().getToolsManager().hasTransformableImageSelectionProvider())
-                .withAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).fill(WyldCardPatternFactory.getInstance().getPattern(WyldCard.getInstance().getToolsManager().getFillPattern()), new DefaultFillFunction()))
+                .withAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).fill(WyldCardPatternFactory.getInstance().getPattern(WyldCard.getInstance().getToolsManager().getFillPattern()), new FillFunction() {}))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -241,7 +241,7 @@ public class PaintMenu extends HyperCardMenu {
 
                         MenuItemBuilder.ofCheckType()
                                 .named("None")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new NullDitherer()))
+                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.NullDitherer()))
                                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof NullDitherer))
                                 .build(ditherMenu);
 
@@ -249,50 +249,50 @@ public class PaintMenu extends HyperCardMenu {
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Atkinson")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new AtkinsonDitherer()))
-                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof AtkinsonDitherer))
+                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.AtkinsonDitherer()))
+                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.AtkinsonDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Burkes")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new BurkesDitherer()))
-                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof BurkesDitherer))
+                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.BurkesDitherer()))
+                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.BurkesDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Floyd Steinberg")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new FloydSteinbergDitherer()))
-                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof FloydSteinbergDitherer))
+                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.FloydSteinbergDitherer()))
+                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.FloydSteinbergDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Jarvis Judice Ninke")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new JarvisJudiceNinkeDitherer()))
-                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof JarvisJudiceNinkeDitherer))
+                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.JarvisJudiceNinkeDitherer()))
+                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.JarvisJudiceNinkeDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Sierra")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new SierraDitherer()))
-                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof SierraDitherer))
+                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.SierraDitherer()))
+                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.SierraDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Sierra Two")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new SierraTwoDitherer()))
-                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof SierraTwoDitherer))
+                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.SierraTwoDitherer()))
+                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.SierraTwoDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Sierra Lite")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new SierraLiteDitherer()))
-                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof SierraLiteDitherer))
+                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.SierraLiteDitherer()))
+                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.SierraLiteDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Stucki")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new StuckiDitherer()))
-                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof StuckiDitherer))
+                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.StuckiDitherer()))
+                                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.StuckiDitherer))
                                 .build(ditherMenu);
 
     }

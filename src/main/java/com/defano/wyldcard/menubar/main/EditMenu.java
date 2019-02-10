@@ -2,7 +2,7 @@ package com.defano.wyldcard.menubar.main;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.clipboard.CanvasClipboardActionListener;
-import com.defano.jmonet.tools.base.AbstractSelectionTool;
+import com.defano.jmonet.tools.base.SelectionTool;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
@@ -28,7 +28,7 @@ public class EditMenu extends HyperCardMenu {
         super("Edit");
 
         // Routes cut/copy/paste actions to the correct canvas
-        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener(() -> WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas());
+        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener();
         CardActionListener cardActionListener = new CardActionListener();
 
         MenuItemBuilder.ofDefaultType()
@@ -73,7 +73,7 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Clear")
-                .withAction(e -> ((AbstractSelectionTool) WyldCard.getInstance().getToolsManager().getPaintTool()).deleteSelection())
+                .withAction(e -> ((SelectionTool) WyldCard.getInstance().getToolsManager().getPaintTool()).deleteSelection())
                 .withDisabledProvider(WyldCard.getInstance().getToolsManager().getSelectedImageProvider().map(Objects::isNull))
                 .build(this);
 
