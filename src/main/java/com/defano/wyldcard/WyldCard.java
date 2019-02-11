@@ -61,7 +61,7 @@ public class WyldCard implements PartFinder {
     @Inject private SoundManager soundManager;                          // Sound playback management
     @Inject private SearchManager searchManager;                        // Search context management
     @Inject private PartEditManager partEditManager;                    // AWT management of button/field editing
-    @Inject private PatternManager patternManager;                      // Paint pattern management
+    @Inject private PatternManager patternManager;                      // Automatically color patterns when color changes
     @Inject private PeriodicMessageManager periodicMessageManager;      // Send within and idle messages repeatedly
     @Inject private CursorManager cursorManager;                        // Mouse cursor management
     @Inject private PartToolManager partToolManager;                    // Button/field tool selection state
@@ -259,8 +259,8 @@ public class WyldCard implements PartFinder {
     }
 
     /**
-     * Returns the {@link PatternManager} object (singleton). The {@link PatternManager} provides a facade for getting
-     * and editing paint patterns.
+     * Returns the {@link PatternManager} object (singleton). The {@link PatternManager} is responsible for updating
+     * pattern renderings on the pattern palette when the color selection changes.
      *
      * @return The manager object.
      */
@@ -340,9 +340,10 @@ public class WyldCard implements PartFinder {
     }
 
     /**
-     * Sets the Guice Injector used to assemble this object, then creates the singleton instance using this Injector.
+     * Sets the Guice Injector used to assemble WyldCard, then creates the singleton WyldCard application instance
+     * using the Injector.
      *
-     * Intended for test use to create a WyldCard instance injected with mock managed objects. Typically this method
+     * Primarily intended for test use to create a WyldCard instance injected with mock objects. Typically this method
      * should only be invoked once, prior to executing any code which depends on the WyldCard singleton.
      *
      * @param injector The Google Guice injector to use when assembling this managed Singleton.

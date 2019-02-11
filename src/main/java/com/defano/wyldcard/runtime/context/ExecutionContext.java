@@ -7,6 +7,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
+import com.defano.wyldcard.StackManager;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.PartException;
@@ -398,11 +399,11 @@ public class ExecutionContext {
      * interrogate when looking for parts and properties.
      * <p>
      * In most cases, this method returns the card visible to the user (not accounting for screen lock; equivalent to
-     * {@link WyldCard#getFocusedCard()} but during certain operations (like card sorting) this method may
+     * {@link StackManager#getFocusedCard()} but during certain operations (like card sorting) this method may
      * return a different value.
      * <p>
      * In general, scripts should always use this method for getting a reference to the active card; UI elements (like
-     * menus and palettes) should use {@link WyldCard#getFocusedCard()}.
+     * menus and palettes) should use {@link StackManager#getFocusedCard()}.
      *
      * @return The active card in the context of this script execution.
      */

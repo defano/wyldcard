@@ -2,7 +2,6 @@ package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import org.antlr.v4.runtime.ParserRuleContext;

@@ -1,7 +1,7 @@
 package com.defano.wyldcard.window.layouts;
 
 import com.defano.hypertalk.ast.model.Destination;
-import com.defano.jmonet.algo.transform.image.ScaleTransform;
+import com.defano.jmonet.transform.image.ScaleTransform;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackPart;

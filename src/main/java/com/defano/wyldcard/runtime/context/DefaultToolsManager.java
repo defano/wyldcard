@@ -4,15 +4,15 @@ import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.jmonet.algo.dither.Ditherer;
-import com.defano.jmonet.algo.dither.FloydSteinbergDitherer;
-import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.jmonet.transform.dither.Ditherer;
+import com.defano.jmonet.transform.dither.FloydSteinbergDitherer;
 import com.defano.jmonet.canvas.PaintCanvas;
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.SelectionTool;
-import com.defano.jmonet.tools.base.AbstractSelectionTool;
-import com.defano.jmonet.tools.builder.PaintTool;
+import com.defano.jmonet.tools.MarqueeTool;
+import com.defano.jmonet.tools.base.SelectionTool;
+import com.defano.jmonet.tools.base.Tool;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
 import com.defano.jmonet.tools.builder.StrokeBuilder;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
@@ -56,7 +56,7 @@ public class DefaultToolsManager implements ToolsManager {
     private final Subject<Paint> linePaintProvider = createDefault(Color.black);
     private final Subject<Integer> fillPatternProvider = createDefault(0);
     private final Subject<Integer> shapeSidesProvider = createDefault(5);
-    private final Subject<PaintTool> paintToolProvider = createDefault(PaintToolBuilder.create(PaintToolType.ARROW).build());
+    private final Subject<Tool> paintToolProvider = createDefault(PaintToolBuilder.create(PaintToolType.ARROW).build());
     private final Subject<Boolean> drawMultipleProvider = createDefault(false);
     private final Subject<Boolean> drawCenteredProvider = createDefault(false);
     private final Subject<Color> foregroundColorProvider = createDefault(Color.BLACK);
@@ -64,6 +64,7 @@ public class DefaultToolsManager implements ToolsManager {
     private final Subject<Double> intensityProvider = createDefault(0.1);
     private final Subject<Ditherer> dithererProvider = createDefault(new FloydSteinbergDitherer());
     private final Subject<Interpolation> antiAliasingProvider = createDefault(Interpolation.NONE);
+    private final Subject<Boolean> pathInterpolationProvider = createDefault(true);
 
     // Properties that we provide the canvas
     private final Subject<Integer> gridSpacingProvider = createDefault(1);
@@ -114,7 +115,7 @@ public class DefaultToolsManager implements ToolsManager {
     }
 
     @Override
-    public Subject<PaintTool> getPaintToolProvider() {
+    public Subject<Tool> getPaintToolProvider() {
         return paintToolProvider;
     }
 
@@ -129,13 +130,13 @@ public class DefaultToolsManager implements ToolsManager {
     }
 
     @Override
-    public PaintTool getPaintTool() {
+    public Tool getPaintTool() {
         return paintToolProvider.blockingFirst();
     }
 
     @Override
     public void selectAll() {
-        ((SelectionTool) forceToolSelection(ToolType.SELECT, false)).createSelection(new Rectangle(
+        ((MarqueeTool) forceToolSelection(ToolType.SELECT, false)).createSelection(new Rectangle(
                 0,
                 0,
                 WyldCard.getInstance().getStackManager().getFocusedCard().getWidth() - 1,
@@ -153,8 +154,8 @@ public class DefaultToolsManager implements ToolsManager {
         BufferedImage sub = undid.render().getSubimage(reduction.x, reduction.y, reduction.width + 1, reduction.height + 1);
 
         // Force selection tool and create new selection from it
-        SelectionTool selectionTool = (SelectionTool) forceToolSelection(ToolType.SELECT, false);
-        selectionTool.createSelection(sub, new Point(reduction.x, reduction.y));
+        MarqueeTool marqueeTool = (MarqueeTool) forceToolSelection(ToolType.SELECT, false);
+        marqueeTool.createSelection(sub, new Point(reduction.x, reduction.y));
     }
 
     @Override
@@ -300,6 +301,16 @@ public class DefaultToolsManager implements ToolsManager {
     }
 
     @Override
+    public boolean getPathInterpolation() {
+        return pathInterpolationProvider.blockingFirst();
+    }
+
+    @Override
+    public void setPathInterpolation(boolean enabled) {
+        pathInterpolationProvider.onNext(enabled);
+    }
+
+    @Override
     public Ditherer getDitherer() {
         return dithererProvider.blockingFirst();
     }
@@ -326,7 +337,7 @@ public class DefaultToolsManager implements ToolsManager {
 
     @Override
     public void toggleMagnifier() {
-        if (getPaintTool().getToolType() == PaintToolType.MAGNIFIER) {
+        if (getPaintTool().getPaintToolType() == PaintToolType.MAGNIFIER) {
             WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().setScale(1.0);
             forceToolSelection(ToolType.fromPaintTool(lastToolType), false);
         } else if (WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().getScale() != 1.0) {
@@ -389,7 +400,7 @@ public class DefaultToolsManager implements ToolsManager {
     @Override
     public void toggleShapesFilled() {
         shapesFilledProvider.onNext(!shapesFilledProvider.blockingFirst());
-        forceToolSelection(ToolType.fromPaintTool(paintToolProvider.blockingFirst().getToolType()), false);
+        forceToolSelection(ToolType.fromPaintTool(paintToolProvider.blockingFirst().getPaintToolType()), false);
     }
 
     @Override
@@ -407,8 +418,8 @@ public class DefaultToolsManager implements ToolsManager {
     }
 
     @Override
-    public PaintTool forceToolSelection(ToolType tool, boolean keepSelection) {
-        PaintTool selected = activatePaintTool(tool.toPaintTool(), keepSelection);
+    public Tool forceToolSelection(ToolType tool, boolean keepSelection) {
+        Tool selected = activatePaintTool(tool.toPaintTool(), keepSelection);
 
         switch (tool) {
             case BROWSE:
@@ -431,7 +442,7 @@ public class DefaultToolsManager implements ToolsManager {
 
     @Override
     public ToolType getSelectedTool() {
-        return ToolType.fromToolMode(getToolMode(), getPaintTool().getToolType());
+        return ToolType.fromToolMode(getToolMode(), getPaintTool().getPaintToolType());
     }
 
     @Override
@@ -461,10 +472,10 @@ public class DefaultToolsManager implements ToolsManager {
         );
     }
 
-    private PaintTool activatePaintTool(PaintToolType selectedToolType, boolean keepSelection) {
+    private Tool activatePaintTool(PaintToolType selectedToolType, boolean keepSelection) {
 
         // Create and activate new paint tool
-        PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
+        Tool selectedTool = PaintToolBuilder.create(selectedToolType)
                 .withStrokeObservable(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintObservable(getStrokePaintProviderForTool(selectedToolType))
                 .withFillPaintObservable(fillPatternProvider.map(t -> isShapesFilled() || !selectedToolType.isShapeTool() ? Optional.of(WyldCardPatternFactory.getInstance().getPattern(t)) : Optional.empty()))
@@ -475,24 +486,25 @@ public class DefaultToolsManager implements ToolsManager {
                 .withDrawCenteredObservable(drawCenteredProvider)
                 .withDrawMultipleObservable(drawMultipleProvider)
                 .withAntiAliasingObservable(antiAliasingProvider)
+                .withPathInterpolationObservable(pathInterpolationProvider)
                 .makeActiveOnCanvas(WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas())
                 .build();
 
         // When requested, move current selection over to the new tool
         if (keepSelection) {
-            PaintTool lastTool = paintToolProvider.blockingFirst();
-            if (lastTool instanceof AbstractSelectionTool && selectedTool instanceof AbstractSelectionTool) {
-                ((AbstractSelectionTool) lastTool).morphSelection((AbstractSelectionTool) selectedTool);
+            Tool lastTool = paintToolProvider.blockingFirst();
+            if (lastTool instanceof SelectionTool && selectedTool instanceof SelectionTool) {
+                ((SelectionTool) lastTool).morphSelection((SelectionTool) selectedTool);
             }
         }
 
         // Deactivate current tool
-        lastToolType = paintToolProvider.blockingFirst().getToolType();
+        lastToolType = paintToolProvider.blockingFirst().getPaintToolType();
         paintToolProvider.blockingFirst().deactivate();
 
         // Update selected image provider (so UI can tell when a selection exists)
-        if (selectedTool instanceof AbstractSelectionTool) {
-            setSelectedImage(((AbstractSelectionTool) selectedTool).getSelectedImageObservable());
+        if (selectedTool instanceof SelectionTool) {
+            setSelectedImage(((SelectionTool) selectedTool).getSelectedImageObservable());
         }
 
         paintToolProvider.onNext(selectedTool);

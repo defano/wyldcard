@@ -1,14 +1,13 @@
 package com.defano.wyldcard.window.layouts;
 
+import com.defano.jmonet.tools.base.Tool;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.DoubleClickListenable;
 import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.builder.PaintTool;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.l2fprod.common.swing.JFontChooser;
@@ -68,10 +67,10 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
 
         // Double-click actions
         eraser.addMouseListener((DoubleClickListenable) e -> eraseAll());
-        shape.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getShapesPalette().setVisible(true));
-        line.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getLinesPalette().setVisible(true));
-        paintbrush.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getBrushesPalette().setVisible(true));
-        spraypaint.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getIntensityPalette().setVisible(true));
+        shape.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getShapesPalette().toggleVisible());
+        line.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getLinesPalette().toggleVisible());
+        paintbrush.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getBrushesPalette().toggleVisible());
+        spraypaint.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getIntensityPalette().toggleVisible());
         rectangle.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
         roundRectangle.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
         oval.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
@@ -79,6 +78,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         polygon.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
         selection.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().selectAll());
         text.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getFontManager().setSelectedFont(JFontChooser.showDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow(), "Choose Font", WyldCard.getInstance().getFontManager().getFocusedTextStyle().toFont())));
+        fill.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getPatternsPalette().toggleVisible());
 
         WyldCard.getInstance().getToolsManager().getShapesFilledProvider().subscribe(filled -> {
             SwingUtilities.invokeLater(() -> {
@@ -190,19 +190,19 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
     @Override
     public void accept(Object newValue) {
         SwingUtilities.invokeLater(() -> {
-            if (newValue instanceof PaintTool) {
-                PaintTool selectedTool = (PaintTool) newValue;
+            if (newValue instanceof Tool) {
+                Tool selectedTool = (Tool) newValue;
 
                 // Special case; "pseudo" transform tools highlight selection tools
-                if (selectedTool.getToolType() == PaintToolType.SLANT ||
-                        selectedTool.getToolType() == PaintToolType.ROTATE ||
-                        selectedTool.getToolType() == PaintToolType.PERSPECTIVE ||
-                        selectedTool.getToolType() == PaintToolType.PROJECTION ||
-                        selectedTool.getToolType() == PaintToolType.RUBBERSHEET) {
+                if (selectedTool.getPaintToolType() == PaintToolType.SLANT ||
+                        selectedTool.getPaintToolType() == PaintToolType.ROTATE ||
+                        selectedTool.getPaintToolType() == PaintToolType.PERSPECTIVE ||
+                        selectedTool.getPaintToolType() == PaintToolType.PROJECTION ||
+                        selectedTool.getPaintToolType() == PaintToolType.RUBBERSHEET) {
                     enableAllTools();
                     selection.setEnabled(false);
                 } else {
-                    JButton selectedToolButton = getButtonForTool(selectedTool.getToolType());
+                    JButton selectedToolButton = getButtonForTool(selectedTool.getPaintToolType());
 
                     enableAllTools();
                     if (selectedToolButton != null) {
@@ -378,4 +378,5 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
     public JComponent $$$getRootComponent$$$() {
         return palettePanel;
     }
+
 }

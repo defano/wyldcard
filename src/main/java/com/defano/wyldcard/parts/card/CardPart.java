@@ -1,6 +1,18 @@
 package com.defano.wyldcard.parts.card;
 
+import com.defano.hypertalk.ast.expressions.ListExp;
+import com.defano.hypertalk.ast.expressions.LiteralExp;
+import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.exception.HtException;
+import com.defano.jmonet.canvas.JMonetCanvas;
+import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
+import com.defano.jmonet.clipboard.CanvasTransferDelegate;
+import com.defano.jmonet.clipboard.CanvasTransferHandler;
+import com.defano.jmonet.tools.MarqueeTool;
+import com.defano.jmonet.tools.base.SelectionTool;
+import com.defano.jmonet.tools.base.Tool;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseListenable;
@@ -11,26 +23,14 @@ import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.clipboard.CardPartTransferHandler;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldPart;
-import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.PartsTable;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.hypertalk.ast.expressions.ListExp;
-import com.defano.hypertalk.ast.expressions.LiteralExp;
-import com.defano.hypertalk.ast.model.*;
-import com.defano.hypertalk.exception.HtException;
-import com.defano.jmonet.canvas.JMonetCanvas;
-import com.defano.jmonet.canvas.PaintCanvas;
-import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
-import com.defano.jmonet.clipboard.CanvasTransferDelegate;
-import com.defano.jmonet.clipboard.CanvasTransferHandler;
-import com.defano.jmonet.tools.SelectionTool;
-import com.defano.jmonet.tools.base.AbstractSelectionTool;
-import com.defano.jmonet.tools.builder.PaintTool;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
@@ -412,9 +412,9 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     /** {@inheritDoc} */
     @Override
     public BufferedImage copySelection() {
-        PaintTool activeTool = WyldCard.getInstance().getToolsManager().getPaintTool();
-        if (activeTool instanceof AbstractSelectionTool) {
-            return ((AbstractSelectionTool) activeTool).getSelectedImage();
+        Tool activeTool = WyldCard.getInstance().getToolsManager().getPaintTool();
+        if (activeTool instanceof SelectionTool) {
+            return ((SelectionTool) activeTool).getSelectedImage();
         }
 
         return null;
@@ -423,9 +423,9 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     /** {@inheritDoc} */
     @Override
     public void deleteSelection() {
-        PaintTool activeTool = WyldCard.getInstance().getToolsManager().getPaintTool();
-        if (activeTool instanceof AbstractSelectionTool) {
-            ((AbstractSelectionTool) activeTool).deleteSelection();
+        Tool activeTool = WyldCard.getInstance().getToolsManager().getPaintTool();
+        if (activeTool instanceof SelectionTool) {
+            ((SelectionTool) activeTool).deleteSelection();
         }
     }
 
@@ -435,7 +435,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         int cardCenterX = getWidth() / 2;
         int cardCenterY = getHeight() / 2;
 
-        SelectionTool tool = (SelectionTool) WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.SELECT, false);
+        MarqueeTool tool = (MarqueeTool) WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.SELECT, false);
         tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
     }
 

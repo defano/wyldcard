@@ -3,7 +3,6 @@ package com.defano.wyldcard.parts.field.styles;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.parts.field.highlighters.AutoSelectionHighlighterPainter;
 import com.defano.wyldcard.parts.field.highlighters.FoundSelectionHighlightPainter;
 import com.defano.wyldcard.parts.util.FieldUtilities;

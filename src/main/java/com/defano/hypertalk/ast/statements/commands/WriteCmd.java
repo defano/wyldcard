@@ -2,12 +2,12 @@ package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultFileManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.FileHandle;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class WriteCmd extends Command {
@@ -42,7 +42,7 @@ public class WriteCmd extends Command {
     public void onExecute(ExecutionContext context) throws HtException {
         try {
             String filename = file.evaluate(context).toString();
-            DefaultFileManager.FileHandle handle = WyldCard.getInstance().getFileManager().getFileHandle(filename);
+            FileHandle handle = WyldCard.getInstance().getFileManager().getFileHandle(filename);
 
             if (handle == null) {
                 throw new HtSemanticException("Cannot write to file " + file + " because it is not open.");

@@ -18,6 +18,6 @@ public class ImageLayerUtils {
     }
 
     public static boolean layerRemovesPaint(ImageLayer layer) {
-        return layer.getComposite().getRule() == AlphaComposite.DST_OUT && !ImageUtils.getMinimumBounds(layer.getImage()).isEmpty();
+        return ((AlphaComposite)layer.getComposite()).getRule() == AlphaComposite.DST_OUT && !ImageUtils.getMinimumBounds(layer.getImage()).isEmpty();
     }
 }

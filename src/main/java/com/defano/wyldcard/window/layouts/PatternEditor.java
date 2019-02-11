@@ -29,8 +29,9 @@ public class PatternEditor extends WyldCardDialog<Integer> {
     private JPanel editorPanel;
     private JButton saveButton;
     private JPanel patternPanel;
-    private JButton revertButton;
+    private JButton undoButton;
     private JLabel preview;
+    private JButton revertButton;
     private JMonetCanvas patternCanvas;
 
     private int patternId;
@@ -43,10 +44,17 @@ public class PatternEditor extends WyldCardDialog<Integer> {
             }
         });
 
-        revertButton.addActionListener(e -> {
+        undoButton.addActionListener(e -> {
             TexturePaint paint = WyldCardPatternFactory.getInstance().getPattern(patternId);
             setPreviewPaint(paint);
             setCanvasImage(makePaintImage(paint));
+        });
+
+        revertButton.addActionListener(e -> {
+            StackModel focusedStack = WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel();
+            focusedStack.setUserPattern(patternId, null);
+            setPreviewPaint(WyldCardPatternFactory.getInstance().getPattern(patternId));
+            setCanvasImage(makePaintImage(WyldCardPatternFactory.getInstance().getPattern(patternId)));
         });
 
         saveButton.addActionListener(e -> {
@@ -132,10 +140,10 @@ public class PatternEditor extends WyldCardDialog<Integer> {
      */
     private void $$$setupUI$$$() {
         windowPanel = new JPanel();
-        windowPanel.setLayout(new GridLayoutManager(5, 2, new Insets(10, 10, 10, 10), -1, -1));
+        windowPanel.setLayout(new GridLayoutManager(6, 2, new Insets(10, 10, 10, 10), -1, -1));
         editorPanel = new JPanel();
         editorPanel.setLayout(new BorderLayout(0, 0));
-        windowPanel.add(editorPanel, new GridConstraints(0, 0, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        windowPanel.add(editorPanel, new GridConstraints(0, 0, 5, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         editorPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), null));
         patternPanel = new JPanel();
         patternPanel.setLayout(new BorderLayout(0, 0));
@@ -145,17 +153,20 @@ public class PatternEditor extends WyldCardDialog<Integer> {
         preview.setText("");
         patternPanel.add(preview, BorderLayout.CENTER);
         final Spacer spacer1 = new Spacer();
-        windowPanel.add(spacer1, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        windowPanel.add(spacer1, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         saveButton = new JButton();
         saveButton.setText("Save");
-        windowPanel.add(saveButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        windowPanel.add(saveButton, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
-        windowPanel.add(spacer2, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        windowPanel.add(spacer2, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        undoButton = new JButton();
+        undoButton.setText("Undo");
+        windowPanel.add(undoButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer3 = new Spacer();
+        windowPanel.add(spacer3, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         revertButton = new JButton();
         revertButton.setText("Revert");
         windowPanel.add(revertButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer3 = new Spacer();
-        windowPanel.add(spacer3, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**
@@ -164,4 +175,5 @@ public class PatternEditor extends WyldCardDialog<Integer> {
     public JComponent $$$getRootComponent$$$() {
         return windowPanel;
     }
+
 }

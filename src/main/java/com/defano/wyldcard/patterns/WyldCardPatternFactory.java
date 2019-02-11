@@ -1,7 +1,6 @@
 package com.defano.wyldcard.patterns;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

@@ -2,7 +2,6 @@ package com.defano.wyldcard.window.layouts;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -14,10 +13,14 @@ import java.awt.*;
 public class IntensityPalette extends WyldCardDialog<Object> {
     private JSlider intensitySlider;
     private JPanel intensityPanel;
+    private JCheckBox smooth;
 
     public IntensityPalette() {
         intensitySlider.setValue((int) (WyldCard.getInstance().getToolsManager().getIntensity() * 100.0));
         intensitySlider.addChangeListener(e -> WyldCard.getInstance().getToolsManager().setIntensity(intensitySlider.getValue() / 100.0));
+
+        smooth.setSelected(WyldCard.getInstance().getToolsManager().getPathInterpolation());
+        smooth.addChangeListener(e -> WyldCard.getInstance().getToolsManager().setPathInterpolation(smooth.isSelected()));
     }
 
     @Override
@@ -47,7 +50,7 @@ public class IntensityPalette extends WyldCardDialog<Object> {
      */
     private void $$$setupUI$$$() {
         intensityPanel = new JPanel();
-        intensityPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        intensityPanel.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
         intensitySlider = new JSlider();
         intensitySlider.setInverted(false);
         intensitySlider.setMajorTickSpacing(5);
@@ -57,9 +60,15 @@ public class IntensityPalette extends WyldCardDialog<Object> {
         intensitySlider.setPaintLabels(false);
         intensitySlider.setPaintTicks(true);
         intensitySlider.setValueIsAdjusting(false);
-        intensityPanel.add(intensitySlider, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
+        intensityPanel.add(intensitySlider, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
         final Spacer spacer1 = new Spacer();
-        intensityPanel.add(spacer1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        intensityPanel.add(spacer1, new GridConstraints(1, 1, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        smooth = new JCheckBox();
+        smooth.setText("Smooth spray");
+        intensityPanel.add(smooth, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        intensityPanel.add(panel1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     }
 
     /**
@@ -68,4 +77,5 @@ public class IntensityPalette extends WyldCardDialog<Object> {
     public JComponent $$$getRootComponent$$$() {
         return intensityPanel;
     }
+
 }
