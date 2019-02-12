@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * Mechanism for sending periodic messages to parts. Periodic messages include 'idle' and 'mouseWithin'.
  */
 @Singleton
-public class DefaultPeriodicMessageManager implements PeriodicMessageManager {
+public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
 
     private final static int IDLE_PERIOD_MS = 200;              // Frequency that periodic messages are sent
     private final static int IDLE_DEFERRAL_CYCLES = 50;         // Number of cycles we defer if error is encountered
@@ -35,7 +35,7 @@ public class DefaultPeriodicMessageManager implements PeriodicMessageManager {
         idleTimeExecutor.scheduleAtFixedRate(this, 0, IDLE_PERIOD_MS, TimeUnit.MILLISECONDS);
 
         // Stop tracking 'within' when card goes away
-        WyldCard.getInstance().getStackManager().getFocusedStackProvider().subscribe(stackPart -> stackPart.addNavigationObserver(DefaultPeriodicMessageManager.this));
+        WyldCard.getInstance().getStackManager().getFocusedStackProvider().subscribe(stackPart -> stackPart.addNavigationObserver(WyldCardPeriodicMessageManager.this));
 
         // Stop tracking 'within' when not in browse mode
         WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> {

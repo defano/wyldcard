@@ -2,7 +2,7 @@ package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.menubar.main.DefaultWyldCardMenuBar;
+import com.defano.wyldcard.menubar.main.MainWyldCardMenuBar;
 import com.defano.wyldcard.util.ThreadUtils;
 import io.reactivex.Observable;
 
@@ -51,14 +51,14 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
 
     /**
      * Specifies if this window has a menu bar. On Mac OS X systems, windows without a menu bar inherit the system menu
-     * bar, {@link DefaultWyldCardMenuBar}.
+     * bar, {@link MainWyldCardMenuBar}.
      *
      * @param ownsMenuBar True if this window should have a menu bar
      */
     void setHasMenuBar(boolean ownsMenuBar);
 
     /**
-     * Gets the JMenuBar that should be applied to this window; by default, returns the {@link DefaultWyldCardMenuBar}.
+     * Gets the JMenuBar that should be applied to this window; by default, returns the {@link MainWyldCardMenuBar}.
      *
      * @return The menu bar belonging to this window.
      */

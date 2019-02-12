@@ -16,7 +16,7 @@ import java.awt.*;
  * A singleton facade for managing the HyperCard cursor.
  */
 @Singleton
-public class DefaultCursorManager implements CursorManager {
+public class WyldCardCursorManager implements CursorManager {
 
     private HyperCardCursor activeCursor = HyperCardCursor.HAND;
 
@@ -30,7 +30,7 @@ public class DefaultCursorManager implements CursorManager {
             updateCursor();
 
             // ... or when the card of the focused stack changes
-            stackPart.addNavigationObserver(DefaultCursorManager.this);
+            stackPart.addNavigationObserver(WyldCardCursorManager.this);
         });
 
     }

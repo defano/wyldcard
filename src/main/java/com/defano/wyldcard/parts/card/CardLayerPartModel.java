@@ -40,15 +40,15 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
     public CardLayerPartModel(PartType type, Owner owner, PartModel parentPartModel) {
         super(type, owner, parentPartModel);
 
-        defineProperty(PROP_ZORDER, new Value(0), false);
-        defineProperty(PROP_SELECTEDTEXT, new Value(""), true);
-        defineProperty(PROP_SELECTEDLINE, new Value(""), true);
-        defineProperty(PROP_SELECTEDCHUNK, new Value(""), true);
-        defineProperty(PROP_TEXTSIZE, new Value(((Font) UIManager.get("Button.font")).getSize()), false);
-        defineProperty(PROP_TEXTFONT, new Value(((Font) UIManager.get("Button.font")).getFamily()), false);
-        defineProperty(PROP_TEXTSTYLE, new Value("plain"), false);
-        defineProperty(PROP_TEXTALIGN, new Value("center"), false);
-        defineProperty(PROP_ENABLED, new Value(true), false);
+        newProperty(PROP_ZORDER, new Value(0), false);
+        newProperty(PROP_SELECTEDTEXT, new Value(""), true);
+        newProperty(PROP_SELECTEDLINE, new Value(""), true);
+        newProperty(PROP_SELECTEDCHUNK, new Value(""), true);
+        newProperty(PROP_TEXTSIZE, new Value(((Font) UIManager.get("Button.font")).getSize()), false);
+        newProperty(PROP_TEXTFONT, new Value(((Font) UIManager.get("Button.font")).getFamily()), false);
+        newProperty(PROP_TEXTSTYLE, new Value("plain"), false);
+        newProperty(PROP_TEXTALIGN, new Value("center"), false);
+        newProperty(PROP_ENABLED, new Value(true), false);
     }
 
     @PostConstruct
@@ -59,9 +59,9 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
         this.currentCardId = new ThreadLocal<>();
         this.currentCardId.set(new ExecutionContext().getCurrentCard().getId(new ExecutionContext()));
 
-        defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
-        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));
-        defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
+        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
+        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));
+        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
     }
 
     /** {@inheritDoc} */

@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * A base model object for all HyperCard "parts" that Defines properties common to all part objects.
  */
-public abstract class PartModel extends DefaultPropertiesModel implements Messagable {
+public abstract class PartModel extends WyldCardPropertiesModel implements Messagable {
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";
@@ -70,9 +70,9 @@ public abstract class PartModel extends DefaultPropertiesModel implements Messag
         this.owner = owner;
         this.parentPartModel = parentPartModel;
 
-        defineProperty(PROP_VISIBLE, new Value(true), false);
-        defineProperty(PROP_SCRIPTTEXT, new Value(), false);
-        defineProperty(PROP_BREAKPOINTS, new Value(), false);
+        newProperty(PROP_VISIBLE, new Value(true), false);
+        newProperty(PROP_SCRIPTTEXT, new Value(), false);
+        newProperty(PROP_BREAKPOINTS, new Value(), false);
 
         initialize();
     }
@@ -99,7 +99,7 @@ public abstract class PartModel extends DefaultPropertiesModel implements Messag
         super.initialize();
 
         // Convert rectangle (consisting of top left and bottom right coordinates) into top, left, height and width
-        defineComputedSetterProperty(PROP_RECT, (context, model, propertyName, value) -> {
+        newComputedSetterProperty(PROP_RECT, (context, model, propertyName, value) -> {
             if (value.isRect()) {
                 model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
                 model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
@@ -110,7 +110,7 @@ public abstract class PartModel extends DefaultPropertiesModel implements Messag
             }
         });
 
-        defineComputedGetterProperty(PROP_RECT, (context, model, propertyName) -> {
+        newComputedGetterProperty(PROP_RECT, (context, model, propertyName) -> {
             Value left = model.getKnownProperty(context, PROP_LEFT);
             Value top = model.getKnownProperty(context, PROP_TOP);
             Value height = model.getKnownProperty(context, PROP_HEIGHT);
@@ -119,23 +119,23 @@ public abstract class PartModel extends DefaultPropertiesModel implements Messag
             return new Value(left.integerValue(), top.integerValue(), left.integerValue() + width.integerValue(), top.integerValue() + height.integerValue());
         });
 
-        defineComputedGetterProperty(PROP_RIGHT, (context, model, propertyName) ->
+        newComputedGetterProperty(PROP_RIGHT, (context, model, propertyName) ->
                 new Value(model.getKnownProperty(context, PROP_LEFT).integerValue() + model.getKnownProperty(context, PROP_WIDTH).integerValue())
         );
 
-        defineComputedSetterProperty(PROP_RIGHT, (context, model, propertyName, value) ->
+        newComputedSetterProperty(PROP_RIGHT, (context, model, propertyName, value) ->
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.integerValue() - model.getKnownProperty(context, PROP_WIDTH).integerValue()))
         );
 
-        defineComputedGetterProperty(PROP_BOTTOM, (context, model, propertyName) ->
+        newComputedGetterProperty(PROP_BOTTOM, (context, model, propertyName) ->
                 new Value(model.getKnownProperty(context, PROP_TOP).integerValue() + model.getKnownProperty(context, PROP_HEIGHT).integerValue())
         );
 
-        defineComputedSetterProperty(PROP_BOTTOM, (context, model, propertyName, value) ->
+        newComputedSetterProperty(PROP_BOTTOM, (context, model, propertyName, value) ->
                 model.setKnownProperty(context, PROP_TOP, new Value(value.integerValue() - model.getKnownProperty(context, PROP_HEIGHT).integerValue()))
         );
 
-        defineComputedSetterProperty(PROP_TOPLEFT, (context, model, propertyName, value) -> {
+        newComputedSetterProperty(PROP_TOPLEFT, (context, model, propertyName, value) -> {
             if (value.isPoint()) {
                 model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
                 model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
@@ -144,11 +144,11 @@ public abstract class PartModel extends DefaultPropertiesModel implements Messag
             }
         });
 
-        defineComputedGetterProperty(PROP_TOPLEFT, (context, model, propertyName) ->
+        newComputedGetterProperty(PROP_TOPLEFT, (context, model, propertyName) ->
                 new Value(model.getKnownProperty(context, PROP_LEFT).integerValue(), model.getKnownProperty(context, PROP_TOP).integerValue())
         );
 
-        defineComputedSetterProperty(PROP_BOTTOMRIGHT, (context, model, propertyName, value) -> {
+        newComputedSetterProperty(PROP_BOTTOMRIGHT, (context, model, propertyName, value) -> {
             if (value.isPoint()) {
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue()));
                 model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue()));
@@ -156,23 +156,23 @@ public abstract class PartModel extends DefaultPropertiesModel implements Messag
                 throw new HtSemanticException("Expected a point, but got " + value.toString());
             }
         });
-        definePropertyAlias(PROP_BOTTOMRIGHT, PROP_BOTRIGHT);
+        newPropertyAlias(PROP_BOTTOMRIGHT, PROP_BOTRIGHT);
 
-        defineComputedGetterProperty(PROP_BOTTOMRIGHT, (context, model, propertyName) ->
+        newComputedGetterProperty(PROP_BOTTOMRIGHT, (context, model, propertyName) ->
                 new Value(
                         model.getKnownProperty(context, PROP_LEFT).integerValue() + model.getKnownProperty(context, PROP_WIDTH).integerValue(),
                         model.getKnownProperty(context, PROP_TOP).integerValue() + model.getKnownProperty(context, PROP_HEIGHT).integerValue()
                 )
         );
 
-        definePropertyAlias(PROP_LOCATION, PROP_LOC);
-        defineComputedGetterProperty(PROP_LOCATION, (context, model, propertyName) ->
+        newPropertyAlias(PROP_LOCATION, PROP_LOC);
+        newComputedGetterProperty(PROP_LOCATION, (context, model, propertyName) ->
                 new Value(
                         model.getKnownProperty(context, PROP_LEFT).integerValue() + model.getKnownProperty(context, PROP_WIDTH).integerValue() / 2,
                         model.getKnownProperty(context, PROP_TOP).integerValue() + model.getKnownProperty(context, PROP_HEIGHT).integerValue() / 2
                 )
         );
-        defineComputedSetterProperty(PROP_LOCATION, (context, model, propertyName, value) -> {
+        newComputedSetterProperty(PROP_LOCATION, (context, model, propertyName, value) -> {
             if (value.isPoint()) {
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue() / 2));
                 model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue() / 2));
@@ -181,7 +181,7 @@ public abstract class PartModel extends DefaultPropertiesModel implements Messag
             }
         });
 
-        definePropertyAlias(PROP_RECT, PROP_RECTANGLE);
+        newPropertyAlias(PROP_RECT, PROP_RECTANGLE);
 
         // When breakpoints change, automatically apply them to the script
         addPropertyChangedObserver((context, model, property, oldValue, newValue) -> {
@@ -189,10 +189,10 @@ public abstract class PartModel extends DefaultPropertiesModel implements Messag
                 getScript(context).applyBreakpoints(getBreakpoints());
             }
         });
-        definePropertyAlias(PROP_BREAKPOINTS, PROP_CHECKPOINTS);
+        newPropertyAlias(PROP_BREAKPOINTS, PROP_CHECKPOINTS);
 
-        defineComputedGetterProperty(PROP_SCRIPT, (context, model, propertyName) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
-        defineComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> {
+        newComputedGetterProperty(PROP_SCRIPT, (context, model, propertyName) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
+        newComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> {
             model.setKnownProperty(context, PROP_SCRIPTTEXT, value);
             precompile(context);
         });
@@ -201,7 +201,7 @@ public abstract class PartModel extends DefaultPropertiesModel implements Messag
     }
 
     /**
-     * Gets the "default" adjective associated with a given property. That is, the length adjective that is
+     * Gets the "default" adjective associated with the given property. That is, the length adjective that is
      * automatically applied when referring to a property without explicitly specifying an adjective.
      * <p>
      * For example, 'the name of btn 1' actually refers to 'the abbreviated name' property.

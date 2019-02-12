@@ -17,12 +17,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
-public class DefaultSpeechPlaybackManager extends ThreadPoolExecutor implements SpeechPlaybackManager {
+public class WyldCardSpeechPlaybackManager extends ThreadPoolExecutor implements SpeechPlaybackManager {
 
     private LocalMaryInterface mary;
     private String theSpeech = "done";
 
-    public DefaultSpeechPlaybackManager() {
+    public WyldCardSpeechPlaybackManager() {
         super(1, 1, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 
         try {

@@ -11,7 +11,7 @@ import com.defano.wyldcard.editor.HyperTalkTextEditor;
 import com.defano.wyldcard.editor.SyntaxParserDelegate;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.menubar.script.ScriptEditorMenuBar;
-import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
+import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
@@ -544,7 +544,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
     }
 
     @Override
-    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property.toLowerCase()) {
 
             // Special case: Script text was programatically changed

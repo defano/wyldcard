@@ -20,7 +20,7 @@ import java.util.Optional;
  * is presently selected, if any.
  */
 @Singleton
-public class DefaultPartToolManager implements PartToolManager {
+public class WyldCardPartToolManager implements PartToolManager {
 
     private final Subject<Optional<ToolEditablePart>> selectedPart = BehaviorSubject.createDefault(Optional.empty());
     private final TextFontObserver fontObserver = new TextFontObserver();
@@ -100,7 +100,7 @@ public class DefaultPartToolManager implements PartToolManager {
     private class TextStyleObserver implements Consumer<Value> {
         @Override
         public void accept(Value value) {
-            Optional<ToolEditablePart> selectedPart = DefaultPartToolManager.this.selectedPart.blockingFirst();
+            Optional<ToolEditablePart> selectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
             selectedPart.ifPresent(part -> part.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTSTYLE, value));
         }
     }
@@ -108,7 +108,7 @@ public class DefaultPartToolManager implements PartToolManager {
     private class TextSizeObserver implements Consumer<Value> {
         @Override
         public void accept(Value value) {
-            Optional<ToolEditablePart> selectedPart = DefaultPartToolManager.this.selectedPart.blockingFirst();
+            Optional<ToolEditablePart> selectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
             selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTSIZE, value));
         }
     }
@@ -116,7 +116,7 @@ public class DefaultPartToolManager implements PartToolManager {
     private class TextFontObserver implements Consumer<Value> {
         @Override
         public void accept(Value value) {
-            Optional<ToolEditablePart> selectedPart = DefaultPartToolManager.this.selectedPart.blockingFirst();
+            Optional<ToolEditablePart> selectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
             selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTFONT, value));
         }
     }
@@ -124,7 +124,7 @@ public class DefaultPartToolManager implements PartToolManager {
     private class TextAlignObserver implements Consumer<Value> {
         @Override
         public void accept(Value value) {
-            Optional<ToolEditablePart> selectedPart = DefaultPartToolManager.this.selectedPart.blockingFirst();
+            Optional<ToolEditablePart> selectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
             selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTALIGN, value));
         }
     }

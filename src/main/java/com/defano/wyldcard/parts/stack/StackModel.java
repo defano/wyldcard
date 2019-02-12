@@ -54,11 +54,11 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     private StackModel(String stackName, Dimension dimension) {
         super(PartType.STACK, Owner.HYPERCARD, null);
 
-        defineProperty(PROP_NAME, new Value(stackName), false);
-        defineProperty(PROP_WIDTH, new Value(dimension.width), false);
-        defineProperty(PROP_HEIGHT, new Value(dimension.height), false);
-        defineProperty(PROP_RESIZABLE, new Value(false), false);
-        defineProperty(PROP_CANTPEEK, new Value(false), false);
+        newProperty(PROP_NAME, new Value(stackName), false);
+        newProperty(PROP_WIDTH, new Value(dimension.width), false);
+        newProperty(PROP_HEIGHT, new Value(dimension.height), false);
+        newProperty(PROP_RESIZABLE, new Value(false), false);
+        newProperty(PROP_CANTPEEK, new Value(false), false);
 
         initialize();
     }
@@ -91,17 +91,17 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
             userIcons = new HashMap<>();
         }
 
-        defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
-        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));
-        defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
+        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
+        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));
+        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
 
-        defineComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().x));
-        defineComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(value.integerValue(), WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getY()));
-        defineComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().y));
-        defineComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getX(), value.integerValue()));
+        newComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().x));
+        newComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(value.integerValue(), WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getY()));
+        newComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().y));
+        newComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getX(), value.integerValue()));
 
         if (!hasProperty(PartModel.PROP_ID)) {
-            defineProperty(PartModel.PROP_ID, new Value(UUID.randomUUID().toString()), true);
+            newProperty(PartModel.PROP_ID, new Value(UUID.randomUUID().toString()), true);
         }
     }
 

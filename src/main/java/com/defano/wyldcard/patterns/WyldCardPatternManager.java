@@ -8,7 +8,7 @@ import com.google.inject.Singleton;
  * as required.
  */
 @Singleton
-public class DefaultPatternManager implements PatternManager {
+public class WyldCardPatternManager implements PatternManager {
 
     @Override
     @SuppressWarnings({"ResultOfMethodCallIgnored", "DuplicateExpressions"})

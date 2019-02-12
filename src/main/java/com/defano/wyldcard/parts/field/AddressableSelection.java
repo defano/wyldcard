@@ -1,7 +1,7 @@
 package com.defano.wyldcard.parts.field;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
+import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Value;
@@ -171,14 +171,14 @@ public interface AddressableSelection {
      * @param isSystemSelection True if this selection qualifies as the global, "system" selection. That is, when
 *                          true, this selection is addressable as 'the selection'; when false, the selection
      */
-    default void updateSelectionContext(ExecutionContext context, Range selection, DefaultPropertiesModel model, boolean isSystemSelection) {
+    default void updateSelectionContext(ExecutionContext context, Range selection, WyldCardPropertiesModel model, boolean isSystemSelection) {
         getSelectableTextModel().onViewDidUpdateSelection(selection);
 
         if (isSystemSelection) {
-            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_SELECTEDTEXT, getSelectedText(context), true);
-            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(context), true);
-            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_SELECTEDFIELD, getSelectedFieldExpression(context), true);
-            WyldCard.getInstance().getWyldCardProperties().defineProperty(DefaultWyldCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(context), true);
+            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_SELECTEDTEXT, getSelectedText(context), true);
+            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(context), true);
+            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_SELECTEDFIELD, getSelectedFieldExpression(context), true);
+            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(context), true);
 
             WyldCard.getInstance().getSelectionManager().setSelection(getPartSpecifier(context), getSelectableTextModel().getSelection(context));
         }

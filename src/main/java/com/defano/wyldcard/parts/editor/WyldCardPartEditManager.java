@@ -17,7 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 @Singleton
-public class DefaultPartEditManager implements PartEditManager {
+public class WyldCardPartEditManager implements PartEditManager {
 
     // Initial size of new part when user command-drags
     private final static Dimension NEW_PART_DIM = new Dimension(10,10);

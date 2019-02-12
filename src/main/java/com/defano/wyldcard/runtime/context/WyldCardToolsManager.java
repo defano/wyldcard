@@ -40,7 +40,7 @@ import static io.reactivex.subjects.BehaviorSubject.createDefault;
  * including line width, brush selection, pattern, poly sides, draw multiple, draw centered, grid spacing, etc.
  */
 @Singleton
-public class DefaultToolsManager implements ToolsManager {
+public class WyldCardToolsManager implements ToolsManager {
 
     // Tool mode properties
     private final Subject<ToolMode> toolModeProvider = createDefault(ToolMode.BROWSE);
@@ -448,8 +448,8 @@ public class DefaultToolsManager implements ToolsManager {
     @Override
     public Observable<Boolean> hasTransformableImageSelectionProvider() {
         return Observable.combineLatest(
-                DefaultToolsManager.this.getPaintToolProvider(),
-                DefaultToolsManager.this.getSelectedImageProvider(),
+                WyldCardToolsManager.this.getPaintToolProvider(),
+                WyldCardToolsManager.this.getSelectedImageProvider(),
                 (paintTool, bufferedImage) -> paintTool instanceof TransformableImageSelection && bufferedImage.isPresent()
         );
     }
@@ -457,8 +457,8 @@ public class DefaultToolsManager implements ToolsManager {
     @Override
     public Observable<Boolean> hasTransformableSelectionProvider() {
         return Observable.combineLatest(
-                DefaultToolsManager.this.getPaintToolProvider(),
-                DefaultToolsManager.this.getSelectedImageProvider(),
+                WyldCardToolsManager.this.getPaintToolProvider(),
+                WyldCardToolsManager.this.getSelectedImageProvider(),
                 (paintTool, bufferedImage) -> paintTool instanceof TransformableSelection && bufferedImage.isPresent()
         );
     }
@@ -466,8 +466,8 @@ public class DefaultToolsManager implements ToolsManager {
     @Override
     public Observable<Boolean> hasTransformableCanvasSelectionProvider() {
         return Observable.combineLatest(
-                DefaultToolsManager.this.getPaintToolProvider(),
-                DefaultToolsManager.this.getSelectedImageProvider(),
+                WyldCardToolsManager.this.getPaintToolProvider(),
+                WyldCardToolsManager.this.getSelectedImageProvider(),
                 (paintTool, bufferedImage) -> paintTool instanceof TransformableCanvasSelection && bufferedImage.isPresent()
         );
     }

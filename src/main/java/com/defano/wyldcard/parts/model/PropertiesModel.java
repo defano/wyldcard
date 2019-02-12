@@ -18,7 +18,7 @@ public interface PropertiesModel {
      * @param readOnly True to indicate that the property cannot be set via {@link #setProperty(ExecutionContext, String, Value)} or
      *                 {@link #setKnownProperty(ExecutionContext, String, Value)}
      */
-    void defineProperty(String property, Value value, boolean readOnly);
+    void newProperty(String property, Value value, boolean readOnly);
 
     /**
      * Delegates gets/sets of a property to another model. Useful in cases where one part inherits a property from
@@ -42,7 +42,7 @@ public interface PropertiesModel {
      * @param property The name of the property to be aliased
      * @param alsoKnownAs Another nam(s) by which the property can be addressed
      */
-    void definePropertyAlias(String property, String... alsoKnownAs);
+    void newPropertyAlias(String property, String... alsoKnownAs);
 
     /**
      * Defines a new writable property with a computed setter, or, overrides the write behavior of an existing
@@ -50,28 +50,28 @@ public interface PropertiesModel {
      * take whatever action is required to persist the value.
      *
      * Note that write-only properties are disallowed. Created a computer-setter requires a corresponding
-     * call to {@link #defineComputedGetterProperty(String, ComputedGetter)} or
-     * {@link #defineProperty(String, Value, boolean)}.
+     * call to {@link #newComputedGetterProperty(String, ComputedGetter)} or
+     * {@link #newProperty(String, Value, boolean)}.
      *
      * @param propertyName The name the property on which the computed setter function should apply; may be an existing
      *                     property or a new property name.
      * @param setter The function used to set the property value.
      */
-    void defineComputedSetterProperty(String propertyName, ComputedSetter setter);
+    void newComputedSetterProperty(String propertyName, ComputedSetter setter);
 
     /**
      * Defines a new readable property with a computed getter, or, overrides the read behavior of an existing
      * property. When this property's value is read, the computed getter function will be invoked to retrieve the
      * actual value.
      *
-     * Note, for computed read-only properties, use Use {@link #defineComputedReadOnlyProperty(String, ComputedGetter)}
+     * Note, for computed read-only properties, use Use {@link #newComputedReadOnlyProperty(String, ComputedGetter)}
      * instead.
      *
      * @param propertyName The name the property on which the computed getter function should apply; may be an existing
      *                     property or a new property name.
      * @param getter The function used to get the property value.
      */
-    void defineComputedGetterProperty(String propertyName, ComputedGetter getter);
+    void newComputedGetterProperty(String propertyName, ComputedGetter getter);
 
     /**
      * Defines a new, read-only property whose value is computed each time the value is requested.
@@ -79,7 +79,7 @@ public interface PropertiesModel {
      * @param propertyName The name of the new read-only property
      * @param getter The compute function invoked to determine the property's value
      */
-    void defineComputedReadOnlyProperty(String propertyName, ComputedGetter getter);
+    void newComputedReadOnlyProperty(String propertyName, ComputedGetter getter);
 
     /**
      * Sets the value of a property.
@@ -169,7 +169,7 @@ public interface PropertiesModel {
     void addPropertyChangedObserver(PropertyChangeObserver listener);
 
     /**
-     * Invokes the {@link PropertyChangeObserver#onPropertyChanged(ExecutionContext, DefaultPropertiesModel, String, Value, Value)} method for
+     * Invokes the {@link PropertyChangeObserver#onPropertyChanged(ExecutionContext, WyldCardPropertiesModel, String, Value, Value)} method for
      * all properties on the provided observer. Useful for listeners that wish to initialize themselves with the current
      * state of the model.
      *

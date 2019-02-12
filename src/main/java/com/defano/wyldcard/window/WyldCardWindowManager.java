@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
-public class DefaultWindowManager implements WindowManager {
+public class WyldCardWindowManager implements WindowManager {
 
     private final BehaviorSubject<List<WyldCardFrame>> framesProvider = BehaviorSubject.createDefault(new ArrayList<>());
     private final BehaviorSubject<List<WyldCardFrame>> windowsProvider = BehaviorSubject.createDefault(new ArrayList<>());
@@ -37,6 +37,7 @@ public class DefaultWindowManager implements WindowManager {
     private JFrame hiddenPrintFrame;;
 
     @RunOnDispatch
+    @Override
     public void start() {
         messageWindow = new MessageWindow();
         paintToolsPalette = new PaintToolsPalette();
@@ -138,6 +139,8 @@ public class DefaultWindowManager implements WindowManager {
                 .build();
     }
 
+    @RunOnDispatch
+    @Override
     public void restoreDefaultLayout() {
 
         StackWindow stackWindow = getFocusedStackWindow();
@@ -175,58 +178,72 @@ public class DefaultWindowManager implements WindowManager {
                 .setLocationBelow(intensityPalette.getWindow());
     }
 
+    @Override
     public StackWindow getFocusedStackWindow() {
         return getWindowForStack(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack());
     }
 
+    @Override
     public MessageWindow getMessageWindow() {
         return messageWindow;
     }
 
+    @Override
     public PaintToolsPalette getPaintToolsPalette() {
         return paintToolsPalette;
     }
 
+    @Override
     public ShapesPalette getShapesPalette() {
         return shapesPalette;
     }
 
+    @Override
     public LinesPalette getLinesPalette() {
         return linesPalette;
     }
 
+    @Override
     public PatternPalette getPatternsPalette() {
         return patternsPalette;
     }
 
+    @Override
     public BrushesPalette getBrushesPalette() {
         return brushesPalette;
     }
 
+    @Override
     public ColorPalette getColorPalette() {
         return colorPalette;
     }
 
+    @Override
     public IntensityPalette getIntensityPalette() {
         return intensityPalette;
     }
 
+    @Override
     public MessageWatcher getMessageWatcher() {
         return messageWatcher;
     }
 
+    @Override
     public VariableWatcher getVariableWatcher() {
         return variableWatcher;
     }
 
+    @Override
     public ExpressionEvaluator getExpressionEvaluator() {
         return expressionEvaluator;
     }
 
+    @Override
     public MagnificationPalette getMagnifierPalette() {
         return magnifierPalette;
     }
 
+    @Override
     public void showPatternEditor() {
         new WindowBuilder<>(new PatternEditor())
                 .withModel(WyldCard.getInstance().getToolsManager().getFillPattern())
@@ -236,6 +253,7 @@ public class DefaultWindowManager implements WindowManager {
                 .build();
     }
 
+    @Override
     public void showRecentCardsWindow() {
         new WindowBuilder<>(new RecentCardsWindow())
                 .withTitle("Recent Cards")
@@ -256,6 +274,7 @@ public class DefaultWindowManager implements WindowManager {
      *
      * @return A JFrame intended to be used for screen printing.
      */
+    @Override
     public JFrame getScreenshotBufferWindow() {
         return hiddenPrintFrame;
     }
@@ -270,6 +289,7 @@ public class DefaultWindowManager implements WindowManager {
      * @return A window (new or existing) bound to the stack.
      */
     @RunOnDispatch
+    @Override
     public StackWindow getWindowForStack(ExecutionContext context, StackPart stackPart) {
         if (stackPart == null) {
             throw new IllegalArgumentException("Can't get window for null stack part.");
@@ -288,18 +308,22 @@ public class DefaultWindowManager implements WindowManager {
         }
     }
 
+    @Override
     public BehaviorSubject<List<WyldCardFrame>> getFramesProvider() {
         return framesProvider;
     }
 
+    @Override
     public BehaviorSubject<List<WyldCardFrame>> getVisibleWindowsProvider() {
         return windowsProvider;
     }
 
+    @Override
     public BehaviorSubject<List<WyldCardFrame>> getVisiblePalettesProvider() {
         return palettesProvider;
     }
 
+    @Override
     public WyldCardFrame nextWindow() {
         List<WyldCardFrame> windows = getFocusableFrames(true);
 
@@ -316,6 +340,7 @@ public class DefaultWindowManager implements WindowManager {
         return null;
     }
 
+    @Override
     public WyldCardFrame prevWindow() {
         List<WyldCardFrame> windows = getFocusableFrames(true);
 
@@ -332,6 +357,7 @@ public class DefaultWindowManager implements WindowManager {
         return null;
     }
 
+    @Override
     public void toggleDockPalettes() {
         palettesDockedProvider.onNext(!palettesDockedProvider.blockingFirst());
 
@@ -344,10 +370,12 @@ public class DefaultWindowManager implements WindowManager {
         }
     }
 
+    @Override
     public BehaviorSubject<Boolean> getPalettesDockedProvider() {
         return palettesDockedProvider;
     }
 
+    @Override
     public void notifyWindowVisibilityChanged() {
         framesProvider.onNext(getFrames(false));
         windowsProvider.onNext(getWindows(true));

@@ -24,7 +24,7 @@ public class BufferedImageSerializer implements JsonSerializer<BufferedImage>, J
                 ByteArrayInputStream stream = new ByteArrayInputStream(imageData);
                 return ImageIO.read(stream);
             } catch (IOException e) {
-                throw new RuntimeException("An error occurred reading the image. This stack may be corrupted.", e);
+                throw new RuntimeException("An error occurred decoding an image. This stack is corrupted.", e);
             }
         }
     }

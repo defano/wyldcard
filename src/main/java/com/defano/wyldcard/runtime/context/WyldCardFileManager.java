@@ -11,7 +11,7 @@ import java.util.Set;
  * A singleton representing the state of files opened for reading and writing by script.
  */
 @Singleton
-public class DefaultFileManager implements FileManager {
+public class WyldCardFileManager implements FileManager {
 
     private final Set<FileHandle> openFiles = new HashSet<>();
 

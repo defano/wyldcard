@@ -6,7 +6,7 @@ import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
+import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.*;
@@ -208,7 +208,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_STYLE:
                 setStyle(context, ButtonStyle.fromName(newValue.toString()));

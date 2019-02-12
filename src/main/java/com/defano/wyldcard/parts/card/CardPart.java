@@ -23,7 +23,7 @@ import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.clipboard.CardPartTransferHandler;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldPart;
-import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
+import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.stack.StackModel;
@@ -71,7 +71,6 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     /**
      * Instantiates the CardPart occurring at a specified position in a the stack.
-     *
      *
      * @param context The execution context.
      * @param cardIndex The location in the stack where the card should be created.
@@ -509,7 +508,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @RunOnDispatch
     private ButtonPart importButton(ExecutionContext context, ButtonPart part, CardLayer layer) throws HtException {
         ButtonModel model = (ButtonModel) Serializer.copy(part.getPartModel());
-        model.defineProperty(PartModel.PROP_ID, new Value(cardModel.getStackModel().getNextButtonId()), true);
+        model.newProperty(PartModel.PROP_ID, new Value(cardModel.getStackModel().getNextButtonId()), true);
         model.setOwner(layer.asOwner());
 
         ButtonPart newButton = ButtonPart.fromModel(context, this, model);
@@ -533,7 +532,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @RunOnDispatch
     private FieldPart importField(ExecutionContext context, FieldPart part, CardLayer layer) {
         FieldModel model = (FieldModel) Serializer.copy(part.getPartModel());
-        model.defineProperty(PartModel.PROP_ID, new Value(cardModel.getStackModel().getNextFieldId()), true);
+        model.newProperty(PartModel.PROP_ID, new Value(cardModel.getStackModel().getNextFieldId()), true);
         model.setOwner(layer.asOwner());
 
         FieldPart newField = FieldPart.fromModel(context, this, model);
@@ -808,15 +807,13 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
-        switch (property.toLowerCase()) {
-            case CardModel.PROP_SHOWPICT:
-                if (model == getCardModel()) {
-                    setCardImageVisible(newValue.booleanValue());
-                } else if (model == getCardModel().getBackgroundModel()) {
-                    setBackgroundImageVisible(newValue.booleanValue());
-                }
-                break;
+    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
+        if (CardModel.PROP_SHOWPICT.equals(property.toLowerCase())) {
+            if (model == getCardModel()) {
+                setCardImageVisible(newValue.booleanValue());
+            } else if (model == getCardModel().getBackgroundModel()) {
+                setBackgroundImageVisible(newValue.booleanValue());
+            }
         }
     }
 

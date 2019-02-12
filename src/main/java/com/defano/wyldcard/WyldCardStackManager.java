@@ -36,7 +36,7 @@ import java.util.Optional;
  * Manages opening, closing, saving and focusing stacks.
  */
 @Singleton
-public class DefaultStackManager implements StackNavigationObserver, StackManager {
+public class WyldCardStackManager implements StackNavigationObserver, StackManager {
 
     private final ArrayList<StackPart> openedStacks = new ArrayList<>();
     private final LimitedDepthStack<Destination> backstack = new LimitedDepthStack<>(20);

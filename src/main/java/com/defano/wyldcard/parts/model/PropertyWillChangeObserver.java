@@ -3,7 +3,7 @@ package com.defano.wyldcard.parts.model;
 import com.defano.hypertalk.ast.model.Value;
 
 /**
- * An observer to pending changes in a {@link DefaultPropertiesModel}.
+ * An observer to pending changes in a {@link WyldCardPropertiesModel}.
  */
 public interface PropertyWillChangeObserver {
     /**

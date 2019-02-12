@@ -7,7 +7,7 @@ import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.SharedHilight;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.fonts.FontUtils;
-import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
+import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
@@ -37,7 +37,7 @@ public class CheckboxButton extends JCheckBox implements SharedHilight, HyperCar
     }
 
     @Override
-    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:

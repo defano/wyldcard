@@ -29,13 +29,13 @@ public class WindowProxyPartModel extends PartModel {
         super(PartType.WINDOW, Owner.HYPERCARD, null);
         this.window = window;
 
-        defineProperty(PROP_OWNER, new Value("HyperCard"), true);
-        defineProperty(PartModel.PROP_CONTENTS, new Value(), false);
+        newProperty(PROP_OWNER, new Value("HyperCard"), true);
+        newProperty(PartModel.PROP_CONTENTS, new Value(), false);
 
-        defineComputedReadOnlyProperty(PartModel.PROP_NAME, (context, model, propertyName) -> new Value(window.getTitle()));
+        newComputedReadOnlyProperty(PartModel.PROP_NAME, (context, model, propertyName) -> new Value(window.getTitle()));
 
-        defineComputedGetterProperty(PROP_ZOOMED, (context, model, propertyName) -> new Value((((JFrame) window.getWindow()).getExtendedState() & JFrame.MAXIMIZED_BOTH) != 0));
-        defineComputedSetterProperty(PROP_ZOOMED, (context, model, propertyName, value) -> {
+        newComputedGetterProperty(PROP_ZOOMED, (context, model, propertyName) -> new Value((((JFrame) window.getWindow()).getExtendedState() & JFrame.MAXIMIZED_BOTH) != 0));
+        newComputedSetterProperty(PROP_ZOOMED, (context, model, propertyName, value) -> {
             if (window.getWindow() instanceof JFrame) {
                 JFrame frame = (JFrame) window.getWindow();
                 if (value.booleanValue()) {
@@ -46,22 +46,22 @@ public class WindowProxyPartModel extends PartModel {
             }
         });
 
-        defineComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(window.getWindow().getLocation().x));
-        defineComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> window.getWindow().setLocation(value.integerValue(), window.getWindow().getY()));
+        newComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(window.getWindow().getLocation().x));
+        newComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> window.getWindow().setLocation(value.integerValue(), window.getWindow().getY()));
 
-        defineComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(window.getWindow().getLocation().y));
-        defineComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> window.getWindow().setLocation(window.getWindow().getX(), value.integerValue()));
+        newComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(window.getWindow().getLocation().y));
+        newComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> window.getWindow().setLocation(window.getWindow().getX(), value.integerValue()));
 
-        defineComputedGetterProperty(PartModel.PROP_WIDTH, (context, model, propertyName) -> new Value(window.getWindow().getSize().width));
-        defineComputedSetterProperty(PartModel.PROP_WIDTH, (context, model, propertyName, value) -> window.getWindow().setSize(value.integerValue(), window.getWindow().getHeight()));
+        newComputedGetterProperty(PartModel.PROP_WIDTH, (context, model, propertyName) -> new Value(window.getWindow().getSize().width));
+        newComputedSetterProperty(PartModel.PROP_WIDTH, (context, model, propertyName, value) -> window.getWindow().setSize(value.integerValue(), window.getWindow().getHeight()));
 
-        defineComputedGetterProperty(PartModel.PROP_HEIGHT, (context, model, propertyName) -> new Value(window.getWindow().getSize().height));
-        defineComputedSetterProperty(PartModel.PROP_HEIGHT, (context, model, propertyName, value) -> window.getWindow().setSize(window.getWindow().getWidth(), value.integerValue()));
+        newComputedGetterProperty(PartModel.PROP_HEIGHT, (context, model, propertyName) -> new Value(window.getWindow().getSize().height));
+        newComputedSetterProperty(PartModel.PROP_HEIGHT, (context, model, propertyName, value) -> window.getWindow().setSize(window.getWindow().getWidth(), value.integerValue()));
 
-        defineComputedGetterProperty(PartModel.PROP_VISIBLE, (context, model, propertyName) -> new Value(window.getWindow().isVisible()));
-        defineComputedSetterProperty(PartModel.PROP_VISIBLE, (context, model, propertyName, value) -> window.getWindow().setVisible(value.booleanValue()));
+        newComputedGetterProperty(PartModel.PROP_VISIBLE, (context, model, propertyName) -> new Value(window.getWindow().isVisible()));
+        newComputedSetterProperty(PartModel.PROP_VISIBLE, (context, model, propertyName, value) -> window.getWindow().setVisible(value.booleanValue()));
 
-        defineComputedReadOnlyProperty(PartModel.PROP_ID, (context, model, propertyName) -> new Value(System.identityHashCode(window.getWindow())));
+        newComputedReadOnlyProperty(PartModel.PROP_ID, (context, model, propertyName) -> new Value(System.identityHashCode(window.getWindow())));
     }
 
     @Override

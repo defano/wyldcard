@@ -21,7 +21,7 @@ public interface MouseManager {
 
     boolean isMouseDown();
 
-    void notifyOnMousePressed(DefaultMouseManager.MousePressedObserver observer);
+    void notifyOnMousePressed(WyldCardMouseManager.MousePressedObserver observer);
 
-    void notifyOnMouseReleased(DefaultMouseManager.MouseReleasedObserver observer);
+    void notifyOnMouseReleased(WyldCardMouseManager.MouseReleasedObserver observer);
 }

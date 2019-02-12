@@ -14,7 +14,7 @@ import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
+import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -284,7 +284,7 @@ public class StackPart implements Part, PropertyChangeObserver {
 
             CardModel card = cardClipboardProvider.blockingFirst().get().getCardModel().copyOf();
             card.relinkParentPartModel(getStackModel());
-            card.defineProperty(CardModel.PROP_ID, new Value(getStackModel().getNextCardId()), true);
+            card.newProperty(CardModel.PROP_ID, new Value(getStackModel().getNextCardId()), true);
 
             stackModel.insertCard(card);
             cardCountProvider.onNext(stackModel.getCardCount());
@@ -384,7 +384,7 @@ public class StackPart implements Part, PropertyChangeObserver {
      */
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case StackModel.PROP_NAME:
                 fireOnStackNameChanged(newValue.toString());

@@ -38,7 +38,7 @@ public class LogicalLinkObserver implements PropertyChangeObserver {
     }
 
     @Override
-    public void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
         if (property.equalsIgnoreCase(whenProperty) && newValue.booleanValue() == whenState) {
             model.setKnownProperty(context, thenProperty, new Value(thenState));
         }

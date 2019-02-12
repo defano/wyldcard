@@ -16,7 +16,7 @@ import java.util.Set;
  * from a String.
  */
 @Singleton
-public class DefaultKeyboardManager implements KeyboardManager {
+public class WyldCardKeyboardManager implements KeyboardManager {
 
     private boolean isShiftDown;
     private boolean isAltOptionDown;          // Either 'alt' or 'option' (Mac)

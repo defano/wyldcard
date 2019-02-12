@@ -5,7 +5,7 @@ import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
-import com.defano.wyldcard.parts.model.DefaultPropertiesModel;
+import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.DispatchComputedSetter;
 import com.defano.wyldcard.parts.model.LogicalLinkObserver;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -43,7 +43,7 @@ import java.util.*;
  * Third: TextAlign is a separate, managed property of the field and not of the document model because Java's
  * RTFEditorKit doesn't support saving text alignment. Ugh! That's okay though, because HyperCard supports only a
  * single alignment per field, which we can model as a standard read/writable property in the
- * {@link DefaultPropertiesModel}.
+ * {@link WyldCardPropertiesModel}.
  * <p>
  * Fourth: Changes to the field's DOM can originate from the UI (i.e., a user typing into the field) or from HyperTalk.
  * Because changes can originate in the view ({@link HyperCardTextField}, this
@@ -93,27 +93,27 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         partModel.setCurrentCardId(parentPartModel.getId(context));
 
-        partModel.defineProperty(PROP_SCRIPT, new Value(), false);
-        partModel.defineProperty(PROP_ID, new Value(id), true);
-        partModel.defineProperty(PROP_NAME, new Value("Text Field " + id), false);
-        partModel.defineProperty(PROP_LEFT, new Value(geometry.x), false);
-        partModel.defineProperty(PROP_TOP, new Value(geometry.y), false);
-        partModel.defineProperty(PROP_WIDTH, new Value(geometry.width), false);
-        partModel.defineProperty(PROP_HEIGHT, new Value(geometry.height), false);
-        partModel.defineProperty(PROP_DONTWRAP, new Value(false), false);
-        partModel.defineProperty(PROP_VISIBLE, new Value(true), false);
-        partModel.defineProperty(PROP_LOCKTEXT, new Value(false), false);
-        partModel.defineProperty(PROP_SHOWLINES, new Value(true), false);
-        partModel.defineProperty(PROP_STYLE, new Value(FieldStyle.TRANSPARENT.getName()), false);
-        partModel.defineProperty(PROP_TEXTALIGN, new Value("left"), false);
-        partModel.defineProperty(PROP_CONTENTS, new Value(""), false);
-        partModel.defineProperty(PROP_SHAREDTEXT, new Value(false), false);
-        partModel.defineProperty(PROP_WIDEMARGINS, new Value(false), false);
-        partModel.defineProperty(PROP_AUTOTAB, new Value(false), false);
-        partModel.defineProperty(PROP_AUTOSELECT, new Value(false), false);
-        partModel.defineProperty(PROP_MULTIPLELINES, new Value(false), false);
-        partModel.defineProperty(PROP_SCROLLING, new Value(true), false);
-        partModel.defineProperty(PROP_SCROLL, new Value(0), false);
+        partModel.newProperty(PROP_SCRIPT, new Value(), false);
+        partModel.newProperty(PROP_ID, new Value(id), true);
+        partModel.newProperty(PROP_NAME, new Value("Text Field " + id), false);
+        partModel.newProperty(PROP_LEFT, new Value(geometry.x), false);
+        partModel.newProperty(PROP_TOP, new Value(geometry.y), false);
+        partModel.newProperty(PROP_WIDTH, new Value(geometry.width), false);
+        partModel.newProperty(PROP_HEIGHT, new Value(geometry.height), false);
+        partModel.newProperty(PROP_DONTWRAP, new Value(false), false);
+        partModel.newProperty(PROP_VISIBLE, new Value(true), false);
+        partModel.newProperty(PROP_LOCKTEXT, new Value(false), false);
+        partModel.newProperty(PROP_SHOWLINES, new Value(true), false);
+        partModel.newProperty(PROP_STYLE, new Value(FieldStyle.TRANSPARENT.getName()), false);
+        partModel.newProperty(PROP_TEXTALIGN, new Value("left"), false);
+        partModel.newProperty(PROP_CONTENTS, new Value(""), false);
+        partModel.newProperty(PROP_SHAREDTEXT, new Value(false), false);
+        partModel.newProperty(PROP_WIDEMARGINS, new Value(false), false);
+        partModel.newProperty(PROP_AUTOTAB, new Value(false), false);
+        partModel.newProperty(PROP_AUTOSELECT, new Value(false), false);
+        partModel.newProperty(PROP_MULTIPLELINES, new Value(false), false);
+        partModel.newProperty(PROP_SCROLLING, new Value(true), false);
+        partModel.newProperty(PROP_SCROLL, new Value(0), false);
 
         partModel.initialize();
 
@@ -126,21 +126,21 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public void initialize() {
         super.initialize();
 
-        defineComputedGetterProperty(PROP_TEXT, (context, model, propertyName) -> new Value(getText(context)));
-        defineComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (context, model, propertyName, value) -> replaceText(context, value.toString()));
+        newComputedGetterProperty(PROP_TEXT, (context, model, propertyName) -> new Value(getText(context)));
+        newComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (context, model, propertyName, value) -> replaceText(context, value.toString()));
 
-        defineComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(getTextFontFamily(context, 0, getText(context).length() + 1)));
-        defineComputedSetterProperty(PROP_TEXTFONT, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontFamily(context, 0, getText(context).length() + 1, value));
+        newComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(getTextFontFamily(context, 0, getText(context).length() + 1)));
+        newComputedSetterProperty(PROP_TEXTFONT, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontFamily(context, 0, getText(context).length() + 1, value));
 
-        defineComputedGetterProperty(PROP_TEXTSIZE, (context, model, propertyName) -> new Value(getTextFontSize(context, 0, getText(context).length() + 1)));
-        defineComputedSetterProperty(PROP_TEXTSIZE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontSize(context, 0, getText(context).length() + 1, value));
+        newComputedGetterProperty(PROP_TEXTSIZE, (context, model, propertyName) -> new Value(getTextFontSize(context, 0, getText(context).length() + 1)));
+        newComputedSetterProperty(PROP_TEXTSIZE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontSize(context, 0, getText(context).length() + 1, value));
 
-        defineComputedGetterProperty(PROP_TEXTSTYLE, (context, model, propertyName) -> new Value(getTextFontStyle(context, 0, getText(context).length() + 1)));
-        defineComputedSetterProperty(PROP_TEXTSTYLE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontStyle(context, 0, getText(context).length() + 1, value));
+        newComputedGetterProperty(PROP_TEXTSTYLE, (context, model, propertyName) -> new Value(getTextFontStyle(context, 0, getText(context).length() + 1)));
+        newComputedSetterProperty(PROP_TEXTSTYLE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontStyle(context, 0, getText(context).length() + 1, value));
 
-        defineComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> getSelectedText(context));
-        defineComputedReadOnlyProperty(PROP_SELECTEDCHUNK, (context, model, propertyName) -> getSelectedChunkExpression(context));
-        defineComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> getSelectedLineExpression(context));
+        newComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> getSelectedText(context));
+        newComputedReadOnlyProperty(PROP_SELECTEDCHUNK, (context, model, propertyName) -> getSelectedChunkExpression(context));
+        newComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> getSelectedLineExpression(context));
 
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_DONTWRAP));
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_LOCKTEXT));
@@ -151,7 +151,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * should always be the field view object, {@link HyperCardTextField}.
      *
      * In most every other case, a special observer interface is not required because observable attributes are modeled
-     * by {@link DefaultPropertiesModel}. Unfortunately, this technique requires properties
+     * by {@link WyldCardPropertiesModel}. Unfortunately, this technique requires properties
      * to be modeled as a HyperTalk {@link Value}. Coercing a byte array into and out of a Value would be ugly.
      *
      * @param observer The observer of DOM changes.

@@ -47,12 +47,12 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         buttonModels = new ArrayList<>();
         fieldModels = new ArrayList<>();
 
-        defineProperty(PROP_ID, new Value(backgroundId), true);
-        defineProperty(PROP_NAME, new Value(""), false);
-        defineProperty(PROP_CANTDELETE, new Value(false), false);
-        defineProperty(PROP_DONTSEARCH, new Value(false), false);
-        defineProperty(PROP_CONTENTS, new Value(""), false);
-        defineProperty(PROP_SHOWPICT, new Value(true), false);
+        newProperty(PROP_ID, new Value(backgroundId), true);
+        newProperty(PROP_NAME, new Value(""), false);
+        newProperty(PROP_CANTDELETE, new Value(false), false);
+        newProperty(PROP_DONTSEARCH, new Value(false), false);
+        newProperty(PROP_CONTENTS, new Value(""), false);
+        newProperty(PROP_SHOWPICT, new Value(true), false);
 
         initialize();
     }
@@ -67,7 +67,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         super.initialize();
 
         // When no name of card is provided, returns 'background id xxx'
-        defineComputedGetterProperty(PROP_NAME, (context, model, propertyName) -> {
+        newComputedGetterProperty(PROP_NAME, (context, model, propertyName) -> {
             Value raw = model.getRawProperty(propertyName);
             if (raw == null || raw.isEmpty()) {
                 return new Value("bkgnd id " + model.getKnownProperty(context, PROP_ID));
@@ -76,9 +76,9 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
             }
         });
 
-        defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
-        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
-        defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
+        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
+        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
+        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
     }
 
     @Override

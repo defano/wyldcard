@@ -45,22 +45,22 @@ public class ButtonModel extends CardLayerPartModel {
 
         partModel.setCurrentCardId(parentPartModel.getId(context));
 
-        partModel.defineProperty(PROP_SCRIPT, new Value(), false);
-        partModel.defineProperty(PROP_ID, new Value(id), true);
-        partModel.defineProperty(PROP_NAME, new Value("New Button"), false);
-        partModel.defineProperty(PROP_LEFT, new Value(geometry.x), false);
-        partModel.defineProperty(PROP_TOP, new Value(geometry.y), false);
-        partModel.defineProperty(PROP_WIDTH, new Value(geometry.width), false);
-        partModel.defineProperty(PROP_HEIGHT, new Value(geometry.height), false);
-        partModel.defineProperty(PROP_SHOWNAME, new Value(true), false);
-        partModel.defineProperty(PROP_STYLE, new Value(ButtonStyle.ROUND_RECT.toString()), false);
-        partModel.defineProperty(PROP_FAMILY, new Value(), false);
-        partModel.defineProperty(PROP_HILITE, new Value(false), false);
-        partModel.defineProperty(PROP_AUTOHILITE, new Value(true), false);
-        partModel.defineProperty(PROP_CONTENTS, new Value(), false);
-        partModel.defineProperty(PROP_ICON, new Value(), false);
-        partModel.defineProperty(PROP_ICONALIGN, new Value("default"), false);
-        partModel.defineProperty(PROP_SELECTEDITEM, new Value(), false);
+        partModel.newProperty(PROP_SCRIPT, new Value(), false);
+        partModel.newProperty(PROP_ID, new Value(id), true);
+        partModel.newProperty(PROP_NAME, new Value("New Button"), false);
+        partModel.newProperty(PROP_LEFT, new Value(geometry.x), false);
+        partModel.newProperty(PROP_TOP, new Value(geometry.y), false);
+        partModel.newProperty(PROP_WIDTH, new Value(geometry.width), false);
+        partModel.newProperty(PROP_HEIGHT, new Value(geometry.height), false);
+        partModel.newProperty(PROP_SHOWNAME, new Value(true), false);
+        partModel.newProperty(PROP_STYLE, new Value(ButtonStyle.ROUND_RECT.toString()), false);
+        partModel.newProperty(PROP_FAMILY, new Value(), false);
+        partModel.newProperty(PROP_HILITE, new Value(false), false);
+        partModel.newProperty(PROP_AUTOHILITE, new Value(true), false);
+        partModel.newProperty(PROP_CONTENTS, new Value(), false);
+        partModel.newProperty(PROP_ICON, new Value(), false);
+        partModel.newProperty(PROP_ICONALIGN, new Value("default"), false);
+        partModel.newProperty(PROP_SELECTEDITEM, new Value(), false);
 
         return partModel;
     }
@@ -70,8 +70,8 @@ public class ButtonModel extends CardLayerPartModel {
     public void initialize() {
         super.initialize();
 
-        defineComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> new Value(getSelectedLineExpression(context)));
-        defineComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> {
+        newComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> new Value(getSelectedLineExpression(context)));
+        newComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> {
             List<Value> lines = getKnownProperty(context, PROP_CONTENTS).getLines(context);
             int selectedLineIdx = getKnownProperty(context, PROP_SELECTEDITEM).integerValue() - 1;
 
@@ -83,8 +83,8 @@ public class ButtonModel extends CardLayerPartModel {
             return lines.get(selectedLineIdx);
         });
 
-        definePropertyAlias(PROP_HILITE, PROP_HIGHLITE, PROP_HILIGHT, PROP_HIGHLIGHT);
-        definePropertyAlias(PROP_AUTOHILITE, PROP_AUTOHIGHLITE, PROP_AUTOHILIGHT, PROP_AUTOHIGHLIGHT);
+        newPropertyAlias(PROP_HILITE, PROP_HIGHLITE, PROP_HILIGHT, PROP_HIGHLIGHT);
+        newPropertyAlias(PROP_AUTOHILITE, PROP_AUTOHIGHLITE, PROP_AUTOHILIGHT, PROP_AUTOHIGHLIGHT);
     }
 
     @Override

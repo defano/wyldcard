@@ -44,7 +44,7 @@ import java.util.Set;
  * "focused" style, but changes to the "focused" style do not affect the "selected" style.
  */
 @Singleton
-public class DefaultFontManager implements FontManager {
+public class WyldCardFontManager implements FontManager {
 
     private final static String DEFAULT_FONT_FAMILY = "Arial";
     private final static String DEFAULT_FONT_STYLE = "plain";
@@ -72,7 +72,7 @@ public class DefaultFontManager implements FontManager {
     // For JMonet use only; components should listen for and react to font, style and size changes individually.
     private final Subject<Font> paintFontProvider = BehaviorSubject.createDefault(FontUtils.getFontByNameStyleSize(DEFAULT_FONT_FAMILY, DEFAULT_FONT_STYLE_CONST, DEFAULT_FONT_SIZE));
 
-    public DefaultFontManager() {
+    public WyldCardFontManager() {
 
         // Change in selected font should always change focused font
         selectedFontFamilyProvider.subscribe(value -> focusedFontFamilyProvider.onNext(Sets.newHashSet(value)));

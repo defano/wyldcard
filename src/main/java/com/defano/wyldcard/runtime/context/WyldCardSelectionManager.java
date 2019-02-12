@@ -14,7 +14,7 @@ import com.google.inject.Singleton;
  * selection.
  */
 @Singleton
-public class DefaultSelectionManager implements SelectionManager {
+public class WyldCardSelectionManager implements SelectionManager {
 
     private PartSpecifier theSelectionPart;     // Part holding 'the selection'
     private Range theSelectionRange;            // Range of characters selected

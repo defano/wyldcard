@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * A model of HyperTalk-addressable properties that provides observability, derived getters and setters, and read-only
  * attributes.
  */
-public class DefaultPropertiesModel implements PropertiesModel {
+public class WyldCardPropertiesModel implements PropertiesModel {
 
     // Properties which can be read/set by HyperTalk
     private final Map<String, Value> properties = new ConcurrentHashMap<>();
@@ -33,7 +33,7 @@ public class DefaultPropertiesModel implements PropertiesModel {
     private transient Map<String,DelegatedProperty> delegatedProperties;
 
     // Required to initialize transient data member when object is de-serialized
-    public DefaultPropertiesModel() {
+    public WyldCardPropertiesModel() {
         initialize();
     }
 
@@ -48,7 +48,7 @@ public class DefaultPropertiesModel implements PropertiesModel {
     }
 
     @Override
-    public void defineProperty(String property, Value value, boolean readOnly) {
+    public void newProperty(String property, Value value, boolean readOnly) {
         assertConstructed();
 
         property = property.toLowerCase();
@@ -77,7 +77,7 @@ public class DefaultPropertiesModel implements PropertiesModel {
     }
 
     @Override
-    public void definePropertyAlias(String property, String... alsoKnownAs) {
+    public void newPropertyAlias(String property, String... alsoKnownAs) {
         assertConstructed();
 
         for (String thisAka : alsoKnownAs) {
@@ -86,19 +86,19 @@ public class DefaultPropertiesModel implements PropertiesModel {
     }
 
     @Override
-    public void defineComputedSetterProperty(String propertyName, ComputedSetter setter) {
+    public void newComputedSetterProperty(String propertyName, ComputedSetter setter) {
         assertConstructed();
         computerSetters.put(propertyName.toLowerCase(), setter);
     }
 
     @Override
-    public void defineComputedGetterProperty(String propertyName, ComputedGetter getter) {
+    public void newComputedGetterProperty(String propertyName, ComputedGetter getter) {
         assertConstructed();
         computerGetters.put(propertyName.toLowerCase(), getter);
     }
 
     @Override
-    public void defineComputedReadOnlyProperty(String propertyName, ComputedGetter getter) {
+    public void newComputedReadOnlyProperty(String propertyName, ComputedGetter getter) {
         assertConstructed();
         computerGetters.put(propertyName.toLowerCase(), getter);
         computerSetters.put(propertyName.toLowerCase(), (context, model, property, value) -> {
@@ -146,7 +146,7 @@ public class DefaultPropertiesModel implements PropertiesModel {
             if (setter instanceof DispatchComputedSetter) {
                 String finalPropertyName = propertyName;
                 ThreadUtils.invokeAndWaitAsNeeded(() -> {
-                    ((DispatchComputedSetter) setter).setComputedValue(context, DefaultPropertiesModel.this, finalPropertyName, value);
+                    ((DispatchComputedSetter) setter).setComputedValue(context, WyldCardPropertiesModel.this, finalPropertyName, value);
                 });
             } else {
                 setter.setComputedValue(context, this, propertyName, value);
@@ -224,7 +224,7 @@ public class DefaultPropertiesModel implements PropertiesModel {
         try {
             return getProperty(context, property);
         } catch (NoSuchPropertyException e) {
-            defineProperty(property, new Value(), false);
+            newProperty(property, new Value(), false);
             e.printStackTrace();
             return new Value();
         }

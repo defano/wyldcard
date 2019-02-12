@@ -17,7 +17,7 @@ import java.awt.event.ActionListener;
  * An extension of {@link JMenuBar} representing the WyldCard menu bar.
  */
 @Singleton
-public class DefaultWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
+public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
 
     @Override
     @RunOnDispatch
@@ -109,8 +109,8 @@ public class DefaultWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar 
     @Override
     public JMenu findMenuByName(String name) {
         return ThreadUtils.callAndWaitAsNeeded(() -> {
-            for (int thisMenuIndex = 0; thisMenuIndex < DefaultWyldCardMenuBar.this.getMenuCount(); thisMenuIndex++) {
-                JMenu thisMenu = DefaultWyldCardMenuBar.this.getMenu(thisMenuIndex);
+            for (int thisMenuIndex = 0; thisMenuIndex < MainWyldCardMenuBar.this.getMenuCount(); thisMenuIndex++) {
+                JMenu thisMenu = MainWyldCardMenuBar.this.getMenu(thisMenuIndex);
 
                 if (thisMenu != null && name.equalsIgnoreCase(thisMenu.getText())) {
                     return thisMenu;
@@ -123,8 +123,8 @@ public class DefaultWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar 
 
     private JMenuItem findMenuItemByName(String name) {
         return ThreadUtils.callAndWaitAsNeeded(() -> {
-            for (int thisMenuIndex = 0; thisMenuIndex < DefaultWyldCardMenuBar.this.getMenuCount(); thisMenuIndex++) {
-                JMenu thisMenu = DefaultWyldCardMenuBar.this.getMenu(thisMenuIndex);
+            for (int thisMenuIndex = 0; thisMenuIndex < MainWyldCardMenuBar.this.getMenuCount(); thisMenuIndex++) {
+                JMenu thisMenu = MainWyldCardMenuBar.this.getMenu(thisMenuIndex);
 
                 for (int thisMenuItemIndex = 0; thisMenuItemIndex < thisMenu.getItemCount(); thisMenuItemIndex++) {
                     JMenuItem thisMenuItem = thisMenu.getItem(thisMenuItemIndex);

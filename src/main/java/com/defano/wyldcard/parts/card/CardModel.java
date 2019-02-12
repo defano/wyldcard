@@ -58,13 +58,13 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
 
         this.backgroundId = backgroundId;
 
-        defineProperty(PROP_ID, new Value(cardId), true);
-        defineProperty(PROP_MARKED, new Value(false), false);
-        defineProperty(PROP_CANTDELETE, new Value(false), false);
-        defineProperty(PROP_DONTSEARCH, new Value(false), false);
-        defineProperty(PROP_NAME, new Value(""), false);
-        defineProperty(PROP_CONTENTS, new Value(""), false);
-        defineProperty(PROP_SHOWPICT, new Value(true), false);
+        newProperty(PROP_ID, new Value(cardId), true);
+        newProperty(PROP_MARKED, new Value(false), false);
+        newProperty(PROP_CANTDELETE, new Value(false), false);
+        newProperty(PROP_DONTSEARCH, new Value(false), false);
+        newProperty(PROP_NAME, new Value(""), false);
+        newProperty(PROP_CONTENTS, new Value(""), false);
+        newProperty(PROP_SHOWPICT, new Value(true), false);
 
         initialize();
     }
@@ -74,20 +74,20 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
     public void initialize() {
         super.initialize();
 
-        defineComputedReadOnlyProperty(PROP_OWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getName(context)));
-        defineComputedReadOnlyProperty(PROP_LONGOWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getLongName(context)));
-        defineComputedReadOnlyProperty(PROP_SHORTOWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getShortName(context)));
+        newComputedReadOnlyProperty(PROP_OWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getName(context)));
+        newComputedReadOnlyProperty(PROP_LONGOWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getLongName(context)));
+        newComputedReadOnlyProperty(PROP_SHORTOWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getShortName(context)));
 
-        defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
-        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));
-        defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
+        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
+        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));
+        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
 
-        defineComputedReadOnlyProperty(PROP_LONGID, (context, model, propertyName) -> new Value(getLongId(context)));
-        defineComputedReadOnlyProperty(PROP_ABBREVID, (context, model, propertyName) -> new Value(getAbbrevId(context)));
-        defineComputedReadOnlyProperty(PROP_SHORTID, (context, model, propertyName) -> new Value(getShortId(context)));
+        newComputedReadOnlyProperty(PROP_LONGID, (context, model, propertyName) -> new Value(getLongId(context)));
+        newComputedReadOnlyProperty(PROP_ABBREVID, (context, model, propertyName) -> new Value(getAbbrevId(context)));
+        newComputedReadOnlyProperty(PROP_SHORTID, (context, model, propertyName) -> new Value(getShortId(context)));
 
         // When no name of card is provided, returns 'card id xxx'
-        defineComputedGetterProperty(PROP_NAME, (context, model, propertyName) -> {
+        newComputedGetterProperty(PROP_NAME, (context, model, propertyName) -> {
             Value raw = model.getRawProperty(propertyName);
             if (raw == null || raw.isEmpty()) {
                 return new Value("card id " + model.getKnownProperty(context, PROP_ID));

@@ -4,7 +4,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
- * An observer of changes to attributes in a {@link DefaultPropertiesModel}.
+ * An observer of changes to attributes in a {@link WyldCardPropertiesModel}.
  */
 public interface PropertyChangeObserver {
     /**
@@ -19,5 +19,5 @@ public interface PropertyChangeObserver {
      * @param oldValue The attribute's previous value
      * @param newValue The attribute's new value
      */
-    void onPropertyChanged(ExecutionContext context, DefaultPropertiesModel model, String property, Value oldValue, Value newValue);
+    void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue);
 }

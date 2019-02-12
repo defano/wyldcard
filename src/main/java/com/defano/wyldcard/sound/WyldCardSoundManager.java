@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 @Singleton
-public class DefaultSoundManager implements SoundManager {
+public class WyldCardSoundManager implements SoundManager {
 
     private static final int DEFAULT_TEMPO = 120;
     private static String lastPlayedSound = "";
@@ -36,7 +36,7 @@ public class DefaultSoundManager implements SoundManager {
         if (SoundPlaybackExecutor.getInstance().getActiveSoundChannelsCount() == 0) {
             return "done";
         } else {
-            return DefaultSoundManager.lastPlayedSound;
+            return WyldCardSoundManager.lastPlayedSound;
         }
     }
 
