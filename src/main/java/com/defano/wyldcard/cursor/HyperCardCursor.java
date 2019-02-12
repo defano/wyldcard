@@ -1,6 +1,7 @@
 package com.defano.wyldcard.cursor;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.jmonet.tools.cursors.CursorFactory;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -13,7 +14,7 @@ public enum HyperCardCursor {
     CROSS("cross", Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR)),
     PLUS("plus", Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR)),
     WATCH("watch", Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)),
-    HAND("hand", Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)),
+    HAND("hand", getBrowseCursor()),
     ARROW("arrow", Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)),
     BUSY("busy", Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)),
     NONE("none", getBlankCursor());
@@ -34,6 +35,13 @@ public enum HyperCardCursor {
         }
 
         return null;
+    }
+
+    private static Cursor getBrowseCursor() {
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Image image = toolkit.getImage(CursorFactory.class.getResource("/cursors/browse.png"));
+        Point hotspot = new Point(9, 2);
+        return toolkit.createCustomCursor(image, hotspot, "browse");
     }
 
     private static Cursor getBlankCursor() {
