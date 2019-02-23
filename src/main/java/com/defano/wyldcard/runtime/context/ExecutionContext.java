@@ -57,6 +57,7 @@ public class ExecutionContext {
     private Value result;                                   // Value returned by 'the result'
     private CardPart card;                                  // "Current" card in the context of this execution
     private PartSpecifier theTarget;                        // Part that the message was initially sent
+    private boolean isStaticContext;                        // Is message box evaluation?
 
     /**
      * Creates an unbound execution context. Scripts executing with a unbound context will operate on whichever stack
@@ -492,6 +493,26 @@ public class ExecutionContext {
      */
     public void setTarget(PartSpecifier theTarget) {
         this.theTarget = theTarget;
+    }
+
+    /**
+     * Gets the flag indicating whether this execution context is a static context, that is, whether this execution
+     * represents the message box or the debugger's "Evaluate Expression" feature.
+     *
+     * @return True if this execution is occurring in the static context.
+     */
+    public boolean isStaticContext() {
+        return isStaticContext;
+    }
+
+    /**
+     * Sets the flag indicating whether this execution context is a static context, that is, whether this execution
+     * represents the message box or the debugger's "Evaluate Expression" feature.
+     *
+     * @param staticContext True if this execution is occurring in the static context, false otherwise.
+     */
+    public void setStaticContext(boolean staticContext) {
+        isStaticContext = staticContext;
     }
 
     @Override

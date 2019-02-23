@@ -21,6 +21,8 @@ public class MessageEvaluationTask implements Callable<String> {
     public MessageEvaluationTask(ExecutionContext staticContext, String messageText) {
         this.context = staticContext;
         this.messageText = messageText;
+
+        this.context.setStaticContext(true);
     }
 
     @Override

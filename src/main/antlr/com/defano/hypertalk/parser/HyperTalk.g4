@@ -143,6 +143,7 @@ commandStmnt
     | 'convert' expression 'to' convertible                                                                             # convertToCmd
     | 'convert' expression 'from' convertible 'to' convertible                                                          # convertFromToCmd
     | 'create' 'menu' expression                                                                                        # createMenuCmdStmt
+    | 'debug' 'checkpoint'                                                                                              # debugCheckpointCmdStmt
     | 'delete' expression                                                                                               # deleteCmdStmt
     | 'dial' expression                                                                                                 # dialCmdStmt
     | 'disable' expression                                                                                              # disableExprStmt

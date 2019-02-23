@@ -1207,6 +1207,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitDebugCheckpointCmdStmt(HyperTalkParser.DebugCheckpointCmdStmtContext ctx) {
+        return new DebugCheckpointCmd(ctx);
+    }
+
+    @Override
     public Object visitDeleteCmdStmt(HyperTalkParser.DeleteCmdStmtContext ctx) {
         return new DeleteCmd(ctx, (Expression) visit(ctx.expression()));
     }
