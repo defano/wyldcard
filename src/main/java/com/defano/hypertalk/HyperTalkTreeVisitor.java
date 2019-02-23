@@ -95,6 +95,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitKeydownCmdStmt(HyperTalkParser.KeydownCmdStmtContext ctx) {
+        return new KeyDownCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitShowCmdStmnt(HyperTalkParser.ShowCmdStmntContext ctx) {
         return new SetPropertyCmd(ctx, (Expression) visit(ctx.expression()), PartModel.PROP_VISIBLE, new Value(true));
     }

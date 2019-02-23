@@ -1063,6 +1063,7 @@ Command	         | Description
 `go`             | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
 `hide`           | Makes a part, image layer, or window title bar invisible. Syntax is `hide <part-factor>`, `hide {card / background} picture`, `hide picture of {<card-factor> / <bkgnd-factor>}`, or `hide titleBar`. For example `hide button id 0`, `hide picture of the last bg`, or `hide card picture`.
 `import paint`   | Pastes the graphics from a given file onto the current card's canvas (making the imported graphic the active selection). For example, `import paint from file "Card Image.png"`.
+`keyDown`        | Equivalent to pressing the key (or keys) on the keyboard.
 `lock screen`    | "Locks" the screen until WyldCard is idle or the screen is unlocked explicitly via the `unlock screen` command.
 `mark`           | Marks cards matching a query or expression. Several forms including, `mark <card-expression>`, `mark all cards`, `mark cards where <logical-expression>`, `mark cards by finding <term> [in <field-expression>]`
 `multiply`       | Multiplies a container by a value; `multiply x by 3`

@@ -175,6 +175,7 @@ commandStmnt
     | 'hide' picture of expression                                                                                      # hidePictCmd
     | 'hide' 'titlebar'                                                                                                 # hideTitleBar
     | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmdStmt
+    | 'keydown' expression                                                                                              # keydownCmdStmt
     | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
     | 'mark' 'all' cards                                                                                                # markAllCardsCmdStmt
     | 'mark' expression                                                                                                 # markCardCmdStmt
@@ -731,6 +732,7 @@ commandName
     | 'controlkey'
     | 'enterinfield'
     | 'enterkey'
+    | 'keydown'
     | 'put'
     | 'get'
     | 'set'
