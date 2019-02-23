@@ -136,11 +136,14 @@ commandStmnt
     | 'click' 'at' listExpression                                                                                       # clickCmdStmt
     | 'click' 'at' listExpression 'with' listExpression                                                                 # clickWithKeyCmdStmt
     | 'close' 'file' expression                                                                                         # closeFileCmdStmt
+    | 'commandkeydown' expression                                                                                       # commandKeyDownCmdStmt
+    | 'controlkey' expression                                                                                           # controlKeyCmdStmt
     | 'convert' container 'to' convertible                                                                              # convertContainerToCmd
     | 'convert' container 'from' convertible 'to' convertible                                                           # convertContainerFromToCmd
     | 'convert' expression 'to' convertible                                                                             # convertToCmd
     | 'convert' expression 'from' convertible 'to' convertible                                                          # convertFromToCmd
     | 'create' 'menu' expression                                                                                        # createMenuCmdStmt
+    | 'debug' 'checkpoint'                                                                                              # debugCheckpointCmdStmt
     | 'delete' expression                                                                                               # deleteCmdStmt
     | 'dial' expression                                                                                                 # dialCmdStmt
     | 'disable' expression                                                                                              # disableExprStmt
@@ -722,6 +725,8 @@ commandName
     : 'answer'
     | 'ask'
     | 'arrowkey'
+    | 'commandkeydown'
+    | 'controlkey'
     | 'put'
     | 'get'
     | 'set'

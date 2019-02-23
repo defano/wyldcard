@@ -902,6 +902,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitCommandKeyDownCmdStmt(HyperTalkParser.CommandKeyDownCmdStmtContext ctx) {
+        return new CommandKeyDownCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitControlKeyCmdStmt(HyperTalkParser.ControlKeyCmdStmtContext ctx) {
+        return new ControlKeyCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitNextRepeatCmdStmt(HyperTalkParser.NextRepeatCmdStmtContext ctx) {
         return new NextRepeatStatement(ctx);
     }
@@ -1194,6 +1204,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitCreateMenuCmdStmt(HyperTalkParser.CreateMenuCmdStmtContext ctx) {
         return new CreateMenuCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitDebugCheckpointCmdStmt(HyperTalkParser.DebugCheckpointCmdStmtContext ctx) {
+        return new DebugCheckpointCmd(ctx);
     }
 
     @Override

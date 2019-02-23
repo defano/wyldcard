@@ -63,6 +63,11 @@ public class DebugContext {
      */
     public void debug(ExecutionContext context, Statement statement) {
 
+        // Can't debug the message box or the "Evaluate Expression" debug window
+        if (context.isStaticContext()) {
+            return;
+        }
+
         // Already busy debugging another thread. 
         if (isDebugging() && !isActiveDebugThread()) {
             throw new IllegalStateException("Already debugging thread " + debugThread.getName());

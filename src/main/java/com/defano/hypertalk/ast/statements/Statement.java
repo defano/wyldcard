@@ -51,12 +51,22 @@ public abstract class Statement extends ASTNode {
         return new ArrayList<>();
     }
 
+    /**
+     * Used to indicate that this statement represents a permanent breakpoint (i.e., the 'debug checkpoint' command).
+     * Subclasses should override this method to declare themselves permanent breakpoints.
+     *
+     * @return True if this statement is a fixed breakpoint, false otherwise.
+     */
+    protected boolean isPermanentBreakpoint() {
+        return false;
+    }
+
     public void setBreakpoint(boolean isBreakpoint) {
         this.breakpoint = isBreakpoint;
     }
 
     public boolean hasBreakpoint() {
-        return breakpoint;
+        return isPermanentBreakpoint() || breakpoint;
     }
 
     /**
