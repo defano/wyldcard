@@ -1,6 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.preemptions.Preemption;
@@ -28,10 +29,6 @@ public class SendCmd extends Command {
         PartExp recipient = part.factor(context, PartExp.class, new HtSemanticException("Cannot send a message to that."));
         MessageCmd messageCmd = interpretMessage(message.evaluate(context).toString());
 
-        if (messageCmd == null) {
-            throw new HtSemanticException("Not a valid message.");
-        }
-
         messageCmd.setMessageRecipient(recipient);
         messageCmd.execute(context);
     }
@@ -41,7 +38,7 @@ public class SendCmd extends Command {
             Script compiled = Interpreter.blockingCompile(CompilationUnit.SCRIPTLET, message);
             return (MessageCmd) compiled.getStatements().list.get(0);
         } catch (Exception e) {
-            return null;
+            return new MessageCmd(null, message, new ListExp(null));
         }
     }
 

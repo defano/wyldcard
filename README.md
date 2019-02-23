@@ -887,7 +887,7 @@ find "Hyper" in background field "Card"  -- Searches only this one field
 
 ## Special Effects
 
-[Visual Effects](#visual-effects) | [Sound Effects](#sound-effects) | [Music](#music) | [Text to Speech](#text-to-speech)
+[Visual Effects](#visual-effects) | [Sound Effects](#sound-effects) | [Music](#music) | [Speech](#speech)
 
 WyldCard supports a nearly identical set of visual and sound effects as HyperCard.
 
@@ -997,7 +997,7 @@ wait until the sound is done
 put "Finally some peace and quiet!"
 ```
 
-### Text to speech
+### Speech
 
 WyldCard can speak text using one of several pre-installed, English-speaking voices. The syntax for speaking text is `speak <text> [ with { <gender> voice } | { voice <name>} ]` where:
 
@@ -1052,8 +1052,10 @@ Command	         | Description
 `do`             | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
 `doMenu`         | Finds a menu item (in the menubar) matching the given argument and performs the action associated with it (behaves as if the user chose the item from the menubar). Causes the `doMenu theMenu, theMenuItem` message to be sent to the card. Note that WyldCard searches the menu bar from left-to-right (File, Edit, Go, ...), top-to-bottom when looking for a matching menu item. The first item matching the given name (case insensitive) is invoked. For example, `doMenu "Card Info..."`
 `drag`           | Drags the mouse from one point to another while optionally holding down one or more modifier keys; `drag from "35,70" to "200,180" with shiftKey`. For security reasons, some operating systems (like macOS Mojave) require special accessibility permissions to be given to WyldCard to allow scripted mouse or keyboard control.
-`enable`         | Enables a part, menu or menu item; sets the part's `enabled` property to true. For example, `enable menu "Objects"`.
 `edit script`    | Displays the script editor of the given part. For example, `edit script of button id 3` or `edit the script of this card`.
+`enable`         | Enables a part, menu or menu item; sets the part's `enabled` property to true. For example, `enable menu "Objects"`.
+`enterInField`   | Equivalent to pressing the `enter` key in the currently focused text field. Has no effect when the focus owner is not a field.
+`enterKey`       | Equivalent to pressing the `enter` key on the keyboard.
 `exit`           | Interrupts the flow of execution. Use `exit to HyperCard` to immediately exit all pending script handlers; `exit <message>` to break out of a handler or function (for example, `exit mouseUp`); `exit repeat` to prematurely end execution of a loop. Note that the `exit` message is not sent to the card and cannot be trapped in script.
 `export paint`   | Saves an image of the displayed card (or the selected graphic, if a selection exists) to a given file. For example, `export paint to file "Card Image.png"`.
 `find`           | Finds text in the stack or in a given field. Several forms of the command, see the "Searching & Sorting" section. For example, `find chars "blah" of marked cards`.
@@ -1078,7 +1080,7 @@ Command	         | Description
 `set`            | Sets the property of a part to a value (`set the wrapText of field id 3 to (5 > 3)`) or sets a global WyldCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
 `show`           | Makes a part, image layer, or window title bar visible. Syntax is `show <part-factor>`, `show {card / background} picture`, `show picture of {<card-factor> / <bkgnd-factor>}`, or `show titleBar`. For example `show button "My Button"`, `show picture of card 2`, or `show card picture`.
 `sort`           | Sorts the cards in the stack, or the `lines` or `items` of a container based on value or expression. See the section on sorting for details.
-`speak`          | Speaks text in a default or specified voice. See the "Text to speech" section for details.
+`speak`          | Speaks text in a default or specified voice. See the "Speech" section for details.
 `subtract`       | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
 `type`           | Emulates the user typing a sequence of characters at the keyboard. For example, `type "Hello world!"`. Add `with commandKey` to simulate typing a control sequence, for example, `type "v" with commandKey` to invoke the "Paste" command from the "Edit" menu.
 `unlock screen`  | Unlocks the screen while optionally applying a visual effect to the revealed changes. Use the syntax `unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` for animated transitions. See the "Visual Effects" section of this document for details.

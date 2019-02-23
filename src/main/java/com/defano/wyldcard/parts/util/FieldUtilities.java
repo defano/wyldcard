@@ -1,8 +1,12 @@
 package com.defano.wyldcard.parts.util;
 
 import com.defano.hypertalk.utils.Range;
+import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
+import com.defano.wyldcard.parts.field.styles.HyperCardTextPane;
 
 import javax.swing.text.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
 public class FieldUtilities {
@@ -149,5 +153,11 @@ public class FieldUtilities {
         }
 
         return 0;
+    }
+
+    public static boolean isEnterKeyEvent(AWTEvent e) {
+        return e instanceof KeyEvent &&
+                ((KeyEvent) e).getKeyChar() == KeyEvent.VK_ENTER &&
+                ((KeyEvent) e).getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD;
     }
 }

@@ -154,6 +154,8 @@ commandStmnt
     | 'drag' 'from' listExpression 'to' listExpression 'with' listExpression                                            # dragWithKeyCmdStmt
     | 'edit' 'the'? 'script' of expression                                                                              # editScriptCmdStmt
     | 'enable' expression                                                                                               # enableExpStmnt
+    | 'enterinfield'                                                                                                    # enterInFieldCmdStmt
+    | 'enterkey'                                                                                                        # enterKeyCmdStmt
     | 'exit' handlerName                                                                                                # exitCmdStmt
     | 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
     | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
@@ -727,6 +729,8 @@ commandName
     | 'arrowkey'
     | 'commandkeydown'
     | 'controlkey'
+    | 'enterinfield'
+    | 'enterkey'
     | 'put'
     | 'get'
     | 'set'

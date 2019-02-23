@@ -1222,6 +1222,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitEnterInFieldCmdStmt(HyperTalkParser.EnterInFieldCmdStmtContext ctx) {
+        return new EnterInFieldCmd(ctx);
+    }
+
+    @Override
+    public Object visitEnterKeyCmdStmt(HyperTalkParser.EnterKeyCmdStmtContext ctx) {
+        return new EnterKeyCmd(ctx);
+    }
+
+    @Override
     public Object visitIfStatement(HyperTalkParser.IfStatementContext ctx) {
         return new IfStatement(ctx, (Expression) visit(ctx.expression()), (ThenElseBlock) visit(ctx.thenStatement()));
     }
