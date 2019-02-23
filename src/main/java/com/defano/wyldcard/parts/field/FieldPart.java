@@ -11,6 +11,7 @@ import com.defano.wyldcard.parts.DeferredKeyEventComponent;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.card.CardPart;
+import com.defano.wyldcard.parts.util.TextArrowsMessageCompletionObserver;
 import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
@@ -264,7 +265,16 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
 
-        if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get() && !isPartToolActive()) {
+        // When textArrows is false, navigate between cards when arrow key is pressed, even when field has focus
+        if (!WyldCard.getInstance().getWyldCardProperties().isTextArrows() &&
+                e.getID() == KeyEvent.KEY_PRESSED &&
+                ArrowDirection.fromKeyEvent(e) != null)
+        {
+            new TextArrowsMessageCompletionObserver(getCard(), e).doArrowKeyNavigation();
+        }
+
+        // Key press didn't result in navigation, let field process event
+        else if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get() && !isPartToolActive()) {
             BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, true);
             if (bsm != null) {
                 getPartModel().receiveAndDeferKeyEvent(new ExecutionContext(this), bsm.message.messageName, bsm.boundArguments, e, this);

@@ -793,6 +793,7 @@ Global Property | Description
 `scriptTextFont`| The name of the font family used in the script editor; default is `Monaco`.
 `scriptTextSize`| The size, in points, of the text of the script editor; default is `12`.
 `systemVersion` | The read-only version number of the Java Virtual Machine executing WyldCard, for example, `1.8.0_131`.
+`textArrows`    | When `false`, pressing an arrow key will always navigate between cards in the stack; when `true`, pressing an arrow key will only navigate between cards in the stack if a text field is not in focus (when a text field has focus and `textArrows` is true, the arrow keys move the caret position within the field).
 `textFont`      | The currently active font family, as indicated by the selection in the "Font" menu.
 `textSize`      | The currently active font size, as indicated by the selection in the "Style" menu.
 `textStyle`     | The currently active font style, as indicated by the selection in the "Style" menu.
@@ -1031,6 +1032,7 @@ Command	         | Description
 -----------------|------------------------------
 `add`            | Adds a value to a container; for example `add 3 to x` or `add card field id 0 to card field id 1`
 `answer`         | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
+`arrowKey`       | Has the same effect as typing an arrow key on the keyboard (the exact behavior of which is determined by focus and the value of the `textArrows` global property). Accepts a single argument referring to the arrow direction, one of `up`, `down`, `left` or `right.`
 `ask`            | Similar to `answer`, but produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
 `ask file`       | Displays a directory chooser in which the user can enter a file name (same as a user would see when choosing 'Save As...' from the 'Edit' menu). The full directory path of the chosen file is put into the variable `it`. When the user cancels the dialog without making a selection, `the result` function returns `Cancel`. For example, `ask file "Please choose a file" with "Untitled.txt"`.
 `beep`           | Causes the system to emit an alert/beep sound. Has no effect if the system has no alert sound.

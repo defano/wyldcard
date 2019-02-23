@@ -23,10 +23,11 @@ import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.clipboard.CardPartTransferHandler;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldPart;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
+import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.stack.StackModel;
+import com.defano.wyldcard.parts.util.TextArrowsMessageCompletionObserver;
 import com.defano.wyldcard.runtime.PartsTable;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
@@ -787,7 +788,9 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @Override
     @RunOnDispatch
     public void keyTyped(KeyEvent e) {
-        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.KEY_DOWN.messageName, new ListExp(null, new LiteralExp(null, String.valueOf(e.getKeyChar()))));
+        getPartModel().receiveMessage(
+                new ExecutionContext(this),
+                SystemMessage.KEY_DOWN.messageName, new ListExp(null, new LiteralExp(null, String.valueOf(e.getKeyChar()))));
     }
 
     @Override
@@ -795,7 +798,11 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     public void keyPressed(KeyEvent e) {
         BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, false);
         if (bsm != null) {
-            getPartModel().receiveMessage(new ExecutionContext(this), bsm.message.messageName, bsm.boundArguments);
+            getPartModel().receiveMessage(
+                    new ExecutionContext(this),
+                    bsm.message.messageName,
+                    bsm.boundArguments,
+                    new TextArrowsMessageCompletionObserver(this, e));
         }
     }
 

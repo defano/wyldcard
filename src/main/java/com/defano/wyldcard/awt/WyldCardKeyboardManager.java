@@ -5,6 +5,7 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.google.inject.Singleton;
 
+import javax.swing.FocusManager;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -36,6 +37,11 @@ public class WyldCardKeyboardManager implements KeyboardManager {
             }
 
             fireGlobalKeyListeners(e);
+
+            // When no UI element has keyboard focus, send key press events to the displayed card
+            if (FocusManager.getCurrentManager().getFocusOwner() == null) {
+                delegateKeyEventToFocusedCard(e);
+            }
 
             return false;
         });
@@ -71,6 +77,22 @@ public class WyldCardKeyboardManager implements KeyboardManager {
                     .getStackModel()
                     .getKnownProperty(context, StackModel.PROP_CANTPEEK)
                     .booleanValue();
+    }
+
+    private void delegateKeyEventToFocusedCard(KeyEvent e) {
+        switch (e.getID()) {
+            case KeyEvent.KEY_PRESSED:
+                WyldCard.getInstance().getStackManager().getFocusedStack().getDisplayedCard().keyPressed(e);
+                break;
+
+            case KeyEvent.KEY_TYPED:
+                WyldCard.getInstance().getStackManager().getFocusedStack().getDisplayedCard().keyTyped(e);
+                break;
+
+            case KeyEvent.KEY_RELEASED:
+                WyldCard.getInstance().getStackManager().getFocusedStack().getDisplayedCard().keyReleased(e);
+                break;
+        }
     }
 
     private static void fireGlobalKeyListeners(KeyEvent e) {

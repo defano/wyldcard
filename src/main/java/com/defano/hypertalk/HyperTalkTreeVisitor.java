@@ -190,6 +190,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitArrowLiteralExpr(HyperTalkParser.ArrowLiteralExprContext ctx) {
+        return new LiteralExp(ctx, ctx.getText());
+    }
+
+    @Override
+    public Object visitArrowExpr(HyperTalkParser.ArrowExprContext ctx) {
+        return visit(ctx.expression());
+    }
+
+    @Override
     public Object visitConvertContainerFromToCmd(HyperTalkParser.ConvertContainerFromToCmdContext ctx) {
         return new ConvertCmd(ctx, (ContainerExp) visit(ctx.container()), (Convertible) visit(ctx.convertible(0)), (Convertible) visit(ctx.convertible(1)));
     }
@@ -1304,6 +1314,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitAnswerDefaultCmd(HyperTalkParser.AnswerDefaultCmdContext ctx) {
         return new AnswerCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitArrowKeyCmd(HyperTalkParser.ArrowKeyCmdContext ctx) {
+        return new ArrowKeyCmd(ctx, (Expression) visit(ctx.arrowExpression()));
     }
 
     @Override
