@@ -124,6 +124,7 @@ commandStmnt
     | 'answer' expression 'with' factor 'or' factor                                                                     # answerTwoButtonCmd
     | 'answer' expression 'with' factor                                                                                 # answerOneButtonCmd
     | 'answer' expression                                                                                               # answerDefaultCmd
+    | 'arrowkey' arrowExpression                                                                                        # arrowKeyCmd
     | 'ask' expression 'with' expression                                                                                # askExpWithCmd
     | 'ask' expression                                                                                                  # askExpCmd
     | 'ask' 'file' expression                                                                                           # askFileCmd
@@ -477,6 +478,14 @@ toolExpression
     | expression                                                                                                        # toolExpr
     ;
 
+arrowExpression
+    : 'up'                                                                                                              # arrowLiteralExpr
+    | 'down'                                                                                                            # arrowLiteralExpr
+    | 'left'                                                                                                            # arrowLiteralExpr
+    | 'right'                                                                                                           # arrowLiteralExpr
+    | expression                                                                                                        # arrowExpr
+    ;
+
 effectExpression
     : 'effect'? effect                                                                                                  # effectDefault
     | 'effect'? effect 'to' image                                                                                       # effectTo
@@ -712,6 +721,7 @@ propertyValue
 commandName
     : 'answer'
     | 'ask'
+    | 'arrowkey'
     | 'put'
     | 'get'
     | 'set'

@@ -41,6 +41,7 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
         newProperty(PROP_FOUNDLINE, new Value(), true);
         newProperty(PROP_FOUNDTEXT, new Value(), true);
         newProperty(PROP_LOCKMESSAGES, new Value(true), false);
+        newProperty(PROP_TEXTARROWS, new Value(true), false);
 
         newComputedReadOnlyProperty(PROP_SYSTEMVERSION, (context, model, propertyName) -> new Value(System.getProperty("java.version")));
 
@@ -147,5 +148,15 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
         setKnownProperty(new ExecutionContext(), PROP_LOCKMESSAGES, new Value(false));
 
         WyldCard.getInstance().getCursorManager().setActiveCursor(HyperCardCursor.HAND);
+    }
+
+    @Override
+    public boolean isTextArrows() {
+        return getKnownProperty(new ExecutionContext(), PROP_TEXTARROWS).booleanValue();
+    }
+
+    @Override
+    public boolean isLockMessages() {
+        return getKnownProperty(new ExecutionContext(), PROP_LOCKMESSAGES).booleanValue();
     }
 }

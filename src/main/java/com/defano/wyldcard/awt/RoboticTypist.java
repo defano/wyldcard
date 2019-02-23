@@ -1,5 +1,6 @@
 package com.defano.wyldcard.awt;
 
+import com.defano.hypertalk.ast.model.ArrowDirection;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
@@ -80,6 +81,10 @@ public class RoboticTypist {
 
     public static RoboticTypist getInstance() {
         return instance;
+    }
+
+    public void type(ArrowDirection arrowKey) throws HtException {
+        new KeyStroke(arrowKey.getKeyEvent(), false).type(false);
     }
 
     public void type(String string, boolean withCommandKey) throws HtException {
