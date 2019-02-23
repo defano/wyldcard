@@ -4,6 +4,8 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.Script;
+import com.defano.hypertalk.ast.model.SystemMessage;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
@@ -12,6 +14,8 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import java.util.ArrayList;
 
 public class SendCmd extends Command {
 
@@ -27,19 +31,21 @@ public class SendCmd extends Command {
 
     public void onExecute(ExecutionContext context) throws HtException, Preemption {
         PartExp recipient = part.factor(context, PartExp.class, new HtSemanticException("Cannot send a message to that."));
-        MessageCmd messageCmd = interpretMessage(message.evaluate(context).toString());
+        MessageCmd messageCmd = synthesizeMessageCmd(context, message.evaluate(context).toString());
 
         messageCmd.setMessageRecipient(recipient);
         messageCmd.execute(context);
     }
 
-    private MessageCmd interpretMessage(String message) {
-        try {
-            Script compiled = Interpreter.blockingCompile(CompilationUnit.SCRIPTLET, message);
-            return (MessageCmd) compiled.getStatements().list.get(0);
-        } catch (Exception e) {
-            return new MessageCmd(null, message, new ListExp(null));
+    private MessageCmd synthesizeMessageCmd(ExecutionContext context, String text) {
+        String message = text.trim().split("\\s")[0];
+        ArrayList<Value> arguments = new ArrayList<>();
+
+        for (String component : text.trim().substring(message.length()).split(",")) {
+            arguments.add(Interpreter.blockingEvaluate(component.trim(), context));
         }
+
+        return new MessageCmd(null, message, ListExp.fromValues(null, arguments.toArray(new Value[]{})));
     }
 
 }
