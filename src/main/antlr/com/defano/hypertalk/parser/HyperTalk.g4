@@ -136,6 +136,8 @@ commandStmnt
     | 'click' 'at' listExpression                                                                                       # clickCmdStmt
     | 'click' 'at' listExpression 'with' listExpression                                                                 # clickWithKeyCmdStmt
     | 'close' 'file' expression                                                                                         # closeFileCmdStmt
+    | 'commandkeydown' expression                                                                                       # commandKeyDownCmdStmt
+    | 'controlkey' expression                                                                                           # controlKeyCmdStmt
     | 'convert' container 'to' convertible                                                                              # convertContainerToCmd
     | 'convert' container 'from' convertible 'to' convertible                                                           # convertContainerFromToCmd
     | 'convert' expression 'to' convertible                                                                             # convertToCmd
@@ -722,6 +724,8 @@ commandName
     : 'answer'
     | 'ask'
     | 'arrowkey'
+    | 'commandkeydown'
+    | 'controlkey'
     | 'put'
     | 'get'
     | 'set'

@@ -84,13 +84,13 @@ public class RoboticTypist {
     }
 
     public void type(ArrowDirection arrowKey) throws HtException {
-        new KeyStroke(arrowKey.getKeyEvent(), false).type(false);
+        new KeyStroke(arrowKey.getKeyEvent(), false).type(false, false);
     }
 
-    public void type(String string, boolean withCommandKey) throws HtException {
+    public void type(String string, boolean withCommandKey, boolean withControlKey) throws HtException {
         for (Character thisChar : string.toCharArray()) {
             if (keystrokeMap.containsKey(thisChar)) {
-                keystrokeMap.get(thisChar).type(withCommandKey);
+                keystrokeMap.get(thisChar).type(withCommandKey, withControlKey);
             } else {
                 throw new HtSemanticException("Sorry, don't know type this character: " + thisChar);
             }
@@ -106,7 +106,7 @@ public class RoboticTypist {
             isShifted = shift;
         }
 
-        public void type(boolean withCommandKey) throws HtException {
+        public void type(boolean withCommandKey, boolean withControlKey) throws HtException {
 
             if (robot == null) {
                 try {
@@ -124,6 +124,10 @@ public class RoboticTypist {
                 robot.keyPress(commandKey);
             }
 
+            if (withControlKey) {
+                robot.keyPress(KeyEvent.VK_CONTROL);
+            }
+
             robot.keyPress(code);
             robot.keyRelease(code);
 
@@ -133,6 +137,10 @@ public class RoboticTypist {
 
             if (withCommandKey) {
                 robot.keyRelease(commandKey);
+            }
+
+            if (withControlKey) {
+                robot.keyRelease(KeyEvent.VK_CONTROL);
             }
 
             if (code == KeyEvent.VK_ENTER) {
