@@ -2,7 +2,6 @@ package com.defano.wyldcard.runtime;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.cursor.HyperCardCursor;
-import com.defano.wyldcard.parts.model.ComputedGetter;
 import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;

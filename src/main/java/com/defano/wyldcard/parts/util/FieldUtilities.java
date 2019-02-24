@@ -1,8 +1,6 @@
 package com.defano.wyldcard.parts.util;
 
 import com.defano.hypertalk.utils.Range;
-import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
-import com.defano.wyldcard.parts.field.styles.HyperCardTextPane;
 
 import javax.swing.text.*;
 import java.awt.*;

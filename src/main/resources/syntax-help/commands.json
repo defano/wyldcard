@@ -548,12 +548,12 @@
       "send ${message} to ${partFactor}"
     ],
     "parameters": [
-      {"parameter": "message", "description": "An expression representing the message (and any optional arguments) to be sent."},
+      {"parameter": "message", "description": "An expression representing the message (and any optional arguments) to be sent. Arguments in the message are evaluated before being sent."},
       {"parameter": "expression", "description": "The part that should receive the message."}
     ],
     "examples": [
       {"description": "Send `mouseUp` to a part (to make it behave as though it were clicked by the mouse).", "code": "send \"mouseUp\" to bkgnd button 3"},
-      {"description": "Sends a message with arguments.", "code": "send \"addUser\" && theUserId to card id 3"}
+      {"description": "Sends a message with arguments (note how the second argument is HyperTalk expression).", "code": "send \"greetUser Hello, the first word of cd fld name\" to this card"}
     ]
   },
 
@@ -766,6 +766,89 @@
       {"parameter": "searchStrategy", "description": "Optionally one of `word`, `chars`, `whole`, or `string`. When no `strategy` is specified, `whole` is assumed."},
       {"parameter": "fieldExpression", "description": "An expression evaluating to a field where text should be searched. If the expression does not evaluate to a valid field on the card, the card will not be unmarked."}
     ]
+  },
+
+  {
+    "title": "Tab Key",
+    "summary": "Equivalent to typing `tab` on the keyboard.",
+    "codePrefix": "tabkey",
+    "templates": [
+      "tabKey"
+    ]
+  },
+
+  {
+    "title": "Enter Key",
+    "summary": "Equivalent to typing `enter` on the keyboard.",
+    "codePrefix": "enterkey",
+    "templates": [
+      "enterKey"
+    ]
+  },
+
+  {
+    "title": "Control Key",
+    "summary": "Equivalent to pressing the `control` key on the keyboard.",
+    "codePrefix": "controlkey",
+    "templates": [
+      "controlKey"
+    ]
+  },
+
+  {
+    "title": "Enter In Field",
+    "summary": "Equivalent to typing `enter` into the in-focus field. Has no effect if a text field is not currently focused.",
+    "codePrefix": "enterinfield",
+    "templates": [
+      "enterInField"
+    ]
+  },
+
+  {
+    "title": "Command Key Down",
+    "summary": "Equivalent to pressing the `command` key on the keyboard.",
+    "codePrefix": "commandkeydown",
+    "templates": [
+      "commandKeyDown"
+    ]
+  },
+
+  {
+    "title": "Debug Checkpoint",
+    "summary": "Activates the HyperTalk debugger.",
+    "description": "Pauses execution of the script and causes the HyperTalk debugger to open, highlighting this statement. Has no effect when executed from the message window.",
+    "codePrefix": "debug",
+    "templates": [
+      "debug checkpoint"
+    ]
+  },
+
+  {
+    "title": "Arrow Key",
+    "summary": "Equivalent to pressing one of the directional arrow keys on the keyboard.",
+    "codePrefix": "arrowkey",
+    "templates": [
+      "arrowKey ${directionExpression}"
+    ],
+    "parameters": [
+      {"parameter": "directionExpression", "description": "An expression evaluating to a direction; one of `up`, `down`, `left` or `right`."}
+    ]
+  },
+
+  {
+    "title": "Save",
+    "summary": "Saves the current, or a specified stack, to disk.",
+    "description": "Saves a copy of the current stack, or a specified stack, to a given file. If an error occurs, `the result` will contain an error message. Note that stacks are always saved with the `.stack` file extension. If the given filename does not end in `.stack` then this extension will be automatically appended to the filename.",
+    "codePrefix": "save",
+    "templates": [
+      "save this stack as ${fileExpression}",
+      "save ${stackExpression} as ${fileExpression}"
+    ],
+    "parameters": [
+      {"parameter": "stackExpression", "description": "An expression that evaluates to a stack. For example, `stack \"My Stack\"`"},
+      {"parameter": "fileExpression", "description": "An expression evaluating to a file or a path to a file, for example `\"/users/bill/mystack\"`."}
+    ]
   }
+
 
 ]

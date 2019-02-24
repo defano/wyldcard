@@ -237,7 +237,32 @@
     "examples": [
       {"code": "set the theme to \"Nimbus\""}
     ]
-  }
+  },
 
+  {
+    "title": "Address",
+    "summary": "The IP address of the localhost, or empty if it can't be determined.",
+    "codePrefix": "address",
+    "templates": [
+      "get the address"
+    ],
+    "examples": [
+      {"code": "set the itemDelimiter to \".\"\nif the first item of the address is 192 then answer \"Class C private network!\""}
+    ]
+  },
+
+  {
+    "title": "Text Arrows",
+    "summary": "Specifies the action taken when an arrow key is pressed on the keyboard.",
+    "description": "When `false`, pressing an arrow key will always navigate between cards in the stack; when `true`, pressing an arrow key will only navigate between cards in the stack if a text field is not in focus (when a text field has focus and `textArrows` is true, the arrow keys move the caret position within the field).",
+    "codePrefix": "textarrows",
+    "templates": [
+      "set the textarrows to ${booleanExpression}",
+      "get the textarrows"
+    ],
+    "parameters": [
+      {"parameter": "booleanExpression", "description": "An expression that evaluates to `true` or `false`."}
+    ]
+  }
 
 ]
