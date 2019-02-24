@@ -1,5 +1,6 @@
 package com.defano.wyldcard.awt;
 
+import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -39,7 +40,7 @@ public class WyldCardKeyboardManager implements KeyboardManager {
             fireGlobalKeyListeners(e);
 
             // When no UI element has keyboard focus, send key press events to the displayed card
-            if (FocusManager.getCurrentManager().getFocusOwner() == null) {
+            if (FocusManager.getCurrentManager().getFocusOwner() == null || FocusManager.getCurrentManager().getFocusOwner() instanceof JMonetCanvas) {
                 delegateKeyEventToFocusedCard(e);
             }
 

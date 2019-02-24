@@ -227,6 +227,7 @@ commandStmnt
     | 'speak' expression 'with' gender=('male'|'female'|'neuter'|'robotic') 'voice'                                     # speakGenderCmd
     | 'speak' expression 'with' 'voice' expression                                                                      # speakVoiceCmd
     | 'subtract' expression 'from' expression                                                                           # subtractCmdStmnt
+    | 'tabkey'                                                                                                          # tabKeyCmdStmnt
     | 'type' expression                                                                                                 # typeCmdStmt
     | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmdStmt
     | 'unlock' 'screen'                                                                                                 # unlockScreenCmdStmt
@@ -735,6 +736,7 @@ commandName
     | 'enterinfield'
     | 'enterkey'
     | 'keydown'
+    | 'tabkey'
     | 'put'
     | 'get'
     | 'set'

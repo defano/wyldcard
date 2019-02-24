@@ -1084,6 +1084,7 @@ Command	         | Description
 `sort`           | Sorts the cards in the stack, or the `lines` or `items` of a container based on value or expression. See the section on sorting for details.
 `speak`          | Speaks text in a default or specified voice. See the "Speech" section for details.
 `subtract`       | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
+`tabKey`         | Has the same effect as typing `tab` on the keyboard.
 `type`           | Emulates the user typing a sequence of characters at the keyboard. For example, `type "Hello world!"`. Add `with commandKey` to simulate typing a control sequence, for example, `type "v" with commandKey` to invoke the "Paste" command from the "Edit" menu.
 `unlock screen`  | Unlocks the screen while optionally applying a visual effect to the revealed changes. Use the syntax `unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` for animated transitions. See the "Visual Effects" section of this document for details.
 `visual effect`  | Specifies the visual effect to be used with any subsequent `go` command within the current handler. If the `go` command specifies its own visual effect, the `go` command's visual effect takes precedence. This command only affects navigation that occurs within the function/handler that invokes it.
