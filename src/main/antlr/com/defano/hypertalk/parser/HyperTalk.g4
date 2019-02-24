@@ -198,6 +198,8 @@ commandStmnt
     | 'read' 'from' 'file' expression 'until' expression                                                                # readFileUntil
     | 'reset' 'the'? 'menubar'                                                                                          # resetMenuCmdStmt
     | 'reset' 'paint'                                                                                                   # resetPaintCmdStmt
+    | 'save' 'this'? 'stack' 'as' 'stack'? expression                                                                   # saveThisStackAsCmdStmt
+    | 'save' 'stack' expression 'as' 'stack'? expression                                                                # saveStackAsCmdStmt
     | 'select' 'empty'                                                                                                  # selectEmptyCmd
     | 'select' 'text' of expression                                                                                     # selectTextCmd
     | 'select' 'before' 'text' of expression                                                                            # selectBeforeCmd

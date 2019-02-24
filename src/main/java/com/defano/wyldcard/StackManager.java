@@ -33,12 +33,24 @@ public interface StackManager {
     StackModel findStack(ExecutionContext context, StackPartSpecifier specifier, RemoteNavigationOptions options);
 
     /**
+     * Attempts to load the specified stack file into memory and demoralize it into a StackModel object. Does not
+     * "open", display, or otherwise make the stack available to WyldCard.
+     *
+     * @param context   The execution context.
+     * @param stackFile The serialized stack file.
+     * @return The deserialized stack model loaded from the given file, or null if the file cannot be loaded for any
+     * reason.
+     */
+    StackModel loadStack(ExecutionContext context, File stackFile);
+
+    /**
      * Prompts the user to select a stack file from disk for opening.
      *
      * @param context     The current execution context
      * @param inNewWindow When true, the stack will open in a new stack window. When false, the opened stack will
      *                    replace the stack active in the execution context (i.e., the focused stack or stack requesting
      *                    to open a new stack).
+     * @param title       The title to be displayed in the Open/Find file dialog.
      */
     StackPart openStack(ExecutionContext context, boolean inNewWindow, String title);
 
@@ -72,6 +84,16 @@ public interface StackManager {
      * @param stackModel The StackModel to save; when null the focused stack is assumed.
      */
     void saveStack(ExecutionContext context, StackModel stackModel);
+
+    /**
+     * Writes the serialized stack data into the given file. Prompts the "Save as..." dialog if the given file is null.
+     * Sets the result to empty if stack is saved successfully, otherwise, puts the error message into the result.
+     *
+     * @param context    The execution context.
+     * @param stackModel The model of the stack to be saved
+     * @param file       The file where the stack should be saved
+     */
+    void saveStack(ExecutionContext context, StackModel stackModel, File file);
 
     /**
      * Closes all of the open stack windows (prompting as required to save); when all stacks have closed, the

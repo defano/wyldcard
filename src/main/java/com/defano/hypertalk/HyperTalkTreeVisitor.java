@@ -1207,6 +1207,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSaveThisStackAsCmdStmt(HyperTalkParser.SaveThisStackAsCmdStmtContext ctx) {
+        return new SaveStackCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitSaveStackAsCmdStmt(HyperTalkParser.SaveStackAsCmdStmtContext ctx) {
+        return new SaveStackCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+    }
+
+    @Override
     public Object visitCreateMenuCmdStmt(HyperTalkParser.CreateMenuCmdStmtContext ctx) {
         return new CreateMenuCmd(ctx, (Expression) visit(ctx.expression()));
     }

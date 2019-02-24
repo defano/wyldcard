@@ -3,6 +3,7 @@ package com.defano.wyldcard;
 import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
 import com.defano.hypertalk.ast.model.SystemMessage;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.aspect.RunOnDispatch;
@@ -54,6 +55,15 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     public void newStack(ExecutionContext context) {
         StackPart newStack = StackPart.newStack(context);
         ThreadUtils.invokeAndWaitAsNeeded(() -> displayStack(context, newStack, true));
+    }
+
+    @Override
+    public StackModel loadStack(ExecutionContext context, File stackFile) {
+        try {
+            return Serializer.deserialize(stackFile, StackModel.class);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
@@ -165,19 +175,15 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         saveStack(context, stackModel, saveFile.orElse(null));
     }
 
-    /**
-     * Writes the serialized stack data into the given file. Prompts the "Save as..." dialog if the given file is null.
-     *
-     * @param context The execution context.
-     * @param file    The file where the stack should be saved
-     */
-    private void saveStack(ExecutionContext context, StackModel stackModel, File file) {
+    @Override
+    public void saveStack(ExecutionContext context, StackModel stackModel, File file) {
         if (file != null) {
             try {
                 Serializer.serialize(file, stackModel);
                 stackModel.setSavedStackFile(context, file);
+                context.setResult(new Value());
             } catch (IOException e) {
-                WyldCard.getInstance().showErrorDialog(new HtSemanticException("An error occurred saving the file " + file.getAbsolutePath()));
+                context.setResult(new Value("An error occurred saving the file " + file.getAbsolutePath()));
             }
         } else {
             saveStackAs(context, stackModel);
