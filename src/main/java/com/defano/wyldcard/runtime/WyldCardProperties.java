@@ -4,6 +4,7 @@ import com.defano.wyldcard.parts.model.PropertiesModel;
 
 public interface WyldCardProperties extends PropertiesModel {
 
+    String PROP_ADDRESS = "address";
     String PROP_ITEMDELIMITER = "itemdelimiter";
     String PROP_SELECTEDTEXT = "selectedtext";
     String PROP_SELECTEDCHUNK = "selectedchunk";

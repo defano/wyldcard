@@ -597,7 +597,7 @@ Menus in WyldCard differ from Apple's HyperCard in a few ways:
 
 ## Properties
 
-[Buttons](#button-properties) | [Fields](#field-properties) | [Menus](#menu-properties) | [Cards & Backgrounds](#card-and-background-properties) | [Windows](#window-properties) | [Stacks](#stack-properties) | [HyperCard](#hypercard-properties)
+[Buttons](#button-properties) | [Fields](#field-properties) | [Menus](#menu-properties) | [Cards & Backgrounds](#card-and-background-properties) | [Windows](#window-properties) | [Stacks](#stack-properties) | [WyldCard](#wyldcard-properties)
 
 A property is a HyperTalk-addressable attribute that determines how an object looks, feels, and reacts to user interaction. Properties in WyldCard are _first class_ containers that can be read or written in whole or by chunk as an expression or by using the `set`, `get`, or `put` commands.
 
@@ -778,6 +778,7 @@ WyldCard supports these global properties:
 
 Global Property | Description
 ----------------|---------------
+`address`       | Returns the IP address of the localhost (as defined by Java's `Inet4Address.getLocalHost()` method), or empty, if the IP address cannot be retrieved. Note that HyperCard's `address` property returned the Mac's AppleTalk network address.
 `brush`         | An integer value between `0` and `23` indicating the active paintbrush.
 `centered`      | A boolean value indicating whether shapes from center out, or corner-to-corner (equivalent to "Draw Centered" in the "Options" menu).
 `cursor`        | The name of the cursor to be displayed in place of the default, `hand` cursor; one of `ibeam`, `cross`, `plus` (same as `busy`), `watch`, `hand`, `arrow`, `busy` or `none`. Does not effect paint tool, button tool or field tool cursors. Resets to `hand` on idle. Some cursors may not be supported on all operating systems.

@@ -2,12 +2,16 @@ package com.defano.wyldcard.runtime;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.cursor.HyperCardCursor;
+import com.defano.wyldcard.parts.model.ComputedGetter;
 import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.inject.Singleton;
+
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 
 /**
  * A model of global, HyperCard properties. Note that this model is not part of a stack and is therefore never saved.
@@ -42,6 +46,14 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
         newProperty(PROP_FOUNDTEXT, new Value(), true);
         newProperty(PROP_LOCKMESSAGES, new Value(true), false);
         newProperty(PROP_TEXTARROWS, new Value(true), false);
+
+        newComputedReadOnlyProperty(PROP_ADDRESS, (context, model, propertyName) -> {
+            try {
+                return new Value(Inet4Address.getLocalHost().getHostAddress());
+            } catch (UnknownHostException e) {
+                return new Value();
+            }
+        });
 
         newComputedReadOnlyProperty(PROP_SYSTEMVERSION, (context, model, propertyName) -> new Value(System.getProperty("java.version")));
 
