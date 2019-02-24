@@ -2,10 +2,9 @@
 
 [Features](#features) | [Getting Started](#getting-started) | [Building](doc/BUILDING.md) | [HyperTalk Language Reference](#the-hypertalk-language)
 
-A reproduction of Apple's HyperCard written in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
+A reproduction of Apple's HyperCard, written in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
 
 [![Build Status](https://travis-ci.org/defano/wyldcard.svg?branch=master)](https://travis-ci.org/defano/wyldcard) [![Sonar](https://sonarcloud.io/api/project_badges/measure?project=wyldcard&metric=alert_status)](https://sonarcloud.io/dashboard?id=wyldcard)
-
 
 ![WyldCard](doc/images/hero.png)
 
@@ -20,9 +19,8 @@ WyldCard strives to offer a high-fidelity reproduction of Apple's original Hyper
 
 #### What's missing?
 
-* WyldCard can't open or import old HyperCard stacks.
+* WyldCard can't open or import old HyperCard stacks and has no concept of external commands or functions (XCMDs/XFCNs).
 * No home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
-* No external commands or functions (XCMDs/XFCNs).
 
 #### What's HyperCard?
 
@@ -30,7 +28,7 @@ Released in 1987 and included in the box with every Macintosh sold during the la
 
 Apple called HyperCard "programming for the rest of us." Steve Wozniak called it ["the best program ever written"](https://www.macworld.com/article/1018126/woz.html).
 
-[Watch an interview of HyperCard's creators](https://www.youtube.com/watch?v=BeMRoYDc2z8) Bill Atkinson and Dan Winkler on The Computer Chronicles, circa 1987. Or, watch [a screencast tutorial](https://www.youtube.com/watch?v=AmeUt3_yQ8c).
+[Watch an interview of HyperCard's creators](https://www.youtube.com/watch?v=BeMRoYDc2z8) Bill Atkinson and Dan Winkler on The Computer Chronicles, circa 1987.
 
 ## Getting started
 
@@ -38,13 +36,13 @@ Getting started is easy. What is it that you're interested in doing?
 
 #### I want to download and play with this.
 
-Lucky for you, an executable will be available for download soon.
+Someday an executable will be available for download, until then, see the [build guide](doc/BUILDING.md) for instructions on how to run the application using Gradle.
 
 #### I'm a Java developer and want to contribute to the source code.
 
 Glad to have you aboard! Have a look at [the build instructions](doc/BUILDING.md).
 
-#### I don't care about your dumb homework assignment. I want to run the real HyperCard.
+#### I want to run the real HyperCard.
 
 Use the SheepShaver emulator to run Macintosh System Software on modern Macs and PCs. See [this tutorial](https://jamesfriend.com.au/running-hypercard-stack-2014) for details.
 
@@ -58,11 +56,15 @@ This project represents a homework assignment gone awry and is in no way associa
 
 _This guide describes HyperTalk as implemented by WyldCard; an attempt has been made to note the difference wherever a language feature provided by WyldCard differs from HyperCard._
 
-WyldCard lets users create and interact with a document called a _stack_. Like a deck of PowerPoint slides, a stack represents a navigable list of _cards_. Each card may contain graphics and interactive user interface elements (like buttons and text fields) appearing on two layers: a _foreground layer_ (sometimes called the _card layer_) that's drawn atop the _background layer_. Each card has its own unique foreground, but a background may be shared between cards in the stack.
+WyldCard lets users create and interact with a document called a _stack_. Like a deck of PowerPoint slides, a stack represents a navigable list of _cards_ containing graphics and interactive user interface elements (like buttons and text fields, called _parts_ or _objects_). The contents of a card appears on two layers, a card-unique _foreground_ overlaying a _background_, which may be shared between cards.
 
-HyperCard's native language is called _HyperTalk_, and programs written in this language are called _scripts_. Scripts are applied to user interface elements like buttons and fields (known as _parts_ or _objects_) and describe the actions that should be taken when a user interacts with them. A script might describe what should happen when a user clicks a button, chooses an item from a menu, or simply moves the mouse.
+HyperCard's native language is called _HyperTalk_ and programs written in this language are known as _scripts_. Scripts are applied to user interface elements and describe the actions that should be taken when a user interacts with them. A script might describe what should happen when a user clicks a button, chooses an item from a menu, or simply moves the mouse across the surface of the card.
 
-HyperTalk scripts respond to _messages_ that HyperCard sends to parts when a user interacts with them. These messages describe the nature of the interaction. A HyperTalk script is comprised of _handlers_ that execute when a message of the same name is received by the part containing the script. For example, HyperCard sends the `mouseDoubleClick` message to a part when the user double-clicks it with the mouse. If that part contains a script containing an `on mouseDoubleClick` handler then the body of that handler will be executed. Scripts can send and respond to messages of their own creation, too (essentially a subroutine). When a message is sent to a part that has no handler to address it, the unhandled message is forwarded to other parts in its _message passing order_. For example, a `mouseDown` message that's ignored by a button will be passed to the card on which the button appears, then to its background, and finally to its stack.
+As a user interacts with a stack's parts, HyperCard sends _messages_ to them describing the nature of the interaction. Stack authors can associate actions to parts by attaching a HyperTalk script having a _handler_ for each desired interaction.
+
+For example, HyperCard sends the `mouseDoubleClick` message to a part when the user double-clicks it with the mouse. If the script of the double-clicked part contains a handler for this message, it will be executed each time the part is double-clicked. Scripts can also send and respond to messages of their own invention, too.
+
+When a message is sent to a part that has no handler to address it, the unhandled message is forwarded to other parts in the _message passing order_. For example, a `mouseDown` message that's ignored by a button will be passed to the card on which the button appears, then to the card's background, and finally to its stack.
 
 A simple script to prompt the user to enter their name then greet them might look like:
 
@@ -77,9 +79,11 @@ end mouseUp
 
 ```
 
-HyperTalk is a dynamically typed language. Internally, WyldCard stores each value as a string of characters and interprets it as a number, boolean, list, coordinate or rectangle depending on the context of its use. The language does not allow nonsensical conversions: `5 + "12"` yields `17`, but `5 + "huh?"` produces an error.  Its been argued that HyperTalk is an object oriented programming language whose objects are its user interface elements.
+HyperTalk is a dynamically typed language. Internally, WyldCard stores each value as a string of characters and interprets it as a number, boolean, list, coordinate or rectangle depending on the context of its use. The language does not allow nonsensical conversions: `5 + "12"` yields `17`, but `5 + "huh?"` produces an error.  Some have even argued that HyperTalk is an object oriented programming language whose objects are its user interface elements.
 
-Keywords and symbols in the language are case insensitive. Thus, `put x into y` is the same as `PUt x iNTo Y`. Comments are preceded by `--` and terminate at the end of the line (HyperTalk has no mutli-line comment construct like `/* ... */`). Although indentation and most whitespace is ignored, newlines have special meaning in the syntax and are somewhat analogous to semicolons in C-like languages. Statements must be separated by a newline, and a single statement cannot break across multiple lines.
+Keywords and symbols in the language are case insensitive. Thus, `put x into y` is the same as `PUt x iNTo Y`. Comments are preceded by `--` and terminate at the end of the line. HyperTalk has no multi-line comment syntax like, `/* ... */`.
+
+Indentation and most whitespace is ignored, but newlines have special meaning in the syntax and are somewhat analogous to semicolons in C-like languages. Statements must be separated by a newline, and a single statement cannot break across multiple lines.
 
 For example, this is legal:
 
@@ -95,7 +99,7 @@ answer "How are you today" with
   "Stinky!"
 ```
 
-HyperTalk provides a line-wrap symbol (`¬`) that can be used to break a long statement across multiple lines. WyldCard also allows the the pipe character (`|`) to be used for this purpose. Either symbol must be immediately followed by a carriage-return in order to be valid, and you may not break a quoted string literal across lines. For example:
+To improve code formatting, HyperTalk provides a line-wrap symbol (`¬`) that can be used to break a long statement across multiple lines. WyldCard also allows the the pipe character (`|`) to be used for this purpose. Either symbol must be immediately followed by a carriage-return in order to be valid, and a quoted string literal cannot be wrapped across lines. For example,
 
 ```
 answer "This is totally acceptable!" |
@@ -105,7 +109,7 @@ answer "This is totally acceptable!" |
 
 ## Messages and handlers
 
-A _script_ is a set of _message handlers_ and _function handlers_ that describe how the owning part reacts when WyldCard sends a message to it. A message handler traps incoming messages, a function handler is a subroutine that can be invoked by a message handler to return a value to its caller.
+A HyperTalk script is a set of _message handlers_ and _function handlers_ that describe how the owning part reacts when WyldCard sends a message to it. A message handler traps incoming messages, where as a function handler is a subroutine that can be invoked by a message handler to compute and return a value.
 
 HyperTalk scripts can be attached to stacks, backgrounds, cards, buttons and fields. For example, a button could contain the script:
 
@@ -132,7 +136,7 @@ The result of this code is an infinite loop: After displaying the "hello world" 
 
 ### Message arguments
 
-Messages may contain arguments. For example, we could define a message called `greet` that provides the name of the person to greet. We'd invoke this message as `greet "Bill"` or `send "greet Bill"`.
+Messages may contain arguments. For example, we could define a message called `greet` whose argument defines the name of the person to greet. We'd invoke this message as `greet "Bill"` or `send "greet Bill"`.
 
 Then, a handler to handle this message would be written like:
 
@@ -144,7 +148,7 @@ end greet
 
 HyperTalk does not require that the number of message arguments match the number of parameters defined by the handler. If a handler defines more parameters than actual arguments provided with the message, the unspecified parameters are bound to `empty` (`""`). In the previous example, `send greet` is equivalent to `send greet ""`. Both cause the `greet` handler to execute with `thePerson` bound to the empty string.
 
-This implies that HyperTalk does not support handler [overloading](https://en.wikipedia.org/wiki/Function_overloading). That is, HyperTalk does not differentiate between handlers that handle the same message but which accept a different number of arguments. When a script defines two handlers for the same message, the first handler lexically appearing in the script will always be used handle the message (with subsequent handlers effectively unreachable).
+HyperTalk does not differentiate between handlers that handle the same message but which accept a different number of arguments (known as [overloading](https://en.wikipedia.org/wiki/Function_overloading)). When a script defines two handlers for the same message, only the first handler lexically appearing in the script will ever be used handle the message (subsequent handlers are effectively unreachable).
 
 ### Messages automatically sent by WyldCard
 
@@ -197,6 +201,7 @@ Messages follow this sequence:
 This message passing architecture empowers parts to override system behavior by _trapping_ event messages. For example, add the following script to a field to disallow entry any of any character other than an even number:
 
 ```
+-- Prevent user from typing anything other than an even number in this field.
 on keyDown theKey
   if theKey is a number then
     if theKey mod 2 is 0 then pass keyDown
@@ -204,9 +209,11 @@ on keyDown theKey
 end keyDown
 ```
 
-This works because WyldCard passes the `keyDown` message to the field when a user types a character into it. The script's `on keyDown` handler passes `keyDown` through the message passing order only when the key that was pressed (`theKey`) is a number that is evenly divisible by 2. By implementing this handler and only conditionally passing the `keyDown` message back to WyldCard (`pass keyDown`), the script can "steal" these key press events and prevent their normal behavior (which would be to add the character to the text of the field).
+This works because WyldCard passes the `keyDown` message to the field when a user types a character into it. Because this script declares an `on keyDown` handler, the script traps this message and prevents WyldCard from acting on it (WyldCard's action would be to insert the typed character in the field's text).
 
-Note that HyperTalk does not short-circuit logical evaluations (as most languages do). The script cannot be simplified to `if theKey is a number and theKey mod 2 is 0` because in the case of `theKey` being a non-numeric value, the `mod` expression will produce an error.
+However, when the typed character is an even number, the script invokes `pass keyDown` which explicitly forwards the message through the message passing order to WyldCard. Thus, by implementing this handler and only conditionally passing the `keyDown` message back to WyldCard, the script can "steal" these key press events and prevent their normal behavior.
+
+Note that HyperTalk does not short-circuit logical evaluations as many programming languages do. The script cannot be simplified to `if theKey is a number and theKey mod 2 is 0` because in the case of `theKey` being a non-numeric value, the `mod` expression will produce an error.
 
 Anytime a command is executed in HyperTalk, a message of the same name as the command is sent to the current card. The enables the same capacity for trapping the behavior of commands. For example, adding the following script to a card, background or stack prevents the `create` (menu) command from doing its job:
 
@@ -225,9 +232,9 @@ Each time WyldCard sends a message to a part (e.g., `mouseUp`) it attempts to ex
 
 ## Expressions
 
-[Chunks](#chunks) [Operators](#operators) | [Factors](#factors) | [Literals](#constants-and-literals)
+[Chunks](#chunks) | [Operators](#operators) | [Factors](#factors) | [Literals](#constants-and-literals)
 
-An _expression_ is any fragment of HyperTalk that represents or produces a _value_. Literals (like `"Hello!"`), constants (`pi`), containers and variables (`myVariable`, `the message window`, `card field 1`), operators (`2 + 2`, `p is within r`) and functions (`the date`, `f(x)`) are all expressions.
+An _expression_ is any fragment of HyperTalk that represents or produces a _value_. Literals (`"Hello!"`), constants (`pi`), containers, (`the first line of card field 1`), properties (`the name of me`), operators (`2 + 2`) and functions (`the short date`) are all expressions.
 
 Some examples of valid expressions include:
 
@@ -244,11 +251,11 @@ false is not "tr" & "ue" -- true, concatenating 'tr' with 'ue' produces a logica
 
 ### Chunks
 
-In HyperTalk, you can refer to a portion of an expression. This is called a _chunk_.
+In HyperTalk, you can refer to a _chunk_ of an expression.
 
-A script can retrieve or mutate any range of words, characters, lines, or comma-delimited items by specifying them numerically (`line 3 of`), positionally (`the last line of`, `the middle word of`), randomly (`any item of`), or by ordinal (`the third line of`).
+A script can retrieve or mutate any range of words, characters, lines, or comma separated items by specifying them numerically (`line 3 of`), positionally (`the last line of`, `the middle word of`), randomly (`any item of`), or by ordinal (`the third line of`).
 
-Consider these chunked expressions:
+For example, consider these chunked expressions:
 
 ```
 the first character of the second word of the last line of field id 24
@@ -257,7 +264,7 @@ the second item of "Hello,Goodbye" -- yields "Goodbye"
 the middle word of "one two three" -- yields "two"
 ```
 
-A preposition (`before`, `into`, or `after`) must be included in the command when mutating a chunk of a container. For example:
+When modifying a chunk of an expression, a preposition (`before`, `into`, or `after`) must be included in the command. For example:
 
 ```
 put word 2 of "Hello Goodbye" into the first word of field id 0
@@ -265,7 +272,7 @@ put "blah" after the third character of the middle item of myVar
 put 29 before the message box
 ```
 
-Chunks may be used as terms in an expression to produce powerful and easy-to-understand logic:
+Chunks can be used as terms in an expression to produce powerful and easy-to-understand logic:
 
 ```
 multiply the first character of card field "numbers" by 9
@@ -282,7 +289,7 @@ put the first char of the second word of myContainer into the middle item of the
 
 ### Operators
 
-An _operator_ is an expression that takes one or two values (called _operands_) and performs some _operation_ on them which yields a new value. HyperTalk supports a standard suite of mathematical, logical, and string operators.
+An _operator_ is an expression that takes one or two values (called _operands_) and performs some _operation_ on them that yields a new value. HyperTalk provides a suite of mathematical, logical, and string operators.
 
 |Precedence  | Operator        | Description
 |------------| ----------------|-------------
@@ -319,23 +326,21 @@ An _operator_ is an expression that takes one or two values (called _operands_) 
 
 A _factor_ is an expression that refers to a part (like a card, button or field) that WyldCard interprets in whichever way is most meaningful in the context of its usage. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
 
-For example, the `go` command expects to "go" to a card or background. But if you say `go to cd field 1`, WyldCard will assume that because it can't navigate to a field, you mean that it should go wherever the text of that field refers. If no such field exists, or if the text contained in that field doesn't actually refer to a navigable destination (like `card 1`, `stack "My other stack"`, or `any card in the first background of this stack`) then WyldCard will produce an error. The same is true of other values as well: You could _go_ to a variable (`go to x`), a property (`go to the name of me`), or any other expression provided it can be evaluated as a navigable destination.
+For example, the `go` command expects to "go" to a card or background. If you say `go to cd field 1`, WyldCard will assume that what you really mean is that it should go wherever the text of that field refers, because it can't navigate to a field. Of course, if no such field exists, or if the text contained in that field doesn't actually refer to a navigable destination (such as `card 3 of stack "Fun Games"`) then WyldCard will produce an error. The same is true of other expression types as well, provided they can be evaluated as a navigable destination (`go to x`, `go to the name of me`).
 
-#### How do factors work in WyldCard
+#### How factors work in WyldCard
 
 When a HyperTalk command expects an argument conforming to a specific object type (like a button), it uses this algorithm to determine how to interpret the factor:
 
 1. If the argument expression is a _grouped expression_ (that is, it has parentheses around it) then the expression inside the parens is evaluated and the resulting value is re-interpreted as a HyperTalk expression. If the re-interpreted expression refers to an object of the expected type, then that object becomes the argument to the command. For example, consider a card in which `card field 1` contains the text `card button 1`. On this card, the command `hide card field 1` has the effect of hiding the first card field, but, the command `hide (card field 1)` hides the button `card button 1`, not the field.
 
-2. If the expression is an _object literal_ referring directly to the expected object type, then the literal value is used as the argument to the command. In the previous example, removing the parentheses from the command causes the field itself to be hidden (because `card field 1` is an object literal in the command `hide card field 1`).
+2. If the expression is an _object literal_ referring directly to the expected object type, then the literal value is accepted as the argument to the command. In the previous example, removing the parentheses from the command causes the field itself to be hidden because `card field 1` is an acceptable object literal for the `hide` command.
 
-3. Finally, if the previous attempts don't produce a usable argument, then the expression is evaluated, and the text of result is re-interpreted as a HyperTalk expression.
+3. Finally, if the previous attempts don't produce a usable argument, then the expression is evaluated, and the result is treated as the argument. For example, when executing the command `hide x`, we find that `x` is neither a grouped expression, nor is it an object literal. HyperTalk then attempts to evaluate `x` as an expression. If a variable called `x` exists, then the value of that variable is treated as the argument to `hide`.
 
 ### Constants and literals
 
 The table below lists special values that are treated as _constants_ in the language. These are special _keywords_ in the language; any unquoted use of these terms evaluates to the specified value.
-
-Any single-word unquoted literal that is not a language keyword or an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat into x` is equivalent to `put "neat" into x` (unless there's a variable named `neat`). Multi-word unquoted literals are never allowed in WyldCard (e.g., `put hello world` results in a syntax error).
 
 Constant     | Value
 -------------|---------------------------------------
@@ -351,11 +356,13 @@ Constant     | Value
 `colon`      | The colon character, `:`
 `zero`..`ten`| The integers `0` to `10`
 
+Any single-word unquoted literal that is not a language keyword or an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat into x` is equivalent to `put "neat" into x`. Multi-word unquoted literals are never allowed in WyldCard (e.g., `put hello world` results in a syntax error).
+
 ## Containers
 
 [Variables](#variable-containers) | [Parts](#part-containers) | [Menus](#menu-containers) | [Message](#the-message) | [It](#the-it-container) | [Selection](#the-selection-container) | [Target](#the-target-container)
 
-A _container_ is anything in WyldCard that you can `put` a value into (an _l-value_, in C parlance): parts, variables, properties, menus, the message box, the selection and the target are all containers. HyperTalk uses the `put` command (**not** `=`) to place a value into a container (`put 10 into x`, not `x = 10`).
+A _container_ is anything in WyldCard that you can `put` a value into (an _l-value_, in C parlance): parts, variables, properties, menus, the message box, the selection and the target are all containers. HyperTalk uses the `put` command to place a value into a container (`put 10 into x`, not `x = 10`).
 
 #### Variables as containers
 
