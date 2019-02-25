@@ -1109,13 +1109,15 @@ WyldCard provides a suite of built-in functions plus the ability to script new o
 
 ### Built-in functions
 
-There are several equivalent syntax forms that can be used when invoking a built-in function:
+When invoking a built-in WyldCard function, there are several equivalent syntax forms that can be used:
 
-* For built-in functions that don't accept any arguments, use `[the] <function>`. (You cannot invoke a no-argument built-in as `<function>()` as you might in C or Java.)
-* For built-in functions that accept a single argument, use `[the] <function> { of | in } <argument>` or `<function> ( <argument> )`
-* For built-in functions that accept multiple arguments, use `function(<arg1>, <arg2>, ...)`.
+* Use `the <function>` for built-in functions that don't accept any arguments. For example, `the mouseLoc` or `the screenRect` but not `mouseLoc` or `screenRect` (without the `the`).
+* Use `[the] <function> { of | in } <argument>` for built-in functions that accept a single argument. For example, `the number of card buttons` or `sqrt of 25`. WyldCard also allows this form to be used when invoking a function that accepts a list of arguments provided the list is contained within quotes, for example, `the max of "1,2,3"` (HyperCard did not support this).
+* Use `function(<arg1>, <arg2>, ...)` for all kinds of built-in functions. For example, `sum(3,5,9)` or `mouseLoc()` or `sqrt(25)`.
 
-This implementation includes the following built-in functions:
+Note that you cannot invoke a function handler defined inside of a script using either of the first two forms. Only WyldCard-provided functions can be invoked as `the <function>` or `<function> of ...`.
+
+WyldCard includes the following built-in functions:
 
 Function        | Description
 ----------------|-----------------------------------

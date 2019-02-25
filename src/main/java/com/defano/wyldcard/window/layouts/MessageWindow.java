@@ -26,7 +26,7 @@ public class MessageWindow extends WyldCardWindow<Object> implements PropertyCha
 
     public MessageWindow() {
         // Update selection
-        messageBox.addCaretListener(e -> getPartModel().updateSelectionContext(new ExecutionContext(), Range.ofMarkAndDot(e.getDot(), e.getMark()), getPartModel(), true));
+        messageBox.addCaretListener(e -> getPartModel().updateSelectionContext(new ExecutionContext(), Range.ofMarkAndDot(e.getDot(), e.getMark()), true));
 
         SwingUtilities.invokeLater(() -> {
             partModel = new MsgBoxModel();

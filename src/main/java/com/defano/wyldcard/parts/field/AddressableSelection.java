@@ -1,8 +1,6 @@
 package com.defano.wyldcard.parts.field;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
-import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -12,20 +10,23 @@ public interface AddressableSelection {
 
     /**
      * Gets a HyperTalk expression that refers to this component, like 'card field id 1' or 'the message box'.
-     * @return A HyperTalk expression referring to this component
+     *
      * @param context The execution context.
+     * @return A HyperTalk expression referring to this component
      */
     String getHyperTalkAddress(ExecutionContext context);
 
     /**
      * Gets a part specifier that refers to this component.
-     * @return The part specifier.
+     *
      * @param context The execution context.
+     * @return The part specifier.
      */
     PartSpecifier getPartSpecifier(ExecutionContext context);
 
     /**
      * Gets the model associated with the selectable text element.
+     *
      * @return The selectable text model.
      */
     SelectableTextModel getSelectableTextModel();
@@ -35,8 +36,8 @@ public interface AddressableSelection {
      * text is selected but the caret is moved to the given position.
      *
      * @param context The execution context.
-     * @param start The selection start, inclusive, counting from 0.
-     * @param end The selection end, exclusive, counting from 0.
+     * @param start   The selection start, inclusive, counting from 0.
+     * @param end     The selection end, exclusive, counting from 0.
      */
     default void setSelection(ExecutionContext context, int start, int end) {
         if (start > end) {
@@ -50,8 +51,8 @@ public interface AddressableSelection {
      * Gets a HyperTalk expression representing the current line selection (like 'line 1 to 3 of card field id 7'), or
      * 'empty' if no selection exists.
      *
-     * @return An expression representing the current line selection
      * @param context The execution context.
+     * @return An expression representing the current line selection
      */
     default Value getSelectedLineExpression(ExecutionContext context) {
         int lineStart = getLineAtCharPosition(context, getSelectableTextModel().getSelection(context).start);
@@ -73,8 +74,8 @@ public interface AddressableSelection {
      * Gets a HyperTalk expression representing the current field selection (like 'field id 3' or 'the message'), or
      * 'empty' if no selection exists.
      *
-     * @return An expression representing the current field selection.
      * @param context The execution context.
+     * @return An expression representing the current field selection.
      */
     default Value getSelectedFieldExpression(ExecutionContext context) {
         int selectionStart = getSelectableTextModel().getSelection(context).start;
@@ -92,8 +93,8 @@ public interface AddressableSelection {
      * Gets a HyperTalk expression representing the current chunk selection (like 'char 11 to 17 of field id 3'), or
      * 'empty' if no selection exists.
      *
-     * @return An expression representing the current chunk selection.
      * @param context The execution context.
+     * @return An expression representing the current chunk selection.
      */
     default Value getSelectedChunkExpression(ExecutionContext context) {
         int selectionStart = getSelectableTextModel().getSelection(context).start;
@@ -117,8 +118,9 @@ public interface AddressableSelection {
 
     /**
      * Gets the text of the current selection or 'empty' if no selection exists.
-     * @return The currently selected text.
+     *
      * @param context The execution context.
+     * @return The currently selected text.
      */
     default Value getSelectedText(ExecutionContext context) {
         Range selection = getSelectableTextModel().getSelection(context);
@@ -135,8 +137,9 @@ public interface AddressableSelection {
 
     /**
      * Gets the entire selectable contents of this component (that is, all of the text, not just the selected text).
-     * @return The entire text of this component.
+     *
      * @param context The execution context.
+     * @return The entire text of this component.
      */
     default String getSelectableText(ExecutionContext context) {
         return getSelectableTextModel().getText(context);
@@ -145,8 +148,7 @@ public interface AddressableSelection {
     /**
      * Gets the line number at which the given position falls.
      *
-     *
-     * @param context The execution context.
+     * @param context  The execution context.
      * @param position The position of character whose line should be determined.
      * @return The line (counting from 1) where the character is found.
      */
@@ -163,23 +165,17 @@ public interface AddressableSelection {
     }
 
     /**
-     * Updates the HyperCard properties and selection context with the active selection.
+     * Updates the HyperCard selection context with the active selection.
      *
-     * @param context The execution context.
+     * @param context           The execution context.
      * @param selection         The range of characters in the current selection; a zero-length range indicates no selection.
-     * @param model             The model of the component that owns the selection.
      * @param isSystemSelection True if this selection qualifies as the global, "system" selection. That is, when
-*                          true, this selection is addressable as 'the selection'; when false, the selection
+     *                          true, this selection is addressable as 'the selection'; when false, the selection
      */
-    default void updateSelectionContext(ExecutionContext context, Range selection, WyldCardPropertiesModel model, boolean isSystemSelection) {
+    default void updateSelectionContext(ExecutionContext context, Range selection, boolean isSystemSelection) {
         getSelectableTextModel().onViewDidUpdateSelection(selection);
 
         if (isSystemSelection) {
-            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_SELECTEDTEXT, getSelectedText(context), true);
-            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(context), true);
-            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_SELECTEDFIELD, getSelectedFieldExpression(context), true);
-            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(context), true);
-
             WyldCard.getInstance().getSelectionManager().setSelection(getPartSpecifier(context), getSelectableTextModel().getSelection(context));
         }
     }

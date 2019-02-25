@@ -18,6 +18,7 @@ public class WyldCardSelectionManager implements SelectionManager {
 
     private PartSpecifier theSelectionPart;     // Part holding 'the selection'
     private Range theSelectionRange;            // Range of characters selected
+    private Value theClickText;
 
     @Override
     public void setSelection(PartSpecifier selectionPart, Range selectionRange) {
@@ -59,6 +60,16 @@ public class WyldCardSelectionManager implements SelectionManager {
     @Override
     public Value getSelection(ExecutionContext context) throws HtSemanticException {
         return getManagedSelection(context).getSelectedText(context);
+    }
+
+    @Override
+    public void setClickText(Value clickText) {
+        theClickText = clickText;
+    }
+
+    @Override
+    public Value getClickText() {
+        return theClickText;
     }
 
     private boolean hasFieldSelection() {

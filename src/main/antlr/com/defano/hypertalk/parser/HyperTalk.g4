@@ -509,24 +509,28 @@ functionCall
 
 builtInFunc
     : 'the' zeroArgFunc                                                                                                 # builtinFuncNoArg
-    | 'the'? singleArgFunc of factor                                                                                    # builtinFuncOneArgs
-    | singleArgFunc '(' listExpression ')'                                                                              # builtinFuncOneArgs
+    | 'the'? oneArgFunc of factor                                                                                       # builtinFuncOneArgs
+    | zeroArgFunc '(' ')'                                                                                               # builtinFuncNoArg
+    | oneArgFunc '(' listExpression ')'                                                                                 # builtinFuncOneArgs
     | multiArgFunc '(' listExpression ')'                                                                               # builtinFuncArgList
     ;
 
 zeroArgFunc
-    : 'mouse'                                                                                                           # mouseFunc
-    | 'mouseloc'                                                                                                        # mouseLocFunc
-    | 'result'                                                                                                          # resultFunc
+    : 'clickh'                                                                                                          # clickHFunc
+    | 'clickloc'                                                                                                        # clickLocFunc
+    | 'clicktext'                                                                                                       # clickTextFunc
+    | 'clickv'                                                                                                          # clickVFunc
     | ('commandkey' | 'cmdkey')                                                                                         # commandKeyFunc
-    | 'shiftkey'                                                                                                        # shiftKeyFunc
-    | 'optionkey'                                                                                                       # optionKeyFunc
-    | 'ticks'                                                                                                           # ticksFunc
-    | seconds                                                                                                           # secondsFunc
-    | length 'time'                                                                                                     # timeFunc
     | length 'date'                                                                                                     # dateFunc
-    | 'tool'                                                                                                            # toolFunc
+    | 'diskspace'                                                                                                       # diskSpaceNoArgFunc
+    | 'foundchunk'                                                                                                      # foundChunkFunc
+    | 'foundfield'                                                                                                      # foundFieldFunc
+    | 'foundline'                                                                                                       # foundLineFunc
+    | 'foundtext'                                                                                                       # foundTextFunc
+    | 'menus'                                                                                                           # menusFunc
+    | 'mouse'                                                                                                           # mouseFunc
     | 'mouseclick'                                                                                                      # mouseClickFunc
+    | 'mouseloc'                                                                                                        # mouseLocFunc
     | 'number' 'of' card? 'parts'                                                                                       # numberOfCardParts
     | 'number' 'of' background 'parts'                                                                                  # numberOfBkgndParts
     | 'number' 'of' card? button                                                                                        # numberOfCardButtons
@@ -538,18 +542,30 @@ zeroArgFunc
     | 'number' 'of' 'marked' cards                                                                                      # numberOfMarkedCards
     | 'number' 'of' 'menus'                                                                                             # numberOfMenusFunc
     | 'number' 'of' 'windows'                                                                                           # numberOfWindows
-    | 'menus'                                                                                                           # menusFunc
-    | 'diskspace'                                                                                                       # diskSpaceNoArgFunc
-    | 'params'                                                                                                          # paramsFunc
-    | 'paramcount'                                                                                                      # paramCountFunc
-    | 'target'                                                                                                          # targetFunc
+    | 'optionkey'                                                                                                       # optionKeyFunc
+    | 'result'                                                                                                          # resultFunc
+    | 'screenrect'                                                                                                      # screenRectFunc
+    | seconds                                                                                                           # secondsFunc
+    | 'selectedchunk'                                                                                                   # selectedChunkFunc
+    | 'selectedfield'                                                                                                   # selectedFieldFunc
+    | 'selectedline'                                                                                                    # selectedLineFunc
+    | 'selectedtext'                                                                                                    # selectedTextFunc
+    | 'shiftkey'                                                                                                        # shiftKeyFunc
+    | 'sound'                                                                                                           # soundFunc
     | 'speech'                                                                                                          # speechFunc
+    | 'stacks'                                                                                                          # stacksFunc
+    | 'systemversion'                                                                                                   # systemVersionFunc
+    | 'ticks'                                                                                                           # ticksFunc
+    | length 'time'                                                                                                     # timeFunc
+    | 'tool'                                                                                                            # toolFunc
+    | 'paramcount'                                                                                                      # paramCountFunc
+    | 'params'                                                                                                          # paramsFunc
+    | 'target'                                                                                                          # targetFunc
     | 'voices'                                                                                                          # voicesFunc
     | 'windows'                                                                                                         # windowsFunc
-    | 'stacks'                                                                                                          # stacksFunc
     ;
 
-singleArgFunc
+oneArgFunc
     : 'average'                                                                                                         # averageFunc
     | 'min'                                                                                                             # minFunc
     | 'max'                                                                                                             # maxFunc
@@ -593,7 +609,7 @@ singleArgFunc
     ;
 
 multiArgFunc
-    : singleArgFunc                                                                                                     # oneArgArgFunc
+    : oneArgFunc                                                                                                        # oneArgArgFunc
     | 'annuity'                                                                                                         # annuityArgFunc
     | 'compound'                                                                                                        # compoundArgFunc
     | 'offset'                                                                                                          # offsetArgFunc

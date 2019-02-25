@@ -24,25 +24,9 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
         super();
 
         newProperty(PROP_ITEMDELIMITER, new Value(","), false);
-        newProperty(PROP_SELECTEDTEXT, new Value(), true);
-        newProperty(PROP_SELECTEDCHUNK, new Value(), true);
-        newProperty(PROP_SELECTEDFIELD, new Value(), true);
-        newProperty(PROP_SELECTEDLINE, new Value(), true);
         newProperty(PROP_LOCKSCREEN, new Value(false), false);
-        newProperty(PROP_CLICKTEXT, new Value(""), true);
-        newProperty(PROP_MOUSEH, new Value(0), true);
-        newProperty(PROP_MOUSEV, new Value(0), true);
-        newProperty(PROP_SCREENRECT, new Value("0,0,0,0"), true);
-        newProperty(PROP_CLICKLOC, new Value("0, 0"), true);
-        newProperty(PROP_CLICKH, new Value("0"), true);
-        newProperty(PROP_CLICKV, new Value("0"), true);
-        newProperty(PROP_SOUND, new Value("done"), true);
         newProperty(PROP_SCRIPTTEXTFONT, new Value("Monaco"), false);
         newProperty(PROP_SCRIPTTEXTSIZE, new Value(12), false);
-        newProperty(PROP_FOUNDCHUNK, new Value(), true);
-        newProperty(PROP_FOUNDFIELD, new Value(), true);
-        newProperty(PROP_FOUNDLINE, new Value(), true);
-        newProperty(PROP_FOUNDTEXT, new Value(), true);
         newProperty(PROP_LOCKMESSAGES, new Value(true), false);
         newProperty(PROP_TEXTARROWS, new Value(true), false);
 
@@ -53,8 +37,6 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
                 return new Value();
             }
         });
-
-        newComputedReadOnlyProperty(PROP_SYSTEMVERSION, (context, model, propertyName) -> new Value(System.getProperty("java.version")));
 
         newComputedReadOnlyProperty(PROP_THEMS, (context, model, propertyName) -> Value.ofItems(WyldCard.getInstance().getWindowManager().getThemeNames()));
         newComputedGetterProperty(PROP_THEME, (context, model, propertyName) -> new Value(WyldCard.getInstance().getWindowManager().getCurrentThemeName()));
@@ -81,7 +63,7 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
         newComputedSetterProperty(PROP_CENTERED, (context, model, propertyName, value) -> WyldCard.getInstance().getToolsManager().setDrawCentered(value.booleanValue()));
         newComputedGetterProperty(PROP_CENTERED, (context, model, propertyName) -> new Value(WyldCard.getInstance().getToolsManager().isDrawCentered()));
 
-        newComputedSetterProperty(PROP_MULTIPLE, (context, model, propertyName, value) -> WyldCard.getInstance().getToolsManager().setDrawMultiple(value.booleanValue()));
+        newComputedSetterProperty(PROP_MULTIPLE, (context, model, propg4ertyName, value) -> WyldCard.getInstance().getToolsManager().setDrawMultiple(value.booleanValue()));
         newComputedGetterProperty(PROP_MULTIPLE, (context, model, propertyName) -> new Value(WyldCard.getInstance().getToolsManager().isDrawMultiple()));
 
         newComputedSetterProperty(PROP_CURSOR, (context, model, propertyName, value) -> WyldCard.getInstance().getCursorManager().setActiveCursor(value));
@@ -99,46 +81,6 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
             }
         });
         newComputedGetterProperty(PROP_PATTERN, (context, model, propertyName) -> new Value (WyldCard.getInstance().getToolsManager().getFillPattern()));
-
-        newComputedGetterProperty(PROP_MOUSEH, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getMouseLoc(context).x));
-        newComputedGetterProperty(PROP_MOUSEV, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getMouseLoc(context).y));
-        newComputedGetterProperty(PROP_SCREENRECT, (context, model, propertyName) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getGraphicsConfiguration().getBounds()));
-        newComputedGetterProperty(PROP_CLICKLOC, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getClickLoc()));
-        newComputedGetterProperty(PROP_CLICKH, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getClickLoc().x));
-        newComputedGetterProperty(PROP_CLICKV, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getClickLoc().y));
-        newComputedGetterProperty(PROP_SOUND, (context, model, propertyName) -> new Value(WyldCard.getInstance().getSoundManager().getSound()));
-
-        newComputedGetterProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> {
-            try {
-                return WyldCard.getInstance().getSelectionManager().getManagedSelection(context).getSelectedLineExpression(context);
-            } catch (HtSemanticException e) {
-                return new Value();
-            }
-        });
-
-        newComputedGetterProperty(PROP_SELECTEDFIELD, (context, model, propertyName) -> {
-            try {
-                return WyldCard.getInstance().getSelectionManager().getManagedSelection(context).getSelectedFieldExpression(context);
-            } catch (HtSemanticException e) {
-                return new Value();
-            }
-        });
-
-        newComputedGetterProperty(PROP_SELECTEDCHUNK, (context, model, propertyName) -> {
-            try {
-                return WyldCard.getInstance().getSelectionManager().getManagedSelection(context).getSelectedChunkExpression(context);
-            } catch (HtSemanticException e) {
-                return new Value();
-            }
-        });
-
-        newComputedGetterProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> {
-            try {
-                return WyldCard.getInstance().getSelectionManager().getSelection(context);
-            } catch (HtSemanticException e) {
-                return new Value();
-            }
-        });
 
         addPropertyWillChangeObserver((property, oldValue, newValue) -> {
             switch (property.toLowerCase()) {

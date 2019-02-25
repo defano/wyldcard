@@ -1,5 +1,6 @@
 package com.defano.wyldcard.search;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
@@ -23,4 +24,12 @@ public interface SearchManager extends SearchResultHighlighter {
      * properties to their default, empty state.
      */
     void reset();
+
+    Value getFoundChunk();
+
+    Value getFoundField();
+
+    Value getFoundLine();
+
+    Value getFoundText();
 }

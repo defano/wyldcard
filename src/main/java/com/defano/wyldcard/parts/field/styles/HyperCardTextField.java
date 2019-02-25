@@ -252,9 +252,9 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         // Update selectedText
         FieldModel fieldModel = (FieldModel) toolEditablePart.getPartModel();
         if (fieldModel.isAutoSelection(new ExecutionContext())) {
-            fieldModel.updateSelectionContext(new ExecutionContext(), getSelectedTextRange(), fieldModel, false);
+            fieldModel.updateSelectionContext(new ExecutionContext(), getSelectedTextRange(), false);
         } else {
-            fieldModel.updateSelectionContext(new ExecutionContext(), Range.ofMarkAndDot(e.getDot(), e.getMark()), fieldModel, true);
+            fieldModel.updateSelectionContext(new ExecutionContext(), Range.ofMarkAndDot(e.getDot(), e.getMark()), true);
         }
 
         // Update font style selection in menus

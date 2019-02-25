@@ -18,6 +18,11 @@ public class WyldCardSearchManager implements SearchManager {
     private List<SearchResult> results = new ArrayList<>();
     private int nextResult = 0;
 
+    private Value foundChunk = new Value();
+    private Value foundField = new Value();
+    private Value foundLine = new Value();
+    private Value foundText = new Value();
+
     @Override
     public void find(ExecutionContext context, SearchQuery query) throws HtException {
 
@@ -50,10 +55,30 @@ public class WyldCardSearchManager implements SearchManager {
         clearSearchHighlights(new ExecutionContext());
         results.clear();
 
-        WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_FOUNDTEXT, new Value(), true);
-        WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_FOUNDFIELD, new Value(), true);
-        WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_FOUNDLINE, new Value(), true);
-        WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_FOUNDCHUNK, new Value(), true);
+        foundChunk = new Value();
+        foundField = new Value();
+        foundLine = new Value();
+        foundChunk = new Value();
+    }
+
+    @Override
+    public Value getFoundChunk() {
+        return foundChunk;
+    }
+
+    @Override
+    public Value getFoundField() {
+        return foundField;
+    }
+
+    @Override
+    public Value getFoundLine() {
+        return foundLine;
+    }
+
+    @Override
+    public Value getFoundText() {
+        return foundText;
     }
 
     private void processSearchResult(ExecutionContext context, SearchResult result) {
@@ -61,10 +86,10 @@ public class WyldCardSearchManager implements SearchManager {
             context.setResult(new Value("Not found"));
             Toolkit.getDefaultToolkit().beep();
         } else {
-            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_FOUNDTEXT, new Value(result.getFoundText()), true);
-            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_FOUNDFIELD, new Value(result.getFoundField(context)), true);
-            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_FOUNDLINE, new Value(result.getFoundLine(context)), true);
-            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_FOUNDCHUNK, new Value(result.getFoundChunk(context)), true);
+            foundText = new Value(result.getFoundText());
+            foundField = new Value(result.getFoundField(context));
+            foundLine = new Value(result.getFoundLine(context));
+            foundChunk = new Value(result.getFoundChunk(context));
 
             highlightSearchResult(context, result);
         }

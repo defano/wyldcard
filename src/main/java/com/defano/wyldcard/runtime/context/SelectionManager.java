@@ -44,4 +44,17 @@ public interface SelectionManager {
      * @param context The execution context.
      */
     Value getSelection(ExecutionContext context) throws HtSemanticException;
+
+    /**
+     * Sets the value returned by 'the clickText' function
+     * @param clickText The text that was last clicked
+     */
+    void setClickText(Value clickText);
+
+    /**
+     * Returns the value represented by 'the clickText' function (the last word clicked in a field), or empty if no
+     * text has been clicked.
+     * @return The click text.
+     */
+    Value getClickText();
 }

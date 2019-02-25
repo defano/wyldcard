@@ -318,7 +318,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
             int endWordIndex = Utilities.getWordEnd(getHyperCardTextPane(), clickIndex);
 
             String clickText = getHyperCardTextPane().getStyledDocument().getText(startWordIndex, endWordIndex - startWordIndex);
-            WyldCard.getInstance().getWyldCardProperties().newProperty(DefaultWyldCardProperties.PROP_CLICKTEXT, new Value(clickText), true);
+            WyldCard.getInstance().getSelectionManager().setClickText(new Value(clickText));
 
         } catch (BadLocationException e) {
             // Nothing to do

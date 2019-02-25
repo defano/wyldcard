@@ -9,7 +9,6 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.hypertalk.ast.expressions.*;
 import com.defano.hypertalk.ast.expressions.containers.*;
-import com.defano.hypertalk.ast.expressions.functions.*;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.MenuSpecifier;
@@ -1910,6 +1909,46 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitClickHFunc(HyperTalkParser.ClickHFuncContext ctx) {
+        return BuiltInFunction.CLICKH;
+    }
+
+    @Override
+    public Object visitClickLocFunc(HyperTalkParser.ClickLocFuncContext ctx) {
+        return BuiltInFunction.CLICKLOC;
+    }
+
+    @Override
+    public Object visitClickTextFunc(HyperTalkParser.ClickTextFuncContext ctx) {
+        return BuiltInFunction.CLICKTEXT;
+    }
+
+    @Override
+    public Object visitClickVFunc(HyperTalkParser.ClickVFuncContext ctx) {
+        return BuiltInFunction.CLICKV;
+    }
+
+    @Override
+    public Object visitFoundChunkFunc(HyperTalkParser.FoundChunkFuncContext ctx) {
+        return BuiltInFunction.FOUNDCHUNK;
+    }
+
+    @Override
+    public Object visitFoundFieldFunc(HyperTalkParser.FoundFieldFuncContext ctx) {
+        return BuiltInFunction.FOUNDFIELD;
+    }
+
+    @Override
+    public Object visitFoundLineFunc(HyperTalkParser.FoundLineFuncContext ctx) {
+        return BuiltInFunction.FOUNDLINE;
+    }
+
+    @Override
+    public Object visitFoundTextFunc(HyperTalkParser.FoundTextFuncContext ctx) {
+        return BuiltInFunction.FOUNDTEXT;
+    }
+
+    @Override
     public Object visitTicksFunc(HyperTalkParser.TicksFuncContext ctx) {
         return BuiltInFunction.TICKS;
     }
@@ -2087,115 +2126,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitBuiltinFuncOneArgs(HyperTalkParser.BuiltinFuncOneArgsContext ctx) {
         ParseTree expTree = ctx.factor() != null ? ctx.factor() : ctx.listExpression();
-
-        switch ((BuiltInFunction) visit(ctx.singleArgFunc())) {
-            case MIN: return new MinFunc(ctx, (Expression) visit(expTree));
-            case MAX: return new MaxFunc(ctx, (Expression) visit(expTree));
-            case SUM: return new SumFunc(ctx, (Expression) visit(expTree));
-            case AVERAGE: return new AverageFunc(ctx, (Expression) visit(expTree));
-            case NUMBER_CHARS: return new NumberOfFunc(ctx, Countable.CHAR, (Expression) visit(expTree));
-            case NUMBER_ITEMS: return new NumberOfFunc(ctx, Countable.ITEM, (Expression) visit(expTree));
-            case NUMBER_LINES: return new NumberOfFunc(ctx, Countable.LINE, (Expression) visit(expTree));
-            case NUMBER_WORDS: return new NumberOfFunc(ctx, Countable.WORD, (Expression) visit(expTree));
-            case NUMBER_MENUITEMS: return new NumberOfFunc(ctx, Countable.MENU_ITEMS, (Expression) visit(expTree));
-            case NUMBER_OF_PART: return new NumberOfPartFunc(ctx, (Expression) visit(expTree));
-            case NUMBER_CARDS: return new NumberOfFunc(ctx, Countable.CARDS, (Expression) visit(expTree));
-            case NUMBER_CARD_PARTS: return new NumberOfFunc(ctx, Countable.CARD_PARTS, (Expression) visit(expTree));
-            case NUMBER_BKGND_PARTS: return new NumberOfFunc(ctx, Countable.BKGND_PARTS, (Expression) visit(expTree));
-            case NUMBER_CARD_BUTTONS: return new NumberOfFunc(ctx, Countable.CARD_BUTTONS, (Expression) visit(expTree));
-            case NUMBER_BKGND_BUTTONS: return new NumberOfFunc(ctx, Countable.BKGND_BUTTONS, (Expression) visit(expTree));
-            case NUMBER_CARD_FIELDS: return new NumberOfFunc(ctx, Countable.CARD_FIELDS, (Expression) visit(expTree));
-            case NUMBER_BKGND_FIELDS: return new NumberOfFunc(ctx, Countable.BKGND_FIELDS, (Expression) visit(expTree));
-            case NUMBER_MARKED_CARDS: return new NumberOfFunc(ctx, Countable.MARKED_CARDS, (Expression) visit(expTree));
-            case NUMBER_BKGNDS: return new NumberOfFunc(ctx, Countable.BKGNDS, (Expression) visit(expTree));
-            case RANDOM: return new RandomFunc(ctx, (Expression) visit(expTree));
-            case SQRT:
-            case TRUNC:
-            case SIN:
-            case COS:
-            case TAN:
-            case ATAN:
-            case EXP:
-            case EXP1:
-            case EXP2:
-            case LN:
-            case LN1:
-            case LOG2:
-            case ABS:
-            case NUM_TO_CHAR:
-                return new MathFunc(ctx, (BuiltInFunction) visit(ctx.singleArgFunc()), (Expression) visit(expTree));
-            case CHAR_TO_NUM: return new CharToNumFunc(ctx, (Expression) visit(expTree));
-            case VALUE: return new ValueFunc(ctx, (Expression) visit(expTree));
-            case LENGTH: return new NumberOfFunc(ctx, Countable.CHAR, (Expression) visit(expTree));
-            case DISK_SPACE: return new DiskSpaceFunc(ctx, (Expression) visit(expTree));
-            case PARAM: return new ParamFunc(ctx, (Expression) visit(expTree));
-
-            default: throw new RuntimeException("Bug! Unimplemented one-arg function: " + ctx.singleArgFunc().getText());
-        }
+        return ((BuiltInFunction) visit(ctx.oneArgFunc())).asSingleArgumentFunction(ctx, (Expression) visit(expTree));
     }
 
     @Override
     public Object visitBuiltinFuncNoArg(HyperTalkParser.BuiltinFuncNoArgContext ctx) {
-        switch ((BuiltInFunction) visit(ctx.zeroArgFunc())) {
-            case MOUSE: return new MouseFunc(ctx);
-            case MOUSELOC: return new MouseLocFunc(ctx);
-            case RESULT: return new ResultFunc(ctx);
-            case TICKS: return new TicksFunc(ctx);
-            case SECONDS: return new SecondsFunc(ctx);
-            case ABBREV_DATE: return new DateFunc(ctx, LengthAdjective.ABBREVIATED);
-            case SHORT_DATE: return new DateFunc(ctx, LengthAdjective.SHORT);
-            case LONG_DATE: return new DateFunc(ctx, LengthAdjective.LONG);
-            case ABBREV_TIME: return new TimeFunc(ctx, LengthAdjective.ABBREVIATED);
-            case LONG_TIME: return new TimeFunc(ctx, LengthAdjective.LONG);
-            case SHORT_TIME: return new TimeFunc(ctx, LengthAdjective.SHORT);
-            case OPTION_KEY: return new ModifierKeyFunc(ctx, ModifierKey.OPTION);
-            case COMMAND_KEY: return new ModifierKeyFunc(ctx, ModifierKey.COMMAND);
-            case SHIFT_KEY: return new ModifierKeyFunc(ctx, ModifierKey.SHIFT);
-            case TOOL: return new ToolFunc(ctx);
-            case NUMBER_CARD_PARTS: return new NumberOfFunc(ctx, Countable.CARD_PARTS);
-            case NUMBER_BKGND_PARTS: return new NumberOfFunc(ctx, Countable.BKGND_PARTS);
-            case NUMBER_CARD_BUTTONS: return new NumberOfFunc(ctx, Countable.CARD_BUTTONS);
-            case NUMBER_BKGND_BUTTONS: return new NumberOfFunc(ctx, Countable.BKGND_BUTTONS);
-            case NUMBER_CARD_FIELDS: return new NumberOfFunc(ctx, Countable.CARD_FIELDS);
-            case NUMBER_BKGND_FIELDS: return new NumberOfFunc(ctx, Countable.BKGND_FIELDS);
-            case NUMBER_MENUS: return new NumberOfFunc(ctx, Countable.MENUS);
-            case NUMBER_CARDS: return new NumberOfFunc(ctx, Countable.CARDS);
-            case NUMBER_MARKED_CARDS: return new NumberOfFunc(ctx, Countable.MARKED_CARDS);
-            case NUMBER_BKGNDS: return new NumberOfFunc(ctx, Countable.BKGNDS);
-            case NUMBER_WINDOWS: return new NumberOfFunc(ctx, Countable.WINDOWS);
-            case MENUS: return new MenusFunc(ctx);
-            case DISK_SPACE: return new DiskSpaceFunc(ctx);
-            case PARAM_COUNT: return new ParamCountFunc(ctx);
-            case PARAMS: return new ParamsFunc(ctx);
-            case TARGET: return new TargetFunc(ctx);
-            case SPEECH: return new SpeechFunc(ctx);
-            case VOICES: return new VoicesFunc(ctx);
-            case MOUSECLICK: return new MouseClickFunc(ctx);
-            case WINDOWS: return new WindowsFunc(ctx);
-            case STACKS: return new StacksFunc(ctx);
-
-            default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.zeroArgFunc().getText());
-        }
+        return ((BuiltInFunction) visit(ctx.zeroArgFunc())).asNoArgumentFunction(ctx);
     }
 
     @Override
     public Object visitBuiltinFuncArgList(HyperTalkParser.BuiltinFuncArgListContext ctx) {
-        switch ((BuiltInFunction) visit(ctx.multiArgFunc())) {
-            case MIN: return new MinFunc(ctx, (Expression) visit(ctx.listExpression()));
-            case MAX: return new MaxFunc(ctx, (Expression) visit(ctx.listExpression()));
-            case SUM: return new SumFunc(ctx, (Expression) visit(ctx.listExpression()));
-            case AVERAGE: return new AverageFunc(ctx, (Expression) visit(ctx.listExpression()));
-            case RANDOM: return new RandomFunc(ctx, (Expression) visit(ctx.listExpression()));
-            case ANNUITY: return new AnnuityFunc(ctx, (Expression) visit(ctx.listExpression()));
-            case COMPOUND: return new CompoundFunc(ctx, (Expression) visit(ctx.listExpression()));
-            case OFFSET: return new OffsetFunc(ctx, (Expression) visit(ctx.listExpression()));
-            default: throw new RuntimeException("Bug! Unimplemented arg-list function: " + ctx.multiArgFunc().getText());
-        }
+        return ((BuiltInFunction) visit(ctx.multiArgFunc())).asListFunction(ctx, (Expression) visit(ctx.listExpression()));
     }
 
     @Override
     public Object visitOneArgArgFunc(HyperTalkParser.OneArgArgFuncContext ctx) {
-        return visit(ctx.singleArgFunc());
+        return visit(ctx.oneArgFunc());
     }
 
     @Override
@@ -2358,6 +2304,41 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitStacksFunc(HyperTalkParser.StacksFuncContext ctx) {
         return BuiltInFunction.STACKS;
+    }
+
+    @Override
+    public Object visitScreenRectFunc(HyperTalkParser.ScreenRectFuncContext ctx) {
+        return BuiltInFunction.SCREENRECT;
+    }
+
+    @Override
+    public Object visitSelectedChunkFunc(HyperTalkParser.SelectedChunkFuncContext ctx) {
+        return BuiltInFunction.SELECTEDCHUNK;
+    }
+
+    @Override
+    public Object visitSelectedFieldFunc(HyperTalkParser.SelectedFieldFuncContext ctx) {
+        return BuiltInFunction.SELECTEDFIELD;
+    }
+
+    @Override
+    public Object visitSelectedLineFunc(HyperTalkParser.SelectedLineFuncContext ctx) {
+        return BuiltInFunction.SELECTEDLINE;
+    }
+
+    @Override
+    public Object visitSelectedTextFunc(HyperTalkParser.SelectedTextFuncContext ctx) {
+        return BuiltInFunction.SELECTEDTEXT;
+    }
+
+    @Override
+    public Object visitSoundFunc(HyperTalkParser.SoundFuncContext ctx) {
+        return BuiltInFunction.SOUND;
+    }
+
+    @Override
+    public Object visitSystemVersionFunc(HyperTalkParser.SystemVersionFuncContext ctx) {
+        return BuiltInFunction.SYSTEMVERSION;
     }
 
     @Override
