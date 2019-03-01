@@ -33,6 +33,7 @@ public class WindowProxyPartModel extends PartModel {
         newProperty(PartModel.PROP_CONTENTS, new Value(), false);
 
         newComputedReadOnlyProperty(PartModel.PROP_NAME, (context, model, propertyName) -> new Value(window.getTitle()));
+        newComputedReadOnlyProperty(PartModel.PROP_NUMBER, (context, model, propertyName) -> getWindow().getNumberOfWindow());
 
         newComputedGetterProperty(PROP_ZOOMED, (context, model, propertyName) -> new Value((((JFrame) window.getWindow()).getExtendedState() & JFrame.MAXIMIZED_BOTH) != 0));
         newComputedSetterProperty(PROP_ZOOMED, (context, model, propertyName, value) -> {

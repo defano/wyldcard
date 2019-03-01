@@ -120,9 +120,9 @@ messageStatement
 
 commandStmnt
     : 'add' expression 'to' expression                                                                                  # addCmdStmnt
-    | 'answer' expression 'with' factor 'or' factor 'or' factor                                                         # answerThreeButtonCmd
-    | 'answer' expression 'with' factor 'or' factor                                                                     # answerTwoButtonCmd
-    | 'answer' expression 'with' factor                                                                                 # answerOneButtonCmd
+    | 'answer' expression 'with' term 'or' term 'or' term                                                               # answerThreeButtonCmd
+    | 'answer' expression 'with' term 'or' term                                                                         # answerTwoButtonCmd
+    | 'answer' expression 'with' term                                                                                   # answerOneButtonCmd
     | 'answer' expression                                                                                               # answerDefaultCmd
     | 'arrowkey' arrowExpression                                                                                        # arrowKeyCmd
     | 'ask' expression 'with' expression                                                                                # askExpWithCmd
@@ -337,12 +337,12 @@ chunk
     ;
 
 menu
-    : 'menu' factor                                                                                                     # expressionMenu
+    : 'menu' term                                                                                                       # expressionMenu
     | ordinal 'menu'                                                                                                    # ordinalMenu
     ;
 
 menuItem
-    : 'menuitem' factor of menu                                                                                         # expressionMenuItem
+    : 'menuitem' term of menu                                                                                           # expressionMenuItem
     | ordinal 'menuitem' of menu                                                                                        # ordinalMenuItem
     ;
 
@@ -356,14 +356,14 @@ globalProperty
     ;
 
 partProperty
-    : 'the'? propertyName of factor                                                                                     # propertySpecPart
-    | 'the'? length propertyName of factor                                                                              # lengthPropertySpecPart
+    : 'the'? propertyName of term                                                                                       # propertySpecPart
+    | 'the'? length propertyName of term                                                                                # lengthPropertySpecPart
     ;
 
 part
     : message                                                                                                           # msgPart
-    | card 'part' factor                                                                                                # cardPartNumberPart
-    | background 'part' factor                                                                                          # bkgndPartNumberPart
+    | card 'part' term                                                                                                  # cardPartNumberPart
+    | background 'part' term                                                                                            # bkgndPartNumberPart
     | 'me'                                                                                                              # mePart
     | buttonPart                                                                                                        # buttonPartPart
     | fieldPart                                                                                                         # fieldPartPart
@@ -375,24 +375,24 @@ part
 
 stackPart
     : 'this'? stack                                                                                                     # thisStackPart
-    | stack factor                                                                                                      # anotherStackPart
+    | stack term                                                                                                        # anotherStackPart
     ;
 
 buttonPart
-    : card? button 'id' factor                                                                                          # cardButtonIdPart
-    | background button 'id' factor                                                                                     # bkgndButtonIdPart
-    | card? button factor                                                                                               # cardButtonPart
-    | background button factor                                                                                          # bkgndButtonPart
+    : card? button 'id' term                                                                                            # cardButtonIdPart
+    | background button 'id' term                                                                                       # bkgndButtonIdPart
+    | card? button term                                                                                                 # cardButtonPart
+    | background button term                                                                                            # bkgndButtonPart
     | ordinal card? button                                                                                              # cardButtonOrdinalPart
     | ordinal background button                                                                                         # bkgndButtonOrdinalPart
     | buttonPart of cardPart                                                                                            # buttonOfCardPart
     ;
 
 fieldPart
-    : card field 'id' factor                                                                                            # cardFieldIdPart
-    | background? field 'id' factor                                                                                     # bkgndFieldIdPart
-    | card field factor                                                                                                 # cardFieldPart
-    | background? field factor                                                                                          # bkgndFieldPart
+    : card field 'id' term                                                                                              # cardFieldIdPart
+    | background? field 'id' term                                                                                       # bkgndFieldIdPart
+    | card field term                                                                                                   # cardFieldPart
+    | background? field term                                                                                            # bkgndFieldPart
     | ordinal card field                                                                                                # cardFieldOrdinalPart
     | ordinal background? field                                                                                         # bkgndFieldOrdinalPart
     | fieldPart of cardPart                                                                                             # fieldOfCardPart
@@ -400,18 +400,18 @@ fieldPart
 
 cardPart
     : 'this'? card                                                                                                      # thisCardPart
-    | card 'id' factor                                                                                                  # cardIdPart
+    | card 'id' term                                                                                                    # cardIdPart
     | position card                                                                                                     # positionCardPart
     | ordinal card                                                                                                      # ordinalCardPart
-    | card factor                                                                                                       # expressionCardPart
+    | card term                                                                                                         # expressionCardPart
     | cardPart of bkgndPart                                                                                             # cardOfBkgndPart
     | cardPart of stackPart                                                                                             # cardOfStackPart
     ;
 
 bkgndPart
     : 'this'? background                                                                                                # thisBkgndPart
-    | background 'id' factor                                                                                            # bkgndIdPart
-    | background factor                                                                                                 # expressionBkgndPart
+    | background 'id' term                                                                                              # bkgndIdPart
+    | background term                                                                                                   # expressionBkgndPart
     | ordinal background                                                                                                # ordinalBkgndPart
     | position background                                                                                               # positionBkgndPart
     | bkgndPart of stackPart                                                                                            # bkgndOfStackPart
@@ -433,7 +433,7 @@ listExpression
     ;
 
 expression
-    : factor                                                                                                            # factorExp
+    : term                                                                                                              # factorExp
     | 'not' expression                                                                                                  # notExp
     | '-' expression                                                                                                    # negateExp
     | op=(THERE_IS_A|THERE_IS_NO) expression                                                                            # unaryOpExp
@@ -447,14 +447,14 @@ expression
     | expression 'or' expression                                                                                        # binaryOrExp
     ;
 
-factor
+term
     : literal                                                                                                           # literalFactor
     | '-' literal                                                                                                       # negativeLiteralFactor
     | '(' expression ')'                                                                                                # expressionFactor
     | effectExpression                                                                                                  # visualEffectFactor
     | functionCall                                                                                                      # functionExp
     | container                                                                                                         # containerFactor
-    | chunk factor                                                                                                      # chunkFactorChunk
+    | chunk term                                                                                                        # chunkFactorChunk
     ;
 
 container
@@ -509,10 +509,16 @@ functionCall
 
 builtInFunc
     : 'the' zeroArgFunc                                                                                                 # builtinFuncNoArg
-    | 'the'? oneArgFunc of factor                                                                                       # builtinFuncOneArgs
     | zeroArgFunc '(' ')'                                                                                               # builtinFuncNoArg
+    | 'the'? oneArgFunc of term                                                                                         # builtinFuncOneArgs
     | oneArgFunc '(' listExpression ')'                                                                                 # builtinFuncOneArgs
     | multiArgFunc '(' listExpression ')'                                                                               # builtinFuncArgList
+    | numberFunc                                                                                                        # builtinNumberFunc
+    ;
+
+numberFunc
+    : 'the'? 'number' of countable                                                                                      # numberOfCountable
+    | 'number' '(' countable ')'                                                                                        # numberOfCountable
     ;
 
 zeroArgFunc
@@ -531,17 +537,6 @@ zeroArgFunc
     | 'mouse'                                                                                                           # mouseFunc
     | 'mouseclick'                                                                                                      # mouseClickFunc
     | 'mouseloc'                                                                                                        # mouseLocFunc
-    | 'number' 'of' card? 'parts'                                                                                       # numberOfCardParts
-    | 'number' 'of' background 'parts'                                                                                  # numberOfBkgndParts
-    | 'number' 'of' card? button                                                                                        # numberOfCardButtons
-    | 'number' 'of' background button                                                                                   # numberOfBkgndButtons
-    | 'number' 'of' card field                                                                                          # numberOfCardFields
-    | 'number' 'of' background? field                                                                                   # numberOfBkgndFields
-    | 'number' 'of' cards                                                                                               # numberOfCardsFunc
-    | 'number' 'of' background                                                                                          # numberOfBackgrounds
-    | 'number' 'of' 'marked' cards                                                                                      # numberOfMarkedCards
-    | 'number' 'of' 'menus'                                                                                             # numberOfMenusFunc
-    | 'number' 'of' 'windows'                                                                                           # numberOfWindows
     | 'optionkey'                                                                                                       # optionKeyFunc
     | 'result'                                                                                                          # resultFunc
     | 'screenrect'                                                                                                      # screenRectFunc
@@ -570,22 +565,6 @@ oneArgFunc
     | 'min'                                                                                                             # minFunc
     | 'max'                                                                                                             # maxFunc
     | 'sum'                                                                                                             # sumFunc
-    | 'number' 'of' card? 'parts'                                                                                       # numberOfCardPartsOfExprFunc
-    | 'number' 'of' background 'parts'                                                                                  # numberOfBkgndPartsOfExprFunc
-    | 'number' 'of' card? button                                                                                        # numberOfCardButtonsOfExprFunc
-    | 'number' 'of' background button                                                                                   # numberOfBkgndButtonsOfExprFunc
-    | 'number' 'of' card field                                                                                          # numberOfCardFieldsOfExprFunc
-    | 'number' 'of' background? field                                                                                   # numberOfBkgndFieldsofExprFunc
-    | 'number' 'of' cards                                                                                               # numberOfCardsOfExprFunc
-    | 'number' 'of' background                                                                                          # numberOfBackgroundsOfExprFunc
-    | 'number' 'of' 'marked' cards                                                                                      # numberOfMarkedCardsOfExprFunc
-    | 'number' 'of' character                                                                                           # numberOfCharsFunc
-    | 'number' 'of' word                                                                                                # numberOfWordsFunc
-    | 'number' 'of' item                                                                                                # numberOfItemsFunc
-    | 'number' 'of' line                                                                                                # numberOfLinesFunc
-    | 'number' 'of' 'menuitems'                                                                                         # numberOfMenuItemsFunc
-    | 'number' 'of' cards                                                                                               # numberOfBkgndCardsFunc
-    | 'number'                                                                                                          # numberOfPart
     | 'random'                                                                                                          # randomFunc
     | 'sqrt'                                                                                                            # sqrtFunc
     | 'trunc'                                                                                                           # truncFunc
@@ -676,6 +655,34 @@ ordinalValue
     | ('mid' | 'middle')
     | 'last'
     | 'any'
+    ;
+
+countable
+    : cards (of 'this' 'stack')?                                                                                        # cardsCount
+    | cards of expression                                                                                               # cardsOfCount
+    | background (of 'this' 'stack')?                                                                                   # backgroundCount
+    | background of expression                                                                                          # backgroundsOfCount
+    | card button                                                                                                       # cardButtonCount
+    | card button of expression                                                                                         # cardButtonsOfCount
+    | card field                                                                                                        # cardFieldCount
+    | card field of expression                                                                                          # cardFieldsOfCount
+    | card 'parts'                                                                                                      # cardPartCount
+    | card 'parts' of expression                                                                                        # cardPartsOfCount
+    | background button                                                                                                 # bkgndButtonCount
+    | background button of expression                                                                                   # bkgndButtonsOfCount
+    | background field                                                                                                  # bkgndFieldCount
+    | background field of expression                                                                                    # bkgndFieldsOfCount
+    | background 'parts'                                                                                                # bkgndPartCount
+    | background 'parts' of expression                                                                                  # bkgndPartsOfCount
+    | 'marked' cards (of 'this' 'stack')?                                                                               # markedCardsCount
+    | 'marked' cards of expression                                                                                      # markedCardsOfCount
+    | character of expression                                                                                           # charsOfCount
+    | item of expression                                                                                                # itemsOfCount
+    | word of expression                                                                                                # wordsOfCount
+    | line of expression                                                                                                # linesOfCount
+    | 'windows'                                                                                                         # windowsCount
+    | 'menus'                                                                                                           # menusCount
+    | 'menuitems' of 'menu' expression                                                                                  # menuItemsCount
     ;
 
 mouseState

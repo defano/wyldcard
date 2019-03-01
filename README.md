@@ -10,7 +10,7 @@ A reproduction of Apple's HyperCard, written in Java. Originally developed as a 
 
 ## Features
 
-WyldCard strives to offer a high-fidelity reproduction of Apple's original HyperCard, not a modernization of it.
+WyldCard strives to offer a high-fidelity reproduction of Apple's original HyperCard, not a modernization of it:
 
 * Cards support foreground and background layers; buttons and fields come in a variety of styles similar to HyperCard's; text fields can hold richly-styled text. Multiple stacks can be opened simultaneously in different windows.
 * Paint and draw using all the original paint tools, patterns and image transforms (provided by the [JMonet library](https://www.github.com/defano/jmonet)). WyldCard supports full-color graphics and alpha transparency.
@@ -56,11 +56,11 @@ This project represents a homework assignment gone awry and is in no way associa
 
 _This guide describes HyperTalk as implemented by WyldCard; an attempt has been made to note the difference wherever a language feature provided by WyldCard differs from HyperCard._
 
-WyldCard lets users create and interact with a document called a _stack_. Like a deck of PowerPoint slides, a stack represents a navigable list of _cards_ containing graphics and interactive user interface elements (like buttons and text fields, called _parts_ or _objects_). The contents of a card appears on two layers, a card-unique _foreground_ overlaying a _background_, which may be shared between cards.
+WyldCard lets users create and interact with a document called a _stack_. Like a deck of PowerPoint slides, a stack represents a navigable list of _cards_ containing graphics and interactive user interface elements (like buttons and text fields, called _parts_ or _objects_). A card's contents appear on two layers, a unique _foreground_, which overlays a _background_ that may be shared between cards.
 
-HyperCard's native language is called _HyperTalk_ and programs written in this language are known as _scripts_. Scripts are applied to user interface elements and describe the actions that should be taken when a user interacts with them. A script might describe what should happen when a user clicks a button, chooses an item from a menu, or simply moves the mouse across the surface of the card.
+HyperCard's native language is called _HyperTalk_, and programs written in this language are known as _scripts_. Scripts are applied to user interface elements and describe the actions that should be taken when a user interacts with them. A script might describe what should happen when a user clicks a button, chooses an item from a menu, or simply moves the mouse across the surface of the card.
 
-As a user interacts with a stack's parts, HyperCard sends _messages_ to them describing the nature of the interaction. Stack authors can associate actions to parts by attaching a HyperTalk script having a _handler_ for each desired interaction.
+As a user interacts with a stack's parts, HyperCard sends _messages_ to them describing the nature of the interaction. Stack authors can associate actions to parts by attaching a HyperTalk script containing a _handler_ for each desired interaction.
 
 For example, HyperCard sends the `mouseDoubleClick` message to a part when the user double-clicks it with the mouse. If the script of the double-clicked part contains a handler for this message, it will be executed each time the part is double-clicked. Scripts can also send and respond to messages of their own invention, too.
 
@@ -1111,11 +1111,11 @@ WyldCard provides a suite of built-in functions plus the ability to script new o
 
 When invoking a built-in WyldCard function, there are several equivalent syntax forms that can be used:
 
-* Use `the <function>` for built-in functions that don't accept any arguments. For example, `the mouseLoc` or `the screenRect` but not `mouseLoc` or `screenRect` (without the `the`).
-* Use `[the] <function> { of | in } <argument>` for built-in functions that accept a single argument. For example, `the number of card buttons` or `sqrt of 25`. WyldCard also allows this form to be used when invoking a function that accepts a list of arguments provided the list is contained within quotes, for example, `the max of "1,2,3"` (HyperCard did not support this).
-* Use `function(<arg1>, <arg2>, ...)` for all kinds of built-in functions. For example, `sum(3,5,9)` or `mouseLoc()` or `sqrt(25)`.
+* Use `the <function>` for built-in functions that don't accept any arguments. For example, `the mouseLoc` or `the screenRect` (the preceding `the` is required for no-argument functions).
+* Use `[the] <function> { of | in } <argument>` for built-in functions that accept a single argument. For example, `the number of card buttons` or `sqrt of 25` (`the` is optional). WyldCard also allows this form to be used when invoking a function that accepts a list of arguments, provided the list is contained within quotes. For example, `the max of "1,2,3"` (HyperCard does not support this syntax).
+* Use `function(<arg1>, <arg2>, ...)` for any kind of built-in functions. For example, `sum(3,5,9)` or `mouseLoc()` or `sqrt(25)`.
 
-Note that you cannot invoke a function handler defined inside of a script using either of the first two forms. Only WyldCard-provided functions can be invoked as `the <function>` or `<function> of ...`.
+You cannot invoke a function handler defined inside of a script using either of the first two forms. Only WyldCard-provided functions can be invoked as `the <function>` or `<function> of ...`.
 
 WyldCard includes the following built-in functions:
 

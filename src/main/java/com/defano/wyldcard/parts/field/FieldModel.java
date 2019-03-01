@@ -2,6 +2,7 @@ package com.defano.wyldcard.parts.field;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
+import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
@@ -125,6 +126,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     @Override
     public void initialize() {
         super.initialize();
+
+        newComputedReadOnlyProperty(PROP_NUMBER, (context, model, propertyName) -> new Value(((LayeredPartFinder) ((FieldModel) model).getParentPartModel()).getPartNumber(context, (FieldModel) model, PartType.FIELD)));
 
         newComputedGetterProperty(PROP_TEXT, (context, model, propertyName) -> new Value(getText(context)));
         newComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (context, model, propertyName, value) -> replaceText(context, value.toString()));

@@ -117,4 +117,5 @@ public class FindDialog extends WyldCardDialog<ScriptEditor> {
     public JComponent $$$getRootComponent$$$() {
         return findPanel;
     }
+
 }

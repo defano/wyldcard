@@ -188,4 +188,5 @@ public class CardPropertyEditor extends WyldCardDialog<CardPart> {
     public JComponent $$$getRootComponent$$$() {
         return propertiesPanel;
     }
+
 }

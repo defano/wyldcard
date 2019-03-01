@@ -9,7 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ReplaceDialog extends WyldCardDialog<ScriptEditor> {
-    
+
     private JTextField findField;
     private JRadioButton wholeWordRadioButton;
     private JRadioButton partialWordRadioButton;
@@ -143,4 +143,5 @@ public class ReplaceDialog extends WyldCardDialog<ScriptEditor> {
     public JComponent $$$getRootComponent$$$() {
         return replacePanel;
     }
+
 }

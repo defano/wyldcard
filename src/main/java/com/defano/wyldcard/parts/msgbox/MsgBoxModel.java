@@ -21,6 +21,7 @@ public class MsgBoxModel extends WindowProxyPartModel implements AddressableSele
 
         newProperty(PROP_CONTENTS, new Value(), false);
         newComputedGetterProperty(PROP_CONTENTS, (DispatchComputedGetter) (context, model, propertyName) -> new Value(getText(context)));
+        newComputedReadOnlyProperty(PROP_NUMBER, (context, model, propertyName) -> WyldCard.getInstance().getWindowManager().getMessageWindow().getNumberOfWindow());
     }
 
     /**

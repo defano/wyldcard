@@ -320,4 +320,5 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
     public JComponent $$$getRootComponent$$$() {
         return buttonEditor;
     }
+
 }

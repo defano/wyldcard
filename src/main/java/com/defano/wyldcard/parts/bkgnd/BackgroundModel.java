@@ -6,6 +6,7 @@ import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
+import com.defano.wyldcard.parts.finder.OrderedPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -76,6 +77,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
             }
         });
 
+        newComputedReadOnlyProperty(PROP_NUMBER, (context, model, propertyName) -> new Value(((OrderedPartFinder) ((BackgroundModel) model).getParentPartModel()).getPartNumber(context, (BackgroundModel) model, PartType.CARD)));
         newComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
         newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
         newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));

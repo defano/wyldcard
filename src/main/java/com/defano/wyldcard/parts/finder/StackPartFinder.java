@@ -63,7 +63,6 @@ public interface StackPartFinder extends OrderedPartFinder {
      * Finds any kind of part contained in this stack within a given list of parts. Note that the list of parts is
      * ignored when providing a {@link CompositePartSpecifier} or a {@link PartPositionSpecifier}.
      *
-     *
      * @param context The execution context.
      * @param ps The part specifier representing the part to fetch
      * @param parts The list of parts to search
@@ -83,7 +82,6 @@ public interface StackPartFinder extends OrderedPartFinder {
     /**
      * Finds a part that's part of another part (for example, 'the second card of the first bg', 'card button 3 of card
      * 4 of background 2').
-     *
      *
      * @param context The execution context.
      * @param ps The composite part specifier.
@@ -219,7 +217,10 @@ public interface StackPartFinder extends OrderedPartFinder {
     default CardModel findNextBackground(List<CardModel> cardList) throws PartException {
         int thisBackground = cardList.get(0).getBackgroundId();
 
-        Optional<CardModel> nextBkgnd = cardList.stream().filter(cardModel -> cardModel.getBackgroundId() != thisBackground).findFirst();
+        Optional<CardModel> nextBkgnd = cardList.stream()
+                .filter(cardModel -> cardModel.getBackgroundId() != thisBackground)
+                .findFirst();
+
         if (nextBkgnd.isPresent()) {
             return nextBkgnd.get();
         }

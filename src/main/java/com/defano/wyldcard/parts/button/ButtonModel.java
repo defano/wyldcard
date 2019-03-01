@@ -27,7 +27,6 @@ public class ButtonModel extends CardLayerPartModel {
     public static final String PROP_AUTOHIGHLITE = "autohighlite";
     public static final String PROP_AUTOHILIGHT = "autohilight";
     public static final String PROP_AUTOHIGHLIGHT = "autohighlight";
-
     public static final String PROP_SHOWNAME = "showname";
     public static final String PROP_ICON = "icon";
     public static final String PROP_ICONALIGN = "iconalign";
@@ -70,6 +69,7 @@ public class ButtonModel extends CardLayerPartModel {
     public void initialize() {
         super.initialize();
 
+        newComputedReadOnlyProperty(PROP_NUMBER, (context, model, propertyName) -> new Value(((LayeredPartFinder) ((ButtonModel) model).getParentPartModel()).getPartNumber(context, (ButtonModel) model, PartType.BUTTON)));
         newComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> new Value(getSelectedLineExpression(context)));
         newComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> {
             List<Value> lines = getKnownProperty(context, PROP_CONTENTS).getLines(context);

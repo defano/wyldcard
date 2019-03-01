@@ -33,7 +33,10 @@ public class MenuItemSpecifier {
         int itemIndex = getSpecifiedItemIndex(context);
 
         if (itemIndex >= 0 && itemIndex < menu.getItemCount()) {
-            return menu.getItem(itemIndex);
+            JMenuItem foundItem = menu.getItem(itemIndex);
+            if (foundItem != null) {
+                return foundItem;
+            }
         }
 
         throw new HtSemanticException("No such menu item.");

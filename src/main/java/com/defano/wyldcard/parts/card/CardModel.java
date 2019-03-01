@@ -5,10 +5,12 @@ import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.parts.NamedPart;
+import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
+import com.defano.wyldcard.parts.finder.OrderedPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -73,6 +75,8 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
     @PostConstruct
     public void initialize() {
         super.initialize();
+
+        newComputedReadOnlyProperty(PROP_NUMBER, (context, model, propertyName) -> new Value(((OrderedPartFinder) ((CardModel) model).getParentPartModel()).getPartNumber(context, (CardModel) model, PartType.CARD)));
 
         newComputedReadOnlyProperty(PROP_OWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getName(context)));
         newComputedReadOnlyProperty(PROP_LONGOWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getLongName(context)));
@@ -266,6 +270,7 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
         Collection<PartModel> models = new ArrayList<>();
         models.addAll(buttons);
         models.addAll(fields);
+
         return models;
     }
 

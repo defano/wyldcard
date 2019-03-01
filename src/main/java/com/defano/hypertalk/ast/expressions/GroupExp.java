@@ -5,6 +5,9 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+/**
+ * An expression with parenthesis around it, promoting its evaluation order. For example, '(3 + x)'.
+ */
 public class GroupExp extends Expression {
 
     public final Expression expression;

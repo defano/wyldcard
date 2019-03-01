@@ -16,9 +16,11 @@ import java.util.List;
 
 /**
  * A HyperTalk fragment that represents or returns a {@link Value}. Literals, variables, function calls, constants,
- * factors, etc. are all expressions.
- * <p>
- * Contrast to {@link com.defano.hypertalk.ast.statements.Statement}.
+ * factors, etc. are all expressions. Contrast to {@link com.defano.hypertalk.ast.statements.Statement}.
+ *
+ * HyperTalk expressions may be evaluated as "factors" in which their evaluated value may be re-evaluated as a HyperTalk
+ * expression in order to coerce the expression into a requested object type. This enables language uses like 'go to
+ * card field 1' where the result should be to navigate to wherever the text of 'card field 1' refers.
  */
 public abstract class Expression extends ASTNode {
 

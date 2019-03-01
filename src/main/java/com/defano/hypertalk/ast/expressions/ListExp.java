@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * An expression composed of a list of other expressions seen in argument lists.
+ */
 public class ListExp extends Expression {
 
     private final Expression car;   // First item in list

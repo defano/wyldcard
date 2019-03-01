@@ -36,6 +36,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";
+    public static final String PROP_NUMBER = "number";
     public static final String PROP_NAME = "name";
     public static final String PROP_LEFT = "left";
     public static final String PROP_TOP = "top";

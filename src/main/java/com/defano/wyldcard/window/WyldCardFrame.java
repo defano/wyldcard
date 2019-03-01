@@ -1,5 +1,7 @@
 package com.defano.wyldcard.window;
 
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.menubar.main.MainWyldCardMenuBar;
@@ -133,6 +135,18 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
             }
         });
     }
+
+    default Value getNumberOfWindow() {
+        WindowManager windowManager = WyldCard.getInstance().getWindowManager();
+        for (int windowNumber = 1; windowNumber <= windowManager.getFrames(false).size(); windowNumber++) {
+            if (this == windowManager.getFrames(false).get(windowNumber - 1)) {
+                return new Value(windowNumber);
+            }
+        }
+
+        return new Value();
+    }
+
 
     @RunOnDispatch
     default String getTitle() {

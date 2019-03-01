@@ -85,4 +85,5 @@ public class IconCreator extends WyldCardDialog<BufferedImage> {
     public JComponent $$$getRootComponent$$$() {
         return windowPanel;
     }
+
 }
