@@ -37,10 +37,10 @@ public class TextArrowsMessageCompletionObserver implements MessageCompletionObs
     public void doArrowKeyNavigation() {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT:
-                cardPart.getOwningStack().gotoPrevCard(new ExecutionContext(cardPart), null);
+                WyldCard.getInstance().getNavigationManager().goPrevCard(new ExecutionContext(cardPart), cardPart.getOwningStack(), null);
                 break;
             case KeyEvent.VK_RIGHT:
-                cardPart.getOwningStack().gotoNextCard(new ExecutionContext(cardPart), null);
+                WyldCard.getInstance().getNavigationManager().goNextCard(new ExecutionContext(cardPart), cardPart.getOwningStack(), null);
                 break;
         }
     }

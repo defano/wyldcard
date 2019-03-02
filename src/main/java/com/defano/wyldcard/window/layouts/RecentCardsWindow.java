@@ -77,7 +77,7 @@ public class RecentCardsWindow extends WyldCardDialog<Object> {
             ImageIcon icon = new ImageIcon(image);
             JButton button = new JButton();
             button.addActionListener(e -> {
-                stack.gotoCard(new ExecutionContext(), cardNumber, null, true);
+                WyldCard.getInstance().getNavigationManager().goCard(new ExecutionContext(), stack, cardNumber, null, true);
                 stack.getOwningStackWindow().requestFocus();
                 RecentCardsWindow.this.dispose();
             });

@@ -41,6 +41,7 @@ public class ThreadUtils {
      * @return The value returned by the callable
      * @throws Exception The exception thrown by the callable if execution of the callable throws an exception.
      */
+    @SuppressWarnings({"unused", "unchecked"})
     public static <V, E extends Exception> V callCheckedAndWaitAsNeeded(Callable<V> callable, Class<E> exceptionClass) throws E {
         final Object[] value = new Object[1];
         final Exception[] thrown = new Exception[1];

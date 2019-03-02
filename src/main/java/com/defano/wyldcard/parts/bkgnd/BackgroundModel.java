@@ -33,7 +33,6 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
     public final static String PROP_CANTDELETE = "cantdelete";
     public final static String PROP_DONTSEARCH = "dontsearch";
     public final static String PROP_SHOWPICT = "showpict";
-
     public static final String PROP_SHORTNAME = "short name";
     public static final String PROP_ABBREVNAME = "abbreviated name";
     public static final String PROP_LONGNAME = "long name";

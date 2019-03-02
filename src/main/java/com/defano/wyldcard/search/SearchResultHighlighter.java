@@ -1,6 +1,7 @@
 package com.defano.wyldcard.search;
 
 import com.defano.hypertalk.ast.model.Owner;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -25,7 +26,7 @@ public interface SearchResultHighlighter {
 
             // Search result is on a different card; go there
             if (result.getCardIndex() != context.getCurrentCard().getCardModel().getCardIndexInStack()) {
-                context.getCurrentStack().gotoCard(context, result.getCardIndex(), null, false);
+                WyldCard.getInstance().getNavigationManager().goCard(context, context.getCurrentStack(), result.getCardIndex(), null, false);
             }
 
             // Box the found text

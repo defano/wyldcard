@@ -51,6 +51,7 @@ public class WyldCard implements PartFinder {
     private static Injector injector;                                   // Google Guice injector that built the app
 
     @Inject private StackManager stackManager;                          // Open, find and address stacks
+    @Inject private NavigationManager navigationManager;                // Card and stack navigation methods
     @Inject private MouseManager mouseManager;                          // AWT mouse state handler (mouseLoc, etc.)
     @Inject private KeyboardManager keyboardManager;                    // AWT keyboard state handler (keyDown, etc.)
     @Inject private WindowManager windowManager;                        // Window and palette management
@@ -152,7 +153,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link MouseManager} object (singleton). The {@link MouseManager} is responsible for AWT-level
      * handling of global mouse events (like 'the mouseLoc' and 'mouseDown').
      *
-     * @return The manager object.
+     * @return The mouse manager object.
      */
     public MouseManager getMouseManager() {
         return mouseManager;
@@ -162,7 +163,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link KeyboardManager} object (singleton). The {@link KeyboardManager} is responsible for AWT-level
      * handling of global keyboard events (like tracking the state of modifier keys and command-. abort sequences).
      *
-     * @return The manager object.
+     * @return The keyboard manager object.
      */
     public KeyboardManager getKeyboardManager() {
         return keyboardManager;
@@ -172,7 +173,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link WindowManager} object (singleton). The {@link WindowManager} holds references to tool palettes
      * and provides routines for finding the window object bound to stacks.
      *
-     * @return The manager object.
+     * @return The window manager object.
      */
     public WindowManager getWindowManager() {
         return windowManager;
@@ -192,7 +193,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link FileManager} object (singleton). The {@link FileManager} provides a facade on top of which
      * scripts open, read, write, and close text files.
      *
-     * @return The manager object.
+     * @return The file manager object.
      */
     public FileManager getFileManager() {
         return fileManager;
@@ -202,7 +203,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link FontManager} object (singleton). The {@link FontManager} maintains the font style state
      * associated with selected text and selections in the menu bar.
      *
-     * @return The manager object.
+     * @return The font manager object.
      */
     public FontManager getFontManager() {
         return fontManager;
@@ -212,7 +213,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link SelectionManager} object (singleton). The {@link SelectionManager} maintains the state of text
      * and objects referencable as "selected" in script.
      *
-     * @return The manager object.
+     * @return The selection manager object.
      */
     public SelectionManager getSelectionManager() {
         return selectionManager;
@@ -222,7 +223,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link SoundManager} object (singleton). The {@link SoundManager} is responsible for managing sound
      * playback and queries about active playing sounds (i.e., 'the sound' function).
      *
-     * @return The manager object.
+     * @return The sound manager object.
      */
     public SoundManager getSoundManager() {
         return soundManager;
@@ -232,7 +233,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link SearchManager} object (singleton). The {@link SearchManager} maintains the state and context
      * of the WyldCard search engine (i.e., active searches, found field highlights, etc.)
      *
-     * @return The manager object.
+     * @return The search manager object.
      */
     public SearchManager getSearchManager() {
         return searchManager;
@@ -242,7 +243,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link PartToolManager} object (singleton). The {@link PartToolManager} manages the selection state
      * of buttons and fields (i.e., which part is selected).
      *
-     * @return The manager object.
+     * @return The part tool manager object.
      */
     public PartToolManager getPartToolManager() {
         return partToolManager;
@@ -252,7 +253,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link PartEditManager} object (singleton). The {@link PartEditManager} provides the ability to move,
      * resize and edit button and field parts when the appropriate tool is active.
      *
-     * @return The manager object.
+     * @return The part edit manager object.
      */
     public PartEditManager getPartEditManager() {
         return partEditManager;
@@ -262,7 +263,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link PatternManager} object (singleton). The {@link PatternManager} is responsible for updating
      * pattern renderings on the pattern palette when the color selection changes.
      *
-     * @return The manager object.
+     * @return The pattern manager object.
      */
     public PatternManager getPatternManager() {
         return patternManager;
@@ -273,7 +274,7 @@ public class WyldCard implements PartFinder {
      * for sending "periodic" HyperTalk messages (those, like 'idle' and 'mouseWithin', that are sent repeatedly while
      * some condition is met).
      *
-     * @return The manager object.
+     * @return The periodic message manager object.
      */
     public PeriodicMessageManager getPeriodicMessageManager() {
         return periodicMessageManager;
@@ -283,7 +284,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link CursorManager} object (singleton). The {@link CursorManager} provides a facade for querying
      * and setting the mouse cursor icon.
      *
-     * @return The manager object.
+     * @return The cursor manager object.
      */
     public CursorManager getCursorManager() {
         return cursorManager;
@@ -293,7 +294,7 @@ public class WyldCard implements PartFinder {
      * Returns the {@link SpeechPlaybackManager} object (singleton). The {@link SpeechPlaybackManager} provides a
      * facade for text-to-speech related script functions.
      *
-     * @return The manager object.
+     * @return The speech playback manager object.
      */
     public SpeechPlaybackManager getSpeechPlaybackManager() {
         return speechPlaybackManager;
@@ -303,10 +304,20 @@ public class WyldCard implements PartFinder {
      * Returns the {@link StackManager} object (singleton). The {@link StackManager} is responsible for managing the
      * state of open stacks, proving methods for finding, opening, focusing and closing stacks.
      *
-     * @return The manager object.
+     * @return The stack manager object.
      */
     public StackManager getStackManager() {
         return stackManager;
+    }
+
+    /**
+     * Returns the {@link NavigationManager} object (singleton). The {@link NavigationManager} is responsible for
+     * handling requests to navigate between cards and stacks.
+     *
+     * @return The navigation manager object.
+     */
+    public NavigationManager getNavigationManager() {
+        return navigationManager;
     }
 
     /**
@@ -378,6 +389,7 @@ public class WyldCard implements PartFinder {
             bind(SpeechPlaybackManager.class).to(WyldCardSpeechPlaybackManager.class);
             bind(WyldCardMenuBar.class).to(MainWyldCardMenuBar.class);
             bind(WyldCardProperties.class).to(DefaultWyldCardProperties.class);
+            bind(NavigationManager.class).to(WyldCardNavigationManager.class);
         }
     }
 }

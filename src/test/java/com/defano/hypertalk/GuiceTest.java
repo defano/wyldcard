@@ -1,5 +1,6 @@
 package com.defano.hypertalk;
 
+import com.defano.wyldcard.NavigationManager;
 import com.defano.wyldcard.StackManager;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.KeyboardManager;
@@ -49,6 +50,7 @@ public class GuiceTest<T> implements TestDataGenerator {
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected SpeechPlaybackManager mockSpeechPlaybackManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected WyldCardMenuBar mockWyldCardMenuBar;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected WyldCardProperties mockWyldCardProperties;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected NavigationManager mockNavigationManager;
 
     // Statically initialize these so they can be referenced before call to initialize()
     protected ExecutionContext mockExecutionContext = Mockito.mock(ExecutionContext.class, Mockito.RETURNS_DEEP_STUBS);
@@ -113,6 +115,7 @@ public class GuiceTest<T> implements TestDataGenerator {
             bind(SpeechPlaybackManager.class).toInstance(mockSpeechPlaybackManager);
             bind(WyldCardMenuBar.class).toInstance(mockWyldCardMenuBar);
             bind(WyldCardProperties.class).toInstance(mockWyldCardProperties);
+            bind(NavigationManager.class).toInstance(mockNavigationManager);
         }
     }
 

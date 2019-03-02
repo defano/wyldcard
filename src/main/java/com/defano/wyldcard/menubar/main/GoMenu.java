@@ -1,5 +1,8 @@
 package com.defano.wyldcard.menubar.main;
 
+import com.defano.hypertalk.ast.model.Destination;
+import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
@@ -17,19 +20,19 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
-                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().gotoPopCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goPopCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack(), null))
                 .withShortcut('\\')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Home")
-                .disabled()
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goStack(new ExecutionContext(), "Home", false, false))
                 .withShortcut('H')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Help")
-                .disabled()
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goStack(new ExecutionContext(), "Help", false, false))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -42,25 +45,25 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("First")
-                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().gotoFirstCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goFirstCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack(), null))
                 .withShortcut('1')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Prev")
-                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().gotoPrevCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goPrevCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack(),null))
                 .withShortcut('2')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next")
-                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().gotoNextCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goNextCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack(), null))
                 .withShortcut('3')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Last")
-                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().gotoLastCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goLastCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack(), null))
                 .withShortcut('4')
                 .build(this);
 
