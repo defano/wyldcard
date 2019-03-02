@@ -1170,6 +1170,7 @@ Function        | Description
 `seconds`       | Returns the number of seconds since midnight, January 1, 1970 UTC.
 `selectedChunk` | Returns a chunk expression in the form `char x to y of container` describing the active text selection; returns `empty` if no selection exists.
 `selectedField` | Returns a chunk expression identifying the part containing the active selection, for example `the selectedField` yields `card field id 13`
+`selectedLoc`   | Returns the location (in card-relative coordinates) of the text insertion caret last active in a focused text field.
 `selectedLine`  | Returns a chunk expression identifying the line or lines in a field containing the active selection. For example, `the selectedLine` yields `line 2 to 7 of background field id 4`
 `selectedText`  | Returns the currently selected text within whichever field is in focus, or the empty string if no selection exists. For example, `answer the selectedText`
 `shiftKey`      | Returns the current state of the shift key, either `up` or `down`. For example, `wait until the shiftKey is down`

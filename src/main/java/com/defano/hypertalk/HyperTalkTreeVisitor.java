@@ -2408,6 +2408,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSelectedLocFunc(HyperTalkParser.SelectedLocFuncContext ctx) {
+        return BuiltInFunction.SELECTEDLOC;
+    }
+
+    @Override
     public Object visitSelectedTextFunc(HyperTalkParser.SelectedTextFuncContext ctx) {
         return BuiltInFunction.SELECTEDTEXT;
     }

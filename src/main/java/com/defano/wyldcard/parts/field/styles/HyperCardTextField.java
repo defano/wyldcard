@@ -10,6 +10,7 @@ import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.ToolEditablePart;
+import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldModelObserver;
 import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
@@ -78,9 +79,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         this.setViewportView(textPane);
         textPane.setBorder(PartBorderFactory.createEmptyBorder());
 
-        getViewport().addChangeListener(e -> {
-            textPane.invalidateViewport(getViewport());
-        });
+        getViewport().addChangeListener(e -> textPane.invalidateViewport(getViewport()));
     }
 
     /**
@@ -249,6 +248,8 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     @Override
     @RunOnDispatch
     public void caretUpdate(CaretEvent e) {
+        updateSelectedLoc();
+
         // Update selectedText
         FieldModel fieldModel = (FieldModel) toolEditablePart.getPartModel();
         if (fieldModel.isAutoSelection(new ExecutionContext())) {
@@ -259,7 +260,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
 
         // Update font style selection in menus
         if (textPane.getText().length() > 0 && textPane.isEditable()) {
-            updateFocusedFontSelection();
+            updateSelection();
         }
     }
 
@@ -279,7 +280,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     @RunOnDispatch
     public void onAutoSelectionChanged(Set<Integer> selectedLines) {
         textPane.autoSelectLines(selectedLines);
-        updateFocusedFontSelection();
+        updateSelection();
     }
 
     /**
@@ -291,7 +292,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         textPane.requestFocus();
         textPane.setSelectionStart(selection.start);
         textPane.setSelectionEnd(selection.end);
-        updateFocusedFontSelection();
+        updateSelection();
     }
 
     /**
@@ -367,7 +368,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         }
 
         syncModelToView(context);
-        updateFocusedFontSelection();
+        updateSelection();
     }
 
     @RunOnDispatch
@@ -392,7 +393,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         }
 
         syncModelToView(context);
-        updateFocusedFontSelection();
+        updateSelection();
     }
 
     @RunOnDispatch
@@ -417,7 +418,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         }
 
         syncModelToView(context);
-        updateFocusedFontSelection();
+        updateSelection();
     }
 
     @RunOnDispatch
@@ -438,12 +439,23 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         model.setStyledDocument(context, textPane.getStyledDocument());
     }
 
+    @RunOnDispatch
+    private void updateSelectedLoc() {
+        Point caretPos = textPane.getCaret().getMagicCaretPosition();
+        Component cardPart = SwingUtilities.getAncestorOfClass(CardPart.class, textPane);
+
+        if (caretPos != null && cardPart != null) {
+            Point cardLoc = SwingUtilities.convertPoint(textPane, caretPos, cardPart);
+            WyldCard.getInstance().getSelectionManager().setSelectedLoc(new Value(cardLoc));
+        }
+    }
+
     /**
      * Update the menu bar font style selection (Font and Style menus) with the font, size and style of the active
      * text selection.
      */
     @RunOnDispatch
-    private void updateFocusedFontSelection() {
+    private void updateSelection() {
 
         // Style calculation can be costly for large selections; throttle repeated requests in the background
         fontSelectionThrottle.submitOnUiThread(hashCode(), () -> {

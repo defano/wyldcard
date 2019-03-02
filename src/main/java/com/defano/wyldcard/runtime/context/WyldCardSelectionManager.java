@@ -21,6 +21,7 @@ public class WyldCardSelectionManager implements SelectionManager {
     private Value theClickText;
     private Value theClickLine;
     private Value theClickChunk;
+    private Value theSelectedLoc;
 
     @Override
     public void setSelection(PartSpecifier selectionPart, Range selectionRange) {
@@ -92,6 +93,16 @@ public class WyldCardSelectionManager implements SelectionManager {
     @Override
     public Value getClickLine() {
         return theClickLine;
+    }
+
+    @Override
+    public Value getSelectedLoc() {
+        return this.theSelectedLoc;
+    }
+
+    @Override
+    public void setSelectedLoc(Value selectedLoc) {
+        this.theSelectedLoc = selectedLoc;
     }
 
     private boolean hasFieldSelection() {

@@ -546,6 +546,7 @@ zeroArgFunc
     | 'selectedchunk'                                                                                                   # selectedChunkFunc
     | 'selectedfield'                                                                                                   # selectedFieldFunc
     | 'selectedline'                                                                                                    # selectedLineFunc
+    | 'selectedloc'                                                                                                     # selectedLocFunc
     | 'selectedtext'                                                                                                    # selectedTextFunc
     | 'shiftkey'                                                                                                        # shiftKeyFunc
     | 'sound'                                                                                                           # soundFunc

@@ -374,7 +374,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     public void dispatchEvent(AWTEvent event) {
 
         // Special case: Enter in field should cause field to lose focus without adding a newline
-        if (event instanceof KeyEvent && FieldUtilities.isEnterKeyEvent((KeyEvent) event)) {
+        if (event instanceof KeyEvent && FieldUtilities.isEnterKeyEvent(event)) {
             getCard().requestFocusInWindow();
         }
 

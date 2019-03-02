@@ -123,6 +123,8 @@ public enum BuiltInFunction {
                 return new SelectedFieldFunc(ctx);
             case SELECTEDTEXT:
                 return new SelectedTextFunc(ctx);
+            case SELECTEDLOC:
+                return new SelectedLocFunc(ctx);
             case SOUND:
                 return new SoundFunc(ctx);
             case SYSTEMVERSION:
@@ -130,7 +132,6 @@ public enum BuiltInFunction {
 
             case DESTINATION:
             case SELECTEDBUTTON:
-            case SELECTEDLOC:
             case STACKSPACE:
                 throw new IllegalStateException("Bug! Not implemented.");
         }

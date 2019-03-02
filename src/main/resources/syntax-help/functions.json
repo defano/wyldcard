@@ -763,6 +763,15 @@
     "templates": [
       "the clickChunk"
     ]
+  },
+
+  {
+    "title": "Selected Loc",
+    "summary": "Returns the location (in card-relative coordinates) of the text insertion caret last active in a focused text field.",
+    "codePrefix": "selectedloc",
+    "templates": [
+      "the selectedLoc"
+    ]
   }
 
 ]

@@ -45,6 +45,10 @@ public interface SelectionManager {
      */
     Value getSelection(ExecutionContext context) throws HtSemanticException;
 
+    Value getSelectedLoc();
+
+    void setSelectedLoc(Value selectedLoc);
+
     /**
      * Sets the value returned by 'the clickText' function
      * @param clickText The text that was last clicked
