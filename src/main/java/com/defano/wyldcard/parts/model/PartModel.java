@@ -295,7 +295,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
     public String getName(ExecutionContext context) {
         return getKnownProperty(context, PROP_NAME).toString();
     }
-
+    
     public PartSpecifier getPartSpecifier(ExecutionContext context) {
         return new PartIdSpecifier(getOwner(), getType(), getId(context));
     }

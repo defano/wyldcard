@@ -523,7 +523,9 @@ numberFunc
 
 zeroArgFunc
     : 'clickh'                                                                                                          # clickHFunc
+    | 'clickchunk'                                                                                                      # clickChunkFunc
     | 'clickloc'                                                                                                        # clickLocFunc
+    | 'clickline'                                                                                                       # clickLineFunc
     | 'clicktext'                                                                                                       # clickTextFunc
     | 'clickv'                                                                                                          # clickVFunc
     | ('commandkey' | 'cmdkey')                                                                                         # commandKeyFunc

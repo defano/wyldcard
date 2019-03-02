@@ -93,8 +93,12 @@ public enum BuiltInFunction {
                 return new ClickHFunc(ctx);
             case CLICKV:
                 return new ClickVFunc(ctx);
+            case CLICKCHUNK:
+                return new ClickChunkFunc(ctx);
             case CLICKLOC:
                 return new ClickLocFunc(ctx);
+            case CLICKLINE:
+                return new ClickLineFunc(ctx);
             case CLICKTEXT:
                 return new ClickTextFunc(ctx);
             case FOUNDCHUNK:
@@ -124,8 +128,6 @@ public enum BuiltInFunction {
             case SYSTEMVERSION:
                 return new SystemVersionFunc(ctx);
 
-            case CLICKLINE:
-            case CLICKCHUNK:
             case DESTINATION:
             case SELECTEDBUTTON:
             case SELECTEDLOC:

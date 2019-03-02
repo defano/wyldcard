@@ -95,7 +95,7 @@
       {"parameter": "modifierKeys", "description": "A list expression containing one or more modifier keys (`shiftKey`, `commandKey`, or `optionKey`)"}
     ],
     "examples": [
-      {"description": "Choose the paintbrush tool.", "code": "choose brush tool"}
+      {"description": "Click a button.", "code": "click at the location of card button 1"}
     ]
   },
 

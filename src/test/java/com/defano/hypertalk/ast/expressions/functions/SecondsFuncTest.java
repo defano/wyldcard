@@ -11,11 +11,11 @@ public class SecondsFuncTest extends GuiceTest<SecondsFunc> {
 
     @BeforeEach
     public void setUp() {
-        initialize(new SecondsFunc(mockParserRuleContext));
+        initialize();
     }
 
     @Test
     public void testOnEvaluate() throws HtException {
-        assertEquals(System.currentTimeMillis() / 1000f, uut.evaluate(mockExecutionContext).longValue(), 10);
+        assertEquals(System.currentTimeMillis() / 1000f, new SecondsFunc(mockParserRuleContext).evaluate(mockExecutionContext).longValue(), 10);
     }
 }

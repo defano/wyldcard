@@ -1127,6 +1127,8 @@ Function        | Description
 `average`       | Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns `65.33`.
 `charToNum`     | Return the numerical _codepoint_ associated with the given character. The actual mapping between characters and numbers will depend on the character encoding used by the system, but `charToNum` is always assured to be the inverse of `numToChar`
 `clickH`        | Returns the x-coordinate of the last location the user clicked the mouse.
+`clickChunk`    | Returns a HyperTalk expression referring to the chunk of text last clicked in a text field. For example, `char 13 to 18 of background field 2`
+`clickLine`     | Returns the line number of where the user last clicked in a text field.
 `clickLoc`      | Returns the coordinate of the last location the user clicked the mouse.
 `clickText`     | The last word that was clicked in a text field, or the empty string if no text has been clicked. For example, `put "You clicked " & the clickText`.
 `clickV`        | Returns the y-coordinate of the last location the user clicked the mouse.

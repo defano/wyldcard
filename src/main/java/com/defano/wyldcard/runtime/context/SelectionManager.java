@@ -54,7 +54,34 @@ public interface SelectionManager {
     /**
      * Returns the value represented by 'the clickText' function (the last word clicked in a field), or empty if no
      * text has been clicked.
+     *
      * @return The click text.
      */
     Value getClickText();
+
+    /**
+     * Sets the value represented by 'the clickText' function (the last word click in a field).
+     * @param clickChunk The clickText value.
+     */
+    void setClickChunk(Value clickChunk);
+
+    /**
+     * Gets a HyperTalk expression representing the chunk of text last clicked in a field, for example 'chars 3 to 7 of
+     * card field 3'
+     *
+     * @return The clickChunk value, or empty, if no text has been clicked.
+     */
+    Value getClickChunk();
+
+    /**
+     * Sets the number of the line (counting from 1) last clicked in a text field.
+     * @param clickLine The clickLine value.
+     */
+    void setClickLine(Value clickLine);
+
+    /**
+     * Gets the number of the line (counting from 1) last clicked in a text field.
+     * @return The clickLine value.
+     */
+    Value getClickLine();
 }

@@ -31,9 +31,9 @@ public interface SearchResultHighlighter {
             // Box the found text
             SwingUtilities.invokeLater(() -> {
                 try {
-                    FieldModel foundFieldModel = result.getLocalPartSpecifier().getOwner() == Owner.CARD ?
-                            (FieldModel) context.getCurrentCard().getCardModel().findPart(context, result.getLocalPartSpecifier()) :
-                            (FieldModel) context.getCurrentCard().getCardModel().getBackgroundModel().findPart(context, result.getLocalPartSpecifier());
+                    FieldModel foundFieldModel = result.getLocalPartSpecifier(context).getOwner() == Owner.CARD ?
+                            (FieldModel) context.getCurrentCard().getCardModel().findPart(context, result.getLocalPartSpecifier(context)) :
+                            (FieldModel) context.getCurrentCard().getCardModel().getBackgroundModel().findPart(context, result.getLocalPartSpecifier(context));
 
                     FieldPart foundField = (FieldPart) context.getCurrentCard().getPart(context, foundFieldModel);
 

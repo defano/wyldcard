@@ -22,4 +22,8 @@ public enum PartType {
             default: return ToolType.BROWSE;
         }
     }
+
+    public boolean isLayeredPart() {
+        return this == BUTTON || this == FIELD;
+    }
 }

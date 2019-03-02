@@ -149,7 +149,7 @@ public class SearchIndexer {
 
             if (result != null) {
                 searchFrom = result.end;
-                results.add(new SearchResult(fieldText, result, fieldModel.getOwner(), fieldModel.getId(context), cardIndex));
+                results.add(new SearchResult(fieldText, result, fieldModel, cardIndex));
             }
 
         } while (result != null);

@@ -19,6 +19,8 @@ public class WyldCardSelectionManager implements SelectionManager {
     private PartSpecifier theSelectionPart;     // Part holding 'the selection'
     private Range theSelectionRange;            // Range of characters selected
     private Value theClickText;
+    private Value theClickLine;
+    private Value theClickChunk;
 
     @Override
     public void setSelection(PartSpecifier selectionPart, Range selectionRange) {
@@ -70,6 +72,26 @@ public class WyldCardSelectionManager implements SelectionManager {
     @Override
     public Value getClickText() {
         return theClickText;
+    }
+
+    @Override
+    public void setClickChunk(Value clickChunk) {
+        this.theClickChunk = clickChunk;
+    }
+
+    @Override
+    public Value getClickChunk() {
+        return this.theClickChunk;
+    }
+
+    @Override
+    public void setClickLine(Value clickLine) {
+        this.theClickLine = clickLine;
+    }
+
+    @Override
+    public Value getClickLine() {
+        return theClickLine;
     }
 
     private boolean hasFieldSelection() {

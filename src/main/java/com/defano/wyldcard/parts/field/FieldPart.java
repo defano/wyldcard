@@ -16,7 +16,6 @@ import com.defano.wyldcard.parts.util.TextArrowsMessageCompletionObserver;
 import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 
@@ -201,6 +200,8 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         if (SwingUtilities.isLeftMouseButton(e) && !isPartToolActive()) {
             // Update the clickText property
             setClickText(e);
+            setClickLine(e);
+            setClickChunk(e);
 
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOWN.messageName);
             MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_STILL_DOWN.messageName));
@@ -309,6 +310,29 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
                 getCard().onDisplayOrderChanged(context);
                 break;
         }
+    }
+
+    private void setClickLine(MouseEvent evt) {
+        int clickIndex = getHyperCardTextPane().viewToModel(evt.getPoint());
+        int clickLine = FieldUtilities.getLineOfChar(clickIndex, getText(new ExecutionContext(this)));
+
+        WyldCard.getInstance().getSelectionManager().setClickLine(new Value(clickLine));
+    }
+
+    private void setClickChunk(MouseEvent evt) {
+        try {
+            int clickIndex = getHyperCardTextPane().viewToModel(evt.getPoint());
+            int startWordIndex = Utilities.getWordStart(getHyperCardTextPane(), clickIndex);
+            int endWordIndex = Utilities.getWordEnd(getHyperCardTextPane(), clickIndex);
+
+            WyldCard.getInstance().getSelectionManager().setClickChunk(new Value(
+                "chars " + startWordIndex + " to " + endWordIndex + " of " +
+                        ((FieldModel) getPartModel()).getHyperTalkAddress(new ExecutionContext(this)))
+            );
+        } catch (BadLocationException e) {
+            // Nothing to do
+        }
+
     }
 
     private void setClickText(MouseEvent evt) {

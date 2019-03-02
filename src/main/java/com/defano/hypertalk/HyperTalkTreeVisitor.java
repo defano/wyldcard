@@ -1915,8 +1915,18 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitClickChunkFunc(HyperTalkParser.ClickChunkFuncContext ctx) {
+        return BuiltInFunction.CLICKCHUNK;
+    }
+
+    @Override
     public Object visitClickLocFunc(HyperTalkParser.ClickLocFuncContext ctx) {
         return BuiltInFunction.CLICKLOC;
+    }
+
+    @Override
+    public Object visitClickLineFunc(HyperTalkParser.ClickLineFuncContext ctx) {
+        return BuiltInFunction.CLICKLINE;
     }
 
     @Override

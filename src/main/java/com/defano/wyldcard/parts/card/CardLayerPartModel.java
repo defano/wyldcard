@@ -192,4 +192,19 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
         }
     }
 
+    /**
+     * Gets a HyperTalk expression referring to this part by its number and layer, for example, 'card button 2'.
+     *
+     * @return A HyperTalk expression referring to this part by its number and layer.
+     * @throws IllegalStateException Thrown if this is a layered part (like a card, window or stack)
+     */
+    public String getHyperTalkAddress(ExecutionContext context) {
+        if (!getType().isLayeredPart()) {
+            throw new IllegalStateException("Bug! Not a layered part.");
+        }
+
+        return getLayer().hyperTalkName + " " +
+                getType().hypertalkName + " " +
+                getKnownProperty(context, PROP_NUMBER);
+    }
 }

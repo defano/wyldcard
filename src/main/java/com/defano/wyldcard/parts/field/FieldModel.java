@@ -2,7 +2,6 @@ package com.defano.wyldcard.parts.field;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
-import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
@@ -604,15 +603,6 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     @Override
     public void relinkParentPartModel(PartModel parentPartModel) {
         setParentPartModel(parentPartModel);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @param context The execution context.
-     */
-    @Override
-    public String getHyperTalkAddress(ExecutionContext context) {
-        return getOwner().hyperTalkName.toLowerCase() + " field id " + getId(context);
     }
 
     /**

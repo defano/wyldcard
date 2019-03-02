@@ -745,6 +745,24 @@
     "templates": [
       "the themes"
     ]
+  },
+
+  {
+    "title": "Click Line",
+    "summary": "Returns the line number of where the user last clicked in a text field.",
+    "codePrefix": "clickline",
+    "templates": [
+      "the clickLine"
+    ]
+  },
+
+  {
+    "title": "Click Chunk",
+    "summary": "Returns a HyperTalk expression referring to the chunk of text last clicked in a text field.",
+    "codePrefix": "clickchunk",
+    "templates": [
+      "the clickChunk"
+    ]
   }
 
 ]

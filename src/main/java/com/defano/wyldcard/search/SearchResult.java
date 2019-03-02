@@ -1,5 +1,6 @@
 package com.defano.wyldcard.search;
 
+import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
@@ -13,19 +14,17 @@ public class SearchResult {
     private final String searchedText;
     private final int cardIndex;
     private final Range range;
-    private final int fieldId;
-    private final Owner fieldLayer;
+    private final FieldModel fieldModel;
 
-    public SearchResult(String searchedText, Range range, Owner fieldLayer, int fieldId, int cardIndex) {
+    public SearchResult(String searchedText, Range range, FieldModel field, int cardIndex) {
         this.searchedText = searchedText;
         this.range = range;
-        this.fieldId = fieldId;
+        this.fieldModel = field;
         this.cardIndex = cardIndex;
-        this.fieldLayer = fieldLayer;
     }
 
-    public PartSpecifier getLocalPartSpecifier() {
-        return new PartIdSpecifier(fieldLayer, PartType.FIELD, fieldId);
+    public PartSpecifier getLocalPartSpecifier(ExecutionContext context) {
+        return fieldModel.getPartSpecifier(context);
     }
 
     public String getFoundText() {
@@ -33,7 +32,7 @@ public class SearchResult {
     }
 
     public String getFoundField(ExecutionContext context) {
-        return new PartIdSpecifier(fieldLayer, PartType.FIELD, fieldId).getHyperTalkIdentifier(context);
+        return fieldModel.getHyperTalkAddress(context);
     }
 
     public String getFoundLine(ExecutionContext context) {
@@ -51,15 +50,5 @@ public class SearchResult {
 
     public Range getRange() {
         return range;
-    }
-
-    @Override
-    public String toString() {
-        return "SearchResult{" +
-                "cardIndex=" + cardIndex +
-                ", range=" + range +
-                ", fieldId=" + fieldId +
-                ", fieldLayer=" + fieldLayer +
-                '}';
     }
 }
