@@ -270,6 +270,7 @@ on testNoArgFunctions
     the selectedtext
     the selectedchunk
     the selectedline
+    the selectedloc
     the clicktext
     the mouseh
     the mousev
@@ -302,7 +303,7 @@ on testSingleArgFunctions
     the number of words of x
     the number of items of x
     the number of lines of x
-    the number of menuitems of x
+    the number of menuitems of menu x
     the number of cards of x
 
     the random of x
@@ -589,6 +590,8 @@ on commandsTest
     play harpsichord y
     play boing tempo x y
     wait until the sound is done
+    wait 4
+    wait 3 seconds
 
     pop card
     push card

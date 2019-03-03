@@ -669,11 +669,11 @@ countable
     | card button of expression                                                                                         # cardButtonsOfCount
     | card field                                                                                                        # cardFieldCount
     | card field of expression                                                                                          # cardFieldsOfCount
-    | card 'parts'                                                                                                      # cardPartCount
+    | card? 'parts'                                                                                                      # cardPartCount
     | card 'parts' of expression                                                                                        # cardPartsOfCount
     | background button                                                                                                 # bkgndButtonCount
     | background button of expression                                                                                   # bkgndButtonsOfCount
-    | background field                                                                                                  # bkgndFieldCount
+    | background? field                                                                                                  # bkgndFieldCount
     | background field of expression                                                                                    # bkgndFieldsOfCount
     | background 'parts'                                                                                                # bkgndPartCount
     | background 'parts' of expression                                                                                  # bkgndPartsOfCount
@@ -867,6 +867,7 @@ timeUnit
     : 'ticks'                                                                                                           # ticksTimeUnit
     | 'tick'                                                                                                            # tickTimeUnit
     | seconds                                                                                                           # secondsTimeUnit
+    |                                                                                                                   # secondsTimeUnit
     ;
 
 position
