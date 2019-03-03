@@ -12,6 +12,8 @@ import com.google.inject.Singleton;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An extension of {@link JMenuBar} representing the WyldCard menu bar.
@@ -46,6 +48,20 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
         add(FontMenu.instance);
         add(StyleMenu.instance);
         add(WindowsMenu.instance);
+    }
+
+    @Override
+    public List<JMenu> getVisibleMenus() {
+        List<JMenu> visibleMenus = new ArrayList<>();
+
+        for (int idx = 0; idx < getMenuCount(); idx++) {
+            JMenu thisMenu = getMenu(idx);
+            if (thisMenu.isVisible()) {
+                visibleMenus.add(thisMenu);
+            }
+        }
+
+        return visibleMenus;
     }
 
     @Override
@@ -97,21 +113,23 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
 
     @Override
     public JMenu findMenuByNumber(int index) {
+        List<JMenu> visibleMenus = getVisibleMenus();
+
         return ThreadUtils.callAndWaitAsNeeded(() -> {
-            if (index < 0 || index >= getMenuCount()) {
+            if (index < 0 || index >= visibleMenus.size()) {
                 return null;
             }
 
-            return getMenu(index);
+            return visibleMenus.get(index);
         });
     }
 
     @Override
     public JMenu findMenuByName(String name) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
-            for (int thisMenuIndex = 0; thisMenuIndex < MainWyldCardMenuBar.this.getMenuCount(); thisMenuIndex++) {
-                JMenu thisMenu = MainWyldCardMenuBar.this.getMenu(thisMenuIndex);
+        List<JMenu> visibleMenus = getVisibleMenus();
 
+        return ThreadUtils.callAndWaitAsNeeded(() -> {
+            for (JMenu thisMenu : visibleMenus) {
                 if (thisMenu != null && name.equalsIgnoreCase(thisMenu.getText())) {
                     return thisMenu;
                 }
@@ -122,10 +140,10 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
     }
 
     private JMenuItem findMenuItemByName(String name) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
-            for (int thisMenuIndex = 0; thisMenuIndex < MainWyldCardMenuBar.this.getMenuCount(); thisMenuIndex++) {
-                JMenu thisMenu = MainWyldCardMenuBar.this.getMenu(thisMenuIndex);
+        List<JMenu> visibleMenus = getVisibleMenus();
 
+        return ThreadUtils.callAndWaitAsNeeded(() -> {
+            for (JMenu thisMenu : visibleMenus) {
                 for (int thisMenuItemIndex = 0; thisMenuItemIndex < thisMenu.getItemCount(); thisMenuItemIndex++) {
                     JMenuItem thisMenuItem = thisMenu.getItem(thisMenuItemIndex);
 

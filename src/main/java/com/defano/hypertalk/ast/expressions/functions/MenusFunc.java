@@ -7,6 +7,9 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import javax.swing.*;
+import java.util.List;
+
 /**
  * Implementation of a HyperTalk function that returns the number of menus in the menu bar.
  */
@@ -22,10 +25,12 @@ public class MenusFunc extends Expression {
     @Override
     public Value onEvaluate(ExecutionContext context) {
         StringBuilder builder = new StringBuilder();
-        for (int menuIndex = 0; menuIndex < wyldCardMenuBar.getMenuCount(); menuIndex++) {
-            builder.append(wyldCardMenuBar.getMenu(menuIndex).getText());
+        List<JMenu> visibleMenus = wyldCardMenuBar.getVisibleMenus();
 
-            if (menuIndex < wyldCardMenuBar.getMenuCount() - 1) {
+        for (int menuIndex = 0; menuIndex < visibleMenus.size(); menuIndex++) {
+            builder.append(visibleMenus.get(menuIndex).getText());
+
+            if (menuIndex < visibleMenus.size() - 1) {
                 builder.append("\n");
             }
         }

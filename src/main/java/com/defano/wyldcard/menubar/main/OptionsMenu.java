@@ -20,7 +20,7 @@ public class OptionsMenu extends HyperCardMenu {
         // Show this menu only when a paint tool is active
         WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> OptionsMenu.this.setVisible(ToolMode.PAINT == toolMode));
 
-        JMenuItem grid = MenuItemBuilder.ofCheckType()
+        MenuItemBuilder.ofCheckType()
                 .named("Grid")
                 .withAction(a -> WyldCard.getInstance().getToolsManager().setGridSpacing(WyldCard.getInstance().getToolsManager().getGridSpacing() == 8 ? 1 : 8))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getGridSpacingProvider().map(t -> t == 8))

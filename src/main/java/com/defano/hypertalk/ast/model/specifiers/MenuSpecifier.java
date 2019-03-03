@@ -46,7 +46,7 @@ public class MenuSpecifier {
         }
 
         if (menuOrdinal != null) {
-            int menuCount = WyldCard.getInstance().getWyldCardMenuBar().getMenuCount();
+            int menuCount = WyldCard.getInstance().getWyldCardMenuBar().getVisibleMenus().size();
             JMenu foundMenu;
 
             if (menuCount == 0) {

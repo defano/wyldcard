@@ -161,7 +161,7 @@ public class NumberFunc extends Expression {
     }
 
     private Value getNumberOfMenus() {
-        return new Value(WyldCard.getInstance().getWyldCardMenuBar().getMenuCount());
+        return new Value(WyldCard.getInstance().getWyldCardMenuBar().getVisibleMenus().size());
     }
 
     private Value getNumberOfMenuItems(ExecutionContext context, Expression containerExpr) throws HtException {

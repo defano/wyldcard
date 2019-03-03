@@ -119,7 +119,7 @@ public class NumberFuncTest extends GuiceTest<NumberFunc> {
         for (int testValue : nonNegativeIntValues()) {
             Value expectedValue = new Value(testValue);
 
-            Mockito.when(mockWyldCardMenuBar.getMenuCount()).thenReturn(testValue);
+            Mockito.when(mockWyldCardMenuBar.getVisibleMenus().size()).thenReturn(testValue);
             assertEquals(expectedValue, uut.onEvaluate(mockExecutionContext));
         }
     }
