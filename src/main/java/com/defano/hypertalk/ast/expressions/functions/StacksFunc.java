@@ -2,7 +2,6 @@ package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -21,7 +20,7 @@ public class StacksFunc extends Expression {
     }
 
     @Override
-    protected Value onEvaluate(ExecutionContext context) throws HtException {
+    protected Value onEvaluate(ExecutionContext context) {
         ArrayList<Value> stacks = new ArrayList<>();
 
         for (StackPart thisStack : wyldCard.getStackManager().getOpenStacks()) {

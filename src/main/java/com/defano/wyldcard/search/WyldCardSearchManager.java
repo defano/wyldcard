@@ -1,7 +1,5 @@
 package com.defano.wyldcard.search;
 
-import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;

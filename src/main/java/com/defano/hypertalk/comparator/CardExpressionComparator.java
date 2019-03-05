@@ -6,10 +6,9 @@ import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
-import com.defano.wyldcard.parts.card.CardLayerPart;
-import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
+import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 
@@ -77,19 +76,15 @@ public class CardExpressionComparator implements Comparator<CardModel> {
 
         if (!cache.containsKey(model)) {
             ThreadUtils.invokeAndWaitAsNeeded(() -> {
-                try {
-                    cache.put(model, CardPart.skeletonFromModel(context, model));
-                } catch (HtException e) {
-                    // Bug!
-                }
+                cache.put(model, CardPart.fromModel(context, model));
             });
         }
 
         CardPart card = cache.get(model);
 
         // Shared background fields in cached cards maintain original text; update the shared text context
-        for (CardLayerPart thisPart : card.getCardParts()) {
-            ((CardLayerPartModel) thisPart.getPartModel()).setCurrentCardId(model.getId(context));
+        for (FieldPart thisPart : card.getFields()) {
+            thisPart.getPartModel().setCurrentCardId(model.getId(context));
         }
 
         return card;

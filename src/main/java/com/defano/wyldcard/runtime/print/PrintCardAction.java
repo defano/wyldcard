@@ -5,7 +5,6 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.awt.*;
 import java.awt.print.PageFormat;
-import java.awt.print.PrinterException;
 
 public class PrintCardAction extends PrintActionDelegate {
 
@@ -14,7 +13,7 @@ public class PrintCardAction extends PrintActionDelegate {
         StringBuilder jobNameBuilder = new StringBuilder();
 
         jobNameBuilder.append("Card ");
-        jobNameBuilder.append(WyldCard.getInstance().getStackManager().getFocusedCard().getCardModel().getCardIndexInStack() + 1);
+        jobNameBuilder.append(WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().getCardIndexInStack() + 1);
         jobNameBuilder.append(" in ");
         jobNameBuilder.append(WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel().getStackName(new ExecutionContext()));
 
@@ -22,7 +21,7 @@ public class PrintCardAction extends PrintActionDelegate {
     }
 
     @Override
-    public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
+    public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
 
         if (pageIndex > 0) {
             return NO_SUCH_PAGE;

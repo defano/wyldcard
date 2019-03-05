@@ -42,13 +42,13 @@ public class WyldCardPartToolManager implements PartToolManager {
 
     @Override
     public void setSelectedPart(ToolEditablePart part) {
-        if (WyldCard.getInstance().getToolsManager().getToolMode().isPartTool()) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> {
-                deselectAllParts();
-                part.setSelectedForEditing(new ExecutionContext(), true);
-                selectedPart.onNext(Optional.of(part));
-            });
-        }
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            WyldCard.getInstance().getToolsManager().forceToolSelection(part.getEditTool(), false);
+
+            deselectAllParts();
+            part.setSelectedForEditing(new ExecutionContext(), true);
+            selectedPart.onNext(Optional.of(part));
+        });
     }
 
     @Override
@@ -82,7 +82,7 @@ public class WyldCardPartToolManager implements PartToolManager {
     public void deleteSelectedPart() {
         Optional<ToolEditablePart> selectedPart = this.selectedPart.blockingFirst();
         selectedPart.ifPresent(part -> {
-            WyldCard.getInstance().getStackManager().getFocusedCard().getCardModel().removePartModel(new ExecutionContext(), part.getPartModel());
+            WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().removePartModel(new ExecutionContext(), part.getPartModel());
             this.selectedPart.onNext(Optional.empty());
         });
     }

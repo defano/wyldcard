@@ -1,7 +1,6 @@
 package com.defano.wyldcard.window;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.menubar.main.MainWyldCardMenuBar;

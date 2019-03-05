@@ -2,7 +2,6 @@ package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.google.inject.Inject;
@@ -18,7 +17,7 @@ public class ClickHFunc extends Expression {
     }
 
     @Override
-    protected Value onEvaluate(ExecutionContext context) throws HtException {
+    protected Value onEvaluate(ExecutionContext context) {
         return new Value(mouseManager.getClickLoc().x);
     }
 }

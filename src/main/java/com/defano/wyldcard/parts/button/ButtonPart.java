@@ -10,7 +10,6 @@ import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.*;
-import com.defano.hypertalk.exception.HtException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,7 +23,7 @@ import java.lang.ref.WeakReference;
  * See {@link ButtonModel} for the model associated with this controller.
  * See {@link StyleableButton} for the view associated with this controller.
  */
-public class ButtonPart extends StyleableButton implements CardLayerPart, MouseListener, PropertyChangeObserver {
+public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonModel>, MouseListener, PropertyChangeObserver {
 
     private static final int DEFAULT_WIDTH = 120;
     private static final int DEFAULT_HEIGHT = 30;
@@ -41,42 +40,24 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     }
 
     /**
-     * Creates a new button on the given card with default size and position.
-     *
-     *
-     * @param context The execution context.
-     * @param parent The card that this button will belong to.
-     * @return The new button.
-     */
-    public static ButtonPart newButton(ExecutionContext context, CardPart parent, Owner owner) {
-        return newButton(context, parent, owner, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
-    }
-
-    /**
      * Creates a new button on the given card with a given geometry.
      *
-     *
      * @param context The execution context.
      * @param parent The card that this button will belong to.
+     * @param rectangle The location and size of this button; when null, the default size and location will be assumed.
      * @return The new button.
      */
     public static ButtonPart newButton(ExecutionContext context, CardPart parent, Owner owner, Rectangle rectangle) {
-        return fromGeometry(context, parent, rectangle, owner);
-    }
+        if (rectangle == null) {
+            rectangle = new Rectangle(
+                    parent.getWidth() / 2 - (DEFAULT_WIDTH / 2),
+                    parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2),
+                    DEFAULT_WIDTH,
+                    DEFAULT_HEIGHT);
+        }
 
-
-    /**
-     * Creates a new button on the given card with the provided geometry.
-     *
-     *
-     * @param context The execution context.
-     * @param parent The card that this button will belong to.
-     * @param geometry The bounding rectangle of the new button.
-     * @return The new button.
-     */
-    public static ButtonPart fromGeometry(ExecutionContext context, CardPart parent, Rectangle geometry, Owner owner) {
         ButtonPart button = new ButtonPart(ButtonStyle.ROUND_RECT, parent, owner);
-        button.initProperties(context, geometry, parent.getPartModel());
+        button.initProperties(context, rectangle, parent.getPartModel());
         return button;
     }
 
@@ -90,7 +71,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
      * @return The new button.
      * @throws Exception Thrown if an error occurs instantiating the button.
      */
-    public static ButtonPart fromModel(ExecutionContext context, CardPart parent, ButtonModel partModel) throws HtException {
+    public static ButtonPart fromModel(ExecutionContext context, CardPart parent, ButtonModel partModel) {
         ButtonStyle style = ButtonStyle.fromName(partModel.getKnownProperty(context, ButtonModel.PROP_STYLE).toString());
         ButtonPart button = new ButtonPart(style, parent, partModel.getOwner());
 
@@ -148,7 +129,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     }
 
     @Override
-    public PartModel getPartModel() {
+    public ButtonModel getPartModel() {
         return partModel;
     }
 
@@ -236,7 +217,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     private void initProperties(ExecutionContext context, Rectangle geometry, PartModel parentPartModel) {
         CardPart cardPart = parent.get();
         if (cardPart != null) {
-            int id = cardPart.getCardModel().getStackModel().getNextButtonId();
+            int id = cardPart.getPartModel().getStackModel().getNextButtonId();
             partModel = ButtonModel.newButtonModel(context, id, geometry, owner, parentPartModel);
         }
     }

@@ -119,7 +119,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
     }
 
     private void eraseAll() {
-        WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().clearCanvas();
+        WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().clearCanvas();
 
         if (lastTool.isHyperCardTool()) {
             selectTool(lastTool);

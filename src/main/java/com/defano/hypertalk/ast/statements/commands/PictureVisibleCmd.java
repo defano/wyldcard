@@ -33,7 +33,7 @@ public class PictureVisibleCmd extends Command {
 
         // Hide/show picture of current card/bkgnd
         if (layerExpression == null) {
-            CardModel currentCard = context.getCurrentCard().getCardModel();
+            CardModel currentCard = context.getCurrentCard().getPartModel();
             if (owningLayer == Owner.CARD) {
                 currentCard.setKnownProperty(context, CardModel.PROP_SHOWPICT, visibility);
             } else if (owningLayer == Owner.BACKGROUND) {

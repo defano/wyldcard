@@ -32,7 +32,7 @@ public interface SymbolTable {
      * @return True if the symbol has been defined in the table (via a prior call to {@link #set(String, Value)}; false
      * otherwise.
      */
-    boolean exists(String id);
+    boolean contains(String id);
 
     /**
      * Gets an unordered collection of all symbols defined in this table.

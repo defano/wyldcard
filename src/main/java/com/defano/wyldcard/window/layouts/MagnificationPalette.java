@@ -53,7 +53,7 @@ public class MagnificationPalette extends WyldCardDialog<Object> {
         WyldCard.getInstance().getStackManager().getScaleProvider().subscribe(aDouble -> slider1.setValue(WyldCard.getInstance().getStackManager().getScaleProvider().blockingFirst().intValue()));
 
         slider1.setValue(WyldCard.getInstance().getStackManager().getScaleProvider().blockingFirst().intValue());
-        slider1.addChangeListener(e -> WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().setScale(slider1.getValue()));
+        slider1.addChangeListener(e -> WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().setScale(slider1.getValue()));
     }
 
     @Override

@@ -27,14 +27,14 @@ public class BasicSymbolTable implements SymbolTable {
 
     @Override
     public void set(String id, Value v) {
-        Value oldValue = exists(id) ? get(id) : null;
+        Value oldValue = contains(id) ? get(id) : null;
         table.put(id.toLowerCase(), v);
 
         fireObservers(id, oldValue, v);
     }
 
     @Override
-    public boolean exists (String id) {
+    public boolean contains(String id) {
         return table.containsKey(id.toLowerCase());
     }
 

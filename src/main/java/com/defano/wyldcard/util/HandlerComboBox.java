@@ -46,9 +46,8 @@ public class HandlerComboBox extends JComboBox<String> {
         DefaultComboBoxModel<String> cbm = new DefaultComboBoxModel<>();
 
         ArrayList<String> implementedHandlers = Lists.newArrayList(delegate.getImplementedHandlers(this));
-        ArrayList<String> systemHandlers = new ArrayList<>();
 
-        systemHandlers.addAll(delegate.getSystemMessages(this));
+        ArrayList<String> systemHandlers = new ArrayList<>(delegate.getSystemMessages(this));
         Collections.sort(implementedHandlers);
 
         for (String thisHandler : implementedHandlers) {

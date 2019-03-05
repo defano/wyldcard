@@ -49,7 +49,7 @@ public class PushCardCmd extends Command {
         }
     }
 
-    private Integer evaluateAsCardId(ExecutionContext context, PartModel model) throws HtException {
+    private Integer evaluateAsCardId(ExecutionContext context, PartModel model) {
         if (model instanceof CardModel) {
             return model.getId(context);
         } else if (model instanceof BackgroundModel) {

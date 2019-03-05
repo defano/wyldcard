@@ -4,7 +4,6 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.SearchType;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -38,7 +37,7 @@ public class MarkCmd extends Command {
     }
 
     @Override
-    protected void onExecute(ExecutionContext context) throws HtException, Preemption {
+    protected void onExecute(ExecutionContext context) throws HtException {
 
         // Mark all cards matching a logical evaluation (filter)
         if (logicalExpr != null) {
@@ -82,11 +81,11 @@ public class MarkCmd extends Command {
 
     private Set<CardModel> findsCardsBySearchResults(ExecutionContext context, SearchQuery query) {
         Set<CardModel> models = new HashSet<>();
-        List<CardPart> cards = getAllCardSkeletons(context);
+        List<CardPart> cards = getAllCards(context);
 
         for (int cardIndex = 0; cardIndex < context.getCurrentStack().getStackModel().getCardCount(); cardIndex++) {
             if (!SearchIndexer.indexResults(context, query, cardIndex).isEmpty()) {
-                models.add(cards.get(cardIndex).getCardModel());
+                models.add(cards.get(cardIndex).getPartModel());
             }
         }
 
@@ -98,10 +97,10 @@ public class MarkCmd extends Command {
         CardPart currentCard = context.getCurrentCard();
 
         // Walk cards and determine which match expression
-        for (CardPart card : getAllCardSkeletons(context)) {
+        for (CardPart card : getAllCards(context)) {
             context.setCurrentCard(card);
             if (logicalExpr.evaluate(context).booleanValue()) {
-                models.add(card.getCardModel());
+                models.add(card.getPartModel());
             }
         }
 
@@ -110,17 +109,14 @@ public class MarkCmd extends Command {
         return models;
     }
 
-    private List<CardPart> getAllCardSkeletons(ExecutionContext context) {
+    private List<CardPart> getAllCards(ExecutionContext context) {
         ArrayList<CardPart> cards = new ArrayList<>();
 
         // Create skeleton card parts for every card in the stack
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (CardModel model : context.getCurrentStack().getStackModel().getCardModels())
-                try {
-                    cards.add(CardPart.skeletonFromModel(context, model));
-                } catch (HtException e) {
-                    // Bug!
-                }
+            for (CardModel model : context.getCurrentStack().getStackModel().getCardModels()) {
+                cards.add(CardPart.fromModel(context, model));
+            }
         });
 
         return cards;

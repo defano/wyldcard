@@ -18,7 +18,7 @@ public class DoCmd extends Command {
     }
     
     public void onExecute(ExecutionContext context) throws HtException {
-        PartSpecifier target = context.getCurrentStack().getDisplayedCard().getCardModel().getPartSpecifier(context);
+        PartSpecifier target = context.getCurrentStack().getDisplayedCard().getPartModel().getPartSpecifier(context);
         Interpreter.asyncExecuteString(context, target, script.evaluate(context).toString()).checkedGet();
     }
 }

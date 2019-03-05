@@ -223,8 +223,8 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
             focusedStack.blockingFirst().removeNavigationObserver(this);
 
             // Send suspendStack/resumeStack messages
-            focusedStack.blockingFirst().getDisplayedCard().getCardModel().receiveMessage(new ExecutionContext(focusedStack.blockingFirst()), SystemMessage.SUSPEND_STACK.messageName);
-            stackPart.getDisplayedCard().getCardModel().receiveMessage(new ExecutionContext(stackPart), SystemMessage.RESUME_STACK.messageName);
+            focusedStack.blockingFirst().getDisplayedCard().getPartModel().receiveMessage(new ExecutionContext(focusedStack.blockingFirst()), SystemMessage.SUSPEND_STACK.messageName);
+            stackPart.getDisplayedCard().getPartModel().receiveMessage(new ExecutionContext(stackPart), SystemMessage.RESUME_STACK.messageName);
         }
 
         // Make the focused stack the window dock
@@ -236,15 +236,15 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         WyldCardPatternFactory.getInstance().invalidatePatternCache();
 
         // Make the selected tool active on the focused card
-        WyldCard.getInstance().getToolsManager().reactivateTool(stackPart.getDisplayedCard().getCanvas());
+        WyldCard.getInstance().getToolsManager().reactivateTool(stackPart.getDisplayedCard().getActiveCanvas());
 
         // Update proxied observables (so that they reference newly focused stack)
         cardCount.setSource(stackPart.getCardCountProvider());
         cardClipboard.setSource(stackPart.getCardClipboardProvider());
         savedStackFile.setSource(stackPart.getStackModel().getSavedStackFileProvider());
-        isUndoable.setSource(stackPart.getDisplayedCard().getCanvas().isUndoableObservable());
-        isRedoable.setSource(stackPart.getDisplayedCard().getCanvas().isRedoableObservable());
-        canvasScale.setSource(stackPart.getDisplayedCard().getCanvas().getScaleObservable());
+        isUndoable.setSource(stackPart.getDisplayedCard().getActiveCanvas().isUndoableObservable());
+        isRedoable.setSource(stackPart.getDisplayedCard().getActiveCanvas().isRedoableObservable());
+        canvasScale.setSource(stackPart.getDisplayedCard().getActiveCanvas().getScaleObservable());
 
         isSelectable.setSource(Observable.combineLatest(
                 isUndoable.getObservable(),
@@ -256,8 +256,8 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
                 (hasUndoableChanges, selection) ->
                         hasUndoableChanges &&
                                 !selection.isPresent() &&
-                                getFocusedCard().getCanvas().getRedoBufferDepth() == 0 &&
-                                !ImageLayerUtils.layersRemovesPaint(getFocusedCard().getCanvas().peek(0).getImageLayers()))
+                                getFocusedCard().getActiveCanvas().getRedoBufferDepth() == 0 &&
+                                !ImageLayerUtils.layersRemovesPaint(getFocusedCard().getActiveCanvas().peek(0).getImageLayers()))
         );
 
         stackPart.addNavigationObserver(this);
@@ -323,9 +323,9 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
 
     @Override
     public void onCardOpened(CardPart newCard) {
-        isUndoable.setSource(newCard.getCanvas().isUndoableObservable());
-        isRedoable.setSource(newCard.getCanvas().isRedoableObservable());
-        canvasScale.setSource(newCard.getCanvas().getScaleObservable());
+        isUndoable.setSource(newCard.getActiveCanvas().isUndoableObservable());
+        isRedoable.setSource(newCard.getActiveCanvas().isRedoableObservable());
+        canvasScale.setSource(newCard.getActiveCanvas().getScaleObservable());
     }
 
     @Override

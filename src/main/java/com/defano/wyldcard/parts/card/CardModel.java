@@ -5,7 +5,6 @@ import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.parts.NamedPart;
-import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.field.FieldModel;

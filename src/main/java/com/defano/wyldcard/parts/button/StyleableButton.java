@@ -6,7 +6,6 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.Styleable;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.styles.*;
-import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Value;
@@ -28,7 +27,7 @@ import java.awt.event.MouseEvent;
  * This class provides common functionality for "styleable" buttons; the actual look-and-feel of the button is provided
  * by a subclass of {@link HyperCardButton}.
  */
-public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCardButton>, ToolEditablePart, PropertyChangeObserver, MarchingAntsObserver {
+public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCardButton>, ToolEditablePart<ButtonModel>, PropertyChangeObserver, MarchingAntsObserver {
 
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private Disposable toolModeSubscription;
@@ -58,7 +57,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
         if (beingEdited) {
             MarchingAnts.getInstance().addObserver(this);
-            WyldCard.getInstance().getFontManager().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle(context)));
+            WyldCard.getInstance().getFontManager().setFocusedTextStyle((getPartModel().getTextStyle(context)));
         } else {
             MarchingAnts.getInstance().removeObserver(this);
         }

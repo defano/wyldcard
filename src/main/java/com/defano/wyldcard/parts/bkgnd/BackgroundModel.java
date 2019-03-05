@@ -124,12 +124,22 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         return ((StackModel) getParentPartModel()).getCardsInBackground(getId(context));
     }
 
-    public void addFieldModel(FieldModel model) {
+    public void addPartModel(PartModel model) {
+        if (model instanceof FieldModel) {
+            addFieldModel((FieldModel) model);
+        } else if (model instanceof ButtonModel) {
+            addButtonModel((ButtonModel) model);
+        } else {
+            throw new IllegalStateException("Bug! This part cannot be added to the background: " + model);
+        }
+    }
+
+    private void addFieldModel(FieldModel model) {
         model.setParentPartModel(this);
         this.fieldModels.add(model);
     }
 
-    public void addButtonModel(ButtonModel model) {
+    private void addButtonModel(ButtonModel model) {
         model.setParentPartModel(this);
         this.buttonModels.add(model);
     }

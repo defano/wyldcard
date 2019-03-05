@@ -24,7 +24,7 @@ import java.awt.event.MouseEvent;
 /**
  * An interface defining actions common to buttons and fields that can be edited using the button tool or field tool.
  */
-public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLayerPart {
+public interface ToolEditablePart<T extends PartModel> extends MouseListenable, KeyListenable, CardLayerPart<T> {
 
     /**
      * Indicates whether or not the part is currently selected for being edited (i.e., user clicked the part and
@@ -132,7 +132,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
         getPartModel().setKnownProperty(context, PartModel.PROP_VISIBLE, new Value(visibleOnCard), true);
 
         // Force hide when part is in foreground and foreground is hidden
-        boolean forceHidden = getCardLayer() == CardLayer.CARD_PARTS && getCard().isForegroundHidden();
+        boolean forceHidden = getCardLayer() == CardLayer.CARD_PARTS && getCard().isViewingBackground();
 
         // Force show when part tool is active and part is in the editing part layer
         boolean forceVisible = isPartToolActive() && getCardLayer() == CardLayerPart.getActivePartLayer();

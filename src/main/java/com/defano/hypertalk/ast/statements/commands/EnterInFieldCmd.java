@@ -1,8 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.Statement;
-import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.awt.RoboticTypist;
 import com.defano.wyldcard.parts.field.styles.HyperCardTextPane;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -18,7 +16,7 @@ public class EnterInFieldCmd extends Statement {
     }
 
     @Override
-    protected void onExecute(ExecutionContext context) throws HtException, Preemption {
+    protected void onExecute(ExecutionContext context) {
         Component focus = FocusManager.getCurrentManager().getFocusOwner();
 
         if (focus instanceof HyperCardTextPane) {

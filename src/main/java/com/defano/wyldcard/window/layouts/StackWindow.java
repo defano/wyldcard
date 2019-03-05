@@ -52,11 +52,11 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
             return;
         }
 
-        String stackName = card.getCardModel().getStackModel().getStackName(new ExecutionContext());
-        int cardNumber = card.getCardModel().getCardIndexInStack() + 1;
+        String stackName = card.getPartModel().getStackModel().getStackName(new ExecutionContext());
+        int cardNumber = card.getPartModel().getCardIndexInStack() + 1;
         int cardCount = stack.getCardCountProvider().blockingFirst();
 
-        if (card.isForegroundHidden()) {
+        if (card.isViewingBackground()) {
             getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount + " (Background)");
         } else {
             getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount);

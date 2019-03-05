@@ -18,9 +18,14 @@ import com.defano.wyldcard.window.layouts.StackWindow;
 import java.awt.*;
 
 /**
- * An interface defining behavior common to all card-embedded parts (buttons and fields).
+ * An interface defining behavior common to all scriptable WyldCard UI elements, including buttons, fields, cards,
+ * and stacks.
+ *
+ * Note that in WyldCard, a background is not considered a part (even though its scriptable), because the background has
+ * no standalone view object (it's view--canvas, buttons and fields) are merged with the card elements into a single
+ * {@link com.defano.wyldcard.parts.card.CardPart}.
  */
-public interface Part {
+public interface Part<T extends PartModel> {
 
     /**
      * Gets the type of this part.
@@ -32,16 +37,20 @@ public interface Part {
      * Gets the data model associated with this part.
      * @return The part model.
      */
-    PartModel getPartModel();
+    T getPartModel();
 
     /**
-     * Invoked when the part is opened (added) to a card, background or stack.
+     * Invoked exactly once when the part is opened (displayed on-screen). This method should be used to register UI
+     * listeners or otherwise initially the view component.
+     *
      * @param context The execution context.
      */
     void partOpened(ExecutionContext context);
 
     /**
-     * Invoked when the part is closed (removed) from a card, background or stack.
+     * Invoked exactly once when the part is closed (removed from on-screen display). This method should be used to
+     * de-register listeners or otherwise cleanup the view component.
+     *
      * @param context The execution context.
      */
     void partClosed(ExecutionContext context);

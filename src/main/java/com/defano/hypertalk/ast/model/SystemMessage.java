@@ -104,7 +104,7 @@ public enum SystemMessage {
      */
     public static boolean isLockable(String message) {
         SystemMessage systemMessage = SystemMessage.fromHandlerName(message);
-        return systemMessage != null && systemMessage == OPEN_CARD || systemMessage == OPEN_STACK || systemMessage == CLOSE_CARD;
+        return systemMessage == OPEN_CARD || systemMessage == OPEN_STACK || systemMessage == CLOSE_CARD;
     }
 
     public static Collection<SystemMessage> messagesSentTo(PartType partType) {

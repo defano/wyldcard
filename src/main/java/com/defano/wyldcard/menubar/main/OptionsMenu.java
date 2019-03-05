@@ -7,7 +7,6 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
 
-import javax.swing.*;
 import java.util.Optional;
 
 public class OptionsMenu extends HyperCardMenu {

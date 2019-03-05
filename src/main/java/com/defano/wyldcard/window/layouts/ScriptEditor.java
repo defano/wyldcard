@@ -545,13 +545,10 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
 
     @Override
     public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
-        switch (property.toLowerCase()) {
-
-            // Special case: Script text was programatically changed
-            case PartModel.PROP_SCRIPT:
-                saveCaretPosition();
-                applyScriptToEditor();
-                break;
+        // Special case: Script text was programatically changed
+        if (PartModel.PROP_SCRIPT.equals(property.toLowerCase())) {
+            saveCaretPosition();
+            applyScriptToEditor();
         }
     }
 

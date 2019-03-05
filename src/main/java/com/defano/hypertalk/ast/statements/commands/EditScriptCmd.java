@@ -1,4 +1,4 @@
-package com.defano.hypertalk.ast.statements.conditional;
+package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.expressions.Expression;

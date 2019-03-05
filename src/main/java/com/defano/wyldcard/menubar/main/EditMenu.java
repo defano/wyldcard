@@ -34,14 +34,14 @@ public class EditMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
                 .withShortcut('Z')
-                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().undo())
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().undo())
                 .withEnabledProvider(WyldCard.getInstance().getStackManager().getIsUndoableProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Redo")
                 .withShiftShortcut('Z')
-                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().redo())
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().redo())
                 .withEnabledProvider(WyldCard.getInstance().getStackManager().getIsRedoableProvider())
                 .build(this);
 

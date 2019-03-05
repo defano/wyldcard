@@ -33,8 +33,8 @@ public class FilteredSymbolTable implements SymbolTable {
     }
 
     @Override
-    public boolean exists(String id) {
-        return isSymbolVisible(id) && delegate.exists(id);
+    public boolean contains(String id) {
+        return isSymbolVisible(id) && delegate.contains(id);
     }
 
     @Override

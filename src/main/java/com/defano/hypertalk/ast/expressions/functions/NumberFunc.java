@@ -188,9 +188,9 @@ public class NumberFunc extends Expression {
         // Base case: Owning layer isn't specified; implies the current card (`number of card parts`) or its background
         if (containerExp == null) {
             if (countable.isCardPart()) {
-                return context.getCurrentCard().getCardModel();
+                return context.getCurrentCard().getPartModel();
             } else if (countable.isBkgndPart()) {
-                return context.getCurrentCard().getCardModel().getBackgroundModel();
+                return context.getCurrentCard().getPartModel().getBackgroundModel();
             }
 
             throw new IllegalStateException("Bug! Unsupported syntax.");

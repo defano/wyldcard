@@ -73,7 +73,7 @@ public class CardPropertyEditor extends WyldCardDialog<CardPart> {
     public void bindModel(CardPart card) {
         ExecutionContext context = new ExecutionContext();
 
-        cardModel = card.getCardModel();
+        cardModel = card.getPartModel();
 
         // Don't display "default" name ('card id xxx')
         Value cardNameValue = cardModel.getRawProperty(CardModel.PROP_NAME);
@@ -86,10 +86,10 @@ public class CardPropertyEditor extends WyldCardDialog<CardPart> {
         dontSearchCheckBox.setSelected(cardModel.getKnownProperty(context, CardModel.PROP_DONTSEARCH).booleanValue());
         cardIdLabel.setText(String.valueOf(cardModel.getKnownProperty(context, CardModel.PROP_ID).toString()));
 
-        long fieldCount = card.getCardModel().getPartCount(context, PartType.FIELD, Owner.CARD);
-        long buttonCount = card.getCardModel().getPartCount(context, PartType.BUTTON, Owner.CARD);
+        long fieldCount = card.getPartModel().getPartCount(context, PartType.FIELD, Owner.CARD);
+        long buttonCount = card.getPartModel().getPartCount(context, PartType.BUTTON, Owner.CARD);
 
-        int cardNumber = WyldCard.getInstance().getStackManager().getFocusedCard().getCardModel().getCardIndexInStack() + 1;
+        int cardNumber = WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().getCardIndexInStack() + 1;
         int cardCount = WyldCard.getInstance().getStackManager().getFocusedStack().getCardCountProvider().blockingFirst();
 
         cardNumberLabel.setText(cardNumber + " out of " + cardCount);

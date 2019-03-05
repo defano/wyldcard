@@ -1,7 +1,6 @@
 package com.defano.wyldcard.parts.stack;
 
 import com.defano.hypertalk.ast.model.*;
-import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.NavigationManager;
 import com.defano.wyldcard.WyldCard;
@@ -12,7 +11,6 @@ import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
-import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
@@ -32,7 +30,7 @@ import java.util.Set;
  * This controller is "virtual" because a stack has no view of its own, aside from the card that is currently displayed
  * in it. Thus, this class has no associated Swing component and cannot be added to a view hierarchy.
  */
-public class StackPart implements Part, PropertyChangeObserver {
+public class StackPart implements Part<StackModel>, PropertyChangeObserver {
 
     private final NavigationManager navigationManager = WyldCard.getInstance().getNavigationManager();
 
@@ -57,12 +55,7 @@ public class StackPart implements Part, PropertyChangeObserver {
 
         stackPart.cardCountProvider.onNext(model.getCardCount());
         stackPart.stackModel.addPropertyChangedObserver(stackPart);
-
-        try {
-            stackPart.currentCard = CardPart.fromPositionInStack(context, model.getCurrentCardIndex(), model);
-        } catch (HtException e) {
-            throw new RuntimeException("Failed to create card.");
-        }
+        stackPart.currentCard = CardPart.fromPositionInStack(context, model.getCurrentCardIndex(), model);
 
         return stackPart;
     }
@@ -149,7 +142,7 @@ public class StackPart implements Part, PropertyChangeObserver {
     public CardPart newCard(ExecutionContext context) {
         WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
-        stackModel.newCard(currentCard.getCardModel().getBackgroundId());
+        stackModel.newCard(currentCard.getPartModel().getBackgroundId());
         cardCountProvider.onNext(stackModel.getCardCount());
         fireOnCardOrderChanged();
 
@@ -189,7 +182,7 @@ public class StackPart implements Part, PropertyChangeObserver {
         if (cardClipboardProvider.blockingFirst().isPresent()) {
             WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
-            CardModel card = cardClipboardProvider.blockingFirst().get().getCardModel().copyOf();
+            CardModel card = cardClipboardProvider.blockingFirst().get().getPartModel().copyOf();
             card.relinkParentPartModel(getStackModel());
             card.newProperty(CardModel.PROP_ID, new Value(getStackModel().getNextCardId()), true);
 
@@ -380,7 +373,7 @@ public class StackPart implements Part, PropertyChangeObserver {
             fireOnCardOpened(currentCard);
 
             // Reactivate paint tool on new card's canvas
-            WyldCard.getInstance().getToolsManager().reactivateTool(currentCard.getCanvas());
+            WyldCard.getInstance().getToolsManager().reactivateTool(currentCard.getActiveCanvas());
 
             return currentCard;
 
@@ -390,11 +383,11 @@ public class StackPart implements Part, PropertyChangeObserver {
     }
 
     private boolean canDeleteCard(ExecutionContext context) {
-        long cardCountInBackground = stackModel.getCardsInBackground(getDisplayedCard().getCardModel().getBackgroundId()).size();
+        long cardCountInBackground = stackModel.getCardsInBackground(getDisplayedCard().getPartModel().getBackgroundId()).size();
 
         return stackModel.getCardCount() > 1 &&
-                !getDisplayedCard().getCardModel().getKnownProperty(context, CardModel.PROP_CANTDELETE).booleanValue() &&
-                (cardCountInBackground > 1 || !getDisplayedCard().getCardModel().getBackgroundModel().getKnownProperty(context, BackgroundModel.PROP_CANTDELETE).booleanValue());
+                !getDisplayedCard().getPartModel().getKnownProperty(context, CardModel.PROP_CANTDELETE).booleanValue() &&
+                (cardCountInBackground > 1 || !getDisplayedCard().getPartModel().getBackgroundModel().getKnownProperty(context, BackgroundModel.PROP_CANTDELETE).booleanValue());
     }
 
     private void fireOnStackOpened() {
@@ -451,7 +444,7 @@ public class StackPart implements Part, PropertyChangeObserver {
     }
 
     @Override
-    public PartModel getPartModel() {
+    public StackModel getPartModel() {
         return getStackModel();
     }
 

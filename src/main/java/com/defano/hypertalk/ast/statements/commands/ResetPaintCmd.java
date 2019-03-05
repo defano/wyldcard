@@ -4,10 +4,8 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.PaintBrush;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
-import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
-import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ResetPaintCmd extends Command {
@@ -17,7 +15,7 @@ public class ResetPaintCmd extends Command {
     }
 
     @Override
-    protected void onExecute(ExecutionContext context) throws HtException, Preemption {
+    protected void onExecute(ExecutionContext context) {
         WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.ROUND_12X12);
         WyldCard.getInstance().getWyldCardProperties().setKnownProperty(context, DefaultWyldCardProperties.PROP_CENTERED, new Value(false));
         WyldCard.getInstance().getWyldCardProperties().setKnownProperty(context, DefaultWyldCardProperties.PROP_FILLED, new Value(false));

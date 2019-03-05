@@ -2,9 +2,6 @@ package com.defano.wyldcard.search;
 
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.util.FieldUtilities;
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.runtime.context.ExecutionContext;

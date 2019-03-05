@@ -184,15 +184,15 @@ public interface Messagable {
                 return context.getCurrentStack().getStackModel();
             case WINDOW:
             case MESSAGE_BOX:
-                return context.getCurrentCard().getCardModel();
+                return context.getCurrentCard().getPartModel();
             case CARD:
-                return context.getCurrentCard().getCardModel().getBackgroundModel();
+                return context.getCurrentCard().getPartModel().getBackgroundModel();
             case FIELD:
             case BUTTON:
                 if (getMe(context).getOwner() == Owner.BACKGROUND) {
-                    return context.getCurrentCard().getCardModel().getBackgroundModel();
+                    return context.getCurrentCard().getPartModel().getBackgroundModel();
                 } else {
-                    return context.getCurrentCard().getCardModel();
+                    return context.getCurrentCard().getPartModel();
                 }
             default:
                 return null;

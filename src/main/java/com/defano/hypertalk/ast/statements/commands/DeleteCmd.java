@@ -57,7 +57,7 @@ public class DeleteCmd extends Command {
                 if (ps instanceof CompositePartSpecifier) {
                     owner = context.getCurrentStack().getStackModel().findOwningCard(context, (CompositePartSpecifier) ps);
                 } else {
-                    owner = context.getCurrentCard().getCardModel();
+                    owner = context.getCurrentCard().getPartModel();
                 }
 
                 owner.removePartModel(context, p);

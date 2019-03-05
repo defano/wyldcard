@@ -65,9 +65,9 @@ public class BackgroundPropertyEditor extends WyldCardDialog<CardPart> {
     public void bindModel(CardPart cardPart) {
         ExecutionContext context = new ExecutionContext();
         this.cardPart = cardPart;
-        backgroundModel = this.cardPart.getCardModel().getBackgroundModel();
+        backgroundModel = this.cardPart.getPartModel().getBackgroundModel();
 
-        int backgroundId = this.cardPart.getCardModel().getBackgroundId();
+        int backgroundId = this.cardPart.getPartModel().getBackgroundId();
         backgroundIdLabel.setText("Background ID: " + backgroundId);
         cantDeleteBkgndCheckBox.setSelected(backgroundModel.getKnownProperty(context, BackgroundModel.PROP_CANTDELETE).booleanValue());
         dontSearchCheckBox.setSelected(backgroundModel.getKnownProperty(context, BackgroundModel.PROP_DONTSEARCH).booleanValue());
@@ -78,9 +78,9 @@ public class BackgroundPropertyEditor extends WyldCardDialog<CardPart> {
             backgroundName.setText(backgroundModel.getKnownProperty(context, BackgroundModel.PROP_NAME).toString());
         }
 
-        long cardCount = this.cardPart.getCardModel().getStackModel().getCardsInBackground(backgroundId).size();
-        long fieldCount = this.cardPart.getCardModel().getPartCount(context, PartType.FIELD, Owner.BACKGROUND);
-        long buttonCount = this.cardPart.getCardModel().getPartCount(context, PartType.BUTTON, Owner.BACKGROUND);
+        long cardCount = this.cardPart.getPartModel().getStackModel().getCardsInBackground(backgroundId).size();
+        long fieldCount = this.cardPart.getPartModel().getPartCount(context, PartType.FIELD, Owner.BACKGROUND);
+        long buttonCount = this.cardPart.getPartModel().getPartCount(context, PartType.BUTTON, Owner.BACKGROUND);
 
         cardCountLabel.setText(StringUtils.pluralize(cardCount, "Background shared by %d card.", "Background shared by %d cards."));
         buttonCountLabel.setText(StringUtils.pluralize(buttonCount, "Contains %d background button.", "Contains %d background buttons."));
@@ -89,9 +89,9 @@ public class BackgroundPropertyEditor extends WyldCardDialog<CardPart> {
 
     private void updateProperties() {
         ExecutionContext context = new ExecutionContext();
-        cardPart.getCardModel().getBackgroundModel().setKnownProperty(context, BackgroundModel.PROP_NAME, new Value(backgroundName.getText()));
-        cardPart.getCardModel().getBackgroundModel().setKnownProperty(context, BackgroundModel.PROP_CANTDELETE, new Value(cantDeleteBkgndCheckBox.isSelected()));
-        cardPart.getCardModel().getBackgroundModel().setKnownProperty(context, BackgroundModel.PROP_DONTSEARCH, new Value(dontSearchCheckBox.isSelected()));
+        cardPart.getPartModel().getBackgroundModel().setKnownProperty(context, BackgroundModel.PROP_NAME, new Value(backgroundName.getText()));
+        cardPart.getPartModel().getBackgroundModel().setKnownProperty(context, BackgroundModel.PROP_CANTDELETE, new Value(cantDeleteBkgndCheckBox.isSelected()));
+        cardPart.getPartModel().getBackgroundModel().setKnownProperty(context, BackgroundModel.PROP_DONTSEARCH, new Value(dontSearchCheckBox.isSelected()));
     }
 
     private void showContentsEditor() {

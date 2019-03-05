@@ -20,7 +20,7 @@ public class CompositeSymbolTable implements SymbolTable {
     @Override
     public Value get(String id) {
         for (SymbolTable thisTable : symbolTables) {
-            if (thisTable.exists(id)) {
+            if (thisTable.contains(id)) {
                 return thisTable.get(id);
             }
         }
@@ -31,16 +31,16 @@ public class CompositeSymbolTable implements SymbolTable {
     @Override
     public void set(String id, Value v) {
         for (SymbolTable thisTable : symbolTables) {
-            if (thisTable.exists(id)) {
+            if (thisTable.contains(id)) {
                 thisTable.set(id, v);
             }
         }
     }
 
     @Override
-    public boolean exists(String id) {
+    public boolean contains(String id) {
         for (SymbolTable thisTable : symbolTables) {
-            if (thisTable.exists(id)) {
+            if (thisTable.contains(id)) {
                 return true;
             }
         }

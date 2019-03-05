@@ -1,20 +1,24 @@
 package com.defano.wyldcard.parts.clipboard;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.parts.button.ButtonPart;
+import com.defano.wyldcard.parts.button.ButtonModel;
+import com.defano.wyldcard.parts.field.FieldModel;
+import com.defano.wyldcard.parts.field.FieldPart;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.parts.*;
-import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.serializer.Serializer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 
 public class CardPartTransferHandler extends TransferHandler {
 
@@ -46,10 +50,12 @@ public class CardPartTransferHandler extends TransferHandler {
     @Override
     public boolean importData(TransferHandler.TransferSupport info) {
         try {
-            ToolEditablePart part = (ToolEditablePart) info.getTransferable().getTransferData(TransferablePart.partFlavor);
-            CardLayer layer = CardLayerPart.getActivePartLayer();
             CardPart focusedCard = WyldCard.getInstance().getStackManager().getFocusedCard();
-            ToolEditablePart importedPart = (ToolEditablePart) focusedCard.importPart(new ExecutionContext(), part, layer);
+
+            ToolEditablePart copiedPart = (ToolEditablePart) info.getTransferable().getTransferData(TransferablePart.partFlavor);
+            ToolEditablePart importedPart = duplicatePart(new ExecutionContext(), copiedPart, focusedCard);
+
+            focusedCard.addNewPartToCard(new ExecutionContext(), importedPart);
 
             // Position pasted part over the mouse cursor
             Point mouseLoc = WyldCard.getInstance().getMouseManager().getMouseLoc(new ExecutionContext());
@@ -69,6 +75,31 @@ public class CardPartTransferHandler extends TransferHandler {
         }
 
         return false;
+    }
+
+    private ToolEditablePart duplicatePart(ExecutionContext context, ToolEditablePart original, CardPart parentCard) {
+        PartModel copiedPartModel = Serializer.copy(original.getPartModel());
+
+        copiedPartModel.newProperty(PartModel.PROP_ID, getNewId(copiedPartModel, parentCard.getOwningStackModel()), true);
+        copiedPartModel.setOwner(CardLayerPart.getActivePartLayer().asOwner());
+
+        if (copiedPartModel instanceof ButtonModel) {
+            return ButtonPart.fromModel(context, parentCard, (ButtonModel) copiedPartModel);
+        } else if (copiedPartModel instanceof FieldModel) {
+            return FieldPart.fromModel(context, parentCard, (FieldModel) copiedPartModel);
+        }
+
+        throw new IllegalStateException("Bug! Cannot duplicate this part type: " + original);
+    }
+
+    private Value getNewId(PartModel partModel, StackModel owningStack) {
+        if (partModel instanceof FieldModel) {
+            return new Value(owningStack.getNextFieldId());
+        } else if (partModel instanceof ButtonModel) {
+            return new Value(owningStack.getNextButtonId());
+        } else {
+            throw new IllegalStateException("Bug! Not a supported type: " + partModel);
+        }
     }
 
     private static class TransferablePart implements Transferable {
@@ -95,7 +126,7 @@ public class CardPartTransferHandler extends TransferHandler {
         }
 
         @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (flavor == partFlavor) {
                 return part;
             }

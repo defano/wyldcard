@@ -2,7 +2,6 @@ package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.StackManager;
@@ -33,7 +32,7 @@ public class SaveStackCmd extends Command {
     }
 
     @Override
-    protected void onExecute(ExecutionContext context) throws HtException, Preemption {
+    protected void onExecute(ExecutionContext context) throws HtException {
 
         File destinationFile = evaluateAsStackFile(context, fileExpr);
 

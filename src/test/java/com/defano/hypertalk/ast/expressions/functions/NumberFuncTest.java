@@ -3,7 +3,6 @@ package com.defano.hypertalk.ast.expressions.functions;
 import com.defano.hypertalk.GuiceTest;
 import com.defano.hypertalk.ast.expressions.CountableExp;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.Countable;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
@@ -11,28 +10,19 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
-import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.wyldcard.parts.field.FieldModel;
-import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.WindowProxyPartModel;
-import com.defano.wyldcard.parts.msgbox.MsgBoxModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.WyldCardProperties;
-import com.defano.wyldcard.window.WyldCardFrame;
-import com.defano.wyldcard.window.layouts.MessageWindow;
 import com.google.common.collect.Lists;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import javax.swing.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 
@@ -266,7 +256,7 @@ public class NumberFuncTest extends GuiceTest<NumberFunc> {
             Value expectedValue = new Value(testValue);
 
             CardModel mockCardModel = Mockito.mock(CardModel.class);
-            Mockito.when(mockExecutionContext.getCurrentCard().getCardModel()).thenReturn(mockCardModel);
+            Mockito.when(mockExecutionContext.getCurrentCard().getPartModel()).thenReturn(mockCardModel);
             Mockito.when(mockCardModel.getPartCount(mockExecutionContext, null, Owner.CARD)).thenReturn(expectedValue.longValue());
 
             assertEquals(expectedValue, uut.onEvaluate(mockExecutionContext));
@@ -285,7 +275,7 @@ public class NumberFuncTest extends GuiceTest<NumberFunc> {
             Mockito.when(mockCountableExp.partFactor(mockExecutionContext, BackgroundModel.class)).thenReturn(null);
             Mockito.when(mockCountableExp.partFactor(eq(mockExecutionContext), eq(CardModel.class), any(HtSemanticException.class))).thenReturn(mockCardModel);
 
-            Mockito.when(mockExecutionContext.getCurrentCard().getCardModel()).thenReturn(mockCardModel);
+            Mockito.when(mockExecutionContext.getCurrentCard().getPartModel()).thenReturn(mockCardModel);
             Mockito.when(mockCardModel.getPartCount(mockExecutionContext, null, Owner.CARD)).thenReturn(expectedValue.longValue());
 
             assertEquals(expectedValue, uut.onEvaluate(mockExecutionContext));
@@ -302,7 +292,7 @@ public class NumberFuncTest extends GuiceTest<NumberFunc> {
             CardModel mockCardModel = Mockito.mock(CardModel.class);
             BackgroundModel mockBkgndModel = Mockito.mock(BackgroundModel.class);
 
-            Mockito.when(mockExecutionContext.getCurrentCard().getCardModel()).thenReturn(mockCardModel);
+            Mockito.when(mockExecutionContext.getCurrentCard().getPartModel()).thenReturn(mockCardModel);
             Mockito.when(mockCardModel.getBackgroundModel()).thenReturn(mockBkgndModel);
             Mockito.when(mockBkgndModel.getPartCount(mockExecutionContext, null, Owner.BACKGROUND)).thenReturn(expectedValue.longValue());
 
@@ -318,7 +308,7 @@ public class NumberFuncTest extends GuiceTest<NumberFunc> {
             Value expectedValue = new Value(testValue);
 
             CardModel mockCardModel = Mockito.mock(CardModel.class);
-            Mockito.when(mockExecutionContext.getCurrentCard().getCardModel()).thenReturn(mockCardModel);
+            Mockito.when(mockExecutionContext.getCurrentCard().getPartModel()).thenReturn(mockCardModel);
             Mockito.when(mockCardModel.getPartCount(mockExecutionContext, PartType.BUTTON, Owner.CARD)).thenReturn(expectedValue.longValue());
 
             assertEquals(expectedValue, uut.onEvaluate(mockExecutionContext));
@@ -333,7 +323,7 @@ public class NumberFuncTest extends GuiceTest<NumberFunc> {
             Value expectedValue = new Value(testValue);
 
             CardModel mockCardModel = Mockito.mock(CardModel.class);
-            Mockito.when(mockExecutionContext.getCurrentCard().getCardModel()).thenReturn(mockCardModel);
+            Mockito.when(mockExecutionContext.getCurrentCard().getPartModel()).thenReturn(mockCardModel);
             Mockito.when(mockCardModel.getPartCount(mockExecutionContext, PartType.FIELD, Owner.CARD)).thenReturn(expectedValue.longValue());
 
             assertEquals(expectedValue, uut.onEvaluate(mockExecutionContext));
@@ -350,7 +340,7 @@ public class NumberFuncTest extends GuiceTest<NumberFunc> {
             CardModel mockCardModel = Mockito.mock(CardModel.class);
             BackgroundModel mockBkgndModel = Mockito.mock(BackgroundModel.class);
 
-            Mockito.when(mockExecutionContext.getCurrentCard().getCardModel()).thenReturn(mockCardModel);
+            Mockito.when(mockExecutionContext.getCurrentCard().getPartModel()).thenReturn(mockCardModel);
             Mockito.when(mockCardModel.getBackgroundModel()).thenReturn(mockBkgndModel);
             Mockito.when(mockBkgndModel.getPartCount(mockExecutionContext, PartType.BUTTON, Owner.BACKGROUND)).thenReturn(expectedValue.longValue());
 
@@ -368,7 +358,7 @@ public class NumberFuncTest extends GuiceTest<NumberFunc> {
             CardModel mockCardModel = Mockito.mock(CardModel.class);
             BackgroundModel mockBkgndModel = Mockito.mock(BackgroundModel.class);
 
-            Mockito.when(mockExecutionContext.getCurrentCard().getCardModel()).thenReturn(mockCardModel);
+            Mockito.when(mockExecutionContext.getCurrentCard().getPartModel()).thenReturn(mockCardModel);
             Mockito.when(mockCardModel.getBackgroundModel()).thenReturn(mockBkgndModel);
             Mockito.when(mockBkgndModel.getPartCount(mockExecutionContext, PartType.FIELD, Owner.BACKGROUND)).thenReturn(expectedValue.longValue());
 

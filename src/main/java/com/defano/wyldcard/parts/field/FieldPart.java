@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * See {@link FieldModel} for the model object associated with this controller.
  * See {@link StyleableField} for the view object associated with this view.
  */
-public class FieldPart extends StyleableField implements CardLayerPart, Searchable, PropertyChangeObserver, DeferredKeyEventComponent, FocusListener {
+public class FieldPart extends StyleableField implements CardLayerPart<FieldModel>, Searchable, PropertyChangeObserver, DeferredKeyEventComponent, FocusListener {
 
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 100;
@@ -60,23 +60,16 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
      *
      * @param context The execution context.
      * @param parent The card in which the field should be generated.
-     * @return The newly created FieldPart
-     */
-    public static FieldPart newField(ExecutionContext context, CardPart parent, Owner owner) {
-        return newField(context, parent, owner, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
-    }
-
-    /**
-     * Creates a new field with default attributes on the given card.
-     *
-     * @param context The execution context.
-     * @param parent The card in which the field should be generated.
+     * @param rectangle The size and location of the field on the card; when null, a default size and location is assumed.
      * @return The newly created FieldPart
      */
     public static FieldPart newField(ExecutionContext context, CardPart parent, Owner owner, Rectangle rectangle) {
         FieldPart newField = new FieldPart(FieldStyle.TRANSPARENT, parent, owner);
 
-        // Place the field in the center of the card
+        if (rectangle == null) {
+            rectangle = new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        }
+
         newField.initProperties(context, rectangle, parent.getPartModel());
         newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTFONT, new Value(WyldCard.getInstance().getFontManager().getFocusedTextStyle().getFontFamily()));
         newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSIZE, new Value(WyldCard.getInstance().getFontManager().getFocusedTextStyle().getFontSize()));
@@ -117,7 +110,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
     @Override
     public String getText(ExecutionContext context) {
-        return ((FieldModel) getPartModel()).getText(context);
+        return getPartModel().getText(context);
     }
 
     /** {@inheritDoc}
@@ -176,7 +169,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
     /** {@inheritDoc} */
     @Override
-    public PartModel getPartModel() {
+    public FieldModel getPartModel() {
         return partModel;
     }
 
@@ -327,7 +320,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
             WyldCard.getInstance().getSelectionManager().setClickChunk(new Value(
                 "chars " + startWordIndex + " to " + endWordIndex + " of " +
-                        ((FieldModel) getPartModel()).getHyperTalkAddress(new ExecutionContext(this)))
+                        getPartModel().getHyperTalkAddress(new ExecutionContext(this)))
             );
         } catch (BadLocationException e) {
             // Nothing to do
@@ -353,7 +346,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         CardPart cardPart = parent.get();
 
         if (cardPart != null) {
-            int id = cardPart.getCardModel().getStackModel().getNextFieldId();
+            int id = cardPart.getPartModel().getStackModel().getNextFieldId();
             partModel = FieldModel.newFieldModel(context, id, geometry, owner, parentPartModel);
             partModel.addPropertyChangedObserver(this);
         }

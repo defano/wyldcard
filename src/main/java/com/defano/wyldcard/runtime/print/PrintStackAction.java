@@ -6,7 +6,6 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.awt.*;
 import java.awt.print.PageFormat;
-import java.awt.print.PrinterException;
 
 public class PrintStackAction extends PrintActionDelegate {
 
@@ -19,7 +18,7 @@ public class PrintStackAction extends PrintActionDelegate {
 
     @Override
     public void onPrintStarted() {
-        this.currentCard = WyldCard.getInstance().getStackManager().getFocusedCard().getCardModel().getCardIndexInStack();
+        this.currentCard = WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().getCardIndexInStack();
     }
 
     @Override
@@ -29,7 +28,7 @@ public class PrintStackAction extends PrintActionDelegate {
     }
 
     @Override
-    public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
+    public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
         StackPart focusedStack = WyldCard.getInstance().getStackManager().getFocusedStack();
 
         if (pageIndex < WyldCard.getInstance().getStackManager().getFocusedStack().getCardCountProvider().blockingFirst()) {

@@ -6,7 +6,6 @@ import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.inject.Singleton;
 
 import java.net.Inet4Address;
@@ -83,13 +82,11 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
         newComputedGetterProperty(PROP_PATTERN, (context, model, propertyName) -> new Value (WyldCard.getInstance().getToolsManager().getFillPattern()));
 
         addPropertyWillChangeObserver((property, oldValue, newValue) -> {
-            switch (property.toLowerCase()) {
-                case PROP_LOCKSCREEN:
-                    WyldCard.getInstance()
-                            .getStackManager().getFocusedStack()
-                            .getCurtainManager()
-                            .setScreenLocked(new ExecutionContext(), newValue.booleanValue());
-                    break;
+            if (PROP_LOCKSCREEN.equals(property.toLowerCase())) {
+                WyldCard.getInstance()
+                        .getStackManager().getFocusedStack()
+                        .getCurtainManager()
+                        .setScreenLocked(new ExecutionContext(), newValue.booleanValue());
             }
         });
     }

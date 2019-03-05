@@ -51,9 +51,9 @@ public interface StackPartFinder extends OrderedPartFinder {
         } else if (ps instanceof PartPositionSpecifier) {
             return findPartByPosition(context, (PartPositionSpecifier) ps);
         } else if (ps.isCardPartSpecifier()) {
-            return context.getCurrentCard().getCardModel().findPart(context, ps);
+            return context.getCurrentCard().getPartModel().findPart(context, ps);
         } else if (ps.isBackgroundPartSpecifier()) {
-            return context.getCurrentCard().getCardModel().getBackgroundModel().findPart(context, ps);
+            return context.getCurrentCard().getPartModel().getBackgroundModel().findPart(context, ps);
         } else {
             return OrderedPartFinder.super.findPart(context, ps);
         }
@@ -147,7 +147,7 @@ public interface StackPartFinder extends OrderedPartFinder {
             throw new PartException("Cannot find " + ps.getType().toString().toLowerCase() + " by position.");
         }
 
-        int thisCard = context.getCurrentCard().getCardModel().getCardIndexInStack();
+        int thisCard = context.getCurrentCard().getPartModel().getCardIndexInStack();
 
         try {
             if (ps.getType() == PartType.CARD) {

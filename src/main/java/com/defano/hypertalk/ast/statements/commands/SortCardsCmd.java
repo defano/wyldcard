@@ -43,7 +43,7 @@ public class SortCardsCmd extends Command {
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
         // Remember which card we're currently viewing
-        int thisCardId = context.getCurrentStack().getDisplayedCard().getCardModel().getId(context);
+        int thisCardId = context.getCurrentStack().getDisplayedCard().getPartModel().getId(context);
 
         // Get a copy of the list of cards in the stack
         List<CardModel> allCards = context.getCurrentStack().getStackModel().getCardModels();

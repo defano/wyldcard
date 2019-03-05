@@ -245,7 +245,7 @@ public class ExecutionContext {
      * @param id The name of the variable to be made global.
      */
     public void defineGlobal(String id) {
-        if (!globals.exists(id))
+        if (!globals.contains(id))
             globals.set(id, new Value());
 
         getStackFrame().setGlobalInScope(id);
@@ -258,7 +258,7 @@ public class ExecutionContext {
      * @param v      The value to assign it
      */
     public void setVariable(String symbol, Value v) {
-        if (globals.exists(symbol) && getStackFrame().isGlobalInScope(symbol))
+        if (globals.contains(symbol) && getStackFrame().isGlobalInScope(symbol))
             globals.set(symbol, v);
         else
             getStackFrame().getLocalVariables().set(symbol, v);
@@ -302,14 +302,16 @@ public class ExecutionContext {
     public Value getVariable(String symbol) {
         Value value;
 
-        if (globals.exists(symbol) && getStackFrame().isGlobalInScope(symbol))
+        if (globals.contains(symbol) && getStackFrame().isGlobalInScope(symbol)) {
             value = globals.get(symbol);
-        else if (getStackFrame().getLocalVariables().exists(symbol))
+        } else if (getStackFrame().getLocalVariables().contains(symbol)) {
             value = getStackFrame().getLocalVariables().get(symbol);
+        }
 
-            // Allow the user to refer to literals without quotation marks
-        else
+        // Allow the user to refer to literals without quotation marks
+        else {
             value = new Value(symbol);
+        }
 
         return value;
     }
@@ -321,8 +323,8 @@ public class ExecutionContext {
      * @return True if the symbol is an in-scope variable, false otherwise
      */
     private boolean isVariableInScope(String symbol) {
-        return globals.exists(symbol) && getStackFrame().isGlobalInScope(symbol) ||
-                getStackFrame().getLocalVariables().exists(symbol);
+        return globals.contains(symbol) && getStackFrame().isGlobalInScope(symbol) ||
+                getStackFrame().getLocalVariables().contains(symbol);
     }
 
     /**

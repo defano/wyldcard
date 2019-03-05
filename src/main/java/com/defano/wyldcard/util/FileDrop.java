@@ -861,8 +861,7 @@ public class FileDrop
          * @since 1.1
          */
         public Object getTransferData( java.awt.datatransfer.DataFlavor flavor )
-        throws java.awt.datatransfer.UnsupportedFlavorException, java.io.IOException 
-        {   
+        throws java.awt.datatransfer.UnsupportedFlavorException {
             // Native object
             if( flavor.equals( DATA_FLAVOR ) )
                 return fetcher == null ? data : fetcher.getObject();

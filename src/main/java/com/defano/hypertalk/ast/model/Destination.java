@@ -7,7 +7,6 @@ import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import sun.security.krb5.internal.crypto.Des;
 
 import java.util.Objects;
 

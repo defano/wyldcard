@@ -55,10 +55,8 @@ public class MessageWindow extends WyldCardWindow<Object> implements PropertyCha
     @Override
     @RunOnDispatch
     public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
-        switch (property) {
-            case MsgBoxModel.PROP_CONTENTS:
-                getTextComponent().setText(newValue.toString());
-                break;
+        if (MsgBoxModel.PROP_CONTENTS.equals(property)) {
+            getTextComponent().setText(newValue.toString());
         }
     }
 

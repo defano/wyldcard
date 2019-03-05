@@ -39,7 +39,7 @@ public class ThreadUtils {
      * @param callable The callable to execute on the dispatch thread
      * @param <V> The type of object returned by the callable
      * @return The value returned by the callable
-     * @throws Exception The exception thrown by the callable if execution of the callable throws an exception.
+     * @throws E The exception thrown by the callable if execution of the callable throws an exception.
      */
     @SuppressWarnings({"unused", "unchecked"})
     public static <V, E extends Exception> V callCheckedAndWaitAsNeeded(Callable<V> callable, Class<E> exceptionClass) throws E {

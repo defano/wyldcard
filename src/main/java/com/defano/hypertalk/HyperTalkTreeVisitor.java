@@ -17,7 +17,6 @@ import com.defano.hypertalk.ast.model.specifiers.PropertySpecifier;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.ast.statements.*;
 import com.defano.hypertalk.ast.statements.commands.*;
-import com.defano.hypertalk.ast.statements.conditional.EditScriptCmd;
 import com.defano.hypertalk.ast.statements.conditional.IfStatement;
 import com.defano.hypertalk.ast.statements.conditional.ThenElseBlock;
 import com.defano.hypertalk.ast.statements.repeat.*;

@@ -1,8 +1,5 @@
 package com.defano.wyldcard.menubar.main;
 
-import com.defano.hypertalk.ast.model.Destination;
-import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
-import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;

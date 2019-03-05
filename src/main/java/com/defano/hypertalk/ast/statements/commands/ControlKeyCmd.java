@@ -1,7 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.awt.RoboticTypist;
@@ -18,7 +17,7 @@ public class ControlKeyCmd extends Statement {
     }
 
     @Override
-    protected void onExecute(ExecutionContext context) throws HtException, Preemption {
+    protected void onExecute(ExecutionContext context) throws HtException {
         RoboticTypist.getInstance().type(keyExpr.evaluate(context).toString(), false, true);
     }
 }

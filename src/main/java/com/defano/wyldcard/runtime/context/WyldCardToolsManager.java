@@ -81,7 +81,7 @@ public class WyldCardToolsManager implements ToolsManager {
     @Override
     public void setGridSpacing(int spacing) {
         if (this.gridSpacingSubscription == null) {
-            this.gridSpacingSubscription = this.gridSpacingProvider.subscribe(integer -> WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().setGridSpacing(integer));
+            this.gridSpacingSubscription = this.gridSpacingProvider.subscribe(integer -> WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().setGridSpacing(integer));
         }
         gridSpacingProvider.onNext(spacing);
     }
@@ -146,7 +146,7 @@ public class WyldCardToolsManager implements ToolsManager {
 
     @Override
     public void select() {
-        ImageLayerSet undid = WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().undo();
+        ImageLayerSet undid = WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().undo();
         BufferedImage undidImage = undid.render();
 
         // Calculate minimum bounds sub-image.
@@ -338,10 +338,10 @@ public class WyldCardToolsManager implements ToolsManager {
     @Override
     public void toggleMagnifier() {
         if (getPaintTool().getPaintToolType() == PaintToolType.MAGNIFIER) {
-            WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().setScale(1.0);
+            WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().setScale(1.0);
             forceToolSelection(ToolType.fromPaintTool(lastToolType), false);
-        } else if (WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().getScale() != 1.0) {
-            WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas().setScale(1.0);
+        } else if (WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().getScale() != 1.0) {
+            WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().setScale(1.0);
         } else {
             forceToolSelection(ToolType.MAGNIFIER, false);
         }
@@ -376,7 +376,7 @@ public class WyldCardToolsManager implements ToolsManager {
     public void toggleIsEditingBackground() {
         getPaintTool().deactivate();
         isEditingBackground.onNext(!isEditingBackground.blockingFirst());
-        reactivateTool(WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas());
+        reactivateTool(WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas());
         WyldCard.getInstance().getWindowManager().getFocusedStackWindow().invalidateWindowTitle();
     }
 
@@ -384,7 +384,7 @@ public class WyldCardToolsManager implements ToolsManager {
     public void setIsEditingBackground(boolean isEditingBackground) {
         getPaintTool().deactivate();
         this.isEditingBackground.onNext(isEditingBackground);
-        reactivateTool(WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas());
+        reactivateTool(WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas());
     }
 
     @Override
@@ -410,7 +410,7 @@ public class WyldCardToolsManager implements ToolsManager {
 
     @Override
     public void chooseTool(ToolType toolType) {
-        WyldCard.getInstance().getStackManager().getFocusedCard().getCardModel().receiveMessage(ExecutionContext.unboundInstance(), SystemMessage.CHOOSE.messageName, ListExp.fromValues(null, new Value(toolType.getPrimaryToolName()), new Value(toolType.getToolNumber())), (command, wasTrapped, err) -> {
+        WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().receiveMessage(ExecutionContext.unboundInstance(), SystemMessage.CHOOSE.messageName, ListExp.fromValues(null, new Value(toolType.getPrimaryToolName()), new Value(toolType.getToolNumber())), (command, wasTrapped, err) -> {
             if (!wasTrapped) {
                 SwingUtilities.invokeLater(() -> forceToolSelection(toolType, false));
             }
@@ -487,7 +487,7 @@ public class WyldCardToolsManager implements ToolsManager {
                 .withDrawMultipleObservable(drawMultipleProvider)
                 .withAntiAliasingObservable(antiAliasingProvider)
                 .withPathInterpolationObservable(pathInterpolationProvider)
-                .makeActiveOnCanvas(WyldCard.getInstance().getStackManager().getFocusedCard().getCanvas())
+                .makeActiveOnCanvas(WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas())
                 .build();
 
         // When requested, move current selection over to the new tool

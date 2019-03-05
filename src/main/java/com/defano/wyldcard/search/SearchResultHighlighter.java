@@ -25,7 +25,7 @@ public interface SearchResultHighlighter {
             clearSearchHighlights(context);
 
             // Search result is on a different card; go there
-            if (result.getCardIndex() != context.getCurrentCard().getCardModel().getCardIndexInStack()) {
+            if (result.getCardIndex() != context.getCurrentCard().getPartModel().getCardIndexInStack()) {
                 WyldCard.getInstance().getNavigationManager().goCard(context, context.getCurrentStack(), result.getCardIndex(), null, false);
             }
 
@@ -33,8 +33,8 @@ public interface SearchResultHighlighter {
             SwingUtilities.invokeLater(() -> {
                 try {
                     FieldModel foundFieldModel = result.getLocalPartSpecifier(context).getOwner() == Owner.CARD ?
-                            (FieldModel) context.getCurrentCard().getCardModel().findPart(context, result.getLocalPartSpecifier(context)) :
-                            (FieldModel) context.getCurrentCard().getCardModel().getBackgroundModel().findPart(context, result.getLocalPartSpecifier(context));
+                            (FieldModel) context.getCurrentCard().getPartModel().findPart(context, result.getLocalPartSpecifier(context)) :
+                            (FieldModel) context.getCurrentCard().getPartModel().getBackgroundModel().findPart(context, result.getLocalPartSpecifier(context));
 
                     FieldPart foundField = (FieldPart) context.getCurrentCard().getPart(context, foundFieldModel);
 

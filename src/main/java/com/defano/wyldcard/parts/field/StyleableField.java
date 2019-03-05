@@ -24,7 +24,7 @@ import java.awt.*;
  * This class provides common functionality for "styleable" field parts; the actual style of the field is provided by
  * a concrete subclass.
  */
-public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTextField>, ToolEditablePart, MarchingAntsObserver {
+public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTextField>, ToolEditablePart<FieldModel>, MarchingAntsObserver {
 
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private Disposable toolModeSubscription;
@@ -88,7 +88,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
      * @return
      */
     public JComponent getFieldComponent() {
-        return (JComponent) fieldComponent;
+        return fieldComponent;
     }
 
     public HyperCardTextPane getHyperCardTextPane() {

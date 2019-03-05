@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Represents a part that exists as part of a layer of the card (that is, a button or a field).
  */
-public interface CardLayerPart extends Part {
+public interface CardLayerPart<T extends PartModel> extends Part<T> {
 
     /**
      * Gets the Swing component associated with this part.
@@ -52,7 +52,7 @@ public interface CardLayerPart extends Part {
      */
     default void setDisplayOrder(ExecutionContext context, int newPosition) {
         CardPart card = getCard();
-        ArrayList<PartModel> parts = new ArrayList<>(card.getCardModel().getPartsInDisplayOrder(context));
+        ArrayList<PartModel> parts = new ArrayList<>(card.getPartModel().getPartsInDisplayOrder(context));
 
         if (newPosition < 0) {
             newPosition = 0;

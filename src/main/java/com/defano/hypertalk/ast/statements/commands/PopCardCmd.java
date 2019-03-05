@@ -1,8 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.Command;
-import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.NavigationManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.google.inject.Inject;
@@ -18,7 +16,7 @@ public class PopCardCmd extends Command {
     }
 
     @Override
-    protected void onExecute(ExecutionContext context) throws HtException, Preemption {
+    protected void onExecute(ExecutionContext context) {
         navigationManager.goPopCard(context, context.getCurrentStack(), null);
     }
 }

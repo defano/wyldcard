@@ -62,7 +62,7 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
             if (Interpreter.getPendingScriptCount() == 0) {
                 WyldCard.getInstance().getWyldCardProperties().resetProperties();
                 DebugContext.getInstance().resume();
-                send(SystemMessage.IDLE, new ExecutionContext().getCurrentCard().getCardModel());
+                send(SystemMessage.IDLE, new ExecutionContext().getCurrentCard().getPartModel());
             }
 
             // Send 'within' message to any parts whose bounds the mouse is within

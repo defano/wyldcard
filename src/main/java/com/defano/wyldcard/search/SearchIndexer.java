@@ -56,7 +56,7 @@ public class SearchIndexer {
             }
 
             FieldModel field = (FieldModel) part;
-            CardModel card = context.getCurrentStack().getDisplayedCard().getCardModel();
+            CardModel card = context.getCurrentStack().getDisplayedCard().getPartModel();
 
             int cardIndex = card.getCardIndexInStack();
             if (query.getSearchField() instanceof CompositePartSpecifier) {

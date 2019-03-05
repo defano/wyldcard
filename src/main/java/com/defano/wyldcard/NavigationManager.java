@@ -8,6 +8,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
+@SuppressWarnings("UnusedReturnValue")
 public interface NavigationManager {
 
     /**

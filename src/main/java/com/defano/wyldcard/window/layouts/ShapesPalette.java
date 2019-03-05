@@ -73,7 +73,7 @@ public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<In
             thisShape.setEnabled(true);
         }
 
-        JButton selectedButton = getButtonForShape((int) newValue);
+        JButton selectedButton = getButtonForShape(newValue);
         if (selectedButton != null) {
             selectedButton.setEnabled(false);
         }

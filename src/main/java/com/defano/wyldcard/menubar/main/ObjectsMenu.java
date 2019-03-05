@@ -90,12 +90,12 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Button")
-                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().newButton(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().newButton(new ExecutionContext(), null))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Field")
-                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().newField(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().newField(new ExecutionContext(), null))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

@@ -23,7 +23,7 @@ public class WyldCardWindowManager implements WindowManager {
     private final BehaviorSubject<Boolean> palettesDockedProvider = BehaviorSubject.createDefault(false);
 
     private MessageWindow messageWindow;
-    private PaintToolsPalette paintToolsPalette;;
+    private PaintToolsPalette paintToolsPalette;
     private ShapesPalette shapesPalette;
     private LinesPalette linesPalette;
     private PatternPalette patternsPalette;
@@ -34,7 +34,7 @@ public class WyldCardWindowManager implements WindowManager {
     private VariableWatcher variableWatcher;
     private ExpressionEvaluator expressionEvaluator;
     private MagnificationPalette magnifierPalette;
-    private JFrame hiddenPrintFrame;;
+    private JFrame hiddenPrintFrame;
 
     @RunOnDispatch
     @Override
