@@ -340,32 +340,31 @@ HyperTalk provides this suite of mathematical, logical, and string operators:
 |------------| ----------------|-------------
 |1 (highest) | `( )`           | Grouping
 |2           | `-`             | Negation for numbers (unary)
-|            | `not`	         | Negation for boolean values (unary)
+|            | `not`	         | Negation for logical values (unary)
 |            | `there is a[n]` | Determines if the expression to the right of the operator refers to an existent stack part (unary)
 |            | `there is not a[n]`, `there is no` | Negation of object existence (unary)
 |3           | `^`             | Exponentiation for numbers
 |4           | `*`             | Multiplication for numbers
 |            | `/`             | Division for numbers
 |            | `div`	         | Division for numbers
-|            | `mod`	         | Modulus division for numbers; returns the remainder
+|            | `mod`	         | Modulus division for numbers (returns the remainder)
 |5           | `+`             | Addition for numbers
 |            | `-`             | Subtraction for numbers
-|6           | `&`, `&&`       | Text concatenation; `&&` adds a space between operands; `&` does not
+|6           | `&`             | Text concatenation; `"a" & "b"` yeilds `ab`
+|            | `&&`            | Text concatenation by adding a space between operators; `"a" && "b"` yeilds `a b`
 |7           | `>`             | Greater than comparison for numbers and text
 |            | `<`             | Less than comparison for numbers and text
 |            | `<=`, `≤`       | Less than or equal to comparison for numbers and text
 |            | `>=`, `≥`       | Greater than or equal to comparison for numbers and text
-|            | `contains`      | Substring comparison for text
-|            | `is a`, `is an` | Determines if the left-hand value is a `number`, `integer`, `date`, `point`, `rect` (or `rectangle`), `logical` (or `boolean`, `bool`). Returns an error if the right-hand value is not an expression yielding one of these types.
-|            | `is not a`, `is not an` | The logical inverse of `is a`, `is an`
-|8           | `=`             | Equality comparison for text
-|            | `is`            | Equality comparison for text
-|            | `is not`        | Negative equality comparison
-|            | `<>`, `≠`	     | Synonym for `is not`
-|9           | `is within`     | Determines if the left-hand point value is contained within the right-hand rectangle value.
-|            | `is not within` | Determines if the left-hand point value is not contained within the right-hand rectangle value.
-|10          | `and`           | Logical AND for boolean values
-|11 (lowest) | `or`            | Logical OR for boolean values
+|            | `contains`, `is in` | Substring comparison for text; `"hell" is in "hello"` yeilds true
+|            | `is a[n]`       | Determines if the left-hand value is a `number`, `integer`, `date`, `point`, `rect` (or `rectangle`), `logical` (or `boolean`, `bool`). Returns an error if the right-hand value is not an expression yielding one of these types.
+|            | `is not a[n]`   | The logical inverse of `is a`, `is an`
+|8           | `=`, `is`       | Equality comparison for text, arithmetic or logical values
+|            | `is not`, `<>`, `≠` | Negative equality comparison; the inverse of `=`, `is`
+|            | `is within`     | Determines if the left-hand point value is contained within the right-hand rectangle value
+|            | `is not within` | Determines if the left-hand point value is not contained within the right-hand rectangle value
+|9           | `and`           | Logical AND for boolean values
+|10 (lowest) | `or`            | Logical OR for boolean values
 
 ### Factors
 
@@ -674,7 +673,7 @@ Property      | Description
 --------------|--------------------------
 `bottom`      | Returns or sets the bottom-most border of the part's location, moving the part vertically when changed but not affecting its height.
 `bottomRight` | Returns or sets the bottom-right coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `set the bottomRight of me to "10, 100"`
-`contents`    | Returns or sets the value of this object, as set or retrieved via HyperTalk's `put` and `get` commands. For example, `put "hello" into button id 0` sets the contents of the button to "Hello".
+`contents`    | Returns or sets the value of this object. For example, `set the contents of cd field 1 to "Hello"` is equivalent to, `put "Hello" into cd field 1`. This property does not exist in HyperCard.
 `enabled`     | Returns or sets whether the part is enabled. When disabled, the part appears "grayed out". Note that disabled parts continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`. May also be set with the `enable` and `disable` commands. Not applicable to window, stack, card or background parts.
 `height`      | Returns or sets the height of the part (in pixels). Read only when applied to part types whose size cannot be changed (like cards and background).
 `id`          | Returns the part's ID. Each part has a globally unique ID that is assigned by WyldCard at creation and cannot be changed.
