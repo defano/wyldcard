@@ -239,9 +239,9 @@ public class Interpreter {
      * @param evaluationObserver A set of observer callbacks that fire (on the Swing dispatch thread) when evaluation is
      *                           complete.
      */
-    public static void asyncInContextEvaluate(ExecutionContext staticContext, String message, MessageEvaluationObserver evaluationObserver) {
+    public static void asyncStaticContextEvaluate(ExecutionContext staticContext, String message, MessageEvaluationObserver evaluationObserver) {
 
-        Futures.addCallback(Futures.makeChecked(listeningScriptExecutor.submit(new MessageEvaluationTask(staticContext, message)), new CheckedFutureExceptionMapper()), new FutureCallback<String>() {
+        Futures.addCallback(Futures.makeChecked(listeningScriptExecutor.submit(new StaticContextEvaluationTask(staticContext, message)), new CheckedFutureExceptionMapper()), new FutureCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 SwingUtilities.invokeLater(() -> evaluationObserver.onMessageEvaluated(result));

@@ -341,6 +341,14 @@ public class ExecutionContext {
     }
 
     /**
+     * Resets the abort flag such that subsequent calls to {@link #didAbort()} will return false until the next time
+     * the user aborts (by pressing command-.).
+     */
+    public void clearAbort() {
+        getStackFrame().resetCreationTimeMs();
+    }
+
+    /**
      * Gets the part model associated with the specified part. This is a convenience method; part models and part state
      * are not part of the script execution context.
      *

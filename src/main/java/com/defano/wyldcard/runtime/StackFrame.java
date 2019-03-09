@@ -61,6 +61,14 @@ public class StackFrame {
     }
 
     /**
+     * Sets the creation time of this stack frame to the current time (typically only useful to resetting an abort
+     * condition).
+     */
+    public void resetCreationTimeMs() {
+        this.creationTime = System.currentTimeMillis();
+    }
+
+    /**
      * Gets the local variables that are in scope for this call stack frame.
      *
      * @return In-scope local variables

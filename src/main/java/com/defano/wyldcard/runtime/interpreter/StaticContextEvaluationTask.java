@@ -13,12 +13,12 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.concurrent.Callable;
 
-public class MessageEvaluationTask implements Callable<String> {
+public class StaticContextEvaluationTask implements Callable<String> {
 
     private final ExecutionContext context;
     private final String messageText;
 
-    public MessageEvaluationTask(ExecutionContext staticContext, String messageText) {
+    public StaticContextEvaluationTask(ExecutionContext staticContext, String messageText) {
         this.context = staticContext;
         this.messageText = messageText;
 
@@ -33,6 +33,7 @@ public class MessageEvaluationTask implements Callable<String> {
             context.pushStackFrame();
         }
 
+        context.clearAbort();
         context.setTarget(WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().getPartSpecifier(context));
 
         try {
