@@ -1,12 +1,14 @@
 package com.defano.wyldcard.importer.block;
 
+import com.defano.wyldcard.importer.HyperCardStack;
+import com.defano.wyldcard.importer.ImportException;
 import com.defano.wyldcard.importer.StackInputStream;
-import com.defano.wyldcard.importer.result.MalformedBlockIssue;
-import com.defano.wyldcard.importer.result.Results;
+import com.defano.wyldcard.importer.result.ImportResult;
 import com.defano.wyldcard.importer.type.BlockType;
-import com.defano.wyldcard.importer.type.PageEntry;
+import com.defano.wyldcard.importer.type.PageBlockIndex;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ListBlock extends Block {
 
@@ -15,10 +17,14 @@ public class ListBlock extends Block {
     private int pageEntryTotal;     // total number of entries in all PAGE blocks; should equal number of cards
     private short pageEntrySize;    // length of an entry in a PAGE block
     private int pageEntryTotal2;    // total number of entries in all PAGE blocks; should equal number of cards
-    private PageEntry[] pages;
+    private PageBlockIndex[] pageIndices;
+
+    public ListBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId) {
+        super(root, blockType, blockSize, blockId);
+    }
 
     @Override
-    public Block deserialize(byte[] data, Results results) {
+    public void deserialize(byte[] data, ImportResult results) throws ImportException {
 
         StackInputStream sis = new StackInputStream(data);
 
@@ -34,19 +40,18 @@ public class ListBlock extends Block {
 
             sis.readInt(); // Unknown field; skip
 
-            pages = new PageEntry[pageEntryTotal];
-            for (int idx = 0; idx < pageEntryTotal; idx++) {
+            pageIndices = new PageBlockIndex[pageCount];
+            for (int idx = 0; idx < pageCount; idx++) {
                 int id = sis.readInt();
                 short entryCount = sis.readShort();
-
-                pages[idx] = new PageEntry(id, entryCount);
+                pageIndices[idx] = new PageBlockIndex(id, entryCount);
             }
 
-        } catch (IOException e) {
-            results.error(new MalformedBlockIssue(BlockType.LIST, blockId));
-        }
+            System.err.println(this);
 
-        return null;
+        } catch (IOException e) {
+            results.error(this, "Malformed list block; stack is corrupt.", e);
+        }
     }
 
     public int getPageCount() {
@@ -69,7 +74,15 @@ public class ListBlock extends Block {
         return pageEntryTotal2;
     }
 
-    public PageEntry[] getPages() {
-        return pages;
+    public PageBlockIndex[] getPageIndices() {
+        return pageIndices;
+    }
+
+    public Short getPageEntryCountForPageId(int pageId) {
+        return Arrays.stream(pageIndices)
+                .filter(i -> i.getPageId() == pageId)
+                .map(PageBlockIndex::getPageEntryCount)
+                .findFirst()
+                .orElse(null);
     }
 }

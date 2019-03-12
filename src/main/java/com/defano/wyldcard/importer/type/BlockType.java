@@ -1,9 +1,10 @@
 package com.defano.wyldcard.importer.type;
 
-import com.defano.wyldcard.importer.block.ImageBlock;
-import com.defano.wyldcard.importer.block.Block;
-import com.defano.wyldcard.importer.block.ListBlock;
-import com.defano.wyldcard.importer.block.StackBlock;
+import com.defano.wyldcard.importer.HyperCardStack;
+import com.defano.wyldcard.importer.block.*;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 public enum BlockType {
     /**
@@ -24,7 +25,7 @@ public enum BlockType {
     /**
      * Card index
      */
-    PAGE,
+    PAGE(PageBlock.class),
 
     /**
      * Background
@@ -102,16 +103,13 @@ public enum BlockType {
         throw new IllegalArgumentException("Not a valid block type");
     }
 
-    public Block getBlockInstance(int blockId, int blockSize) {
+    public Block instantiateBlock(HyperCardStack stack, int blockId, int blockSize) {
         if (klass != null) {
             try {
-                Block instance = klass.newInstance();
-                instance.blockId = blockId;
-                instance.blockSize = blockSize;
-                instance.blockType = this;
-
-                return instance;
-            } catch (InstantiationException | IllegalAccessException e) {
+                Constructor constructor = klass.getConstructor(HyperCardStack.class, BlockType.class, int.class, int.class);
+                return  (Block) constructor.newInstance(stack, this, blockSize, blockId);
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                // Somebody changed the Block constructor signature... tsk, tsk
                 throw new IllegalStateException("Bug! Can't instantiate " + klass);
             }
         }

@@ -4,12 +4,16 @@ import java.io.*;
 
 public class StackInputStream extends DataInputStream {
 
+    public StackInputStream(InputStream is) {
+        super(is);
+    }
+
     public StackInputStream(File file) throws FileNotFoundException {
-        super(new FileInputStream(file));
+        this(new FileInputStream(file));
     }
 
     public StackInputStream(byte[] data) {
-        super(new ByteArrayInputStream(data));
+        this(new ByteArrayInputStream(data));
     }
 
     public short[] readShort(int count) throws IOException {

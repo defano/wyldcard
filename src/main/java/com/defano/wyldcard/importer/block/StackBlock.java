@@ -1,9 +1,12 @@
 package com.defano.wyldcard.importer.block;
 
+import com.defano.wyldcard.importer.HyperCardStack;
+import com.defano.wyldcard.importer.ImportException;
+import com.defano.wyldcard.importer.type.BlockType;
 import com.defano.wyldcard.importer.type.StackFlag;
 import com.defano.wyldcard.importer.type.StackFormat;
 import com.defano.wyldcard.importer.StackInputStream;
-import com.defano.wyldcard.importer.result.Results;
+import com.defano.wyldcard.importer.result.ImportResult;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -15,44 +18,48 @@ public class StackBlock extends Block {
     private StackFlag[] flags;
     private BufferedImage[] patterns = new BufferedImage[40];
 
-    public int formatId;
-    public int totalSize;
-    public int stackSize;
-    public int bkgndCount;
-    public int firstBkgndId;
-    public int cardCount;
-    public int firstCardId;
-    public int listId;
-    public int freeCount;
-    public int freeSize;
-    public int printId;
-    public int password;
-    public short userLevel;
-    public short flagsMap;
-    public int createVersion;
-    public int compactVersion;
-    public int modifyVersion;
-    public int openVersion;
-    public int checksum;
-    public short windowTop;
-    public short windowLeft;
-    public short windowBottom;
-    public short windowRight;
-    public short screenTop;
-    public short screenLeft;
-    public short screenBottom;
-    public short screenRight;
-    public short scrollX;
-    public short scrollY;
-    public int fontTableId;
-    public int styleTableId;
-    public short height;
-    public short width;
-    public long[] patternData;        // 40 patterns
-    public String stackScript;
+    private int formatId;
+    private int totalSize;
+    private int stackSize;
+    private int bkgndCount;
+    private int firstBkgndId;
+    private int cardCount;
+    private int firstCardId;
+    private int listId;
+    private int freeCount;
+    private int freeSize;
+    private int printId;
+    private int password;
+    private short userLevel;
+    private short flagsMap;
+    private int createVersion;
+    private int compactVersion;
+    private int modifyVersion;
+    private int openVersion;
+    private int checksum;
+    private short windowTop;
+    private short windowLeft;
+    private short windowBottom;
+    private short windowRight;
+    private short screenTop;
+    private short screenLeft;
+    private short screenBottom;
+    private short screenRight;
+    private short scrollX;
+    private short scrollY;
+    private int fontTableId;
+    private int styleTableId;
+    private short height;
+    private short width;
+    private long[] patternData;        // 40 patterns
+    private String stackScript;
+
+    public StackBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId) {
+        super(root, blockType, blockSize, blockId);
+    }
 
     @Override
-    public StackBlock deserialize(byte[] data, Results results) {
+    public void deserialize(byte[] data, ImportResult report) throws ImportException {
 
         StackInputStream sis = new StackInputStream(data);
 
@@ -112,11 +119,8 @@ public class StackBlock extends Block {
             decodePatterns();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            report.error(this, "Malformed stack block; stack is corrupt.", e);
         }
-
-        return this;
     }
 
     private void decodePatterns() {
@@ -159,5 +163,145 @@ public class StackBlock extends Block {
 
     public BufferedImage[] getPatterns() {
         return patterns;
+    }
+
+    public int getFormatId() {
+        return formatId;
+    }
+
+    public int getTotalSize() {
+        return totalSize;
+    }
+
+    public int getStackSize() {
+        return stackSize;
+    }
+
+    public int getBkgndCount() {
+        return bkgndCount;
+    }
+
+    public int getFirstBkgndId() {
+        return firstBkgndId;
+    }
+
+    public int getCardCount() {
+        return cardCount;
+    }
+
+    public int getFirstCardId() {
+        return firstCardId;
+    }
+
+    public int getListId() {
+        return listId;
+    }
+
+    public int getFreeCount() {
+        return freeCount;
+    }
+
+    public int getFreeSize() {
+        return freeSize;
+    }
+
+    public int getPrintId() {
+        return printId;
+    }
+
+    public int getPassword() {
+        return password;
+    }
+
+    public short getUserLevel() {
+        return userLevel;
+    }
+
+    public short getFlagsMap() {
+        return flagsMap;
+    }
+
+    public int getCreateVersion() {
+        return createVersion;
+    }
+
+    public int getCompactVersion() {
+        return compactVersion;
+    }
+
+    public int getModifyVersion() {
+        return modifyVersion;
+    }
+
+    public int getOpenVersion() {
+        return openVersion;
+    }
+
+    public int getChecksum() {
+        return checksum;
+    }
+
+    public short getWindowTop() {
+        return windowTop;
+    }
+
+    public short getWindowLeft() {
+        return windowLeft;
+    }
+
+    public short getWindowBottom() {
+        return windowBottom;
+    }
+
+    public short getWindowRight() {
+        return windowRight;
+    }
+
+    public short getScreenTop() {
+        return screenTop;
+    }
+
+    public short getScreenLeft() {
+        return screenLeft;
+    }
+
+    public short getScreenBottom() {
+        return screenBottom;
+    }
+
+    public short getScreenRight() {
+        return screenRight;
+    }
+
+    public short getScrollX() {
+        return scrollX;
+    }
+
+    public short getScrollY() {
+        return scrollY;
+    }
+
+    public int getFontTableId() {
+        return fontTableId;
+    }
+
+    public int getStyleTableId() {
+        return styleTableId;
+    }
+
+    public short getHeight() {
+        return height;
+    }
+
+    public short getWidth() {
+        return width;
+    }
+
+    public long[] getPatternData() {
+        return patternData;
+    }
+
+    public String getStackScript() {
+        return stackScript;
     }
 }

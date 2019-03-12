@@ -5,19 +5,19 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class PageEntry {
 
     private final int pageId;
-    private final short pageEntryCount;
+    private final boolean isMarked;
 
-    public PageEntry(int pageId, short pageEntryCount) {
+    public PageEntry(int pageId, boolean isMarked) {
         this.pageId = pageId;
-        this.pageEntryCount = pageEntryCount;
+        this.isMarked = isMarked;
     }
 
     public int getPageId() {
         return pageId;
     }
 
-    public short getPageEntryCount() {
-        return pageEntryCount;
+    public boolean isMarked() {
+        return isMarked;
     }
 
     public String toString() {

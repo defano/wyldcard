@@ -30,43 +30,48 @@
 
 package com.defano.wyldcard.importer.block;
 
+import com.defano.wyldcard.importer.HyperCardStack;
+import com.defano.wyldcard.importer.ImportException;
+import com.defano.wyldcard.importer.WobaDecoder;
 import com.defano.wyldcard.importer.type.BlockType;
-import com.defano.wyldcard.importer.result.CorruptedImageIssue;
-import com.defano.wyldcard.importer.result.MalformedBlockIssue;
-import com.defano.wyldcard.importer.result.Results;
+import com.defano.wyldcard.importer.result.ImportResult;
 import com.defano.wyldcard.importer.StackInputStream;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class ImageBlock extends Block {
+public class ImageBlock extends Block implements WobaDecoder {
 
-    public short bitmapTop;         // top of the card rectangle
-    public short bitmapLeft;        // left of the card rectangle
-    public short bitmapBottom;      // bottom of the card rectangle
-    public short bitmapRight;       // right of the card rectangle
-    public short maskBoundTop;      // top of the mask bounding rectangle
-    public short maskBoundLeft;     // left of the mask bounding rectangle
-    public short maskBoundBottom;   // bottom of the mask bounding rectangle
-    public short maskBoundRight;    // right of the mask bounding rectangle
-    public short imageBoundTop;     // top of the image bounding rectangle
-    public short imageBoundLeft;    // left of the image bounding rectangle
-    public short imageBoundBottom;  // bottom of the image bounding rectangle
-    public short imageBoundRight;   // right of the image bounding rectangle
-    public int maskSize;            // size of the mask data
-    public int imageSize;           // size of the image data
-    public byte[] maskData;         // the WOBA-compressed mask data
-    public byte[] imageData;        // the WOBA-compressed image data
+    private short bitmapTop;         // top of the card rectangle
+    private short bitmapLeft;        // left of the card rectangle
+    private short bitmapBottom;      // bottom of the card rectangle
+    private short bitmapRight;       // right of the card rectangle
+    private short maskBoundTop;      // top of the mask bounding rectangle
+    private short maskBoundLeft;     // left of the mask bounding rectangle
+    private short maskBoundBottom;   // bottom of the mask bounding rectangle
+    private short maskBoundRight;    // right of the mask bounding rectangle
+    private short imageBoundTop;     // top of the image bounding rectangle
+    private short imageBoundLeft;    // left of the image bounding rectangle
+    private short imageBoundBottom;  // bottom of the image bounding rectangle
+    private short imageBoundRight;   // right of the image bounding rectangle
+    private int maskSize;            // size of the mask data
+    private int imageSize;           // size of the image data
+    private byte[] maskData;         // the WOBA-compressed mask data
+    private byte[] imageData;        // the WOBA-compressed image data
 
-    public Rectangle boundRect;     // the image bounding rectangle
-    public Rectangle maskRect;      // the image mask rectangle
-    public Rectangle imageRect;     // the image rectangle
-    public BufferedImage image;     // the decoded image
+    private Rectangle boundRect;     // the image bounding rectangle
+    private Rectangle maskRect;      // the image mask rectangle
+    private Rectangle imageRect;     // the image rectangle
+    private BufferedImage image;     // the decoded image
+
+    public ImageBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId) {
+        super(root, blockType, blockSize, blockId);
+    }
 
     @SuppressWarnings("PointlessArithmeticExpression")
     @Override
-    public Block deserialize(byte[] data, Results results) {
+    public void deserialize(byte[] data, ImportResult results) throws ImportException {
         StackInputStream sis = new StackInputStream(data);
 
         try {
@@ -97,262 +102,113 @@ public class ImageBlock extends Block {
             maskData = sis.readBytes(maskSize);
             imageData = sis.readBytes(imageSize);
 
-            byte[] maskBytes = decodeWOBA(boundRect, maskRect, maskData, 0, maskSize, results);
-            byte[] imageBytes = decodeWOBA(boundRect, imageRect, imageData, 0, imageSize, results);
-            int[] pixels = new int[imageBytes.length * 8];
-            for (int ii = 0, mi = 0, pi = 0; ii < imageBytes.length && mi < maskBytes.length && pi < pixels.length; ii++, mi++, pi += 8) {
-                byte ibt = imageBytes[ii];
-                byte mbt = maskBytes[mi];
-                pixels[pi + 0] = ((ibt & 0x80) > 0) ? 0xFF000000 : ((mbt & 0x80) > 0) ? 0xFFFFFFFF : 0;
-                pixels[pi + 1] = ((ibt & 0x40) > 0) ? 0xFF000000 : ((mbt & 0x40) > 0) ? 0xFFFFFFFF : 0;
-                pixels[pi + 2] = ((ibt & 0x20) > 0) ? 0xFF000000 : ((mbt & 0x20) > 0) ? 0xFFFFFFFF : 0;
-                pixels[pi + 3] = ((ibt & 0x10) > 0) ? 0xFF000000 : ((mbt & 0x10) > 0) ? 0xFFFFFFFF : 0;
-                pixels[pi + 4] = ((ibt & 0x08) > 0) ? 0xFF000000 : ((mbt & 0x08) > 0) ? 0xFFFFFFFF : 0;
-                pixels[pi + 5] = ((ibt & 0x04) > 0) ? 0xFF000000 : ((mbt & 0x04) > 0) ? 0xFFFFFFFF : 0;
-                pixels[pi + 6] = ((ibt & 0x02) > 0) ? 0xFF000000 : ((mbt & 0x02) > 0) ? 0xFFFFFFFF : 0;
-                pixels[pi + 7] = ((ibt & 0x01) > 0) ? 0xFF000000 : ((mbt & 0x01) > 0) ? 0xFFFFFFFF : 0;
-            }
+            try {
+                byte[] maskBytes = decodeWOBA(boundRect, maskRect, maskData, 0, maskSize);
+                byte[] imageBytes = decodeWOBA(boundRect, imageRect, imageData, 0, imageSize);
+                int[] pixels = new int[imageBytes.length * 8];
+                for (int ii = 0, mi = 0, pi = 0; ii < imageBytes.length && mi < maskBytes.length && pi < pixels.length; ii++, mi++, pi += 8) {
+                    byte ibt = imageBytes[ii];
+                    byte mbt = maskBytes[mi];
+                    pixels[pi + 0] = ((ibt & 0x80) > 0) ? 0xFF000000 : ((mbt & 0x80) > 0) ? 0xFFFFFFFF : 0;
+                    pixels[pi + 1] = ((ibt & 0x40) > 0) ? 0xFF000000 : ((mbt & 0x40) > 0) ? 0xFFFFFFFF : 0;
+                    pixels[pi + 2] = ((ibt & 0x20) > 0) ? 0xFF000000 : ((mbt & 0x20) > 0) ? 0xFFFFFFFF : 0;
+                    pixels[pi + 3] = ((ibt & 0x10) > 0) ? 0xFF000000 : ((mbt & 0x10) > 0) ? 0xFFFFFFFF : 0;
+                    pixels[pi + 4] = ((ibt & 0x08) > 0) ? 0xFF000000 : ((mbt & 0x08) > 0) ? 0xFFFFFFFF : 0;
+                    pixels[pi + 5] = ((ibt & 0x04) > 0) ? 0xFF000000 : ((mbt & 0x04) > 0) ? 0xFFFFFFFF : 0;
+                    pixels[pi + 6] = ((ibt & 0x02) > 0) ? 0xFF000000 : ((mbt & 0x02) > 0) ? 0xFFFFFFFF : 0;
+                    pixels[pi + 7] = ((ibt & 0x01) > 0) ? 0xFF000000 : ((mbt & 0x01) > 0) ? 0xFFFFFFFF : 0;
+                }
 
-            image = new BufferedImage(boundRect.width, boundRect.height, BufferedImage.TYPE_INT_ARGB);
-            image.setRGB(0, 0, boundRect.width, boundRect.height, pixels, 0, snap32(boundRect).width);
+                image = new BufferedImage(boundRect.width, boundRect.height, BufferedImage.TYPE_INT_ARGB);
+                image.setRGB(0, 0, boundRect.width, boundRect.height, pixels, 0, snap32(boundRect).width);
+
+            } catch (ArrayIndexOutOfBoundsException e) {
+                results.warn(this, "Encountered corrupted image.", e);
+                image = new BufferedImage(0, 0, BufferedImage.TYPE_INT_ARGB);
+            }
 
         } catch (IOException e) {
-            results.error(new MalformedBlockIssue(BlockType.BMAP, this.blockId));
+            results.error(this, "Malformed image block; stack is corrupt.");
         }
-
-        return this;
     }
 
-    private Rectangle snap32(Rectangle r) {
-        int left = r.x & ~0x1F;
-        int right = r.x + r.width;
-        if ((right & 0x1F) != 0) {
-            right |= 0x1F;
-            right++;
-        }
-        return new Rectangle(left, r.y, right - left, r.height);
+    public short getBitmapTop() {
+        return bitmapTop;
     }
 
-    private byte[] decodeWOBA(Rectangle totr, Rectangle r, byte[] data, int offset, int l, Results results) {
-        Rectangle tr = snap32(totr);
-        int trw = tr.width >> 3;
-        Rectangle rf = snap32(r);
-        int rw = rf.width >> 3;
-        byte[] stuff = new byte[trw * tr.height];
-        try {
-            if (l == 0) {
-                if (r.width > 0 && r.height > 0) {
-                    int sbyte = r.x >> 3;
-                    int sbit = r.x & 0x7;
-                    int ebyte = (r.x + r.width) >> 3;
-                    int ebit = (r.x + r.width) & 0x7;
-                    int base = trw * r.y;
-                    for (int y = r.y; y < r.y + r.height; y++) {
-                        stuff[base + sbyte] = (byte) (0xFF >> sbit);
-                        for (int x = sbyte + 1; x < ebyte; x++) {
-                            stuff[base + x] = (byte) 0xFF;
-                        }
-                        if (ebit > 0) stuff[base + ebyte] = (byte) (0xFF << (8 - ebit));
-                        base += trw;
-                    }
-                }
-            } else {
-                int p = offset;
-                int y = rf.y - tr.y;
-                int base = trw * y + ((rf.x - tr.x) >> 3);
-                int pp = base;
-                int repeat = 1;
-                int dh = 0, dv = 0;
-                byte[] patt = new byte[]{
-                        (byte) 0xAA, (byte) 0x55, (byte) 0xAA, (byte) 0x55,
-                        (byte) 0xAA, (byte) 0x55, (byte) 0xAA, (byte) 0x55
-                };
-                while (y < rf.y - tr.y + rf.height && p < data.length) {
-                    byte opcode = data[p++];
-                    if ((opcode & 0x80) == 0) {
-                        int d = (opcode & 0x70) >> 4;
-                        int z = opcode & 0x0F;
-                        byte[] dat = new byte[d];
-                        for (int i = 0; i < d; i++) dat[i] = data[p++];
-                        while ((repeat--) > 0) {
-                            pp += z;
-                            for (int i = 0; i < d; i++) stuff[pp++] = dat[i];
-                        }
-                    } else if ((opcode & 0xE0) == 0xA0) {
-                        repeat = (opcode & 0x1F);
-                        continue;
-                    } else if ((opcode & 0xE0) == 0xC0) {
-                        int d = (opcode & 0x1F) << 3;
-                        byte[] dat = new byte[d];
-                        for (int i = 0; i < d; i++) dat[i] = data[p++];
-                        while ((repeat--) > 0) {
-                            for (int i = 0; i < d; i++) stuff[pp++] = dat[i];
-                        }
-                    } else if ((opcode & 0xE0) == 0xE0) {
-                        pp += ((opcode & 0x1F) << 4) * repeat;
-                    } else {
-                        switch (opcode) {
-                            case (byte) 0x80: {
-                                byte[] dat = new byte[rw];
-                                for (int i = 0; i < rw; i++) dat[i] = data[p++];
-                                while ((repeat--) > 0) {
-                                    for (int i = 0; i < rw; i++) stuff[pp++] = dat[i];
-                                    y++;
-                                    base += trw;
-                                    pp = base;
-                                }
-                                repeat = 1;
-                            }
-                            break;
-                            case (byte) 0x81: {
-                                y += repeat;
-                                base += trw * repeat;
-                                pp = base;
-                                repeat = 1;
-                            }
-                            break;
-                            case (byte) 0x82: {
-                                while ((repeat--) > 0) {
-                                    for (int i = 0; i < rw; i++) stuff[pp++] = -1;
-                                    y++;
-                                    base += trw;
-                                    pp = base;
-                                }
-                                repeat = 1;
-                            }
-                            break;
-                            case (byte) 0x83: {
-                                byte pb = data[p++];
-                                while ((repeat--) > 0) {
-                                    patt[y & 0x7] = pb;
-                                    for (int i = 0; i < rw; i++) stuff[pp++] = pb;
-                                    y++;
-                                    base += trw;
-                                    pp = base;
-                                }
-                                repeat = 1;
-                            }
-                            break;
-                            case (byte) 0x84: {
-                                while ((repeat--) > 0) {
-                                    byte pb = patt[y & 0x7];
-                                    for (int i = 0; i < rw; i++) stuff[pp++] = pb;
-                                    y++;
-                                    base += trw;
-                                    pp = base;
-                                }
-                                repeat = 1;
-                            }
-                            break;
-                            case (byte) 0x85: {
-                                while ((repeat--) > 0) {
-                                    for (int i = 0; i < rw; i++) {
-                                        stuff[pp] = stuff[pp - trw];
-                                        pp++;
-                                    }
-                                    y++;
-                                    base += trw;
-                                    pp = base;
-                                }
-                                repeat = 1;
-                            }
-                            break;
-                            case (byte) 0x86: {
-                                while ((repeat--) > 0) {
-                                    for (int i = 0; i < rw; i++) {
-                                        stuff[pp] = stuff[pp - (trw * 2)];
-                                        pp++;
-                                    }
-                                    y++;
-                                    base += trw;
-                                    pp = base;
-                                }
-                                repeat = 1;
-                            }
-                            break;
-                            case (byte) 0x87: {
-                                while ((repeat--) > 0) {
-                                    for (int i = 0; i < rw; i++) {
-                                        stuff[pp] = stuff[pp - (trw * 3)];
-                                        pp++;
-                                    }
-                                    y++;
-                                    base += trw;
-                                    pp = base;
-                                }
-                                repeat = 1;
-                            }
-                            break;
-                            case (byte) 0x88:
-                                dh = 16;
-                                dv = 0;
-                                break;
-                            case (byte) 0x89:
-                                dh = 0;
-                                dv = 0;
-                                break;
-                            case (byte) 0x8A:
-                                dh = 0;
-                                dv = 1;
-                                break;
-                            case (byte) 0x8B:
-                                dh = 0;
-                                dv = 2;
-                                break;
-                            case (byte) 0x8C:
-                                dh = 1;
-                                dv = 0;
-                                break;
-                            case (byte) 0x8D:
-                                dh = 1;
-                                dv = 1;
-                                break;
-                            case (byte) 0x8E:
-                                dh = 2;
-                                dv = 2;
-                                break;
-                            case (byte) 0x8F:
-                                dh = 8;
-                                dv = 0;
-                                break;
-                        }
-                        continue;
-                    }
-
-                    repeat = 1;
-                    if (pp >= base + rw) {
-                        if (dh != 0) {
-                            byte[] row = new byte[rw];
-                            for (int i = 0; i < rw; i++) row[i] = stuff[base + i];
-                            int numshifts = (rw << 3) / dh;
-                            while ((numshifts--) > 0) {
-                                int acc = 0;
-                                for (int i = 0; i < rw; i += 4) {
-                                    int tmp = ((row[i] & 0xFF) << 24) | ((row[i + 1] & 0xFF) << 16) | ((row[i + 2] & 0xFF) << 8) | (row[i + 3] & 0xFF);
-                                    int rowi = acc | (tmp >>> dh);
-                                    row[i] = (byte) ((rowi >>> 24) & 0xFF);
-                                    row[i + 1] = (byte) ((rowi >>> 16) & 0xFF);
-                                    row[i + 2] = (byte) ((rowi >>> 8) & 0xFF);
-                                    row[i + 3] = (byte) (rowi & 0xFF);
-                                    acc = tmp << (32 - dh);
-                                }
-                                for (int i = 0; i < rw; i++) stuff[base + i] ^= row[i];
-                            }
-                        }
-                        if (dv != 0 && y - dv >= 0) {
-                            for (int i = 0; i < rw; i++)
-                                stuff[base + i] = (byte) (stuff[base + i] ^ stuff[(base - (trw * dv)) + i]);
-                        }
-                        y++;
-                        base += trw;
-                        pp = base;
-                    }
-                }
-            }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            results.warn(new CorruptedImageIssue(this.blockId));
-        }
-        return stuff;
+    public short getBitmapLeft() {
+        return bitmapLeft;
     }
 
+    public short getBitmapBottom() {
+        return bitmapBottom;
+    }
+
+    public short getBitmapRight() {
+        return bitmapRight;
+    }
+
+    public short getMaskBoundTop() {
+        return maskBoundTop;
+    }
+
+    public short getMaskBoundLeft() {
+        return maskBoundLeft;
+    }
+
+    public short getMaskBoundBottom() {
+        return maskBoundBottom;
+    }
+
+    public short getMaskBoundRight() {
+        return maskBoundRight;
+    }
+
+    public short getImageBoundTop() {
+        return imageBoundTop;
+    }
+
+    public short getImageBoundLeft() {
+        return imageBoundLeft;
+    }
+
+    public short getImageBoundBottom() {
+        return imageBoundBottom;
+    }
+
+    public short getImageBoundRight() {
+        return imageBoundRight;
+    }
+
+    public int getMaskSize() {
+        return maskSize;
+    }
+
+    public int getImageSize() {
+        return imageSize;
+    }
+
+    public byte[] getMaskData() {
+        return maskData;
+    }
+
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public Rectangle getBoundRect() {
+        return boundRect;
+    }
+
+    public Rectangle getMaskRect() {
+        return maskRect;
+    }
+
+    public Rectangle getImageRect() {
+        return imageRect;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
 }
