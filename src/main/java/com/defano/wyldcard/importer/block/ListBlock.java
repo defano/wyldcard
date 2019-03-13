@@ -10,6 +10,7 @@ import com.defano.wyldcard.importer.type.PageBlockIndex;
 import java.io.IOException;
 import java.util.Arrays;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ListBlock extends Block {
 
     private int pageCount;          // number of PAGE blocks
@@ -34,7 +35,7 @@ public class ListBlock extends Block {
             this.pageEntryTotal = sis.readInt();
             this.pageEntrySize = sis.readShort();
 
-            sis.readShort(5); // Unknown field; skip
+            sis.readShort(5); // Unknown fields; skip
 
             this.pageEntryTotal2 = sis.readInt();
 
@@ -47,10 +48,8 @@ public class ListBlock extends Block {
                 pageIndices[idx] = new PageBlockIndex(id, entryCount);
             }
 
-            System.err.println(this);
-
         } catch (IOException e) {
-            results.error(this, "Malformed list block; stack is corrupt.", e);
+            results.throwError(this, "Malformed list block; stack is corrupt.", e);
         }
     }
 

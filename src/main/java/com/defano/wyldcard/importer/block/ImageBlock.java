@@ -32,7 +32,7 @@ package com.defano.wyldcard.importer.block;
 
 import com.defano.wyldcard.importer.HyperCardStack;
 import com.defano.wyldcard.importer.ImportException;
-import com.defano.wyldcard.importer.WobaDecoder;
+import com.defano.wyldcard.importer.decoder.WOBAImageDecoder;
 import com.defano.wyldcard.importer.type.BlockType;
 import com.defano.wyldcard.importer.result.ImportResult;
 import com.defano.wyldcard.importer.StackInputStream;
@@ -41,7 +41,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class ImageBlock extends Block implements WobaDecoder {
+@SuppressWarnings("unused")
+public class ImageBlock extends Block implements WOBAImageDecoder {
 
     private short bitmapTop;         // top of the card rectangle
     private short bitmapLeft;        // left of the card rectangle
@@ -71,7 +72,7 @@ public class ImageBlock extends Block implements WobaDecoder {
 
     @SuppressWarnings("PointlessArithmeticExpression")
     @Override
-    public void deserialize(byte[] data, ImportResult results) throws ImportException {
+    public void deserialize(byte[] data, ImportResult report) throws ImportException {
         StackInputStream sis = new StackInputStream(data);
 
         try {
@@ -102,33 +103,15 @@ public class ImageBlock extends Block implements WobaDecoder {
             maskData = sis.readBytes(maskSize);
             imageData = sis.readBytes(imageSize);
 
-            try {
-                byte[] maskBytes = decodeWOBA(boundRect, maskRect, maskData, 0, maskSize);
-                byte[] imageBytes = decodeWOBA(boundRect, imageRect, imageData, 0, imageSize);
-                int[] pixels = new int[imageBytes.length * 8];
-                for (int ii = 0, mi = 0, pi = 0; ii < imageBytes.length && mi < maskBytes.length && pi < pixels.length; ii++, mi++, pi += 8) {
-                    byte ibt = imageBytes[ii];
-                    byte mbt = maskBytes[mi];
-                    pixels[pi + 0] = ((ibt & 0x80) > 0) ? 0xFF000000 : ((mbt & 0x80) > 0) ? 0xFFFFFFFF : 0;
-                    pixels[pi + 1] = ((ibt & 0x40) > 0) ? 0xFF000000 : ((mbt & 0x40) > 0) ? 0xFFFFFFFF : 0;
-                    pixels[pi + 2] = ((ibt & 0x20) > 0) ? 0xFF000000 : ((mbt & 0x20) > 0) ? 0xFFFFFFFF : 0;
-                    pixels[pi + 3] = ((ibt & 0x10) > 0) ? 0xFF000000 : ((mbt & 0x10) > 0) ? 0xFFFFFFFF : 0;
-                    pixels[pi + 4] = ((ibt & 0x08) > 0) ? 0xFF000000 : ((mbt & 0x08) > 0) ? 0xFFFFFFFF : 0;
-                    pixels[pi + 5] = ((ibt & 0x04) > 0) ? 0xFF000000 : ((mbt & 0x04) > 0) ? 0xFFFFFFFF : 0;
-                    pixels[pi + 6] = ((ibt & 0x02) > 0) ? 0xFF000000 : ((mbt & 0x02) > 0) ? 0xFFFFFFFF : 0;
-                    pixels[pi + 7] = ((ibt & 0x01) > 0) ? 0xFF000000 : ((mbt & 0x01) > 0) ? 0xFFFFFFFF : 0;
-                }
+            image = decodeImage(boundRect, maskRect, imageRect, imageSize, imageData, maskSize, maskData);
 
-                image = new BufferedImage(boundRect.width, boundRect.height, BufferedImage.TYPE_INT_ARGB);
-                image.setRGB(0, 0, boundRect.width, boundRect.height, pixels, 0, snap32(boundRect).width);
-
-            } catch (ArrayIndexOutOfBoundsException e) {
-                results.warn(this, "Encountered corrupted image.", e);
+            if (image == null) {
+                report.warn(this, "An error occurred decoding a stack bitmap; corrupted image will appear blank.");
                 image = new BufferedImage(0, 0, BufferedImage.TYPE_INT_ARGB);
             }
 
         } catch (IOException e) {
-            results.error(this, "Malformed image block; stack is corrupt.");
+            report.throwError(this, "Malformed image block; stack is corrupt.");
         }
     }
 

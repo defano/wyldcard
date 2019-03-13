@@ -1,17 +1,67 @@
-package com.defano.wyldcard.importer;
+/*
+ * This code is derived from WOBAFormat.java, a part of Kreative
+ * Software's PowerPaint application. The original source code can
+ * be found on GitHub, here: https://github.com/kreativekorp/powerpaint/blob/master/main/java/PowerPaint/src/com/kreative/paint/format/WOBAFormat.java
+ * <p>
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * <a href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</a>
+ * <p>
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations
+ * under the License.
+ * <p>
+ * Alternatively, the contents of this file may be used under the terms
+ * of the GNU Lesser General Public License (the "LGPL License"), in which
+ * case the provisions of LGPL License are applicable instead of those
+ * above. If you wish to allow use of your version of this file only
+ * under the terms of the LGPL License and not to allow others to use
+ * your version of this file under the MPL, indicate your decision by
+ * deleting the provisions above and replace them with the notice and
+ * other provisions required by the LGPL License. If you do not delete
+ * the provisions above, a recipient may use your version of this file
+ * under either the MPL or the LGPL License.
+ *
+ * @author Rebecca G. Bettencourt, Kreative Software
+ * @author Matt DeFano
+ */
+
+package com.defano.wyldcard.importer.decoder;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
-public interface WobaDecoder {
+public interface WOBAImageDecoder {
 
-    default Rectangle snap32(Rectangle r) {
-        int left = r.x & ~0x1F;
-        int right = r.x + r.width;
-        if ((right & 0x1F) != 0) {
-            right |= 0x1F;
-            right++;
+    default BufferedImage decodeImage(Rectangle boundRect, Rectangle maskRect, Rectangle imageRect, int imageSize, byte[] imageData, int maskSize, byte[] maskData) {
+        BufferedImage image;
+
+        try {
+            byte[] maskBytes = decodeWOBA(boundRect, maskRect, maskData, 0, maskSize);
+            byte[] imageBytes = decodeWOBA(boundRect, imageRect, imageData, 0, imageSize);
+            int[] pixels = new int[imageBytes.length * 8];
+            for (int ii = 0, mi = 0, pi = 0; ii < imageBytes.length && mi < maskBytes.length && pi < pixels.length; ii++, mi++, pi += 8) {
+                byte ibt = imageBytes[ii];
+                byte mbt = maskBytes[mi];
+                pixels[pi + 0] = ((ibt & 0x80) > 0) ? 0xFF000000 : ((mbt & 0x80) > 0) ? 0xFFFFFFFF : 0;
+                pixels[pi + 1] = ((ibt & 0x40) > 0) ? 0xFF000000 : ((mbt & 0x40) > 0) ? 0xFFFFFFFF : 0;
+                pixels[pi + 2] = ((ibt & 0x20) > 0) ? 0xFF000000 : ((mbt & 0x20) > 0) ? 0xFFFFFFFF : 0;
+                pixels[pi + 3] = ((ibt & 0x10) > 0) ? 0xFF000000 : ((mbt & 0x10) > 0) ? 0xFFFFFFFF : 0;
+                pixels[pi + 4] = ((ibt & 0x08) > 0) ? 0xFF000000 : ((mbt & 0x08) > 0) ? 0xFFFFFFFF : 0;
+                pixels[pi + 5] = ((ibt & 0x04) > 0) ? 0xFF000000 : ((mbt & 0x04) > 0) ? 0xFFFFFFFF : 0;
+                pixels[pi + 6] = ((ibt & 0x02) > 0) ? 0xFF000000 : ((mbt & 0x02) > 0) ? 0xFFFFFFFF : 0;
+                pixels[pi + 7] = ((ibt & 0x01) > 0) ? 0xFF000000 : ((mbt & 0x01) > 0) ? 0xFFFFFFFF : 0;
+            }
+
+            image = new BufferedImage(boundRect.width, boundRect.height, BufferedImage.TYPE_INT_ARGB);
+            image.setRGB(0, 0, boundRect.width, boundRect.height, pixels, 0, snap32(boundRect).width);
+            return image;
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return null;
         }
-        return new Rectangle(left, r.y, right - left, r.height);
     }
 
     default byte[] decodeWOBA(Rectangle totr, Rectangle r, byte[] data, int offset, int l) throws ArrayIndexOutOfBoundsException {
@@ -232,4 +282,15 @@ public interface WobaDecoder {
 
         return stuff;
     }
+
+    default Rectangle snap32(Rectangle r) {
+        int left = r.x & ~0x1F;
+        int right = r.x + r.width;
+        if ((right & 0x1F) != 0) {
+            right |= 0x1F;
+            right++;
+        }
+        return new Rectangle(left, r.y, right - left, r.height);
+    }
+
 }

@@ -35,7 +35,7 @@ public enum BlockType {
     /**
      * Card
      */
-    CARD,
+    CARD(CardBlock.class),
 
     /**
      * Card or background image ("WOBA" format)
@@ -100,7 +100,7 @@ public enum BlockType {
             }
         }
 
-        throw new IllegalArgumentException("Not a valid block type");
+        return null;
     }
 
     public Block instantiateBlock(HyperCardStack stack, int blockId, int blockSize) {

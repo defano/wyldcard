@@ -2,6 +2,8 @@ package com.defano.wyldcard.importer.block;
 
 import com.defano.wyldcard.importer.HyperCardStack;
 import com.defano.wyldcard.importer.ImportException;
+import com.defano.wyldcard.importer.decoder.PatternDecoder;
+import com.defano.wyldcard.importer.decoder.VersionDecoder;
 import com.defano.wyldcard.importer.type.BlockType;
 import com.defano.wyldcard.importer.type.StackFlag;
 import com.defano.wyldcard.importer.type.StackFormat;
@@ -10,12 +12,13 @@ import com.defano.wyldcard.importer.result.ImportResult;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class StackBlock extends Block {
 
     private StackFormat format;
-    private StackFlag[] flags;
+    private List<StackFlag> flags;
     private BufferedImage[] patterns = new BufferedImage[40];
 
     private int formatId;
@@ -116,48 +119,21 @@ public class StackBlock extends Block {
             sis.skipToOffset(0x600 - 16);
             stackScript = sis.readString();
 
-            decodePatterns();
+            // Convert pattern bitmaps to BufferedImages
+            for (int patternIdx = 0; patternIdx < 40; patternIdx++) {
+                patterns[patternIdx] = decodePattern(patternData[patternIdx]);
+            }
 
         } catch (IOException e) {
-            report.error(this, "Malformed stack block; stack is corrupt.", e);
+            report.throwError(this, "Malformed stack block; stack is corrupt.", e);
         }
-    }
-
-    private void decodePatterns() {
-        for (int patternIdx = 0; patternIdx < 40; patternIdx++) {
-            patterns[patternIdx] = decodePattern(patternIdx);
-        }
-    }
-
-    @SuppressWarnings("PointlessArithmeticExpression")
-    private BufferedImage decodePattern(int patternIdx) {
-        long pattern = patternData[patternIdx];
-        int[] pixels = new int[64];
-
-        for (int row = 0; row < 8; row++) {
-            byte rowBits = (byte) ((pattern & (0xffL << (row * 8))) >> (row * 8));
-
-            pixels[row * 8 + 7] = ((rowBits & 0x80) > 0) ? 0xFF000000 : 0xFFFFFFFF;
-            pixels[row * 8 + 6] = ((rowBits & 0x40) > 0) ? 0xFF000000 : 0xFFFFFFFF;
-            pixels[row * 8 + 5] = ((rowBits & 0x20) > 0) ? 0xFF000000 : 0xFFFFFFFF;
-            pixels[row * 8 + 4] = ((rowBits & 0x10) > 0) ? 0xFF000000 : 0xFFFFFFFF;
-            pixels[row * 8 + 3] = ((rowBits & 0x08) > 0) ? 0xFF000000 : 0xFFFFFFFF;
-            pixels[row * 8 + 2] = ((rowBits & 0x04) > 0) ? 0xFF000000 : 0xFFFFFFFF;
-            pixels[row * 8 + 1] = ((rowBits & 0x02) > 0) ? 0xFF000000 : 0xFFFFFFFF;
-            pixels[row * 8 + 0] = ((rowBits & 0x01) > 0) ? 0xFF000000 : 0xFFFFFFFF;
-        }
-
-        BufferedImage image = new BufferedImage(8, 8, BufferedImage.TYPE_INT_ARGB);
-        image.setRGB(0, 0, 8, 8, pixels, 0, 8);
-
-        return image;
     }
 
     public StackFormat getFormat() {
         return format;
     }
 
-    public StackFlag[] getFlags() {
+    public List<StackFlag> getFlags() {
         return flags;
     }
 

@@ -8,12 +8,13 @@ import com.defano.wyldcard.importer.type.BlockType;
 import com.defano.wyldcard.importer.type.PageEntry;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class PageBlock extends Block {
 
-    private int listId; // ID number of the LIST block
-    private List<PageEntry> pageEntryList;
+    private final List<PageEntry> pageEntryList = new ArrayList<>();
 
     public PageBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId) {
         super(root, blockType, blockSize, blockId);
@@ -23,20 +24,49 @@ public class PageBlock extends Block {
     public void deserialize(byte[] data, ImportResult report) throws ImportException {
         StackInputStream sis = new StackInputStream(data);
 
-        if (super.stack == null || super.stack.getBlocks(BlockType.LIST).size() != 1) {
-            report.error(this, "Unable to cross-reference LIST block from PAGE; stack is corrupt.");
+        if (getStack() == null || getStack().getBlocks(BlockType.LIST).size() != 1) {
+            report.throwError(this, "Unable to cross-reference LIST block from PAGE; stack is corrupt.");
         }
 
-        ListBlock listBlock = ((ListBlock) stack.getBlock(BlockType.LIST).orElse(null));
-
+        ListBlock listBlock = getListBlock(report);
         Short pageEntryCount = listBlock.getPageEntryCountForPageId(blockId);
         short pageEntrySize = listBlock.getPageEntrySize();
+
+        if (pageEntryCount == null) {
+            report.throwError(this, "Unable to find page entry in list index for block id " + blockId + "; stack is corrupted.");
+        }
 
         try {
             sis.readInt();  // Unknown field; skip
 
+            //noinspection ConstantConditions
+            for (int idx = 0; idx < pageEntryCount; idx++) {
+                int cardId = sis.readInt();
+                byte[] pageData = sis.readBytes(pageEntrySize - 4);
+
+                pageEntryList.add(new PageEntry(cardId, ((pageData[0] & 0x08) != 0)));
+            }
+
         } catch (IOException e) {
-            report.error(this, "Malformed page block; stack is corrupt.");
+            report.throwError(this, "Malformed page block; stack is corrupt.");
         }
+    }
+
+    private ListBlock getListBlock(ImportResult report) throws ImportException {
+        List<Block> listBlocks = getStack().getBlocks(BlockType.LIST);
+
+        if (listBlocks.isEmpty()) {
+            report.throwError(this, "Encountered page block before list block; stack is corrupted.");
+        }
+
+        if (listBlocks.size() > 1) {
+            report.throwError(this, "Found multiple list blocks when only one was expected; stack is corrupted.");
+        }
+
+        return (ListBlock) listBlocks.get(0);
+    }
+
+    public List<PageEntry> getPageEntryList() {
+        return pageEntryList;
     }
 }

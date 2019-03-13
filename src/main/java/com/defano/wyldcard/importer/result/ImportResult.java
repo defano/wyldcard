@@ -1,8 +1,9 @@
 package com.defano.wyldcard.importer.result;
 
-import com.defano.wyldcard.importer.HyperCardStack;
 import com.defano.wyldcard.importer.ImportException;
 import com.defano.wyldcard.importer.block.Block;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.util.ArrayList;
 
@@ -11,11 +12,11 @@ public class ImportResult {
     private final ArrayList<Issue> warnings = new ArrayList<>();
     private final ArrayList<Issue> errors = new ArrayList<>();
 
-    public void error(Block source, String error) throws ImportException {
-        error(source, error, null);
+    public void throwError(Block source, String error) throws ImportException {
+        throwError(source, error, null);
     }
 
-    public void error(Block source, String error, Exception cause) throws ImportException {
+    public void throwError(Block source, String error, Exception cause) throws ImportException {
         errors.add(new Issue(error, source, cause));
         throw new ImportException(this);
     }
@@ -50,5 +51,15 @@ public class ImportResult {
             this.source = source;
             this.cause = cause;
         }
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

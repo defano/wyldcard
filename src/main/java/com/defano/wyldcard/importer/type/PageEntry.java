@@ -4,16 +4,16 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class PageEntry {
 
-    private final int pageId;
+    private final int cardId;
     private final boolean isMarked;
 
-    public PageEntry(int pageId, boolean isMarked) {
-        this.pageId = pageId;
+    public PageEntry(int cardId, boolean isMarked) {
+        this.cardId = cardId;
         this.isMarked = isMarked;
     }
 
-    public int getPageId() {
-        return pageId;
+    public int getCardId() {
+        return cardId;
     }
 
     public boolean isMarked() {

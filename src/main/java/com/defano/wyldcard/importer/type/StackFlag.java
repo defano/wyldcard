@@ -1,6 +1,8 @@
 package com.defano.wyldcard.importer.type;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public enum  StackFlag {
     CANT_MODIFY(0x80),
@@ -9,21 +11,13 @@ public enum  StackFlag {
     CANT_ABORT(0x08),
     CANT_PEEK(0x04);
 
-    int bitmask;
+    private final int mask;
 
-    StackFlag(int bitmask) {
-        this.bitmask = bitmask;
+    StackFlag(int mask) {
+        this.mask = mask;
     }
 
-    public static StackFlag[] fromBitmask(int bitmask) {
-        ArrayList<StackFlag> flags = new ArrayList<>();
-
-        for (StackFlag thisFlag : values()) {
-            if ((thisFlag.bitmask & bitmask) != 0) {
-                flags.add(thisFlag);
-            }
-        }
-
-        return flags.toArray(new StackFlag[] {});
+    public static List<StackFlag> fromBitmask(short mask) {
+        return Arrays.stream(values()).filter(sf -> (sf.mask & mask) > 0).collect(Collectors.toList());
     }
 }
