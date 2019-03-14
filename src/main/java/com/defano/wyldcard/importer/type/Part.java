@@ -1,6 +1,9 @@
 package com.defano.wyldcard.importer.type;
 
+import com.defano.wyldcard.importer.ImportException;
 import com.defano.wyldcard.importer.StackInputStream;
+import com.defano.wyldcard.importer.block.Block;
+import com.defano.wyldcard.importer.result.ImportResult;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -11,60 +14,64 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class Part {
 
-    final short size; // size of the part, including this header
-    short partId; // ID number of the part
-    PartType partType;
-    List<PartFlag> flags;
-    short top; // top of the part's rectangle
-    short left; // left of the part's rectangle
-    short bottom; // bottom of the part's rectangle
-    short right; // right of the part's rectangle
-    List<ExtendedPartFlag> extendedFlags;
-    int family;
-    PartStyle style; // HyperCard only looks at the least significant 4 bits of this field
-    short titleWidthOrLastSelectedLine;
-    short iconIdOrFirstSelectedLine;
-    TextAlignment textAlign;
-    short textFontId; // use the FTBL block to translate this to a font name
-    short textSize;
-    List<TextStyle> textStyles;
-    short textHeight;
-    String name;
-    String script; // the button or field script
+    private short size; // size of the part, including this header
+    private short partId; // ID number of the part
+    private PartType partType;
+    private List<PartFlag> flags;
+    private short top; // top of the part's rectangle
+    private short left; // left of the part's rectangle
+    private short bottom; // bottom of the part's rectangle
+    private short right; // right of the part's rectangle
+    private List<ExtendedPartFlag> extendedFlags;
+    private int family;
+    private PartStyle style; // HyperCard only looks at the least significant 4 bits of this field
+    private short titleWidthOrLastSelectedLine;
+    private short iconIdOrFirstSelectedLine;
+    private TextAlignment textAlign;
+    private short textFontId; // use the FTBL block to translate this to a font name
+    private short textSize;
+    private List<TextStyle> textStyles;
+    private short textHeight;
+    private String name;
+    private String script; // the button or field script
 
-    public Part(short entrySize, byte[] data) {
+    public static Part deserialize(Block parent, short entrySize, byte[] data, ImportResult report) throws ImportException {
+        Part part = new Part();
         StackInputStream sis = new StackInputStream(data);
-        this.size = entrySize;
+
+        part.size = entrySize;
 
         try {
-            partId = sis.readShort();
-            partType = PartType.fromTypeId(sis.readByte());
-            flags = PartFlag.fromBitmask(sis.readByte());
-            top = sis.readShort();
-            left = sis.readShort();
-            bottom = sis.readShort();
-            right = sis.readShort();
+            part.partId = sis.readShort();
+            part.partType = PartType.fromTypeId(sis.readByte());
+            part.flags = PartFlag.fromBitmask(sis.readByte());
+            part.top = sis.readShort();
+            part.left = sis.readShort();
+            part.bottom = sis.readShort();
+            part.right = sis.readShort();
 
             byte extendedFlagsMask = sis.readByte();
-            extendedFlags = ExtendedPartFlag.fromBitmask(extendedFlagsMask);
-            family = extendedFlagsMask & 0x0f;
+            part.extendedFlags = ExtendedPartFlag.fromBitmask(extendedFlagsMask);
+            part.family = extendedFlagsMask & 0x0f;
 
-            style = PartStyle.ofPartStyleId(sis.readByte());
-            titleWidthOrLastSelectedLine = sis.readShort();
-            iconIdOrFirstSelectedLine = sis.readShort();
-            textAlign = TextAlignment.fromAlignmentId(sis.readShort());
-            textFontId = sis.readShort();
-            textSize = sis.readShort();
-            textStyles = TextStyle.fromBitmask(sis.readByte());
+            part.style = PartStyle.ofPartStyleId(sis.readByte());
+            part.titleWidthOrLastSelectedLine = sis.readShort();
+            part.iconIdOrFirstSelectedLine = sis.readShort();
+            part.textAlign = TextAlignment.fromAlignmentId(sis.readShort());
+            part.textFontId = sis.readShort();
+            part.textSize = sis.readShort();
+            part.textStyles = TextStyle.fromBitmask(sis.readByte());
             sis.readByte();
-            textHeight = sis.readShort();
-            name = sis.readString();
+            part.textHeight = sis.readShort();
+            part.name = sis.readString();
             sis.readByte();
-            script = sis.readString();
+            part.script = sis.readString();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            report.throwError(parent, "Malformed part record; stack is corrupt.");
         }
+
+        return part;
     }
 
     public Rectangle getPartRectangle() {

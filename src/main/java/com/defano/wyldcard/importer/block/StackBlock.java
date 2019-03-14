@@ -19,7 +19,7 @@ public class StackBlock extends Block {
 
     private StackFormat format;
     private List<StackFlag> flags;
-    private BufferedImage[] patterns = new BufferedImage[40];
+    private transient BufferedImage[] patterns = new BufferedImage[40];
 
     private int formatId;
     private int totalSize;
@@ -59,74 +59,6 @@ public class StackBlock extends Block {
 
     public StackBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId) {
         super(root, blockType, blockSize, blockId);
-    }
-
-    @Override
-    public void deserialize(byte[] data, ImportResult report) throws ImportException {
-
-        StackInputStream sis = new StackInputStream(data);
-
-        try {
-            formatId = sis.readInt();
-            format = StackFormat.fromFormatInt(formatId);
-            totalSize = sis.readInt();
-            stackSize = sis.readInt();
-
-            // Unknown region; skip
-            sis.readInt(2);
-
-            bkgndCount = sis.readInt();
-            firstBkgndId = sis.readInt();
-            cardCount = sis.readInt();
-            firstCardId = sis.readInt();
-            listId = sis.readInt();
-            freeCount = sis.readInt();
-            freeSize = sis.readInt();
-            printId = sis.readInt();
-            password = sis.readInt();
-            userLevel = sis.readShort();
-            sis.readShort(); // Unknown region; skip
-            flagsMap = sis.readShort();
-            flags = StackFlag.fromBitmask(flagsMap);
-            sis.readShort(); // Unknown region; skip
-            sis.readInt(4); // Unknown region; skip
-            createVersion = sis.readInt();
-            compactVersion = sis.readInt();
-            modifyVersion = sis.readInt();
-            openVersion = sis.readInt();
-            checksum = sis.readInt();
-            sis.readInt(); // Unknown region; skip
-            windowTop = sis.readShort();
-            windowLeft = sis.readShort();
-            windowBottom = sis.readShort();
-            windowRight = sis.readShort();
-            screenTop = sis.readShort();
-            screenLeft = sis.readShort();
-            screenBottom = sis.readShort();
-            screenRight = sis.readShort();
-            scrollX = sis.readShort();
-            scrollY = sis.readShort();
-
-            sis.skipToOffset(0x1b0 - 16);
-            fontTableId = sis.readInt();
-            styleTableId = sis.readInt();
-            height = sis.readShort();
-            width = sis.readShort();
-
-            sis.skipToOffset(0x2c0 - 16);
-            patternData = sis.readLong(40);
-
-            sis.skipToOffset(0x600 - 16);
-            stackScript = sis.readString();
-
-            // Convert pattern bitmaps to BufferedImages
-            for (int patternIdx = 0; patternIdx < 40; patternIdx++) {
-                patterns[patternIdx] = decodePattern(patternData[patternIdx]);
-            }
-
-        } catch (IOException e) {
-            report.throwError(this, "Malformed stack block; stack is corrupt.", e);
-        }
     }
 
     public StackFormat getFormat() {
@@ -279,5 +211,73 @@ public class StackBlock extends Block {
 
     public String getStackScript() {
         return stackScript;
+    }
+
+    @Override
+    public void deserialize(byte[] data, ImportResult report) throws ImportException {
+
+        StackInputStream sis = new StackInputStream(data);
+
+        try {
+            formatId = sis.readInt();
+            format = StackFormat.fromFormatInt(formatId);
+            totalSize = sis.readInt();
+            stackSize = sis.readInt();
+
+            // Unknown region; skip
+            sis.readInt(2);
+
+            bkgndCount = sis.readInt();
+            firstBkgndId = sis.readInt();
+            cardCount = sis.readInt();
+            firstCardId = sis.readInt();
+            listId = sis.readInt();
+            freeCount = sis.readInt();
+            freeSize = sis.readInt();
+            printId = sis.readInt();
+            password = sis.readInt();
+            userLevel = sis.readShort();
+            sis.readShort(); // Unknown region; skip
+            flagsMap = sis.readShort();
+            flags = StackFlag.fromBitmask(flagsMap);
+            sis.readShort(); // Unknown region; skip
+            sis.readInt(4); // Unknown region; skip
+            createVersion = sis.readInt();
+            compactVersion = sis.readInt();
+            modifyVersion = sis.readInt();
+            openVersion = sis.readInt();
+            checksum = sis.readInt();
+            sis.readInt(); // Unknown region; skip
+            windowTop = sis.readShort();
+            windowLeft = sis.readShort();
+            windowBottom = sis.readShort();
+            windowRight = sis.readShort();
+            screenTop = sis.readShort();
+            screenLeft = sis.readShort();
+            screenBottom = sis.readShort();
+            screenRight = sis.readShort();
+            scrollX = sis.readShort();
+            scrollY = sis.readShort();
+
+            sis.skipToOffset(0x1b0 - 16);
+            fontTableId = sis.readInt();
+            styleTableId = sis.readInt();
+            height = sis.readShort();
+            width = sis.readShort();
+
+            sis.skipToOffset(0x2c0 - 16);
+            patternData = sis.readLong(40);
+
+            sis.skipToOffset(0x600 - 16);
+            stackScript = sis.readString();
+
+            // Convert pattern bitmaps to BufferedImages
+            for (int patternIdx = 0; patternIdx < 40; patternIdx++) {
+                patterns[patternIdx] = decodePattern(patternData[patternIdx]);
+            }
+
+        } catch (IOException e) {
+            report.throwError(this, "Malformed stack block; stack is corrupt.", e);
+        }
     }
 }

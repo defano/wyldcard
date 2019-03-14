@@ -54,6 +54,28 @@ public class StackInputStream extends DataInputStream implements MacRomanDecoder
         return buffer;
     }
 
+    /**
+     * Reads a fixed number of MacRoman charset-encoded characters (Pascal-style).
+     * @param characters The number of bytes/characters to read from the stream.
+     * @return The string
+     * @throws IOException Thrown if an error occurs reading from the stream.
+     */
+    public String readString(int characters) throws IOException {
+        StringBuffer sb = new StringBuffer();
+
+        for (int charIdx = 0; charIdx < characters; charIdx++) {
+            sb.append(convertMacRomanToUnicode(readByte()));
+        }
+
+        // Convert returns to newlines
+        return sb.toString().replace('\r', '\n');
+    }
+
+    /**
+     * Reads a null-terminated (C-style), MacRoman charset-encoded string.
+     * @return The string
+     * @throws IOException Thrown if an error occurs reading from the stream.
+     */
     public String readString() throws IOException {
 
         StringBuffer sb = new StringBuffer();

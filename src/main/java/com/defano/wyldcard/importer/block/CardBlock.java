@@ -4,15 +4,15 @@ import com.defano.wyldcard.importer.HyperCardStack;
 import com.defano.wyldcard.importer.ImportException;
 import com.defano.wyldcard.importer.StackInputStream;
 import com.defano.wyldcard.importer.result.ImportResult;
-import com.defano.wyldcard.importer.type.BlockType;
-import com.defano.wyldcard.importer.type.CardFlag;
-import com.defano.wyldcard.importer.type.Part;
-import com.defano.wyldcard.importer.type.PartContent;
+import com.defano.wyldcard.importer.type.*;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ *
+ */
 public class CardBlock extends Block {
 
     private int bitmapId; // ID number of the corresponding BMAP block
@@ -32,46 +32,6 @@ public class CardBlock extends Block {
 
     public CardBlock(HyperCardStack stack, BlockType blockType, int blockSize, int blockId) {
         super(stack, blockType, blockSize, blockId);
-    }
-
-    @Override
-    public void deserialize(byte[] data, ImportResult report) throws ImportException {
-        StackInputStream sis = new StackInputStream(data);
-
-        try {
-            bitmapId = sis.readInt();
-            flags = CardFlag.fromBitmask(sis.readShort());
-            sis.skipBytes(10);
-            pageId = sis.readInt();
-            bkgndId = sis.readInt();
-            partCount = sis.readShort();
-            nextPartId = sis.readShort();
-            partListSize = sis.readInt();
-            partContentCount = sis.readShort();
-            partContentSize = sis.readInt();
-
-            // Deserialize buttons and fields
-            parts = new Part[partCount];
-            for (int partIdx = 0; partIdx < partCount; partIdx++) {
-                short entrySize = sis.readShort();
-                byte[] entryData = sis.readBytes(entrySize - 2);
-
-                parts[partIdx] = new Part(entrySize, entryData);
-            }
-
-            // Deserialize text formatting
-            partContents = new PartContent[partContentCount];
-            for (int partContentsIdx = 0; partContentsIdx < partContentCount; partContentsIdx++) {
-                short partId = sis.readShort();
-                short length = sis.readShort();
-                byte[] contentsData = sis.readBytes(length);
-
-                partContents[partContentsIdx] = new PartContent(partId, contentsData);
-            }
-
-        } catch (IOException e) {
-            report.throwError(this, "Layer block is malformed; stack is corrupt.");
-        }
     }
 
     public BufferedImage getImage() {
@@ -121,4 +81,50 @@ public class CardBlock extends Block {
     public String getCardScript() {
         return cardScript;
     }
+
+
+    @Override
+    public void deserialize(byte[] data, ImportResult report) throws ImportException {
+        StackInputStream sis = new StackInputStream(data);
+
+        try {
+            bitmapId = sis.readInt();
+            flags = CardFlag.fromBitmask(sis.readShort());
+            sis.skipBytes(10);
+            pageId = sis.readInt();
+            bkgndId = sis.readInt();
+            partCount = sis.readShort();
+            nextPartId = sis.readShort();
+            partListSize = sis.readInt();
+            partContentCount = sis.readShort();
+            partContentSize = sis.readInt();
+
+            // Deserialize buttons and fields
+            parts = new Part[partCount];
+            for (int partIdx = 0; partIdx < partCount; partIdx++) {
+                short entrySize = sis.readShort();
+                byte[] entryData = sis.readBytes(entrySize - 2);
+
+                parts[partIdx] = Part.deserialize(this, entrySize, entryData, report);
+            }
+
+            // Deserialize text formatting
+            partContents = new PartContent[partContentCount];
+            for (int partContentsIdx = 0; partContentsIdx < partContentCount; partContentsIdx++) {
+                short partId = sis.readShort();
+                short length = sis.readShort();
+                byte[] partContentsData = sis.readBytes(length);
+
+                partContents[partContentsIdx] = PartContent.deserialize(this, partId, partContentsData, report);
+
+                if (length % 2 != 0) {
+                    sis.readByte();
+                }
+            }
+
+        } catch (IOException e) {
+            report.throwError(this, "Layer block is malformed; stack is corrupt.");
+        }
+    }
+
 }

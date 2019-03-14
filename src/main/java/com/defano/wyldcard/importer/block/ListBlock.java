@@ -24,6 +24,38 @@ public class ListBlock extends Block {
         super(root, blockType, blockSize, blockId);
     }
 
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public int getPageEntryTotal() {
+        return pageEntryTotal;
+    }
+
+    public short getPageEntrySize() {
+        return pageEntrySize;
+    }
+
+    public int getPageEntryTotal2() {
+        return pageEntryTotal2;
+    }
+
+    public PageBlockIndex[] getPageIndices() {
+        return pageIndices;
+    }
+
+    public Short getPageEntryCountForPage(int pageId) {
+        return Arrays.stream(pageIndices)
+                .filter(i -> i.getPageId() == pageId)
+                .map(PageBlockIndex::getPageEntryCount)
+                .findFirst()
+                .orElse(null);
+    }
+
     @Override
     public void deserialize(byte[] data, ImportResult results) throws ImportException {
 
@@ -51,37 +83,5 @@ public class ListBlock extends Block {
         } catch (IOException e) {
             results.throwError(this, "Malformed list block; stack is corrupt.", e);
         }
-    }
-
-    public int getPageCount() {
-        return pageCount;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public int getPageEntryTotal() {
-        return pageEntryTotal;
-    }
-
-    public short getPageEntrySize() {
-        return pageEntrySize;
-    }
-
-    public int getPageEntryTotal2() {
-        return pageEntryTotal2;
-    }
-
-    public PageBlockIndex[] getPageIndices() {
-        return pageIndices;
-    }
-
-    public Short getPageEntryCountForPageId(int pageId) {
-        return Arrays.stream(pageIndices)
-                .filter(i -> i.getPageId() == pageId)
-                .map(PageBlockIndex::getPageEntryCount)
-                .findFirst()
-                .orElse(null);
     }
 }

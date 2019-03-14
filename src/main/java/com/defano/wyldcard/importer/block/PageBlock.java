@@ -14,10 +14,14 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class PageBlock extends Block {
 
-    private final List<PageEntry> pageEntryList = new ArrayList<>();
+    private final List<PageEntry> pageEntries = new ArrayList<>();
 
     public PageBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId) {
         super(root, blockType, blockSize, blockId);
+    }
+
+    public List<PageEntry> getPageEntries() {
+        return pageEntries;
     }
 
     @Override
@@ -29,7 +33,7 @@ public class PageBlock extends Block {
         }
 
         ListBlock listBlock = getListBlock(report);
-        Short pageEntryCount = listBlock.getPageEntryCountForPageId(blockId);
+        Short pageEntryCount = listBlock.getPageEntryCountForPage(blockId);
         short pageEntrySize = listBlock.getPageEntrySize();
 
         if (pageEntryCount == null) {
@@ -44,7 +48,7 @@ public class PageBlock extends Block {
                 int cardId = sis.readInt();
                 byte[] pageData = sis.readBytes(pageEntrySize - 4);
 
-                pageEntryList.add(new PageEntry(cardId, ((pageData[0] & 0x08) != 0)));
+                pageEntries.add(new PageEntry(cardId, ((pageData[0] & 0x08) != 0)));
             }
 
         } catch (IOException e) {
@@ -66,7 +70,4 @@ public class PageBlock extends Block {
         return (ListBlock) listBlocks.get(0);
     }
 
-    public List<PageEntry> getPageEntryList() {
-        return pageEntryList;
-    }
 }

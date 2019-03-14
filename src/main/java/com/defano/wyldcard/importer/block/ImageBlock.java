@@ -70,51 +70,6 @@ public class ImageBlock extends Block implements WOBAImageDecoder {
         super(root, blockType, blockSize, blockId);
     }
 
-    @SuppressWarnings("PointlessArithmeticExpression")
-    @Override
-    public void deserialize(byte[] data, ImportResult report) throws ImportException {
-        StackInputStream sis = new StackInputStream(data);
-
-        try {
-            sis.readShort(4);   // Unknown field; skip
-
-            bitmapTop = sis.readShort();
-            bitmapLeft = sis.readShort();
-            bitmapBottom = sis.readShort();
-            bitmapRight = sis.readShort();
-            boundRect = new Rectangle(bitmapLeft, bitmapTop, bitmapRight - bitmapLeft, bitmapBottom - bitmapTop);
-
-            maskBoundTop = sis.readShort();
-            maskBoundLeft = sis.readShort();
-            maskBoundBottom = sis.readShort();
-            maskBoundRight = sis.readShort();
-            maskRect = new Rectangle(maskBoundLeft, maskBoundTop, maskBoundRight - maskBoundLeft, maskBoundBottom - maskBoundTop);
-
-            imageBoundTop = sis.readShort();
-            imageBoundLeft = sis.readShort();
-            imageBoundBottom = sis.readShort();
-            imageBoundRight = sis.readShort();
-            imageRect = new Rectangle(imageBoundLeft, imageBoundTop, imageBoundRight - imageBoundLeft, imageBoundBottom - imageBoundTop);
-
-            sis.readInt(2); // Unknown field; skip
-
-            maskSize = sis.readInt();
-            imageSize = sis.readInt();
-            maskData = sis.readBytes(maskSize);
-            imageData = sis.readBytes(imageSize);
-
-            image = decodeImage(boundRect, maskRect, imageRect, imageSize, imageData, maskSize, maskData);
-
-            if (image == null) {
-                report.warn(this, "An error occurred decoding a stack bitmap; corrupted image will appear blank.");
-                image = new BufferedImage(0, 0, BufferedImage.TYPE_INT_ARGB);
-            }
-
-        } catch (IOException e) {
-            report.throwError(this, "Malformed image block; stack is corrupt.");
-        }
-    }
-
     public short getBitmapTop() {
         return bitmapTop;
     }
@@ -193,5 +148,49 @@ public class ImageBlock extends Block implements WOBAImageDecoder {
 
     public BufferedImage getImage() {
         return image;
+    }
+
+    @Override
+    public void deserialize(byte[] data, ImportResult report) throws ImportException {
+        StackInputStream sis = new StackInputStream(data);
+
+        try {
+            sis.readShort(4);   // Unknown field; skip
+
+            bitmapTop = sis.readShort();
+            bitmapLeft = sis.readShort();
+            bitmapBottom = sis.readShort();
+            bitmapRight = sis.readShort();
+            boundRect = new Rectangle(bitmapLeft, bitmapTop, bitmapRight - bitmapLeft, bitmapBottom - bitmapTop);
+
+            maskBoundTop = sis.readShort();
+            maskBoundLeft = sis.readShort();
+            maskBoundBottom = sis.readShort();
+            maskBoundRight = sis.readShort();
+            maskRect = new Rectangle(maskBoundLeft, maskBoundTop, maskBoundRight - maskBoundLeft, maskBoundBottom - maskBoundTop);
+
+            imageBoundTop = sis.readShort();
+            imageBoundLeft = sis.readShort();
+            imageBoundBottom = sis.readShort();
+            imageBoundRight = sis.readShort();
+            imageRect = new Rectangle(imageBoundLeft, imageBoundTop, imageBoundRight - imageBoundLeft, imageBoundBottom - imageBoundTop);
+
+            sis.readInt(2); // Unknown field; skip
+
+            maskSize = sis.readInt();
+            imageSize = sis.readInt();
+            maskData = sis.readBytes(maskSize);
+            imageData = sis.readBytes(imageSize);
+
+            image = decodeImage(boundRect, maskRect, imageRect, imageSize, imageData, maskSize, maskData);
+
+            if (image == null) {
+                report.warn(this, "An error occurred decoding a stack bitmap; corrupted image will appear blank.");
+                image = new BufferedImage(0, 0, BufferedImage.TYPE_INT_ARGB);
+            }
+
+        } catch (IOException e) {
+            report.throwError(this, "Malformed image block; stack is corrupt.");
+        }
     }
 }

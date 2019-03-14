@@ -5,7 +5,6 @@ import com.defano.wyldcard.importer.block.ImageBlock;
 import com.defano.wyldcard.importer.result.ImportResult;
 import com.defano.wyldcard.importer.type.BlockType;
 import com.defano.wyldcard.runtime.serializer.Serializer;
-import com.google.gson.JsonSerializer;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -18,10 +17,15 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class HyperCardStack {
 
-    private final List<Block> blockList = new ArrayList<>();
+    private final List<Block> blocks = new ArrayList<>();
 
-    public static void main(String[] argv) throws FileNotFoundException, ImportException {
-        HyperCardStack.fromFile(new File("/Users/matt/Dropbox/Home"), new ImportResult());
+    public static void main(String[] argv) throws FileNotFoundException {
+        try {
+            HyperCardStack stack = HyperCardStack.fromFile(new File("/Users/matt/Dropbox/Addresses"), new ImportResult());
+            System.err.print(Serializer.serialize(stack));
+        } catch (ImportException e) {
+            System.err.println(e.getReport());
+        }
 //        HyperCardStack.fromFile(new File("/Users/matt/Addresses"));
 //        fromFile(new File("/Users/matt/Practice"), new ImportResult());
     }
@@ -37,17 +41,17 @@ public class HyperCardStack {
     }
 
     public List<Block> getBlocks() {
-        return blockList;
+        return blocks;
     }
 
     public List<Block> getBlocks(BlockType type) {
-        return blockList.stream()
+        return blocks.stream()
                 .filter(b -> b.getBlockType() == type)
                 .collect(Collectors.toList());
     }
 
     public Block getBlock(int blockId) {
-        return blockList.stream()
+        return blocks.stream()
                 .filter(b -> b.getBlockId() == blockId)
                 .findFirst()
                 .orElse(null);
@@ -80,7 +84,7 @@ public class HyperCardStack {
                     Block block = blockType.instantiateBlock(this, blockId, blockSize);
                     if (block != null) {
                         block.deserialize(data, report);
-                        blockList.add(block);
+                        blocks.add(block);
                     }
                 }
 
@@ -93,6 +97,6 @@ public class HyperCardStack {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(blockList.stream().map(Block::getBlockType).toArray(), ToStringStyle.SIMPLE_STYLE);
+        return ToStringBuilder.reflectionToString(blocks.stream().map(Block::getBlockType).toArray(), ToStringStyle.SIMPLE_STYLE);
     }
 }
