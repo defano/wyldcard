@@ -22,7 +22,7 @@ public class HyperCardStack {
     public static void main(String[] argv) throws FileNotFoundException {
         try {
             HyperCardStack stack = HyperCardStack.fromFile(new File("/Users/matt/Dropbox/Addresses"), new ImportResult());
-            System.err.print(Serializer.serialize(stack));
+//            System.err.print(Serializer.serialize(stack));
         } catch (ImportException e) {
             System.err.println(e.getReport());
         }

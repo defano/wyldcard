@@ -13,6 +13,7 @@ import java.util.List;
 /**
  *
  */
+@SuppressWarnings("unused")
 public class CardBlock extends Block {
 
     private int bitmapId; // ID number of the corresponding BMAP block
@@ -25,10 +26,9 @@ public class CardBlock extends Block {
     private short partContentCount; // number of part contents
     private int partContentSize;
     private Part[] parts;
-    private PartContent[] partContents;
-    private String contents;
-    private String cardName; // the name of the card
-    private String cardScript; // the card script
+    private PartContent[] contents;
+    private String name; // the name of the card
+    private String script; // the card script
 
     public CardBlock(HyperCardStack stack, BlockType blockType, int blockSize, int blockId) {
         super(stack, blockType, blockSize, blockId);
@@ -66,22 +66,29 @@ public class CardBlock extends Block {
         return parts;
     }
 
-    public PartContent[] getPartContents() {
-        return partContents;
-    }
-
-    public String getContents() {
+    public PartContent[] getContents() {
         return contents;
     }
 
-    public String getCardName() {
-        return cardName;
+    public String getName() {
+        return name;
     }
 
-    public String getCardScript() {
-        return cardScript;
+    public String getScript() {
+        return script;
     }
 
+    public short getNextPartId() {
+        return nextPartId;
+    }
+
+    public int getPartListSize() {
+        return partListSize;
+    }
+
+    public int getPartContentSize() {
+        return partContentSize;
+    }
 
     @Override
     public void deserialize(byte[] data, ImportResult report) throws ImportException {
@@ -109,18 +116,21 @@ public class CardBlock extends Block {
             }
 
             // Deserialize text formatting
-            partContents = new PartContent[partContentCount];
+            contents = new PartContent[partContentCount];
             for (int partContentsIdx = 0; partContentsIdx < partContentCount; partContentsIdx++) {
                 short partId = sis.readShort();
                 short length = sis.readShort();
                 byte[] partContentsData = sis.readBytes(length);
 
-                partContents[partContentsIdx] = PartContent.deserialize(this, partId, partContentsData, report);
+                contents[partContentsIdx] = PartContent.deserialize(this, partId, partContentsData, report);
 
                 if (length % 2 != 0) {
                     sis.readByte();
                 }
             }
+
+            name = sis.readString();
+            script = sis.readString();
 
         } catch (IOException e) {
             report.throwError(this, "Layer block is malformed; stack is corrupt.");
