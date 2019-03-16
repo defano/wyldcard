@@ -69,8 +69,8 @@ public class NativeButton extends JPanel implements ContainerWrappedPart, HyperC
                 break;
 
             case ButtonModel.PROP_ICON:
-                ButtonIcon icon = IconFactory.findIconForValue(newValue);
-                button.setIcon(icon == null ? null : icon.getImage());
+                ButtonIcon icon = IconFactory.getInstance().findIconForValue(newValue);
+                button.setIcon(icon == null ? null : icon.getIcon());
                 break;
 
             case ButtonModel.PROP_ICONALIGN:

@@ -64,11 +64,10 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
 
     public PatternPalette() {
         allPatterns = new PatternPaletteButton[]{
-                button1, button2, button3, button4, button5, button6, button7, button8, button9,
-                button10, button11, button12, button13, button14, button15, button16, button17, button18, button19,
-                button20, button21, button22, button23, button24, button25, button26, button27, button28, button29,
-                button30, button31, button32, button33, button34, button35, button36, button37, button38, button39,
-                button40
+                button1, button5, button9,  button13, button17, button21, button25, button29, button33, button37,
+                button2, button6, button10, button14, button18, button22, button26, button30, button34, button38,
+                button3, button7, button11, button15, button19, button23, button27, button31, button35, button39,
+                button4, button8, button12, button16, button20, button24, button28, button32, button36, button40,
         };
 
         redrawPatternButtons();
@@ -78,7 +77,7 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
         WyldCard.getInstance().getToolsManager().getBackgroundColorProvider().subscribe(this);
         WyldCard.getInstance().getToolsManager().getForegroundColorProvider().subscribe(this);
 
-        WyldCardPatternFactory.getInstance().addPatternInvalidationObserver(() -> redrawPatternButtons());
+        WyldCardPatternFactory.getInstance().addPatternInvalidationObserver(this::redrawPatternButtons);
     }
 
     @Override
@@ -98,6 +97,7 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
             allPatterns[index].addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
+                    System.err.println(i);
                     WyldCard.getInstance().getToolsManager().setPattern(i);
                 }
 
@@ -115,7 +115,7 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
     private void redrawPatternButtons() {
         for (int index = 0; index < allPatterns.length; index++) {
             allPatterns[index].setPatternId(index);
-            allPatterns[index].setLeftFrame(index % 4 != 0);
+            allPatterns[index].setLeftFrame(index >= 10);
             allPatterns[index].setSize(PATTERN_WIDTH, PATTERN_HEIGHT);
             allPatterns[index].setPreferredSize(new Dimension(PATTERN_WIDTH, PATTERN_HEIGHT));
         }

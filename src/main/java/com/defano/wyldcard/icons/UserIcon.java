@@ -1,6 +1,7 @@
 package com.defano.wyldcard.icons;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -27,8 +28,12 @@ public class UserIcon implements ButtonIcon {
     }
 
     @Override
-    public AlphaImageIcon getImage() {
-        return new AlphaImageIcon(new ImageIcon(imageData), 1.0f);
+    public Image getImage() {
+        return imageData;
     }
 
+    @Override
+    public AlphaImageIcon getIcon() {
+        return new AlphaImageIcon(new ImageIcon(getImage()), 1.0f);
+    }
 }

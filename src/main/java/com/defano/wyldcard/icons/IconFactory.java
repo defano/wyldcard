@@ -2,9 +2,9 @@ package com.defano.wyldcard.icons;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
+import com.thoughtworks.xstream.XStream;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,26 +13,40 @@ import java.util.Optional;
  */
 public class IconFactory {
 
-    public static List<ButtonIcon> getAllIcons() {
+    @SuppressWarnings("unused")
+    private List<HyperCardIcon> icons = new ArrayList<>();
+    private final static IconFactory instance = new IconFactory();
+
+    public static IconFactory getInstance() {
+        return instance;
+    }
+
+    private IconFactory() {
+        XStream xStream = new XStream();
+        xStream.allowTypes(new Class[] {IconFactory.class, HyperCardIcon.class});
+        xStream.alias("ResourcesArray", IconFactory.class);
+        xStream.addImplicitCollection(IconFactory.class, "icons");
+        xStream.alias("Resource", HyperCardIcon.class);
+        xStream.aliasField("ResourceID", HyperCardIcon.class, "resourceId");
+        xStream.aliasField("ResourceName", HyperCardIcon.class, "resourceName");
+        xStream.aliasField("ResourceFlags", HyperCardIcon.class, "resourceFlags");
+        xStream.aliasField("ResourceData", HyperCardIcon.class, "resourceData");
+
+        xStream.fromXML(IconFactory.class.getResourceAsStream("/button-icons/button-icons.xml"), this);
+    }
+
+    public List<ButtonIcon> getAllIcons() {
         ArrayList<ButtonIcon> icons = new ArrayList<>();
         icons.addAll(getStackIcons());
         icons.addAll(getHyperCardIcons());
         return icons;
     }
 
-    public static List<ButtonIcon> getHyperCardIcons() {
-        return Arrays.asList(HyperCardIcon.values());
-    }
-
-    public static List<ButtonIcon> getStackIcons() {
-        return WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel().getUserIcons();
-    }
-
-    public static ButtonIcon findIconForValue(Value value) {
+    public ButtonIcon findIconForValue(Value value) {
         return findIconForValue(value, getAllIcons());
     }
 
-    public static ButtonIcon findIconForValue(Value value, List<ButtonIcon> icons) {
+    public ButtonIcon findIconForValue(Value value, List<ButtonIcon> icons) {
         if (value.isInteger()) {
             return findIconById(value.integerValue(), icons);
         }
@@ -40,7 +54,15 @@ public class IconFactory {
         return findIconByName(value.toString(), icons);
     }
 
-    public static ButtonIcon findIconByName(String name, List<ButtonIcon> icons) {
+    private List<ButtonIcon> getHyperCardIcons() {
+        return new ArrayList<>(icons);
+    }
+
+    private List<ButtonIcon> getStackIcons() {
+        return WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel().getUserIcons();
+    }
+
+    private ButtonIcon findIconByName(String name, List<ButtonIcon> icons) {
         Optional<ButtonIcon> icon = icons.stream()
                 .filter(p -> p.getName().equalsIgnoreCase(name))
                 .findFirst();
@@ -48,7 +70,7 @@ public class IconFactory {
         return icon.orElse(null);
     }
 
-    public static ButtonIcon findIconById(int id, List<ButtonIcon> icons) {
+    private ButtonIcon findIconById(int id, List<ButtonIcon> icons) {
         if (id < 1) return null;
 
         Optional<ButtonIcon> icon = icons.stream()
