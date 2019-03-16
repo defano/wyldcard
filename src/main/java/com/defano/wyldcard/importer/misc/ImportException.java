@@ -1,6 +1,6 @@
-package com.defano.wyldcard.importer;
+package com.defano.wyldcard.importer.misc;
 
-import com.defano.wyldcard.importer.result.ImportResult;
+import com.defano.wyldcard.importer.misc.ImportResult;
 
 public class ImportException extends Exception {
 

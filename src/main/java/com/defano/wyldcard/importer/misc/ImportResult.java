@@ -1,6 +1,6 @@
-package com.defano.wyldcard.importer.result;
+package com.defano.wyldcard.importer.misc;
 
-import com.defano.wyldcard.importer.ImportException;
+import com.defano.wyldcard.importer.HyperCardStack;
 import com.defano.wyldcard.importer.block.Block;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -42,6 +42,7 @@ public class ImportResult {
     }
 
     private class Issue {
+        private final HyperCardStack stack;
         private final String message;
         private final Block source;
         private final Exception cause;
@@ -50,6 +51,7 @@ public class ImportResult {
             this.message = message;
             this.source = source;
             this.cause = cause;
+            this.stack = source.getStack();
         }
 
         @Override

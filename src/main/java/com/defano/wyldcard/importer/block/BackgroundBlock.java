@@ -4,29 +4,27 @@ import com.defano.wyldcard.importer.HyperCardStack;
 import com.defano.wyldcard.importer.misc.ImportException;
 import com.defano.wyldcard.importer.misc.StackInputStream;
 import com.defano.wyldcard.importer.misc.ImportResult;
-import com.defano.wyldcard.importer.enums.*;
+import com.defano.wyldcard.importer.enums.CardFlag;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-/**
- *
- */
 @SuppressWarnings("unused")
-public class CardBlock extends AbstractCardBlock {
+public class BackgroundBlock extends AbstractCardBlock {
 
-    private int bitmapId; // ID number of the corresponding BMAP block
+    private int bitmapId;
     private CardFlag[] flags;
-    private int pageId; // ID number of the PAGE block containing this card's index
-    private int bkgndId; // ID number of the card's background
-    private short partCount; // number of parts (buttons and fields) on this card
+    private int cardCount;
+    private int nextBkgndId;
+    private int prevBkgndId;
+    private short partCount;
 
-    public CardBlock(HyperCardStack stack, BlockType blockType, int blockSize, int blockId, byte[] blockData) {
+    public BackgroundBlock(HyperCardStack stack, BlockType blockType, int blockSize, int blockId, byte[] blockData) {
         super(stack, blockType, blockSize, blockId, blockData);
     }
 
-    public BufferedImage getImage() {
-        return getStack().getImage(getBitmapId());
+    @Override
+    public short getPartCount() {
+        return partCount;
     }
 
     public int getBitmapId() {
@@ -37,16 +35,16 @@ public class CardBlock extends AbstractCardBlock {
         return flags;
     }
 
-    public int getPageId() {
-        return pageId;
+    public int getCardCount() {
+        return cardCount;
     }
 
-    public int getBkgndId() {
-        return bkgndId;
+    public int getNextBkgndId() {
+        return nextBkgndId;
     }
 
-    public short getPartCount() {
-        return partCount;
+    public int getPrevBkgndId() {
+        return prevBkgndId;
     }
 
     @Override
@@ -56,17 +54,18 @@ public class CardBlock extends AbstractCardBlock {
         try {
             bitmapId = sis.readInt();
             flags = CardFlag.fromBitmask(sis.readShort());
-            sis.skipBytes(10);
-            pageId = sis.readInt();
-            bkgndId = sis.readInt();
+            sis.readShort();
+            cardCount = sis.readInt();
+            nextBkgndId = sis.readInt();
+            prevBkgndId = sis.readInt();
             partCount = sis.readShort();
 
             // Unpack fields common to both cards and backgrounds
             super.unpack(sis, report);
 
         } catch (IOException e) {
-            report.throwError(this, "Layer block is malformed; stack is corrupt.");
+            report.throwError(this, "Malformed BKGD block.");
         }
-    }
 
+    }
 }

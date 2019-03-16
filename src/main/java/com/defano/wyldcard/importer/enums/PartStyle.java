@@ -1,4 +1,4 @@
-package com.defano.wyldcard.importer.type;
+package com.defano.wyldcard.importer.enums;
 
 import java.util.Arrays;
 

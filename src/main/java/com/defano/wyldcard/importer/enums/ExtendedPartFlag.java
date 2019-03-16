@@ -1,4 +1,4 @@
-package com.defano.wyldcard.importer.type;
+package com.defano.wyldcard.importer.enums;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +21,7 @@ public enum ExtendedPartFlag {
         this.mask = mask;
     }
 
-    public static List<ExtendedPartFlag> fromBitmask(byte mask) {
-        return Arrays.stream(values()).filter(epf -> (epf.mask & mask) > 0).collect(Collectors.toList());
+    public static ExtendedPartFlag[] fromBitmask(byte mask) {
+        return Arrays.stream(values()).filter(epf -> (epf.mask & mask) > 0).toArray(ExtendedPartFlag[]::new);
     }
 }

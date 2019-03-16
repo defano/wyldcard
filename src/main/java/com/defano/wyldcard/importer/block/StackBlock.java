@@ -1,24 +1,20 @@
 package com.defano.wyldcard.importer.block;
 
 import com.defano.wyldcard.importer.HyperCardStack;
-import com.defano.wyldcard.importer.ImportException;
-import com.defano.wyldcard.importer.decoder.PatternDecoder;
-import com.defano.wyldcard.importer.decoder.VersionDecoder;
-import com.defano.wyldcard.importer.type.BlockType;
-import com.defano.wyldcard.importer.type.StackFlag;
-import com.defano.wyldcard.importer.type.StackFormat;
-import com.defano.wyldcard.importer.StackInputStream;
-import com.defano.wyldcard.importer.result.ImportResult;
+import com.defano.wyldcard.importer.misc.ImportException;
+import com.defano.wyldcard.importer.enums.StackFlag;
+import com.defano.wyldcard.importer.enums.StackFormat;
+import com.defano.wyldcard.importer.misc.StackInputStream;
+import com.defano.wyldcard.importer.misc.ImportResult;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class StackBlock extends Block {
 
     private StackFormat format;
-    private List<StackFlag> flags;
+    private StackFlag[] flags;
     private transient BufferedImage[] patterns = new BufferedImage[40];
 
     private int formatId;
@@ -54,18 +50,18 @@ public class StackBlock extends Block {
     private int styleTableId;
     private short height;
     private short width;
-    private long[] patternData;        // 40 patterns
+    private long[] patternData = new long[40];
     private String stackScript;
 
-    public StackBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId) {
-        super(root, blockType, blockSize, blockId);
+    public StackBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId, byte[] blockData) {
+        super(root, blockType, blockSize, blockId, blockData);
     }
 
     public StackFormat getFormat() {
         return format;
     }
 
-    public List<StackFlag> getFlags() {
+    public StackFlag[] getFlags() {
         return flags;
     }
 
@@ -214,9 +210,9 @@ public class StackBlock extends Block {
     }
 
     @Override
-    public void deserialize(byte[] data, ImportResult report) throws ImportException {
+    public void unpack(ImportResult report) throws ImportException {
 
-        StackInputStream sis = new StackInputStream(data);
+        StackInputStream sis = new StackInputStream(getBlockData());
 
         try {
             formatId = sis.readInt();

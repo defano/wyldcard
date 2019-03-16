@@ -31,11 +31,10 @@
 package com.defano.wyldcard.importer.block;
 
 import com.defano.wyldcard.importer.HyperCardStack;
-import com.defano.wyldcard.importer.ImportException;
+import com.defano.wyldcard.importer.misc.ImportException;
 import com.defano.wyldcard.importer.decoder.WOBAImageDecoder;
-import com.defano.wyldcard.importer.type.BlockType;
-import com.defano.wyldcard.importer.result.ImportResult;
-import com.defano.wyldcard.importer.StackInputStream;
+import com.defano.wyldcard.importer.misc.ImportResult;
+import com.defano.wyldcard.importer.misc.StackInputStream;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -66,8 +65,8 @@ public class ImageBlock extends Block implements WOBAImageDecoder {
     private Rectangle imageRect;     // the image rectangle
     private BufferedImage image;     // the decoded image
 
-    public ImageBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId) {
-        super(root, blockType, blockSize, blockId);
+    public ImageBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId, byte[] blockData) {
+        super(root, blockType, blockSize, blockId, blockData);
     }
 
     public short getBitmapTop() {
@@ -151,8 +150,8 @@ public class ImageBlock extends Block implements WOBAImageDecoder {
     }
 
     @Override
-    public void deserialize(byte[] data, ImportResult report) throws ImportException {
-        StackInputStream sis = new StackInputStream(data);
+    public void unpack(ImportResult report) throws ImportException {
+        StackInputStream sis = new StackInputStream(getBlockData());
 
         try {
             sis.readShort(4);   // Unknown field; skip

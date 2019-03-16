@@ -1,7 +1,6 @@
-package com.defano.wyldcard.importer.type;
+package com.defano.wyldcard.importer.block;
 
 import com.defano.wyldcard.importer.HyperCardStack;
-import com.defano.wyldcard.importer.block.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -15,7 +14,7 @@ public enum BlockType {
     /**
      * Master reference object
      */
-    MAST,
+    MAST(MasterBlock.class),
 
     /**
      * Card index list
@@ -25,66 +24,68 @@ public enum BlockType {
     /**
      * Card index
      */
-    PAGE(PageBlock.class),
+    PAGE(PageBlock.class, 1),
 
     /**
-     * Background
+     * Background; describes a background in the stack including all buttons and fields on it.
      */
-    BKGD,
+    BKGD(BackgroundBlock.class),
 
     /**
-     * Card
+     * Card; describes a card in the stack including all buttons and fields on the card.
      */
     CARD(CardBlock.class),
 
     /**
-     * Card or background image ("WOBA" format)
+     * Card or background bitmap image ("WOBA" format)
      */
     BMAP(ImageBlock.class),
 
     /**
      * Free space (removed using the "Compact Stack" command)
      */
-    FREE,
+    FREE(FreeBlock.class),
 
     /**
      * Style table
      */
-    STBL,
+    STBL(StyleTableBlock.class),
 
     /**
      * Font table
      */
-    FTBL,
+    FTBL(FontTableBlock.class),
 
     /**
      * Print settings and template index
      */
-    PRNT,
+    PRNT(PrintTableBlock.class),
 
     /**
      * Page setup settings
      */
-    PRST,
+    PRST(PageSetupBlock.class),
 
     /**
      * Print report template
      */
-    PRFT,
+    PRFT(PrintReportBlock.class),
 
     /**
      * Tail object ("Nu är det slut…" or "That's all folks")
      */
-    TAIL;
+    TAIL(TailBlock.class);
 
     private final Class<? extends Block> klass;
+    private final int importOrder;
 
     <T extends Block> BlockType(Class<T> klass) {
-        this.klass = klass;
+        this(klass, 0);
     }
 
-    BlockType() {
-        this(null);
+    <T extends Block> BlockType(Class<T> klass, int importOrder) {
+        this.klass = klass;
+        this.importOrder = importOrder;
     }
 
     public static BlockType fromBlockId(int blockId) {
@@ -103,11 +104,11 @@ public enum BlockType {
         return null;
     }
 
-    public Block instantiateBlock(HyperCardStack stack, int blockId, int blockSize) {
+    public Block instantiateBlock(HyperCardStack stack, int blockId, int blockSize, byte[] blockData) {
         if (klass != null) {
             try {
-                Constructor constructor = klass.getConstructor(HyperCardStack.class, BlockType.class, int.class, int.class);
-                return  (Block) constructor.newInstance(stack, this, blockSize, blockId);
+                Constructor constructor = klass.getConstructor(HyperCardStack.class, BlockType.class, int.class, int.class, byte[].class);
+                return  (Block) constructor.newInstance(stack, this, blockSize, blockId, blockData);
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 // Somebody changed the Block constructor signature... tsk, tsk
                 throw new IllegalStateException("Bug! Can't instantiate " + klass);
@@ -115,5 +116,9 @@ public enum BlockType {
         }
 
         return null;
+    }
+
+    public int getImportOrder() {
+        return importOrder;
     }
 }

@@ -1,13 +1,14 @@
-package com.defano.wyldcard.importer.type;
+package com.defano.wyldcard.importer.record;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-public class PageEntry {
+@SuppressWarnings("unused")
+public class PageEntryRecord {
 
     private final int cardId;
     private final boolean isMarked;
 
-    public PageEntry(int cardId, boolean isMarked) {
+    public PageEntryRecord(int cardId, boolean isMarked) {
         this.cardId = cardId;
         this.isMarked = isMarked;
     }
@@ -20,6 +21,7 @@ public class PageEntry {
         return isMarked;
     }
 
+    @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }

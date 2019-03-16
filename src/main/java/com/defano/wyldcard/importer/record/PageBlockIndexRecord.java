@@ -1,13 +1,13 @@
-package com.defano.wyldcard.importer.type;
+package com.defano.wyldcard.importer.record;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-public class PageBlockIndex {
+public class PageBlockIndexRecord {
 
     private final int pageId;
     private final short pageEntryCount;
 
-    public PageBlockIndex(int pageId, short pageEntryCount) {
+    public PageBlockIndexRecord(int pageId, short pageEntryCount) {
         this.pageId = pageId;
         this.pageEntryCount = pageEntryCount;
     }

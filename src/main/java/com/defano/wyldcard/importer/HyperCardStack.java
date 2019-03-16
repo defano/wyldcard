@@ -2,8 +2,11 @@ package com.defano.wyldcard.importer;
 
 import com.defano.wyldcard.importer.block.Block;
 import com.defano.wyldcard.importer.block.ImageBlock;
-import com.defano.wyldcard.importer.result.ImportResult;
-import com.defano.wyldcard.importer.type.BlockType;
+import com.defano.wyldcard.importer.misc.ImportException;
+import com.defano.wyldcard.importer.misc.ImportOrderComparator;
+import com.defano.wyldcard.importer.misc.ImportResult;
+import com.defano.wyldcard.importer.block.BlockType;
+import com.defano.wyldcard.importer.misc.StackInputStream;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -14,15 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class HyperCardStack {
 
     private final List<Block> blocks = new ArrayList<>();
 
     public static void main(String[] argv) throws FileNotFoundException {
         try {
-            HyperCardStack stack = HyperCardStack.fromFile(new File("/Users/matt/Dropbox/Addresses"), new ImportResult());
-//            System.err.print(Serializer.serialize(stack));
+            HyperCardStack stack = HyperCardStack.fromFile(new File("/Users/matt/Dropbox/Practice"), new ImportResult());
+            System.err.print(Serializer.serialize(stack));
         } catch (ImportException e) {
             System.err.println(e.getReport());
         }
@@ -69,26 +72,35 @@ public class HyperCardStack {
         BlockType blockType;
 
         try {
+
+            // First pass, read in raw block data
             do {
                 int blockSize = fis.readInt();
                 int blockTypeId = fis.readInt();
                 int blockId = fis.readInt();
                 fis.readInt();  // Padding; ignored
-                byte[] data = fis.readBytes(blockSize - 16);
+                byte[] blockData = fis.readBytes(blockSize - 16);
 
                 blockType = BlockType.fromBlockId(blockTypeId);
 
                 if (blockType == null) {
-                    report.throwError(null, "Encountered block with unknown type: " + blockTypeId + "; stack is corrupt.");
+                    report.throwError(null, "Encountered block with unknown enums: " + blockTypeId + ".");
                 } else {
-                    Block block = blockType.instantiateBlock(this, blockId, blockSize);
+                    Block block = blockType.instantiateBlock(this, blockId, blockSize, blockData);
                     if (block != null) {
-                        block.deserialize(data, report);
                         blocks.add(block);
                     }
                 }
 
             } while (blockType != BlockType.TAIL);
+
+            // Second pass: unpack block data
+            ArrayList<Block> importOrder = new ArrayList<>(blocks);
+            importOrder.sort(new ImportOrderComparator());
+
+            for (Block thisBlock : importOrder) {
+                thisBlock.unpack(report);
+            }
 
         } catch (IOException e) {
             report.throwError(null, "Malformed block array; stack structure is corrupt.", e);

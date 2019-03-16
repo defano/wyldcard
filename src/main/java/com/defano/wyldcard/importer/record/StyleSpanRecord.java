@@ -1,14 +1,15 @@
-package com.defano.wyldcard.importer.type;
+package com.defano.wyldcard.importer.record;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-public class StyleSpan {
+@SuppressWarnings("unused")
+public class StyleSpanRecord {
 
     private final short textPosition;
     private final short styleId;
 
-    public StyleSpan(short textPosition, short styleId) {
+    public StyleSpanRecord(short textPosition, short styleId) {
         this.textPosition = textPosition;
         this.styleId = styleId;
     }

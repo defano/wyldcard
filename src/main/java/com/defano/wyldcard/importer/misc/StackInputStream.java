@@ -1,4 +1,4 @@
-package com.defano.wyldcard.importer;
+package com.defano.wyldcard.importer.misc;
 
 import com.defano.wyldcard.importer.decoder.MacRomanDecoder;
 
@@ -8,10 +8,6 @@ public class StackInputStream extends DataInputStream implements MacRomanDecoder
 
     public StackInputStream(InputStream is) {
         super(is);
-    }
-
-    public StackInputStream(File file) throws FileNotFoundException {
-        this(new FileInputStream(file));
     }
 
     public StackInputStream(byte[] data) {

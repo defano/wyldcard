@@ -1,4 +1,4 @@
-package com.defano.wyldcard.importer.type;
+package com.defano.wyldcard.importer.enums;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +15,7 @@ public enum CardFlag {
         this.mask = mask;
     }
 
-    public static List<CardFlag> fromBitmask(short mask) {
-        return Arrays.stream(values()).filter(cf -> (cf.mask & mask) > 0).collect(Collectors.toList());
+    public static CardFlag[] fromBitmask(short mask) {
+        return Arrays.stream(values()).filter(cf -> (cf.mask & mask) > 0).toArray(CardFlag[]::new);
     }
 }

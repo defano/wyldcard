@@ -1,9 +1,10 @@
-package com.defano.wyldcard.importer.type;
+package com.defano.wyldcard.importer.record;
 
-import com.defano.wyldcard.importer.ImportException;
-import com.defano.wyldcard.importer.StackInputStream;
+import com.defano.wyldcard.importer.misc.ImportException;
+import com.defano.wyldcard.importer.misc.StackInputStream;
 import com.defano.wyldcard.importer.block.Block;
-import com.defano.wyldcard.importer.result.ImportResult;
+import com.defano.wyldcard.importer.misc.ImportResult;
+import com.defano.wyldcard.importer.enums.*;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -12,17 +13,17 @@ import java.io.IOException;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class Part {
+public class PartRecord {
 
     private short size; // size of the part, including this header
     private short partId; // ID number of the part
     private PartType partType;
-    private List<PartFlag> flags;
+    private PartFlag[] flags;
     private short top; // top of the part's rectangle
     private short left; // left of the part's rectangle
     private short bottom; // bottom of the part's rectangle
     private short right; // right of the part's rectangle
-    private List<ExtendedPartFlag> extendedFlags;
+    private ExtendedPartFlag[] extendedFlags;
     private int family;
     private PartStyle style; // HyperCard only looks at the least significant 4 bits of this field
     private short titleWidthOrLastSelectedLine;
@@ -30,49 +31,10 @@ public class Part {
     private TextAlignment textAlign;
     private short textFontId; // use the FTBL block to translate this to a font name
     private short textSize;
-    private List<TextStyle> textStyles;
+    private FontStyle[] fontStyles;
     private short textHeight;
     private String name;
     private String script; // the button or field script
-
-    public static Part deserialize(Block parent, short entrySize, byte[] data, ImportResult report) throws ImportException {
-        Part part = new Part();
-        StackInputStream sis = new StackInputStream(data);
-
-        part.size = entrySize;
-
-        try {
-            part.partId = sis.readShort();
-            part.partType = PartType.fromTypeId(sis.readByte());
-            part.flags = PartFlag.fromBitmask(sis.readByte());
-            part.top = sis.readShort();
-            part.left = sis.readShort();
-            part.bottom = sis.readShort();
-            part.right = sis.readShort();
-
-            byte extendedFlagsMask = sis.readByte();
-            part.extendedFlags = ExtendedPartFlag.fromBitmask(extendedFlagsMask);
-            part.family = extendedFlagsMask & 0x0f;
-
-            part.style = PartStyle.ofPartStyleId(sis.readByte());
-            part.titleWidthOrLastSelectedLine = sis.readShort();
-            part.iconIdOrFirstSelectedLine = sis.readShort();
-            part.textAlign = TextAlignment.fromAlignmentId(sis.readShort());
-            part.textFontId = sis.readShort();
-            part.textSize = sis.readShort();
-            part.textStyles = TextStyle.fromBitmask(sis.readByte());
-            sis.readByte();
-            part.textHeight = sis.readShort();
-            part.name = sis.readString();
-            sis.readByte();
-            part.script = sis.readString();
-
-        } catch (IOException e) {
-            report.throwError(parent, "Malformed part record; stack is corrupt.");
-        }
-
-        return part;
-    }
 
     public Rectangle getPartRectangle() {
         return new Rectangle(left, top, right - left, bottom - top);
@@ -96,6 +58,121 @@ public class Part {
 
     public TextAlignment getTextAlign() {
         return textAlign;
+    }
+
+    public short getSize() {
+        return size;
+    }
+
+    public short getPartId() {
+        return partId;
+    }
+
+    public PartType getPartType() {
+        return partType;
+    }
+
+    public PartFlag[] getFlags() {
+        return flags;
+    }
+
+    public short getTop() {
+        return top;
+    }
+
+    public short getLeft() {
+        return left;
+    }
+
+    public short getBottom() {
+        return bottom;
+    }
+
+    public short getRight() {
+        return right;
+    }
+
+    public ExtendedPartFlag[] getExtendedFlags() {
+        return extendedFlags;
+    }
+
+    public int getFamily() {
+        return family;
+    }
+
+    public PartStyle getStyle() {
+        return style;
+    }
+
+    public short getTitleWidthOrLastSelectedLine() {
+        return titleWidthOrLastSelectedLine;
+    }
+
+    public short getIconIdOrFirstSelectedLine() {
+        return iconIdOrFirstSelectedLine;
+    }
+
+    public short getTextFontId() {
+        return textFontId;
+    }
+
+    public short getTextSize() {
+        return textSize;
+    }
+
+    public FontStyle[] getFontStyles() {
+        return fontStyles;
+    }
+
+    public short getTextHeight() {
+        return textHeight;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getScript() {
+        return script;
+    }
+
+    public static PartRecord deserialize(Block parent, short entrySize, byte[] data, ImportResult report) throws ImportException {
+        PartRecord part = new PartRecord();
+        StackInputStream sis = new StackInputStream(data);
+
+        part.size = entrySize;
+
+        try {
+            part.partId = sis.readShort();
+            part.partType = PartType.fromTypeId(sis.readByte());
+            part.flags = PartFlag.fromBitmask(sis.readByte());
+            part.top = sis.readShort();
+            part.left = sis.readShort();
+            part.bottom = sis.readShort();
+            part.right = sis.readShort();
+
+            byte extendedFlagsMask = sis.readByte();
+            part.extendedFlags = ExtendedPartFlag.fromBitmask(extendedFlagsMask);
+            part.family = extendedFlagsMask & 0x0f;
+
+            part.style = PartStyle.ofPartStyleId(sis.readByte());
+            part.titleWidthOrLastSelectedLine = sis.readShort();
+            part.iconIdOrFirstSelectedLine = sis.readShort();
+            part.textAlign = TextAlignment.fromAlignmentId(sis.readShort());
+            part.textFontId = sis.readShort();
+            part.textSize = sis.readShort();
+            part.fontStyles = FontStyle.fromBitmask(sis.readByte());
+            sis.readByte();
+            part.textHeight = sis.readShort();
+            part.name = sis.readString();
+            sis.readByte();
+            part.script = sis.readString();
+
+        } catch (IOException e) {
+            report.throwError(parent, "Malformed part record; stack is corrupt.");
+        }
+
+        return part;
     }
 
     public String toString() {

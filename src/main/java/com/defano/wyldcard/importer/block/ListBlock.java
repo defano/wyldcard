@@ -1,11 +1,10 @@
 package com.defano.wyldcard.importer.block;
 
 import com.defano.wyldcard.importer.HyperCardStack;
-import com.defano.wyldcard.importer.ImportException;
-import com.defano.wyldcard.importer.StackInputStream;
-import com.defano.wyldcard.importer.result.ImportResult;
-import com.defano.wyldcard.importer.type.BlockType;
-import com.defano.wyldcard.importer.type.PageBlockIndex;
+import com.defano.wyldcard.importer.misc.ImportException;
+import com.defano.wyldcard.importer.misc.StackInputStream;
+import com.defano.wyldcard.importer.misc.ImportResult;
+import com.defano.wyldcard.importer.record.PageBlockIndexRecord;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -18,10 +17,10 @@ public class ListBlock extends Block {
     private int pageEntryTotal;     // total number of entries in all PAGE blocks; should equal number of cards
     private short pageEntrySize;    // length of an entry in a PAGE block
     private int pageEntryTotal2;    // total number of entries in all PAGE blocks; should equal number of cards
-    private PageBlockIndex[] pageIndices;
+    private PageBlockIndexRecord[] pageIndices;
 
-    public ListBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId) {
-        super(root, blockType, blockSize, blockId);
+    public ListBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId, byte[] blockData) {
+        super(root, blockType, blockSize, blockId, blockData);
     }
 
     public int getPageCount() {
@@ -44,22 +43,22 @@ public class ListBlock extends Block {
         return pageEntryTotal2;
     }
 
-    public PageBlockIndex[] getPageIndices() {
+    public PageBlockIndexRecord[] getPageIndices() {
         return pageIndices;
     }
 
     public Short getPageEntryCountForPage(int pageId) {
         return Arrays.stream(pageIndices)
                 .filter(i -> i.getPageId() == pageId)
-                .map(PageBlockIndex::getPageEntryCount)
+                .map(PageBlockIndexRecord::getPageEntryCount)
                 .findFirst()
                 .orElse(null);
     }
 
     @Override
-    public void deserialize(byte[] data, ImportResult results) throws ImportException {
+    public void unpack(ImportResult results) throws ImportException {
 
-        StackInputStream sis = new StackInputStream(data);
+        StackInputStream sis = new StackInputStream(getBlockData());
 
         try {
             this.pageCount = sis.readInt();
@@ -73,11 +72,11 @@ public class ListBlock extends Block {
 
             sis.readInt(); // Unknown field; skip
 
-            pageIndices = new PageBlockIndex[pageCount];
+            pageIndices = new PageBlockIndexRecord[pageCount];
             for (int idx = 0; idx < pageCount; idx++) {
                 int id = sis.readInt();
                 short entryCount = sis.readShort();
-                pageIndices[idx] = new PageBlockIndex(id, entryCount);
+                pageIndices[idx] = new PageBlockIndexRecord(id, entryCount);
             }
 
         } catch (IOException e) {

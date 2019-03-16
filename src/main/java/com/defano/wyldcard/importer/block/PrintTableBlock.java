@@ -1,0 +1,58 @@
+package com.defano.wyldcard.importer.block;
+
+import com.defano.wyldcard.importer.HyperCardStack;
+import com.defano.wyldcard.importer.misc.ImportException;
+import com.defano.wyldcard.importer.misc.ImportResult;
+import com.defano.wyldcard.importer.misc.StackInputStream;
+import com.defano.wyldcard.importer.record.ReportTemplateRecord;
+
+import java.io.IOException;
+
+@SuppressWarnings("unused")
+public class PrintTableBlock extends Block {
+
+    private short prstBlockId;
+    private short reportTemplateCount;
+    private ReportTemplateRecord[] templateRecords = new ReportTemplateRecord[0];
+
+    public PrintTableBlock(HyperCardStack stack, BlockType blockType, int blockSize, int blockId, byte[] blockData) {
+        super(stack, blockType, blockSize, blockId, blockData);
+    }
+
+    public short getPrstBlockId() {
+        return prstBlockId;
+    }
+
+    public short getReportTemplateCount() {
+        return reportTemplateCount;
+    }
+
+    public ReportTemplateRecord[] getTemplateRecords() {
+        return templateRecords;
+    }
+
+    @Override
+    public void unpack(ImportResult report) throws ImportException {
+        StackInputStream sis = new StackInputStream(getBlockData());
+
+        try {
+            sis.skipBytes(32);
+            prstBlockId = sis.readShort();
+            sis.skipBytes(258);
+            reportTemplateCount = sis.readShort();
+
+            templateRecords = new ReportTemplateRecord[reportTemplateCount];
+            for (int idx = 0; idx < reportTemplateCount; idx++) {
+                int templateId = sis.readInt();
+                byte nameLength = sis.readByte();
+                String templateName = sis.readString(nameLength);
+
+                templateRecords[idx] = new ReportTemplateRecord(templateId, templateName);
+                sis.skipBytes(36 - nameLength - 5);
+            }
+
+        } catch (IOException e) {
+            report.throwError(this, "Malformed PRNT block.");
+        }
+    }
+}
