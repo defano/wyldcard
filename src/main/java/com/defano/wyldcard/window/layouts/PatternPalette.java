@@ -97,6 +97,7 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
             allPatterns[index].addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
+                    System.err.println(i);
                     WyldCard.getInstance().getToolsManager().setPattern(i);
                 }
 
