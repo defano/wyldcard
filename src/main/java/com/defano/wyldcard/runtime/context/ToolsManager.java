@@ -92,8 +92,16 @@ public interface ToolsManager {
 
     Subject<Integer> getFillPatternProvider();
 
+    /**
+     * Gets the index of selected pattern, counting from 0.
+     * @return The fill pattern.
+     */
     int getFillPattern();
 
+    /**
+     * Sets the index of the selected pattern, counting from 0. Valid values are between 0 and 39.
+     * @param pattern The pattern index, 0..39
+     */
     void setFillPattern(int pattern);
 
     double getIntensity();

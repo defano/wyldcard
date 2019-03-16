@@ -75,11 +75,11 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
         newComputedGetterProperty(PROP_POLYSIDES, (context, model, propertyName) -> new Value (WyldCard.getInstance().getToolsManager().getShapeSides()));
 
         newComputedSetterProperty(PROP_PATTERN, (context, model, propertyName, value) -> {
-            if (value.integerValue() >= 0 && value.integerValue() < 40) {
-                WyldCard.getInstance().getToolsManager().setFillPattern(value.integerValue());
+            if (value.integerValue() >= 1 && value.integerValue() <= 40) {
+                WyldCard.getInstance().getToolsManager().setFillPattern(value.integerValue() - 1);
             }
         });
-        newComputedGetterProperty(PROP_PATTERN, (context, model, propertyName) -> new Value (WyldCard.getInstance().getToolsManager().getFillPattern()));
+        newComputedGetterProperty(PROP_PATTERN, (context, model, propertyName) -> new Value (WyldCard.getInstance().getToolsManager().getFillPattern() + 1));
 
         addPropertyWillChangeObserver((property, oldValue, newValue) -> {
             if (PROP_LOCKSCREEN.equals(property.toLowerCase())) {

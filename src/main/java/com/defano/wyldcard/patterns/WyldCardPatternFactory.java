@@ -2,12 +2,11 @@ package com.defano.wyldcard.patterns;
 
 import com.defano.wyldcard.WyldCard;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,11 +15,20 @@ public class WyldCardPatternFactory {
     public final static int PATTERN_WIDTH = 8;
     public final static int PATTERN_HEIGHT = 8;
 
-    private final static int SPRITE_MATRIX_WIDTH = 17;
-    private final static int SPRITE_MATRIX_HEIGHT = 12;
+    // Pattern bitmaps, base 64 encoded
+    private final static String PATTERN_DATA =
+                    "ACgAAAAAAAAAAIAAAAAIAAAAiAAiAIgAIgCIiCIiiIgiIoiq" +
+                    "IqqIqiKqzKozqsyqM6ruqruq7qq7qu67u+7uu7vu/7v/7v+7" +
+                    "/+7/u////7v//4AQAiABCEAE//////////+IIogiiCKIIhEi" +
+                    "RIgRIkSIxIAMaEMCMCaxMAMb2MAMjaoAqgCqAKoAiCJVIogi" +
+                    "VSKIVSJViFUiVXfdd9133XfdgAAAAAAAAACqVapVqlWqVQOE" +
+                    "SDAMAgEBgkQ5RIIBAQGIFCJBiEEiFICAQT4ICBTjIgSMdCIX" +
+                    "mBC+gIgI6wiIgCXIMolkJEySopxBvirJFOtAoAAABAoAAIBA" +
+                    "IAACBAgAqgCAAIgAgAD/gICAgICAgAgcIsGAAQIE/4CAgP8I" +
+                    "CAj4dCJHjxcicb8Av7+wsLCw/3++XaJBgAD69fr1oFCgUA==";
 
     private final static WyldCardPatternFactory instance = new WyldCardPatternFactory();
-
+    byte[] patternBytes = Base64.getDecoder().decode(PATTERN_DATA);
     private List<PatternInvalidatonObserver> observers = new ArrayList<>();
     private HashMap<Integer, TexturePaint> patternCache = new HashMap<>();
 
@@ -80,6 +88,7 @@ public class WyldCardPatternFactory {
 
     private BufferedImage getPatternImage(int id) {
 
+        // See if user has edited pattern, if so, return their copy
         if (WyldCard.getInstance().getStackManager().getFocusedStack() != null) {
             BufferedImage userPattern = WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel().getUserPattern(id);
             if (userPattern != null) {
@@ -87,19 +96,40 @@ public class WyldCardPatternFactory {
             }
         }
 
-        try {
-            int row = (id / 4);
-            int column = (id % 4);
+        // Get system pattern image; note that first two bytes of pattern data should be ignored
+        long pattern = ((long) (patternBytes[(id * 8) + 9]) & 0xff) |
+                ((long) (patternBytes[(id * 8) + 8] & 0xff) << 8) |
+                ((long) (patternBytes[(id * 8) + 7] & 0xff) << 16) |
+                ((long) (patternBytes[(id * 8) + 6] & 0xff) << 24) |
+                ((long) (patternBytes[(id * 8) + 5] & 0xff) << 32) |
+                ((long) (patternBytes[(id * 8) + 4] & 0xff) << 40) |
+                ((long) (patternBytes[(id * 8) + 3] & 0xff) << 48) |
+                ((long) (patternBytes[(id * 8) + 2] & 0xff) << 56);
 
-            int xOffset = 1 + (column * SPRITE_MATRIX_WIDTH) + column;
-            int yOffset = 1 + (row * SPRITE_MATRIX_HEIGHT) + row;
+        return decodePattern(pattern);
+    }
 
-            BufferedImage spriteSheet = ImageIO.read(WyldCardPatternFactory.class.getResource("/patterns/patterns.png"));
-            return spriteSheet.getSubimage(xOffset, yOffset, PATTERN_WIDTH, PATTERN_HEIGHT);
+    @SuppressWarnings("PointlessArithmeticExpression")
+    private BufferedImage decodePattern(long pattern) {
+        int[] pixels = new int[64];
 
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read patterns.", e);
+        for (int row = 0; row < 8; row++) {
+            byte rowBits = (byte) ((pattern & (0xffL << (row * 8))) >> (row * 8));
+
+            pixels[row * 8 + 7] = ((rowBits & 0x80) > 0) ? 0xFF000000 : 0xFFFFFFFF;
+            pixels[row * 8 + 6] = ((rowBits & 0x40) > 0) ? 0xFF000000 : 0xFFFFFFFF;
+            pixels[row * 8 + 5] = ((rowBits & 0x20) > 0) ? 0xFF000000 : 0xFFFFFFFF;
+            pixels[row * 8 + 4] = ((rowBits & 0x10) > 0) ? 0xFF000000 : 0xFFFFFFFF;
+            pixels[row * 8 + 3] = ((rowBits & 0x08) > 0) ? 0xFF000000 : 0xFFFFFFFF;
+            pixels[row * 8 + 2] = ((rowBits & 0x04) > 0) ? 0xFF000000 : 0xFFFFFFFF;
+            pixels[row * 8 + 1] = ((rowBits & 0x02) > 0) ? 0xFF000000 : 0xFFFFFFFF;
+            pixels[row * 8 + 0] = ((rowBits & 0x01) > 0) ? 0xFF000000 : 0xFFFFFFFF;
         }
+
+        BufferedImage image = new BufferedImage(PATTERN_WIDTH, PATTERN_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        image.setRGB(0, 0, PATTERN_WIDTH, PATTERN_HEIGHT, pixels, 0, 8);
+
+        return image;
     }
 
     private void fireObservers() {
