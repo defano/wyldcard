@@ -329,13 +329,17 @@
 
   {
     "title": "Hide",
-    "summary": "Hides a button or field part",
+    "summary": "Hides a button, field, the menu bar or the card window's title bar.",
     "codePrefix": "hide",
     "templates": [
-      "hide ${partFactor}"
+      "hide ${partFactor}",
+      "hide ${windowExpression}",
+      "hide titleBar",
+      "hide menuBar"
     ],
     "parameters": [
-      {"parameter": "partFactor", "description": "An expression referring to the part to be hidden."}
+      {"parameter": "partFactor", "description": "An expression referring to the part to be hidden."},
+      {"parameter": "windowExpression", "description": "An expression referring to a window."}
     ],
     "examples": [
       {"code": "hide any card button"}
@@ -559,13 +563,17 @@
 
   {
     "title": "Show",
-    "summary": "Shows (un-hides) a button or field part. Has no effect if the part is not hidden.",
+    "summary": "Shows (un-hides) a button, field, window, the menu bar or the card window's title bar.",
     "codePrefix": "show",
     "templates": [
-      "show ${partFactor}"
+      "show ${partFactor}",
+      "show ${windowExpression}",
+      "show titleBar",
+      "show menuBar"
     ],
     "parameters": [
-      {"parameter": "partFactor", "description": "An expression referring to the part to be shown."}
+      {"parameter": "partFactor", "description": "An expression referring to the part to be shown."},
+      {"parameter": "windowExpression", "description": "An expression referring to a window."}
     ],
     "examples": [
       {"code": "show any card button"}

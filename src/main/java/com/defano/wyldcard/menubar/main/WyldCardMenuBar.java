@@ -22,4 +22,6 @@ public interface WyldCardMenuBar {
     JMenu findMenuByName(String name);
 
     List<JMenu> getVisibleMenus();
+
+    void setVisible(boolean visible);
 }

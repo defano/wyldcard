@@ -173,7 +173,8 @@ commandStmnt
     | 'hide' card picture                                                                                               # hideThisCardPictCmd
     | 'hide' background picture                                                                                         # hideThisBkgndPictCmd
     | 'hide' picture of expression                                                                                      # hidePictCmd
-    | 'hide' 'titlebar'                                                                                                 # hideTitleBar
+    | 'hide' 'the'? 'titlebar'                                                                                          # hideTitleBar
+    | 'hide' 'the'? 'menubar'                                                                                           # hideMenubarCmd
     | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmdStmt
     | 'keydown' expression                                                                                              # keydownCmdStmt
     | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
@@ -213,7 +214,8 @@ commandStmnt
     | 'show' card picture                                                                                               # showThisCardPictCmd
     | 'show' background picture                                                                                         # showThisBkgndPictCmd
     | 'show' picture of expression                                                                                      # showPictCmd
-    | 'show' 'titlebar'                                                                                                 # showTitleBarCmd
+    | 'show' 'the'? 'titlebar'                                                                                          # showTitleBarCmd
+    | 'show' 'the'? 'menubar'                                                                                           # showMenubarCmd
     | 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
     | 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
     | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
