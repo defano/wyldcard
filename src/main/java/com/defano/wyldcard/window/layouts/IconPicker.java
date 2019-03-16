@@ -32,7 +32,6 @@ public class IconPicker extends WyldCardDialog<ButtonModel> {
     private ButtonModel model;
 
     public IconPicker() {
-
         okButton.addActionListener(e -> dispose());
         noneButton.addActionListener(e -> {
             model.setKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICON, new Value());
@@ -76,10 +75,10 @@ public class IconPicker extends WyldCardDialog<ButtonModel> {
     private List<JButton> getButtons() {
         List<JButton> buttons = new ArrayList<>();
 
-        List<ButtonIcon> icons = IconFactory.getAllIcons();
-        ButtonIcon selectedIcon = IconFactory.findIconForValue(this.model.getKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICON), icons);
+        List<ButtonIcon> icons = IconFactory.getInstance().getAllIcons();
+        ButtonIcon selectedIcon = IconFactory.getInstance().findIconForValue(this.model.getKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICON), icons);
 
-        for (ButtonIcon thisIcon : IconFactory.getAllIcons()) {
+        for (ButtonIcon thisIcon : IconFactory.getInstance().getAllIcons()) {
             buttons.add(getButtonForIcon(thisIcon, thisIcon == selectedIcon));
         }
 
@@ -91,7 +90,7 @@ public class IconPicker extends WyldCardDialog<ButtonModel> {
         JButton button = new JButton();
         button.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
         button.setSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
-        button.setIcon(buttonIcon.getIcon());
+        button.setIcon(buttonIcon.getPreviewIcon());
         button.setFocusable(false);
         button.addActionListener(e -> {
             enableButtons();

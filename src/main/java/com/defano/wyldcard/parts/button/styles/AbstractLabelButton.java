@@ -88,8 +88,8 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
                 break;
 
             case ButtonModel.PROP_ICON:
-                ButtonIcon icon = IconFactory.findIconForValue(newValue);
-                label.setIcon(icon == null ? null : icon.getImage());
+                ButtonIcon icon = IconFactory.getInstance().findIconForValue(newValue);
+                label.setIcon(icon == null ? null : icon.getIcon());
                 break;
 
             case ButtonModel.PROP_ICONALIGN:
