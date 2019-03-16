@@ -315,10 +315,9 @@ public class ChunkUtils {
 
         if (start > 1) {
             startChar -= getSeparatorForChunkType(context, delimiter).length();
+            startChar = Math.max(0, startChar);
         } else {
             endChar += getSeparatorForChunkType(context, delimiter).length();
-
-            // Special case: When replacing all available chunks need to assure we don't write off the end of the value
             endChar = Math.min(endChar, value.length());
         }
 
