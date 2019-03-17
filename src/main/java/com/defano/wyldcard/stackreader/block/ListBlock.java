@@ -5,9 +5,13 @@ import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.record.PageBlockIndexRecord;
+import com.defano.wyldcard.stackreader.record.PageEntryRecord;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class ListBlock extends Block {
@@ -47,6 +51,24 @@ public class ListBlock extends Block {
         return pageIndices;
     }
 
+    public List<PageBlock> getPages() {
+        return Arrays.stream(pageIndices)
+                .map(i -> getStack().getBlock(PageBlock.class, i.getPageId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<CardBlock> getCards() {
+        ArrayList<CardBlock> cardBlocks = new ArrayList<>();
+
+        for (PageBlock pageBlock : getPages()) {
+            for (PageEntryRecord pageEntry : pageBlock.getPageEntries()) {
+                cardBlocks.add(getStack().getBlock(CardBlock.class, pageEntry.getCardId()));
+            }
+        }
+
+        return cardBlocks;
+    }
+
     public Short getPageEntryCountForPage(int pageId) {
         return Arrays.stream(pageIndices)
                 .filter(i -> i.getPageId() == pageId)
@@ -74,9 +96,9 @@ public class ListBlock extends Block {
 
             pageIndices = new PageBlockIndexRecord[pageCount];
             for (int idx = 0; idx < pageCount; idx++) {
-                int id = sis.readInt();
+                int cardId = sis.readInt();
                 short entryCount = sis.readShort();
-                pageIndices[idx] = new PageBlockIndexRecord(id, entryCount);
+                pageIndices[idx] = new PageBlockIndexRecord(cardId, entryCount);
             }
 
         } catch (IOException e) {

@@ -118,6 +118,10 @@ public enum BlockType {
         return null;
     }
 
+    public Class<? extends Block> blockClass() {
+        return klass;
+    }
+
     public int getImportOrder() {
         return importOrder;
     }

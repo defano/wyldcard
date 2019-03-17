@@ -1,24 +1,31 @@
 package com.defano.wyldcard.stackreader.record;
 
+import com.defano.wyldcard.stackreader.enums.PageFlag;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @SuppressWarnings("unused")
 public class PageEntryRecord {
 
     private final int cardId;
-    private final boolean isMarked;
+    private PageFlag[] flags;
+    protected byte[] searchHash;
 
-    public PageEntryRecord(int cardId, boolean isMarked) {
+    public PageEntryRecord(int cardId, PageFlag[] flags, byte[] searchHash) {
         this.cardId = cardId;
-        this.isMarked = isMarked;
+        this.flags = flags;
+        this.searchHash = searchHash;
     }
 
     public int getCardId() {
         return cardId;
     }
 
-    public boolean isMarked() {
-        return isMarked;
+    public PageFlag[] getFlags() {
+        return flags;
+    }
+
+    public byte[] getSearchHash() {
+        return searchHash;
     }
 
     @Override

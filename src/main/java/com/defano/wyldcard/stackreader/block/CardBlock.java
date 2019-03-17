@@ -1,22 +1,18 @@
 package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
+import com.defano.wyldcard.stackreader.enums.LayerFlag;
 import com.defano.wyldcard.stackreader.misc.ImportException;
-import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import com.defano.wyldcard.stackreader.misc.ImportResult;
-import com.defano.wyldcard.stackreader.enums.*;
+import com.defano.wyldcard.stackreader.misc.StackInputStream;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-/**
- *
- */
 @SuppressWarnings("unused")
 public class CardBlock extends AbstractCardBlock {
 
-    private int bitmapId; // ID number of the corresponding BMAP block
-    private CardFlag[] flags;
+    private int bitmapId;
+    private LayerFlag[] flags;
     private int pageId; // ID number of the PAGE block containing this card's index
     private int bkgndId; // ID number of the card's background
     private short partCount; // number of parts (buttons and fields) on this card
@@ -25,37 +21,66 @@ public class CardBlock extends AbstractCardBlock {
         super(stack, blockType, blockSize, blockId, blockData);
     }
 
-    public BufferedImage getImage() {
-        return getStack().getImage(getBitmapId());
-    }
-
+    /** {@inheritDoc} */
+    @Override
     public int getBitmapId() {
         return bitmapId;
     }
 
-    public CardFlag[] getFlags() {
+    /**
+     * Gets an array of card flags. See {@link LayerFlag} for details.
+     *
+     * @return Zero or more card flags.
+     */
+    public LayerFlag[] getFlags() {
         return flags;
     }
 
+    /**
+     * Gets the ID of the PAGE block that indexes this card. See {@link PageBlock} for details.
+     *
+     * @return The ID of the page block.
+     */
     public int getPageId() {
         return pageId;
     }
 
+    /**
+     * Gets the ID of the BGND block that describes the background layer associated with this card. Use
+     * {@link #getBkgndBlock()} to retrieve the block data structure directly.
+     * <p>
+     * This is the same value as the background's ID as shown in HyperCard. See {@link BackgroundBlock} for details.
+     *
+     * @return The ID of this card's background.
+     */
     public int getBkgndId() {
         return bkgndId;
     }
 
+    /**
+     * Gets the {@link BackgroundBlock} structure representing this card's background. See {@link BackgroundBlock} for
+     * details.
+     *
+     * @return This card's background block structure
+     */
+    public BackgroundBlock getBkgndBlock() {
+        return getStack().getBlock(BackgroundBlock.class, getBkgndId());
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public short getPartCount() {
         return partCount;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void unpack(ImportResult report) throws ImportException {
         StackInputStream sis = new StackInputStream(getBlockData());
 
         try {
             bitmapId = sis.readInt();
-            flags = CardFlag.fromBitmask(sis.readShort());
+            flags = LayerFlag.fromBitmask(sis.readShort());
             sis.skipBytes(10);
             pageId = sis.readInt();
             bkgndId = sis.readInt();

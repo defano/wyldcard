@@ -1,6 +1,7 @@
 package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
+import com.defano.wyldcard.stackreader.enums.PageFlag;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import com.defano.wyldcard.stackreader.misc.ImportResult;
@@ -12,6 +13,8 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class PageBlock extends Block {
 
+    private int listId;
+    private int checksum;
     private PageEntryRecord[] pageEntries = new PageEntryRecord[0];
 
     public PageBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId, byte[] blockData) {
@@ -20,6 +23,14 @@ public class PageBlock extends Block {
 
     public PageEntryRecord[] getPageEntries() {
         return pageEntries;
+    }
+
+    public int getListId() {
+        return listId;
+    }
+
+    public int getChecksum() {
+        return checksum;
     }
 
     @Override
@@ -39,15 +50,16 @@ public class PageBlock extends Block {
         }
 
         try {
-            sis.readInt();  // Unknown field; skip
+            listId = sis.readInt();
+            checksum = sis.readInt();
             pageEntries = new PageEntryRecord[pageEntryCount];
 
-            //noinspection ConstantConditions
             for (int idx = 0; idx < pageEntryCount; idx++) {
                 int cardId = sis.readInt();
-                byte[] pageData = sis.readBytes(pageEntrySize - 4);
+                PageFlag[] flags = PageFlag.fromBitmask(sis.readByte());
+                byte[] searchHashData = sis.readBytes(pageEntrySize - 5);
 
-                pageEntries[idx] = new PageEntryRecord(cardId, ((pageData[0] & 0x08) != 0));
+                pageEntries[idx] = new PageEntryRecord(cardId, flags, searchHashData);
             }
 
         } catch (IOException e) {

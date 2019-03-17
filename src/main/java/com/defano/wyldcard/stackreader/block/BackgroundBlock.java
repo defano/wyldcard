@@ -4,7 +4,7 @@ import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import com.defano.wyldcard.stackreader.misc.ImportResult;
-import com.defano.wyldcard.stackreader.enums.CardFlag;
+import com.defano.wyldcard.stackreader.enums.LayerFlag;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import java.io.IOException;
 public class BackgroundBlock extends AbstractCardBlock {
 
     private int bitmapId;
-    private CardFlag[] flags;
+    private LayerFlag[] flags;
     private int cardCount;
     private int nextBkgndId;
     private int prevBkgndId;
@@ -27,11 +27,13 @@ public class BackgroundBlock extends AbstractCardBlock {
         return partCount;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public int getBitmapId() {
         return bitmapId;
     }
 
-    public CardFlag[] getFlags() {
+    public LayerFlag[] getFlags() {
         return flags;
     }
 
@@ -53,7 +55,7 @@ public class BackgroundBlock extends AbstractCardBlock {
 
         try {
             bitmapId = sis.readInt();
-            flags = CardFlag.fromBitmask(sis.readShort());
+            flags = LayerFlag.fromBitmask(sis.readShort());
             sis.readShort();
             cardCount = sis.readInt();
             nextBkgndId = sis.readInt();
