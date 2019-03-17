@@ -26,6 +26,8 @@ import com.defano.jsegue.SegueName;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.awt.*;
+
 /**
  * Converts an Antlr parse tree into a HyperTalk abstract syntax tree using Antlr's visitor pattern. The HyperTalk
  * grammar is defined in HyperTalk.g4.
@@ -89,6 +91,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitHideMenubarCmd(HyperTalkParser.HideMenubarCmdContext ctx) {
+        return new MenuBarVisibleCmd(ctx, false);
+    }
+
+    @Override
     public Object visitImportPaintCmdStmt(HyperTalkParser.ImportPaintCmdStmtContext ctx) {
         return new ImportPaintCmd(ctx, (Expression) visit(ctx.expression()));
     }
@@ -121,6 +128,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitShowTitleBarCmd(HyperTalkParser.ShowTitleBarCmdContext ctx) {
         return new TitleBarVisibleCmd(ctx, true);
+    }
+
+    @Override
+    public Object visitShowMenubarCmd(HyperTalkParser.ShowMenubarCmdContext ctx) {
+        return new MenuBarVisibleCmd(ctx, true);
     }
 
     @Override

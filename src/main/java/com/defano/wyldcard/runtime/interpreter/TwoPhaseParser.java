@@ -18,6 +18,10 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 public class TwoPhaseParser {
 
+    private final static String HANDLER_START = "^\\s*(on)\\s+\\w.*";
+    private final static String FUNCTION_START = "^\\s*(function)\\s+\\w.*";
+    private final static String HANDLER_END = "^\\s*(end)\\s+.*";
+
     /**
      * Performs a two-phase parse of the given HyperTalk script text. First attempts to parse the script using the SLL
      * prediction mode; if that fails, attempts to re-parse the input using the LL prediction mode.
@@ -33,8 +37,13 @@ public class TwoPhaseParser {
     public static Object parseScript(CompilationUnit compilationUnit, String scriptText) throws HtException {
 
         // Nothing to do for empty scripts
-        if (scriptText == null || scriptText.length() == 0) {
+        if (scriptText == null || scriptText.trim().length() == 0) {
             return new Script();
+        }
+
+        // HyperCard ignores text between handler blocks in scripts
+        if (compilationUnit == CompilationUnit.SCRIPT) {
+            scriptText = commentNonHandlerLines(scriptText);
         }
 
         try {
@@ -112,4 +121,49 @@ public class TwoPhaseParser {
             return null;
         }
     }
+
+    /**
+     * HyperCard ignores script text that appears outside of a message or function handler block, even if that text
+     * is not proceeded with '--'. So as not to require the parser to deal with this, we'll simply add a comment marker
+     * to the start of each ignored line.
+     *
+     * @param scriptText The script text
+     * @return Script text with ignored lines explicitly commented out
+     */
+    private static String commentNonHandlerLines(String scriptText) {
+        String inHandler = null;
+        StringBuilder lines = new StringBuilder();
+
+        for (String line : scriptText.split("\n")) {
+
+            // Beginning of a handler block?
+            if (inHandler == null && (line.matches(HANDLER_START) || line.matches(FUNCTION_START))) {
+                inHandler = line.split("\\s+")[1];
+            }
+
+            // Outside of handler; prepend line with "--"
+            if (inHandler == null) {
+                lines.append("--")
+                        .append(line)
+                        .append("\n");
+            }
+
+            // Inside handler; no change
+            else {
+                lines.append(line)
+                        .append("\n");
+            }
+
+            // End of a handler block?
+            if (inHandler != null && line.matches(HANDLER_END)) {
+                if (line.split("\\s+")[1].equalsIgnoreCase(inHandler)) {
+                    inHandler = null;
+                }
+            }
+        }
+
+        return lines.toString();
+    }
+
+
 }

@@ -173,7 +173,8 @@ commandStmnt
     | 'hide' background picture                                                                                         # hideThisBkgndPictCmd
     | 'hide' picture of expression                                                                                      # hidePictCmd
     | 'hide' expression                                                                                                 # hideCmdStmnt
-    | 'hide' 'titlebar'                                                                                                 # hideTitleBar
+    | 'hide' 'the'? 'titlebar'                                                                                          # hideTitleBar
+    | 'hide' 'the'? 'menubar'                                                                                           # hideMenubarCmd
     | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmdStmt
     | 'keydown' expression                                                                                              # keydownCmdStmt
     | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
