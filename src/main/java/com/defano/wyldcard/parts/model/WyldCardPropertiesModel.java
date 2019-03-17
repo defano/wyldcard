@@ -123,11 +123,11 @@ public class WyldCardPropertiesModel implements PropertiesModel {
         }
 
         if (!hasProperty(propertyName)) {
-            throw new NoSuchPropertyException("No such property " + propertyName + ".");
+            throw new NoSuchPropertyException(propertyName + " is not a WyldCard property.");
         }
 
         if (immutableProperties.contains(propertyName)) {
-            throw new PropertyPermissionException("Can't set " + propertyName + ".");
+            throw new PropertyPermissionException(propertyName + " can only be read.");
         }
 
         // If this is an alias; get the "real" name of this property

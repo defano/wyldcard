@@ -49,23 +49,23 @@ multilineScriptlet
     ;
 
 handler
-    : 'on' handlerName NEWLINE+ statementList? 'end' handlerName                                                        # noArgHandler
-    | 'on' handlerName parameterList NEWLINE+ statementList? 'end' handlerName                                          # argHandler
+    : 'on' symbol NEWLINE+ statementList? 'end' symbol                                                                  # noArgHandler
+    | 'on' symbol parameterList NEWLINE+ statementList? 'end' symbol                                                    # argHandler
     ;
 
 function
-    : 'function' ID NEWLINE+ statementList? 'end' ID                                                                    # noArgFunction
-    | 'function' ID parameterList NEWLINE+ statementList? 'end' ID                                                      # argFunction
-    ;
-
-handlerName
-    : ID
-    | commandName   // Handlers can take the name of a command keyword (other keywords are disallowed)
+    : 'function' symbol NEWLINE+ statementList? 'end' symbol                                                            # noArgFunction
+    | 'function' symbol parameterList NEWLINE+ statementList? 'end' symbol                                              # argFunction
     ;
 
 parameterList
-    : ID                                                                                                                # singleParamList
-    | parameterList ',' ID                                                                                              # multiParamList
+    : symbol                                                                                                            # singleParamList
+    | parameterList ',' symbol                                                                                          # multiParamList
+    ;
+
+symbol
+    : ID                                                                                                                # idSymbol
+    | keyword                                                                                                           # keywordSymbol
     ;
 
 statementList
@@ -156,7 +156,7 @@ commandStmnt
     | 'enable' expression                                                                                               # enableExpStmnt
     | 'enterinfield'                                                                                                    # enterInFieldCmdStmt
     | 'enterkey'                                                                                                        # enterKeyCmdStmt
-    | 'exit' handlerName                                                                                                # exitCmdStmt
+    | 'exit' symbol                                                                                                     # exitCmdStmt
     | 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
     | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
     | 'export' 'paint' 'to' 'file' expression                                                                           # exportPaintCmdStmt
@@ -169,10 +169,10 @@ commandStmnt
     | 'go' 'to'? expression remoteNavOption                                                                             # goCmdStmnt
     | 'go' 'back'                                                                                                       # goBackCmdStmt
     | 'go' 'back' 'with' 'visual' expression                                                                            # goBackVisualEffectCmdStmt
-    | 'hide' expression                                                                                                 # hideCmdStmnt
     | 'hide' card picture                                                                                               # hideThisCardPictCmd
     | 'hide' background picture                                                                                         # hideThisBkgndPictCmd
     | 'hide' picture of expression                                                                                      # hidePictCmd
+    | 'hide' expression                                                                                                 # hideCmdStmnt
     | 'hide' 'titlebar'                                                                                                 # hideTitleBar
     | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmdStmt
     | 'keydown' expression                                                                                              # keydownCmdStmt
@@ -185,7 +185,7 @@ commandStmnt
     | 'multiply' expression 'by' expression                                                                             # multiplyCmdStmnt
     | 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
     | 'open' 'file' expression                                                                                          # openFileCmdStmt
-    | 'pass' handlerName                                                                                                # passCmdStmt
+    | 'pass' symbol                                                                                                     # passCmdStmt
     | 'play' musicExpression                                                                                            # playCmdStmt
     | 'pop' card                                                                                                        # popCardCmdStmt
     | 'push' card                                                                                                       # pushCardCmdStmt
@@ -209,11 +209,12 @@ commandStmnt
     | 'select' 'after' expression                                                                                       # selectAfterChunkCmd
     | 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
     | 'send' listExpression 'to' expression                                                                             # sendCmdStmnt
-    | 'show' expression                                                                                                 # showCmdStmnt
     | 'show' card picture                                                                                               # showThisCardPictCmd
     | 'show' background picture                                                                                         # showThisBkgndPictCmd
     | 'show' picture of expression                                                                                      # showPictCmd
-    | 'show' 'titlebar'                                                                                                 # showTitleBarCmd
+    | 'show' 'the'? 'titlebar'                                                                                          # showTitleBarCmd
+    | 'show' 'the'? 'menubar'                                                                                           # showMenubarCmd
+    | 'show' expression                                                                                                 # showCmdStmnt
     | 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
     | 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
     | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
@@ -352,12 +353,12 @@ property
     ;
 
 globalProperty
-    : 'the'? propertyName                                                                                               # propertySpecGlobal
+    : 'the'? symbol                                                                                                     # propertySpecGlobal
     ;
 
 partProperty
-    : 'the'? propertyName of term                                                                                       # propertySpecPart
-    | 'the'? length propertyName of term                                                                                # lengthPropertySpecPart
+    : 'the'? symbol of term                                                                                             # propertySpecPart
+    | 'the'? length symbol of term                                                                                      # lengthPropertySpecPart
     ;
 
 part
@@ -458,7 +459,7 @@ term
     ;
 
 container
-    : ID                                                                                                                # variableDest
+    : symbol                                                                                                            # variableDest
     | 'the'? 'selection'                                                                                                # selectionDest
     | 'target'                                                                                                          # targetDest
     | property                                                                                                          # propertyDest
@@ -719,88 +720,42 @@ findType
     | 'string'
     ;
 
-// Not all properties need to be enumerated here, only those sharing a name with another keyword.
-propertyName
-    : 'marked'
-    | 'selectedtext'
-    | 'selectedchunk'
-    | 'selectedfield'
-    | 'selectedline'
-    | 'number'
-    | 'id'
-    | 'rect'
-    | 'rectangle'
-    | 'bottom'
-    | 'left'
-    | 'right'
-    | 'top'
-    | 'center'
-    | 'scroll'
-    | 'script'
-    | 'pattern'
-    | ID
-    ;
-
-// Not all property values need to be enumerated here, only known values sharing a name with another keyword.
 propertyValue
-    : 'plain'                                                                                                           # propertyValueLiteral
-    | 'menu'                                                                                                            # propertyValueLiteral
-    | 'bottom'                                                                                                          # propertyValueLiteral
-    | 'left'                                                                                                            # propertyValueLiteral
-    | 'right'                                                                                                           # propertyValueLiteral
-    | 'top'                                                                                                             # propertyValueLiteral
-    | 'center'                                                                                                          # propertyValueLiteral
+    : symbol                                                                                                            # propertySymbolValueExp
     | listExpression                                                                                                    # propertyValueExp
     ;
 
-commandName
-    : 'answer'
-    | 'ask'
-    | 'arrowkey'
-    | 'commandkeydown'
-    | 'controlkey'
-    | 'enterinfield'
-    | 'enterkey'
-    | 'keydown'
-    | 'tabkey'
-    | 'put'
-    | 'get'
-    | 'set'
-    | 'send'
-    | 'wait'
-    | 'sort'
-    | 'go'
-    | 'enable'
-    | 'disable'
-    | 'read'
-    | 'write'
-    | 'hide'
-    | 'show'
-    | 'add'
-    | 'subtract'
-    | 'multiply'
-    | 'divide'
-    | 'choose'
-    | 'click'
-    | 'drag'
-    | 'type'
-    | 'lock'
-    | 'unlock'
-    | 'pass'
-    | 'domenu'
-    | 'visual'
-    | 'reset'
-    | 'create'
-    | 'delete'
-    | 'play'
-    | 'dial'
-    | 'beep'
-    | 'open'
-    | 'close'
-    | 'select'
-    | 'find'
-    | 'import'
-    | 'export'
+keyword
+    : 'add' | 'to' | 'answer'
+    | 'with' | 'arrowkey' | 'ask' | 'file' | 'beep' | 'choose' | 'tool' | 'click' | 'at' | 'close'
+    | 'commandkeydown' | 'controlkey' | 'convert' | 'from' | 'create' | 'menu' | 'debug' | 'checkpoint' | 'delete'
+    | 'dial' | 'disable' | 'divide' | 'by' | 'domenu' | 'drag' | 'edit' | 'script' | 'enable'
+    | 'enterinfield' | 'enterkey' | 'hypercard' | 'export' | 'paint' | 'find' | 'international' | 'marked'
+    | 'get' | 'go' | 'visual' | 'back' | 'hide' | 'titlebar' | 'menubar' | 'import' | 'keydown' | 'lock' | 'screen'
+    | 'mark' | 'all' | 'where' | 'finding' | 'multiply' | 'next' | 'open' | 'pass' | 'play' | 'pop' | 'push' | 'put'
+    | 'read' | 'for' | 'until' | 'reset' | 'save' | 'this' | 'stack' | 'as' | 'select' | 'text'
+    | 'set' | 'send' | 'show' | 'sort' | 'speak' | 'male' | 'female' | 'neuter' | 'robotic' | 'voice'
+    | 'subtract' | 'tabkey' | 'type' | 'commandkey' | 'cmdkey' | 'unlock' | 'unmark' | 'wait' | 'while' | 'write'
+    | 'window' | 'without' | 'dialog' | 'dateitems' | 'date' | 'time' | 'english' | 'long' | 'abbreviated'
+    | 'abbrev' | 'abbr' | 'short' | 'ascending' | 'descending' | 'numeric' | 'datetime' | 'forever' | 'times'
+    | 'down' | 'menuitem' | 'part' | 'id' | 'pattern' | 'watcher' | 'variable'
+    | 'selection' | 'tempo' | 'field' | 'button' | 'line' | 'reg' | 'regular'
+    | 'poly' | 'polygon' | 'round' | 'rect' | 'rectangle' | 'spray' | 'can' | 'up' | 'left' | 'right' | 'effect'
+    | 'number' | 'clickh' | 'clickchunk' | 'clickloc' | 'clickline' | 'clicktext' | 'clickv' | 'diskspace'
+    | 'foundchunk' | 'foundfield' | 'foundline' | 'foundtext' | 'menus' | 'mouse' | 'mouseclick' | 'mouseloc'
+    | 'optionkey' | 'result' | 'screenrect' | 'selectedchunk' | 'selectedfield' | 'selectedline' | 'selectedloc'
+    | 'selectedtext' | 'shiftkey' | 'sound' | 'speech' | 'stacks' | 'systemversion' | 'ticks' | 'paramcount' | 'params'
+    | 'voices' | 'windows' | 'average' | 'min' | 'max' | 'sum' | 'random' | 'sqrt' | 'trunc' | 'sin' | 'cos' | 'tan'
+    | 'atan' | 'exp' | 'exp1' | 'exp2' | 'ln' | 'ln1' | 'log2' | 'abs' | 'chartonum' | 'numtochar' | 'value' | 'length'
+    | 'param' | 'annuity' | 'compound' | 'offset' | 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth' | 'seventh'
+    | 'eighth' | 'ninth' | 'tenth'
+    | 'mid' | 'middle' | 'last' | 'any' | 'parts' | 'menuitems' | 'integer' | 'point' | 'logical' | 'boolean' | 'bool'
+    | 'word' | 'chars' | 'whole' | 'string' | 'bottom' | 'top' | 'center' | 'scroll' | 'plain' | 'picture' | 'pict'
+    | 'seconds' | 'secs' | 'sec' | 'fast' | 'slow' | 'slowly' | 'very' | 'black' | 'card' | 'gray' | 'grey' | 'inverse'
+    | 'white' | 'dissolve' | 'barn' | 'door' | 'checkerboard' | 'iris' | 'shrink' | 'stretch' | 'venetian' | 'blinds'
+    | 'wipe' | 'zoom' | 'in' | 'out' | 'tick' | 'prev' | 'previous' | 'msg' | 'box' | 'cards' | 'cds' | 'cd'
+    | 'background' | 'backgrounds' | 'bkgnd' | 'bkgnds' | 'bg' | 'bgs' | 'buttons' | 'btn' | 'btns' | 'fields' | 'fld'
+    | 'flds' | 'character' | 'characters' | 'char' | 'words' | 'lines' | 'item' | 'items' | 'of'
     ;
 
 picture

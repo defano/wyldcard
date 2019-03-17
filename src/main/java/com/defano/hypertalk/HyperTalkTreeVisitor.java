@@ -673,50 +673,55 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitNoArgHandler(HyperTalkParser.NoArgHandlerContext ctx) {
         StatementList statements = ctx.statementList() == null ? new StatementList() : (StatementList) visit(ctx.statementList());
-        String onId = ctx.handlerName().size() > 0 ? (String) visit(ctx.handlerName(0)) : null;
-        String endId = ctx.handlerName().size() > 1 ? (String) visit(ctx.handlerName(1)) : null;
+        String onId = ctx.symbol().size() > 0 ? (String) visit(ctx.symbol(0)) : null;
+        String endId = ctx.symbol().size() > 1 ? (String) visit(ctx.symbol(1)) : null;
         return new NamedBlock(ctx, onId, endId, statements);
     }
 
     @Override
     public Object visitArgHandler(HyperTalkParser.ArgHandlerContext ctx) {
         StatementList statements = ctx.statementList() == null ? new StatementList() : (StatementList) visit(ctx.statementList());
-        String onId = ctx.handlerName().size() > 0 ? (String) visit(ctx.handlerName(0)) : null;
-        String endId = ctx.handlerName().size() > 1 ? (String) visit(ctx.handlerName(1)) : null;
+        String onId = ctx.symbol().size() > 0 ? (String) visit(ctx.symbol(0)) : null;
+        String endId = ctx.symbol().size() > 1 ? (String) visit(ctx.symbol(1)) : null;
         return new NamedBlock(ctx, onId, endId, (ParameterList) visit(ctx.parameterList()), statements);
     }
 
     @Override
     public Object visitNoArgFunction(HyperTalkParser.NoArgFunctionContext ctx) {
         StatementList statements = ctx.statementList() == null ? new StatementList() : (StatementList) visit(ctx.statementList());
-        String onId = ctx.ID().size() > 0 ? (String) visit(ctx.ID(0)) : null;
-        String endId = ctx.ID().size() > 1 ? (String) visit(ctx.ID(1)) : null;
+        String onId = ctx.symbol().size() > 0 ? (String) visit(ctx.symbol(0)) : null;
+        String endId = ctx.symbol().size() > 1 ? (String) visit(ctx.symbol(1)) : null;
         return new UserFunction(ctx, onId, endId, new ParameterList(), statements);
     }
 
     @Override
     public Object visitArgFunction(HyperTalkParser.ArgFunctionContext ctx) {
         StatementList statements = ctx.statementList() == null ? new StatementList() : (StatementList) visit(ctx.statementList());
-        String onId = ctx.ID().size() > 0 ? (String) visit(ctx.ID(0)) : null;
-        String endId = ctx.ID().size() > 1 ? (String) visit(ctx.ID(1)) : null;
+        String onId = ctx.symbol().size() > 0 ? (String) visit(ctx.symbol(0)) : null;
+        String endId = ctx.symbol().size() > 1 ? (String) visit(ctx.symbol(1)) : null;
         return new UserFunction(ctx, onId, endId, (ParameterList) visit(ctx.parameterList()), statements);
     }
 
     @Override
-    public Object visitHandlerName(HyperTalkParser.HandlerNameContext ctx) {
-        return super.visitHandlerName(ctx);
-    }
-
-    @Override
     public Object visitSingleParamList(HyperTalkParser.SingleParamListContext ctx) {
-        return new ParameterList((String) visit(ctx.ID()));
+        return new ParameterList((String) visit(ctx.symbol()));
     }
 
     @Override
     public Object visitMultiParamList(HyperTalkParser.MultiParamListContext ctx) {
         ParameterList parameterList = (ParameterList) visit(ctx.parameterList());
-        parameterList.addParameter((String) visit(ctx.ID()));
+        parameterList.addParameter((String) visit(ctx.symbol()));
         return parameterList;
+    }
+
+    @Override
+    public Object visitIdSymbol(HyperTalkParser.IdSymbolContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
+    public Object visitKeywordSymbol(HyperTalkParser.KeywordSymbolContext ctx) {
+        return ctx.getText();
     }
 
     @Override
@@ -932,7 +937,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitExitCmdStmt(HyperTalkParser.ExitCmdStmtContext ctx) {
-        return new ExitStatement(ctx, (String) visit(ctx.handlerName()));
+        return new ExitStatement(ctx, (String) visit(ctx.symbol()));
     }
 
     @Override
@@ -1187,7 +1192,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPassCmdStmt(HyperTalkParser.PassCmdStmtContext ctx) {
-        return new PassCmd(ctx, (String) visit(ctx.handlerName()));
+        return new PassCmd(ctx, (String) visit(ctx.symbol()));
     }
 
     @Override
@@ -1412,7 +1417,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitVariableDest(HyperTalkParser.VariableDestContext ctx) {
-        return new VariableExp(ctx, (String) visit(ctx.ID()));
+        return new VariableExp(ctx, (String) visit(ctx.symbol()));
     }
 
     @Override
@@ -1468,38 +1473,28 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitPropertyValueLiteral(HyperTalkParser.PropertyValueLiteralContext ctx) {
-        return new LiteralExp(ctx, ctx.getText());
-    }
-
-    @Override
     public Object visitPropertyValueExp(HyperTalkParser.PropertyValueExpContext ctx) {
         return visit(ctx.listExpression());
     }
 
     @Override
-    public Object visitPropertySpecGlobal(HyperTalkParser.PropertySpecGlobalContext ctx) {
-        return new PropertySpecifier((String) visit(ctx.propertyName()));
-    }
-
-    @Override
-    public Object visitPropertySpecPart(HyperTalkParser.PropertySpecPartContext ctx) {
-        return new PropertySpecifier((String) visit(ctx.propertyName()), (Expression) visit(ctx.term()));
-    }
-
-    @Override
-    public Object visitLengthPropertySpecPart(HyperTalkParser.LengthPropertySpecPartContext ctx) {
-        return new PropertySpecifier((LengthAdjective) visit(ctx.length()), (String) visit(ctx.propertyName()), (Expression) visit(ctx.term()));
-    }
-
-    @Override
-    public Object visitPropertyName(HyperTalkParser.PropertyNameContext ctx) {
+    public Object visitKeyword(HyperTalkParser.KeywordContext ctx) {
         return ctx.getText();
     }
 
     @Override
-    public Object visitCommandName(HyperTalkParser.CommandNameContext ctx) {
-        return super.visitCommandName(ctx);
+    public Object visitPropertySpecGlobal(HyperTalkParser.PropertySpecGlobalContext ctx) {
+        return new PropertySpecifier((String) visit(ctx.symbol()));
+    }
+
+    @Override
+    public Object visitPropertySpecPart(HyperTalkParser.PropertySpecPartContext ctx) {
+        return new PropertySpecifier((String) visit(ctx.symbol()), (Expression) visit(ctx.term()));
+    }
+
+    @Override
+    public Object visitLengthPropertySpecPart(HyperTalkParser.LengthPropertySpecPartContext ctx) {
+        return new PropertySpecifier((LengthAdjective) visit(ctx.length()), (String) visit(ctx.symbol()), (Expression) visit(ctx.term()));
     }
 
     @Override
@@ -2126,6 +2121,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitFindType(HyperTalkParser.FindTypeContext ctx) {
         return ctx.getText();
+    }
+
+    @Override
+    public Object visitPropertySymbolValueExp(HyperTalkParser.PropertySymbolValueExpContext ctx) {
+        return new VariableExp(ctx, ctx.getText());
     }
 
     @Override
