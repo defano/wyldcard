@@ -34,8 +34,26 @@ public class ButtonModel extends CardLayerPartModel {
     // "Hidden" internal property not addressable in HyperTalk; represents combo-box selection
     public static final String PROP_SELECTEDITEM = "--selectedindex--";
 
-    private ButtonModel(Owner owner, PartModel parentPartModel) {
+    public ButtonModel(Owner owner, PartModel parentPartModel) {
         super(PartType.BUTTON, owner, parentPartModel);
+
+        newProperty(PROP_SCRIPT, new Value(), false);
+        newProperty(PROP_ID, new Value(), true);
+        newProperty(PROP_NAME, new Value("New Button"), false);
+        newProperty(PROP_LEFT, new Value(), false);
+        newProperty(PROP_TOP, new Value(), false);
+        newProperty(PROP_WIDTH, new Value(), false);
+        newProperty(PROP_HEIGHT, new Value(), false);
+        newProperty(PROP_SHOWNAME, new Value(true), false);
+        newProperty(PROP_STYLE, new Value(ButtonStyle.ROUND_RECT.toString()), false);
+        newProperty(PROP_FAMILY, new Value(), false);
+        newProperty(PROP_HILITE, new Value(false), false);
+        newProperty(PROP_AUTOHILITE, new Value(true), false);
+        newProperty(PROP_CONTENTS, new Value(), false);
+        newProperty(PROP_ICON, new Value(), false);
+        newProperty(PROP_ICONALIGN, new Value("default"), false);
+        newProperty(PROP_SELECTEDITEM, new Value(), false);
+        
         initialize();
     }
 

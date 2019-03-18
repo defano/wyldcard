@@ -1,5 +1,6 @@
 package com.defano.wyldcard.stackreader.record;
 
+import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import com.defano.wyldcard.stackreader.block.Block;
@@ -13,6 +14,8 @@ import java.io.IOException;
 
 @SuppressWarnings("unused")
 public class PartRecord {
+
+    private transient HyperCardStack stack;
 
     private short size; // size of the part, including this header
     private short partId; // ID number of the part
@@ -40,19 +43,31 @@ public class PartRecord {
     }
 
     public int getTitleWidth() {
+        if (partType == PartType.FIELD) {
+            throw new IllegalStateException("This value does not apply to field parts.");
+        }
         return titleWidthOrLastSelectedLine;
     }
 
     public int getLastSelectedLine() {
+        if (partType == PartType.BUTTON) {
+            throw new IllegalStateException("This value does not apply to button parts.");
+        }
         return titleWidthOrLastSelectedLine;
     }
 
     public int getFirstSelectedLine() {
+        if (partType == PartType.BUTTON) {
+            throw new IllegalStateException("This value does not apply to button parts.");
+        }
         return iconIdOrFirstSelectedLine;
     }
 
     public int getIconId() {
-        return getIconId();
+        if (partType == PartType.FIELD) {
+            throw new IllegalStateException("This value does not apply to field parts.");
+        }
+        return iconIdOrFirstSelectedLine;
     }
 
     public TextAlignment getTextAlign() {
@@ -139,6 +154,7 @@ public class PartRecord {
         PartRecord part = new PartRecord();
         StackInputStream sis = new StackInputStream(data);
 
+        part.stack = parent.getStack();
         part.size = entrySize;
 
         try {

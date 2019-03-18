@@ -28,6 +28,7 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
         newProperty(PROP_SCRIPTTEXTSIZE, new Value(12), false);
         newProperty(PROP_LOCKMESSAGES, new Value(true), false);
         newProperty(PROP_TEXTARROWS, new Value(true), false);
+        newProperty(PROP_USERLEVEL, new Value(5), false);       // Has no effect
 
         newComputedReadOnlyProperty(PROP_ADDRESS, (context, model, propertyName) -> {
             try {

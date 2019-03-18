@@ -29,7 +29,7 @@ import java.util.Collection;
  * controller object.
  */
 @SuppressWarnings("WeakerAccess")
-public class CardModel extends PartModel implements LayeredPartFinder, NamedPart {
+public class CardModel extends PartModel implements LayeredPartFinder, NamedPart, PartOwner {
 
     public final static String PROP_ID = "id";
     public final static String PROP_MARKED = "marked";
@@ -47,28 +47,63 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
     public static final String PROP_LONGOWNER = "long owner";
     public static final String PROP_SHORTOWNER = "short owner";
 
-    private int backgroundId;
     private final Collection<FieldModel> fields = new ArrayList<>();
     private final Collection<ButtonModel> buttons = new ArrayList<>();
+    private int backgroundId;
     private BufferedImage cardImage;
 
     private transient CardModelObserver observer;
 
-    private CardModel(int cardId, int backgroundId, PartModel parentPartModel) {
+    public CardModel(StackModel parentPartModel) {
         super(PartType.CARD, Owner.STACK, parentPartModel);
 
-        this.backgroundId = backgroundId;
-
-        newProperty(PROP_ID, new Value(cardId), true);
+        newProperty(PROP_ID, new Value(), true);
         newProperty(PROP_MARKED, new Value(false), false);
         newProperty(PROP_CANTDELETE, new Value(false), false);
         newProperty(PROP_DONTSEARCH, new Value(false), false);
-        newProperty(PROP_NAME, new Value(""), false);
-        newProperty(PROP_CONTENTS, new Value(""), false);
+        newProperty(PROP_NAME, new Value(), false);
+        newProperty(PROP_CONTENTS, new Value(), false);
         newProperty(PROP_SHOWPICT, new Value(true), false);
 
         initialize();
     }
+
+//    public CardModel(StackModel stack,
+//                     int cardId,
+//                     int backgroundId,
+//                     String name,
+//                     BufferedImage cardImage,
+//                     boolean isMarked,
+//                     boolean cantDelete,
+//                     boolean dontSearch,
+//                     boolean showPict,
+//                     Object contents) {
+//
+//        super(PartType.CARD, Owner.STACK, stack);
+//        this.backgroundId = backgroundId;
+//
+//        newProperty(PROP_ID, new Value(cardId), true);
+//        newProperty(PROP_MARKED, new Value(isMarked), false);
+//        newProperty(PROP_CANTDELETE, new Value(cantDelete), false);
+//        newProperty(PROP_DONTSEARCH, new Value(dontSearch), false);
+//        newProperty(PROP_NAME, new Value(name), false);
+//        newProperty(PROP_CONTENTS, new Value(contents), false);
+//        newProperty(PROP_SHOWPICT, new Value(showPict), false);
+//        setCardImage(cardImage);
+//
+//        initialize();
+//    }
+
+//    /**
+//     * Returns a new CardModel containing no parts and and empty foreground canvas but which inherits the
+//     * specified background.
+//     *
+//     * @param backgroundId The ID of the background this card should inherit.
+//     * @return The new CardModel
+//     */
+//    public static CardModel emptyCardModel(int cardId, int backgroundId, StackModel parentPartModel) {
+//        return new CardModel(parentPartModel, cardId, backgroundId, "", null, false, false, false, false, "");
+//    }
 
     @Override
     @PostConstruct
@@ -104,41 +139,27 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
                 (context, property) -> context.getCurrentStack().getStackModel());
     }
 
-    /**
-     * Returns a new CardModel containing no parts and and empty foreground canvas but which inherits the
-     * specified background.
-     *
-     * @param backgroundId The ID of the background this card should inherit.
-     * @return The new CardModel
-     */
-    public static CardModel emptyCardModel(int cardId, int backgroundId, PartModel parentPartModel) {
-        return new CardModel(cardId, backgroundId, parentPartModel);
-    }
-
+    @Override
     public Collection<FieldModel> getFieldModels() {
         return fields;
     }
 
+    @Override
     public Collection<ButtonModel> getButtonModels() {
         return buttons;
     }
 
-    /**
-     * Removes the specified part (button or field). Has no effect if the part doesn't exist on this card.
-     *
-     * @param context The execution context.
-     * @param partModel The part to remove from this card.
-     */
+    @Override
     public void removePartModel(ExecutionContext context, PartModel partModel) {
         if (partModel instanceof FieldModel) {
-            if (partModel.getOwner() == Owner.BACKGROUND)  {
-                getBackgroundModel().removePartModel(partModel);
+            if (partModel.getOwner() == Owner.BACKGROUND) {
+                getBackgroundModel().removePartModel(context, partModel);
             } else {
                 fields.remove(partModel);
             }
         } else if (partModel instanceof ButtonModel) {
             if (partModel.getOwner() == Owner.BACKGROUND) {
-                getBackgroundModel().removePartModel(partModel);
+                getBackgroundModel().removePartModel(context, partModel);
             } else {
                 buttons.remove(partModel);
             }
@@ -149,11 +170,7 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
         firePartRemoved(context, partModel);
     }
 
-    /**
-     * Adds a part (button or field) to this card.
-     *
-     * @param partModel The part to add.
-     */
+    @Override
     public void addPartModel(PartModel partModel) {
         if (partModel instanceof FieldModel) {
             fields.add((FieldModel) partModel);
@@ -173,6 +190,10 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
      */
     public int getBackgroundId() {
         return backgroundId;
+    }
+
+    public void setBackgroundId(int backgroundId) {
+        this.backgroundId = backgroundId;
     }
 
     public BackgroundModel getBackgroundModel() {
@@ -247,7 +268,9 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
         setKnownProperty(context, PROP_MARKED, new Value(marked));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LengthAdjective getDefaultAdjectiveForProperty(String propertyName) {
         if (propertyName.equalsIgnoreCase(PROP_NAME)) {
@@ -259,7 +282,9 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean isAdjectiveSupportedProperty(String propertyName) {
         return propertyName.equalsIgnoreCase(PROP_NAME) || propertyName.equalsIgnoreCase(PROP_ID);
     }
@@ -275,6 +300,7 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
 
     /**
      * Gets the zero-based location of this card in its stack.
+     *
      * @return The location of this card in the stack.
      */
     public int getCardIndexInStack() {

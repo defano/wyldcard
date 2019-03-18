@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.model.LengthAdjective;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
+import com.defano.wyldcard.parts.card.PartOwner;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
 import com.defano.wyldcard.parts.finder.OrderedPartFinder;
@@ -26,7 +27,7 @@ import java.util.List;
  * A data model representing a card background. There is no view associated with this model; rather this data is
  * incorporated/merged into the {@link CardPart} controller object when rendered.
  */
-public class BackgroundModel extends PartModel implements LayeredPartFinder {
+public class BackgroundModel extends PartModel implements LayeredPartFinder, PartOwner {
 
     public final static String PROP_ID = "id";
     public final static String PROP_NAME = "name";
@@ -38,28 +39,50 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
     public static final String PROP_LONGNAME = "long name";
 
     private BufferedImage backgroundImage;
-    private final Collection<ButtonModel> buttonModels;
-    private final Collection<FieldModel> fieldModels;
+    private final Collection<ButtonModel> buttonModels = new ArrayList<>();
+    private final Collection<FieldModel> fieldModels = new ArrayList<>();
 
-    private BackgroundModel(int backgroundId, PartModel parentPartModel) {
-        super(PartType.BACKGROUND, Owner.STACK, parentPartModel);
+    public BackgroundModel(StackModel model) {
+        super(PartType.BACKGROUND, Owner.STACK, model);
 
-        buttonModels = new ArrayList<>();
-        fieldModels = new ArrayList<>();
-
-        newProperty(PROP_ID, new Value(backgroundId), true);
-        newProperty(PROP_NAME, new Value(""), false);
+        newProperty(PROP_ID, new Value(), true);
+        newProperty(PROP_NAME, new Value(), false);
         newProperty(PROP_CANTDELETE, new Value(false), false);
         newProperty(PROP_DONTSEARCH, new Value(false), false);
-        newProperty(PROP_CONTENTS, new Value(""), false);
+        newProperty(PROP_CONTENTS, new Value(), false);
         newProperty(PROP_SHOWPICT, new Value(true), false);
 
         initialize();
     }
 
-    public static BackgroundModel emptyBackground(int backgroundId, PartModel parentPartModel) {
-        return new BackgroundModel(backgroundId, parentPartModel);
-    }
+//    public BackgroundModel(int backgroundId,
+//                           StackModel stackModel,
+//                           BufferedImage backgroundImage,
+//                           String name,
+//                           boolean cantDelete,
+//                           boolean dontSearch,
+//                           boolean showPict,
+//                           Object contents)
+//    {
+//        super(PartType.BACKGROUND, Owner.STACK, stackModel);
+//
+//        buttonModels = new ArrayList<>();
+//        fieldModels = new ArrayList<>();
+//
+//        newProperty(PROP_ID, new Value(backgroundId), true);
+//        newProperty(PROP_NAME, new Value(name), false);
+//        newProperty(PROP_CANTDELETE, new Value(cantDelete), false);
+//        newProperty(PROP_DONTSEARCH, new Value(dontSearch), false);
+//        newProperty(PROP_CONTENTS, new Value(contents), false);
+//        newProperty(PROP_SHOWPICT, new Value(showPict), false);
+//        setBackgroundImage(backgroundImage);
+//
+//        initialize();
+//    }
+
+//    public static BackgroundModel emptyBackground(int backgroundId, StackModel stackModel) {
+//        return new BackgroundModel(backgroundId, stackModel, null, "", false, false, false, "");
+//    }
 
     @Override
     @PostConstruct
@@ -124,6 +147,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         return ((StackModel) getParentPartModel()).getCardsInBackground(getId(context));
     }
 
+    @Override
     public void addPartModel(PartModel model) {
         if (model instanceof FieldModel) {
             addFieldModel((FieldModel) model);
@@ -144,8 +168,9 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         this.buttonModels.add(model);
     }
 
+    @Override
     @SuppressWarnings("SuspiciousMethodCalls")
-    public void removePartModel(PartModel model) {
+    public void removePartModel(ExecutionContext context, PartModel model) {
         switch (model.getType()) {
             case FIELD:
                 fieldModels.remove(model);

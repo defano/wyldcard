@@ -194,11 +194,11 @@ public class StackBlock extends Block {
     }
 
     public short getHeight() {
-        return height;
+        return height == 0 ? 342 : height;
     }
 
     public short getWidth() {
-        return width;
+        return width == 0 ? 512 : width;
     }
 
     public long[] getPatternData() {

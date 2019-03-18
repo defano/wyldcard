@@ -1,9 +1,6 @@
 package com.defano.wyldcard.stackreader;
 
-import com.defano.wyldcard.stackreader.block.Block;
-import com.defano.wyldcard.stackreader.block.BlockType;
-import com.defano.wyldcard.stackreader.block.CardBlock;
-import com.defano.wyldcard.stackreader.block.ListBlock;
+import com.defano.wyldcard.stackreader.block.*;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.ImportOrderComparator;
 import com.defano.wyldcard.stackreader.misc.ImportResult;
@@ -11,6 +8,7 @@ import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +110,15 @@ public class HyperCardStack {
      */
     public List<CardBlock> getCardBlocks() {
         return getBlock(ListBlock.class).getCards();
+    }
+
+    public BufferedImage getImage(int bitmapId) {
+        return blocks.stream()
+                .filter(b -> b.getBlockId() == bitmapId)
+                .filter(b -> b.getClass() == ImageBlock.class)
+                .map(b -> ((ImageBlock) b).getImage())
+                .findFirst()
+                .orElse(null);
     }
 
     private void deserialize(StackInputStream fis, ImportResult report) throws ImportException {

@@ -8,6 +8,8 @@ import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.icons.UserIcon;
 import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
+import com.defano.wyldcard.parts.builder.BackgroundModelBuilder;
+import com.defano.wyldcard.parts.builder.CardModelBuilder;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.StackPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -51,25 +53,47 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     // The location where this stack was saved to, or opened from, on disk. Null if the stack has not been saved.
     private transient Subject<Optional<File>> savedStackFileProvider;
 
-    private StackModel(String stackName, Dimension dimension) {
+    public StackModel() {
         super(PartType.STACK, Owner.HYPERCARD, null);
 
-        newProperty(PROP_NAME, new Value(stackName), false);
-        newProperty(PROP_WIDTH, new Value(dimension.width), false);
-        newProperty(PROP_HEIGHT, new Value(dimension.height), false);
+        newProperty(PROP_NAME, new Value("Untitled"), false);
+        newProperty(PROP_WIDTH, new Value(640), false);
+        newProperty(PROP_HEIGHT, new Value(480), false);
         newProperty(PROP_RESIZABLE, new Value(false), false);
         newProperty(PROP_CANTPEEK, new Value(false), false);
 
         initialize();
     }
 
-    public static StackModel newStackModel(String stackName) {
-        StackModel stack = new StackModel(stackName, new Dimension(640, 480));
-        stack.cardModels.add(CardModel.emptyCardModel(stack.getNextCardId(), stack.newBackgroundModel(), stack));
-        return stack;
-    }
+//    public StackModel(String name, int width, int height, boolean resizable, boolean cantPeek) {
+//        super(PartType.STACK, Owner.HYPERCARD, null);
+//
+//        newProperty(PROP_NAME, new Value(name), false);
+//        newProperty(PROP_WIDTH, new Value(width), false);
+//        newProperty(PROP_HEIGHT, new Value(height), false);
+//        newProperty(PROP_RESIZABLE, new Value(resizable), false);
+//        newProperty(PROP_CANTPEEK, new Value(cantPeek), false);
+//
+//        initialize();
+//    }
+//
+//    private StackModel(String stackName, Dimension dimension) {
+//        this(stackName, dimension.width, dimension.height, false, false);
+//    }
+//
+//    public static StackModel newStackModel(String stackName) {
+//        StackModel stack = new StackModel(stackName, new Dimension(640, 480));
+//
+//        stack.cardModels.add(new CardModelBuilder(stack)
+//                .withId(stack.getNextCardId())
+//                .withBackgroundId(stack.newBackgroundModel())
+//                .build());
+//
+//        return stack;
+//    }
 
     @PostConstruct
+    @SuppressWarnings("unused")
     public void postConstruct() {
         initialize();
         relinkParentPartModel(null);
@@ -143,23 +167,21 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         setKnownProperty(context, PROP_NAME, new Value(filename));
     }
 
-    public int insertCard(CardModel cardModel) {
-        cardModels.add(currentCardIndex + 1, cardModel);
-        receiveMessage(new ExecutionContext(), SystemMessage.NEW_CARD.messageName);
-        return currentCardIndex + 1;
+    public void addCard(CardModel cardModel) {
+        cardModels.add(cardModel);
     }
 
-    public void newCard(int backgroundId) {
-        insertCard(CardModel.emptyCardModel(getNextCardId(), backgroundId, this));
+    public void addCard(CardModel cardModel, int atIndex) {
+        cardModels.add(atIndex, cardModel);
     }
 
-    public void newCardWithNewBackground() {
-        insertCard(CardModel.emptyCardModel(getNextCardId(), newBackgroundModel(), this));
+    public void addBackground(BackgroundModel backgroundModel) {
+        backgroundModels.put(backgroundModel.getId(new ExecutionContext()), backgroundModel);
     }
 
-    private int newBackgroundModel() {
+    public int newBackgroundModel() {
         int newBackgroundId = getNextBackgroundId();
-        backgroundModels.put(newBackgroundId, BackgroundModel.emptyBackground(newBackgroundId, this));
+        backgroundModels.put(newBackgroundId, new BackgroundModelBuilder(this).withId(newBackgroundId).build());
         return newBackgroundId;
     }
 

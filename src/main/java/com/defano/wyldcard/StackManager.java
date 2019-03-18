@@ -54,6 +54,8 @@ public interface StackManager {
      */
     StackPart openStack(ExecutionContext context, boolean inNewWindow, String title);
 
+    StackPart openStack(ExecutionContext context, StackModel model, boolean inNewWindow);
+
     /**
      * Gets a list of all currently open stacks (those which are displayed inside of a window).
      *

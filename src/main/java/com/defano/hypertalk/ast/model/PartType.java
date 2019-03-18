@@ -23,6 +23,19 @@ public enum PartType {
         }
     }
 
+    public Owner asOwner() {
+        switch (this) {
+            case CARD:
+                return Owner.CARD;
+            case BACKGROUND:
+                return Owner.BACKGROUND;
+            case STACK:
+                return Owner.STACK;
+        }
+
+        throw new IllegalStateException("Type is not an owner: " + this);
+    }
+
     public boolean isLayeredPart() {
         return this == BUTTON || this == FIELD;
     }

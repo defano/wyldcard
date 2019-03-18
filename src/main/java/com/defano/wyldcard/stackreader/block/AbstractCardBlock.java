@@ -9,6 +9,7 @@ import com.defano.wyldcard.stackreader.record.PartContentRecord;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Represents the fields common to CARD and BKGD blocks.

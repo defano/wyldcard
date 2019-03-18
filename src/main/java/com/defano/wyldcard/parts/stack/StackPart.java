@@ -8,6 +8,8 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fx.CurtainManager;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
+import com.defano.wyldcard.parts.builder.CardModelBuilder;
+import com.defano.wyldcard.parts.builder.StackModelBuilder;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
@@ -47,7 +49,10 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     }
 
     public static StackPart newStack(ExecutionContext context) {
-        return fromStackModel(context, StackModel.newStackModel("Untitled"));
+        return fromStackModel(context, new StackModelBuilder()
+                .withName("Untitled")
+                .withInitialCard()
+                .build());
     }
 
     public static StackPart fromStackModel(ExecutionContext context, StackModel model) {
@@ -124,7 +129,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     public CardPart newBackground(ExecutionContext context) {
         WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
-        stackModel.newCardWithNewBackground();
+        newCardWithNewBackground();
         cardCountProvider.onNext(stackModel.getCardCount());
         fireOnCardOrderChanged();
 
@@ -142,7 +147,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     public CardPart newCard(ExecutionContext context) {
         WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
-        stackModel.newCard(currentCard.getPartModel().getBackgroundId());
+        newCard(currentCard.getPartModel().getBackgroundId());
         cardCountProvider.onNext(stackModel.getCardCount());
         fireOnCardOrderChanged();
 
@@ -186,12 +191,32 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
             card.relinkParentPartModel(getStackModel());
             card.newProperty(CardModel.PROP_ID, new Value(getStackModel().getNextCardId()), true);
 
-            stackModel.insertCard(card);
+            insertCard(card);
             cardCountProvider.onNext(stackModel.getCardCount());
             fireOnCardOrderChanged();
 
             navigationManager.goNextCard(context, this, null);
         }
+    }
+
+    public int insertCard(CardModel cardModel) {
+        getStackModel().addCard(cardModel, getStackModel().getCurrentCardIndex() + 1);
+        getStackModel().receiveMessage(new ExecutionContext(), SystemMessage.NEW_CARD.messageName);
+        return getStackModel().getCurrentCardIndex() + 1;
+    }
+
+    public void newCard(int backgroundId) {
+        insertCard(new CardModelBuilder(getStackModel())
+                .withId(getStackModel().getNextCardId())
+                .withBackgroundId(backgroundId)
+                .build());
+    }
+
+    public void newCardWithNewBackground() {
+        insertCard(new CardModelBuilder(getStackModel())
+                .withId(getStackModel().getNextCardId())
+                .withBackgroundId(getStackModel().newBackgroundModel())
+                .build());
     }
 
     /**

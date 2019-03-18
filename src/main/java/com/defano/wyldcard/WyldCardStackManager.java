@@ -104,6 +104,17 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         return null;
     }
 
+    public StackPart openStack(ExecutionContext context, StackModel model, boolean inNewWindow) {
+        try {
+            StackPart part = StackPart.fromStackModel(context, model);
+            displayStack(context, part, inNewWindow);
+            return part;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Attempts to open the identified stack file.
      *
@@ -117,12 +128,9 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     private StackPart openStack(ExecutionContext context, File stackFile, boolean inNewWindow) {
         try {
             StackModel model = Serializer.deserialize(stackFile, StackModel.class);
-            StackPart part = StackPart.fromStackModel(context, model);
-
             model.setSavedStackFile(context, stackFile);
-            displayStack(context, part, inNewWindow);
 
-            return part;
+            return openStack(context, model, inNewWindow);
         } catch (Exception e) {
             return null;
         }
