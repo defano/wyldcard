@@ -27,6 +27,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -475,5 +476,21 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
                             .build();
                 }
         });
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PartModel that = (PartModel) o;
+        return this.getType() == that.getType() &&
+                this.owner == that.getOwner() &&
+                this.getId(null) == that.getId(null);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, getId(null), getOwner());
     }
 }

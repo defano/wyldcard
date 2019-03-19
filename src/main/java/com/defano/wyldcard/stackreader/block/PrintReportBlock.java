@@ -113,7 +113,6 @@ public class PrintReportBlock extends Block {
             reportRecords = new ReportRecord[reportRecordCount];
             for (int idx = 0; idx < reportRecordCount; idx++) {
                 int recordSize = sis.readShort();
-                System.err.println(recordSize);
                 byte[] recordData = sis.readBytes(recordSize - 2);
 
                 reportRecords[idx] = ReportRecord.deserialize(this, recordSize, recordData, report);

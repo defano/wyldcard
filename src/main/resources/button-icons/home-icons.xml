@@ -1,0 +1,79 @@
+<ResourcesArray>
+    <Resource>
+        <ResourceID>30504</ResourceID>
+        <ResourceName>Apple events</ResourceName>
+        <ResourceFlags>32</ResourceFlags>
+        <ResourceData>
+            AAAAAAAAAAAAAAAAB/gP4B/+P/g//3/8f////n4f/H74B/Af
+            +AfwH/AD4A/wA+AP8APgDwAD4A8H////H////z////9/////
+            fgPgAPgD4AD4A+AP8APgD/AD4A/4B/Af+AfwH34f/H5////+
+            P/9//B/+P/gH+A/gAAAAAAAAAAA=
+        </ResourceData>
+    </Resource>
+    <Resource>
+        <ResourceID>28226</ResourceID>
+        <ResourceName>Audio Help</ResourceName>
+        <ResourceFlags>32</ResourceFlags>
+        <ResourceData>
+            AAAGAAAADwD///n8///w/IAP4HyAD888/4+fnKrPGYzVTgGG
+            qswDg9VMBwOqzgYG1U8GDKrPgBzVT8Y8qs/mfNVP8Pyqz/n8
+            1U///P+P33yAD5u8gA8dvIAMHtyADR7c/6we3IANHtyADx28
+            gA+bvP//33yAD/78gA///P////w=
+        </ResourceData>
+    </Resource>
+    <Resource>
+        <ResourceID>28867</ResourceID>
+        <ResourceName>HyperCard AppleScript Reference</ResourceName>
+        <ResourceFlags>32</ResourceFlags>
+        <ResourceData>
+            AB4AAAAhAAAAQIAAAICAAAEAgAACAQAABAIAAAgEAAAQCgAA
+            IBEAAEAg//zwQFAEiIB//IUAQASGAF//RABUAUAAX/8gAFAB
+            EAH/8QgBf/EEAf/xAgEAEQEBABEAgQARAUEAEQJBABEEIwAR
+            BCUAHwQpABACMQAQAeEAEAAB//A=
+        </ResourceData>
+    </Resource>
+    <Resource>
+        <ResourceID>12659</ResourceID>
+        <ResourceName>Mail Merge</ResourceName>
+        <ResourceFlags>32</ResourceFlags>
+        <ResourceData>
+            AB4AAAAhAAAqQJVQAIBAACEAQBACAIAAJAEAEAgCAAAQBQAQ
+            IAiAAEAQQBDwICAAiEAQEISP//+FCAKrRguFXUAIAq8gCAAB
+            EAgAASgIHvEECAABIggb8QEIAAEgiAABAE///yCgIBABIEAA
+            IhCAEAIRAAAqElVQARQAAAD4AAA=
+        </ResourceData>
+    </Resource>
+    <Resource>
+        <ResourceID>11316</ResourceID>
+        <ResourceName>Color Tools</ResourceName>
+        <ResourceFlags>32</ResourceFlags>
+        <ResourceData>
+            AA/8AABwA4ABgABgAg4AEAQRA4gIFQREEBEERBAOBEQgAAOE
+            IAAABCcB4AhNg/AISIcIME2GCMCHAhMAgAHkAIAABYCAAAZg
+            gAAYGI4AYAabAYABlQYAAZsIAAaOCAAaQB4AZ0AxgZkgPmZm
+            IDmZmBAeZmAIAZmABgDmAAH/OAA=
+        </ResourceData>
+    </Resource>
+    <Resource>
+        <ResourceID>7024</ResourceID>
+        <ResourceName>Quicktime</ResourceName>
+        <ResourceFlags>32</ResourceFlags>
+        <ResourceData>
+            /////4AAAAGAAAABgAAAAYAP8AGAP/wBgP//AYH//4GD///B
+            g/w/wYfwD+GH4Afhj8AD8Y/BA/GPg4Hxj4ZB8Y+CYfGPgdHx
+            j8Cr8Y/AV/GH4Cvhh/AV4YP8OMGD//3hgf//8YD///GAP/3x
+            gA/w8YAAAAGAAAABgAAAAf////8=
+        </ResourceData>
+    </Resource>
+    <Resource>
+        <ResourceID>6134</ResourceID>
+        <ResourceName>Text Controls</ResourceName>
+        <ResourceFlags>32</ResourceFlags>
+        <ResourceData>
+            AB4AAAAhAAAqQJVQAIBAACEAQBACH///JBAAAQgQDAEQEA4B
+            IBAOAUAQHwHwMB8BiFAzgYSQM4GFEGHBRhB/wUAQwOEgEMDh
+            EBGAcSgRgHEEE8D5IhAAAQEQAAEgn///AEAQACCgIBABIEAA
+            IhCAEAIRAAAqElVQARQAAAD4AAA=
+        </ResourceData>
+    </Resource>
+</ResourcesArray>

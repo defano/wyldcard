@@ -125,7 +125,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         newComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getX(), value.integerValue()));
 
         if (!hasProperty(PartModel.PROP_ID)) {
-            newProperty(PartModel.PROP_ID, new Value(UUID.randomUUID().toString()), true);
+            newProperty(PartModel.PROP_ID, new Value(UUID.randomUUID().toString().hashCode()), true);
         }
     }
 
@@ -445,22 +445,6 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         return savedStackFileProvider.blockingFirst()
                 .map(File::getAbsolutePath)
                 .orElseGet(() -> getShortName(context));
-    }
-
-    @Override
-    public int getId(ExecutionContext context) {
-        throw new IllegalStateException("Not valid for stack parts.");
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        String thisId = this.getKnownProperty(new ExecutionContext(), PartModel.PROP_ID).toString();
-        String thatId = ((StackModel) o).getKnownProperty(new ExecutionContext(), PartModel.PROP_ID).toString();
-
-        return thisId.equals(thatId);
     }
 }
 

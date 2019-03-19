@@ -3,7 +3,7 @@ package com.defano.wyldcard.window.layouts;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.icons.ButtonIcon;
-import com.defano.wyldcard.icons.IconFactory;
+import com.defano.wyldcard.icons.IconDatabase;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.WrapLayout;
@@ -75,10 +75,10 @@ public class IconPicker extends WyldCardDialog<ButtonModel> {
     private List<JButton> getButtons() {
         List<JButton> buttons = new ArrayList<>();
 
-        List<ButtonIcon> icons = IconFactory.getInstance().getAllIcons();
-        ButtonIcon selectedIcon = IconFactory.getInstance().findIconForValue(this.model.getKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICON), icons);
+        List<ButtonIcon> icons = IconDatabase.getInstance().getAllIcons();
+        ButtonIcon selectedIcon = IconDatabase.getInstance().findIconForValue(this.model.getKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICON), icons);
 
-        for (ButtonIcon thisIcon : IconFactory.getInstance().getAllIcons()) {
+        for (ButtonIcon thisIcon : IconDatabase.getInstance().getAllIcons()) {
             buttons.add(getButtonForIcon(thisIcon, thisIcon == selectedIcon));
         }
 

@@ -2,51 +2,28 @@ package com.defano.wyldcard.runtime;
 
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.hypertalk.exception.NoSuchPropertyException;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PartsTable<T extends Part> {
 
-    private final ConcurrentHashMap<Integer, T> idhash;         // Mapping of ID to part
+    private final ConcurrentHashMap<PartModel,T> parts = new ConcurrentHashMap<>();
 
-    public PartsTable () {
-        idhash = new ConcurrentHashMap<>();
+    public void removePart(T p) {
+        parts.remove(p.getPartModel());
     }
-    
-    public void removePart(ExecutionContext context, T p) {
-        
-        try {
-            int partId = p.getProperty(context, PartModel.PROP_ID).integerValue();
-            idhash.remove(partId);
-        } catch (NoSuchPropertyException e) {
-            throw new RuntimeException("Bug! All parts must have an id.", e);
-        }
-    }
-    
-    public void addPart(ExecutionContext context, T p) {
-        try {
-            int partId = p.getProperty(context, PartModel.PROP_ID).integerValue();
 
-            // Check for duplicate id or name
-            if (idhash.containsKey(partId)) {
-                throw new RuntimeException("Bug! Duplicate part id: " + partId);
-            }
-
-            idhash.put(partId, p);
-
-        } catch (NoSuchPropertyException e) {
-            throw new RuntimeException("Bug! All parts must have an id.", e);
-        }                
+    public void addPart(T p) {
+        parts.put(p.getPartModel(), p);
     }
 
     public Collection<T> getParts() {
-        return idhash.values();
+        return parts.values();
     }
 
-    public T getPart(ExecutionContext context, PartModel model) {
-        return idhash.get(model.getId(context));
+    public T getPart(PartModel model) {
+        return parts.get(model);
     }
+
 }

@@ -3,7 +3,7 @@ package com.defano.wyldcard.parts.button.styles;
 import com.defano.wyldcard.border.PartBorderFactory;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.icons.ButtonIcon;
-import com.defano.wyldcard.icons.IconFactory;
+import com.defano.wyldcard.icons.IconDatabase;
 import com.defano.wyldcard.parts.ContainerWrappedPart;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.HyperCardButton;
@@ -69,7 +69,7 @@ public class NativeButton extends JPanel implements ContainerWrappedPart, HyperC
                 break;
 
             case ButtonModel.PROP_ICON:
-                ButtonIcon icon = IconFactory.getInstance().findIconForValue(newValue);
+                ButtonIcon icon = IconDatabase.getInstance().findIconForValue(newValue);
                 button.setIcon(icon == null ? null : icon.getIcon());
                 break;
 

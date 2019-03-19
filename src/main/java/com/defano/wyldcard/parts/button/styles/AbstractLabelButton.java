@@ -2,7 +2,7 @@ package com.defano.wyldcard.parts.button.styles;
 
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.icons.ButtonIcon;
-import com.defano.wyldcard.icons.IconFactory;
+import com.defano.wyldcard.icons.IconDatabase;
 import com.defano.wyldcard.icons.AlphaImageIcon;
 import com.defano.wyldcard.parts.ContainerWrappedPart;
 import com.defano.wyldcard.parts.button.HyperCardButton;
@@ -88,7 +88,7 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
                 break;
 
             case ButtonModel.PROP_ICON:
-                ButtonIcon icon = IconFactory.getInstance().findIconForValue(newValue);
+                ButtonIcon icon = IconDatabase.getInstance().findIconForValue(newValue);
                 label.setIcon(icon == null ? null : icon.getIcon());
                 break;
 

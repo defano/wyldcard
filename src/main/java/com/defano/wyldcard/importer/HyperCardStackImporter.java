@@ -69,8 +69,6 @@ public class HyperCardStackImporter {
 
     private static StackModel buildStack(String name, HyperCardStack hcStack) {
 
-        System.err.println(name);
-
         StackBlock stackBlock = hcStack.getBlock(StackBlock.class);
         StackModel stackModel = new StackModelBuilder()
                 .withName(name)
@@ -130,20 +128,18 @@ public class HyperCardStackImporter {
                 .withScript(backgroundBlock.getScript())
                 .build();
 
-//        for (PartRecord part : backgroundBlock.getParts()) {
-//            if (part.getPartType() == PartType.BUTTON) {
-//                buildButton(part, backgroundModel);
-//            } else {
-//                buildField(part, backgroundModel);
-//            }
-//        }
+        for (PartRecord part : backgroundBlock.getParts()) {
+            if (part.getPartType() == PartType.BUTTON) {
+                buildButton(part, backgroundModel);
+            } else {
+                buildField(part, backgroundModel);
+            }
+        }
 
         stackModel.addBackground(backgroundModel);
     }
 
     private static void buildButton(PartRecord partRecord, PartOwner parent) {
-        System.err.println("Adding button id " + partRecord.getPartId() + " Name: " + partRecord.getName());
-
         ButtonModel buttonModel = new ButtonModelBuilder(parent.getType().asOwner(), parent.getParentPartModel())
                 .withTop(partRecord.getTop())
                 .withLeft(partRecord.getLeft())

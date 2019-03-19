@@ -161,10 +161,10 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
         // Add the part to the parts table
         if (newPart instanceof ButtonPart) {
-            buttons.addPart(context, (ButtonPart) newPart);
+            buttons.addPart((ButtonPart) newPart);
             newPartMessage = SystemMessage.NEW_BUTTON.messageName;
         } else if (newPart instanceof FieldPart) {
-            fields.addPart(context, (FieldPart) newPart);
+            fields.addPart((FieldPart) newPart);
             newPartMessage = SystemMessage.NEW_FIELD.messageName;
         } else {
             throw new IllegalStateException("Bug! Can't add this part to a card: " + newPart);
@@ -281,10 +281,10 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      */
     @RunOnDispatch
     void closeButton(ExecutionContext context, ButtonModel buttonModel) {
-        ButtonPart button = buttons.getPart(context, buttonModel);
+        ButtonPart button = buttons.getPart(buttonModel);
 
         if (button != null) {
-            buttons.removePart(context, button);
+            buttons.removePart(button);
             removeSwingComponent(button.getComponent());
             button.partClosed(context);
         }
@@ -299,10 +299,10 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      */
     @RunOnDispatch
     void closeField(ExecutionContext context, FieldModel fieldModel) {
-        FieldPart field = fields.getPart(context, fieldModel);
+        FieldPart field = fields.getPart(fieldModel);
 
         if (field != null) {
-            fields.removePart(context, field);
+            fields.removePart(field);
             removeSwingComponent(field.getComponent());
             field.partClosed(context);
         }
@@ -436,12 +436,12 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         switch (thisPart.getType()) {
             case BUTTON:
                 ButtonPart button = ButtonPart.fromModel(context, this, (ButtonModel) thisPart);
-                buttons.addPart(context, button);
+                buttons.addPart(button);
                 addSwingComponent(button.getComponent(), button.getRect(context), thisPart.getLayer());
                 break;
             case FIELD:
                 FieldPart field = FieldPart.fromModel(context, this, (FieldModel) thisPart);
-                fields.addPart(context, field);
+                fields.addPart(field);
                 addSwingComponent(field.getComponent(), field.getRect(context), thisPart.getLayer());
                 break;
             default:
@@ -587,9 +587,9 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         CardLayerPart part = null;
 
         if (partModel instanceof FieldModel) {
-            part = fields.getPart(context, partModel);
+            part = fields.getPart(partModel);
         } else if (partModel instanceof ButtonModel) {
-            part = buttons.getPart(context, partModel);
+            part = buttons.getPart(partModel);
         }
 
         if (part == null) {
