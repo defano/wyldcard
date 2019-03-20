@@ -52,7 +52,7 @@ public interface StackManager {
      *                    to open a new stack).
      * @param title       The title to be displayed in the Open/Find file dialog.
      */
-    StackPart openStack(ExecutionContext context, boolean inNewWindow, String title);
+    StackPart findAndOpenStack(ExecutionContext context, boolean inNewWindow, String title);
 
     StackPart openStack(ExecutionContext context, StackModel model, boolean inNewWindow);
 

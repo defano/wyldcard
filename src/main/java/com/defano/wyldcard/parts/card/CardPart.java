@@ -29,7 +29,7 @@ import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.util.TextArrowsMessageCompletionObserver;
-import com.defano.wyldcard.runtime.PartsTable;
+import com.defano.wyldcard.runtime.PartTable;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import io.reactivex.disposables.Disposable;
@@ -57,8 +57,8 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
     private final static int CANVAS_UNDO_DEPTH = 20;
 
-    private final PartsTable<FieldPart> fields = new PartsTable<>();
-    private final PartsTable<ButtonPart> buttons = new PartsTable<>();
+    private final PartTable<FieldPart> fields = new PartTable<>();
+    private final PartTable<ButtonPart> buttons = new PartTable<>();
 
     private final EditingBackgroundObserver editingBackgroundObserver = new EditingBackgroundObserver(this);
     private final ForegroundScaleObserver foregroundScaleObserver = new ForegroundScaleObserver(this);
@@ -161,10 +161,10 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
         // Add the part to the parts table
         if (newPart instanceof ButtonPart) {
-            buttons.addPart((ButtonPart) newPart);
+            buttons.add((ButtonPart) newPart);
             newPartMessage = SystemMessage.NEW_BUTTON.messageName;
         } else if (newPart instanceof FieldPart) {
-            fields.addPart((FieldPart) newPart);
+            fields.add((FieldPart) newPart);
             newPartMessage = SystemMessage.NEW_FIELD.messageName;
         } else {
             throw new IllegalStateException("Bug! Can't add this part to a card: " + newPart);
@@ -193,7 +193,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * @return The buttons on this card.
      */
     public Collection<ButtonPart> getButtons() {
-        return buttons.getParts();
+        return buttons.getAll();
     }
 
     /**
@@ -201,7 +201,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * @return The fields on this card.
      */
     public Collection<FieldPart> getFields() {
-        return fields.getParts();
+        return fields.getAll();
     }
 
     /**
@@ -281,10 +281,10 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      */
     @RunOnDispatch
     void closeButton(ExecutionContext context, ButtonModel buttonModel) {
-        ButtonPart button = buttons.getPart(buttonModel);
+        ButtonPart button = buttons.get(buttonModel);
 
         if (button != null) {
-            buttons.removePart(button);
+            buttons.remove(button);
             removeSwingComponent(button.getComponent());
             button.partClosed(context);
         }
@@ -299,10 +299,10 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      */
     @RunOnDispatch
     void closeField(ExecutionContext context, FieldModel fieldModel) {
-        FieldPart field = fields.getPart(fieldModel);
+        FieldPart field = fields.get(fieldModel);
 
         if (field != null) {
-            fields.removePart(field);
+            fields.remove(field);
             removeSwingComponent(field.getComponent());
             field.partClosed(context);
         }
@@ -436,12 +436,12 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         switch (thisPart.getType()) {
             case BUTTON:
                 ButtonPart button = ButtonPart.fromModel(context, this, (ButtonModel) thisPart);
-                buttons.addPart(button);
+                buttons.add(button);
                 addSwingComponent(button.getComponent(), button.getRect(context), thisPart.getLayer());
                 break;
             case FIELD:
                 FieldPart field = FieldPart.fromModel(context, this, (FieldModel) thisPart);
-                fields.addPart(field);
+                fields.add(field);
                 addSwingComponent(field.getComponent(), field.getRect(context), thisPart.getLayer());
                 break;
             default:
@@ -489,7 +489,6 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     @Override
     @RunOnDispatch
     public void partOpened(ExecutionContext context) {
-
         StackModel stack = getOwningStackModel();
         Dimension dimension = stack.getSize(context);
 
@@ -513,11 +512,11 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         setSize(stack.getWidth(context), stack.getHeight(context));
 
         // Fire property change observers on the parts (so that they can draw themselves in their correct initial state)
-        for (ButtonPart thisButton : buttons.getParts()) {
+        for (ButtonPart thisButton : buttons.getAll()) {
             thisButton.getPartModel().notifyPropertyChangedObserver(context, thisButton);
         }
 
-        for (FieldPart thisField : fields.getParts()) {
+        for (FieldPart thisField : fields.getAll()) {
             thisField.getPartModel().notifyPropertyChangedObserver(context, thisField);
         }
 
@@ -545,11 +544,11 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         getPartModel().receiveMessage(context.bind(this), SystemMessage.CLOSE_CARD.messageName);
 
         // Lets parts know they're about to go away
-        for (ButtonPart p : buttons.getParts()) {
+        for (ButtonPart p : buttons.getAll()) {
             p.partClosed(context);
         }
 
-        for (FieldPart p : fields.getParts()) {
+        for (FieldPart p : fields.getAll()) {
             p.partClosed(context);
         }
 
@@ -587,9 +586,9 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         CardLayerPart part = null;
 
         if (partModel instanceof FieldModel) {
-            part = fields.getPart(partModel);
+            part = fields.get(partModel);
         } else if (partModel instanceof ButtonModel) {
-            part = buttons.getPart(partModel);
+            part = buttons.get(partModel);
         }
 
         if (part == null) {

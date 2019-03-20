@@ -2,9 +2,11 @@ package com.defano.wyldcard.parts.util;
 
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.MessageCompletionObserver;
+import com.defano.wyldcard.util.ThreadUtils;
 
 import java.awt.event.KeyEvent;
 
@@ -35,13 +37,15 @@ public class TextArrowsMessageCompletionObserver implements MessageCompletionObs
     }
 
     public void doArrowKeyNavigation() {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT:
-                WyldCard.getInstance().getNavigationManager().goPrevCard(new ExecutionContext(cardPart), cardPart.getOwningStack(), null);
-                break;
-            case KeyEvent.VK_RIGHT:
-                WyldCard.getInstance().getNavigationManager().goNextCard(new ExecutionContext(cardPart), cardPart.getOwningStack(), null);
-                break;
-        }
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_LEFT:
+                    WyldCard.getInstance().getNavigationManager().goPrevCard(new ExecutionContext(cardPart), cardPart.getOwningStack(), null);
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    WyldCard.getInstance().getNavigationManager().goNextCard(new ExecutionContext(cardPart), cardPart.getOwningStack(), null);
+                    break;
+            }
+        });
     }
 }

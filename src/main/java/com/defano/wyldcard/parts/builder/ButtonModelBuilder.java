@@ -14,25 +14,39 @@ public class ButtonModelBuilder extends PartModelBuilder<ButtonModel, ButtonMode
     }
 
     public ButtonModelBuilder withIconId(Object v) {
-        this.model.newProperty(ButtonModel.PROP_ICON, new Value(v), true);
+        this.model.setKnownProperty(context, ButtonModel.PROP_ICON, new Value(v));
         return this;
     }
 
     public ButtonModelBuilder withStyle(Object v) {
-        this.model.newProperty(ButtonModel.PROP_STYLE, new Value(v), true);
+        this.model.setKnownProperty(context, ButtonModel.PROP_STYLE, new Value(v));
         return this;
     }
 
     public ButtonModelBuilder withTextFont(Object v) {
-        this.model.newProperty(ButtonModel.PROP_TEXTFONT, new Value(v), true);
+        this.model.setKnownProperty(context, ButtonModel.PROP_TEXTFONT, new Value(v));
         return this;
     }
 
     public ButtonModelBuilder withTextSize(Object v) {
-        this.model.newProperty(ButtonModel.PROP_TEXTSIZE, new Value(v), true);
+        this.model.setKnownProperty(context, ButtonModel.PROP_TEXTSIZE, new Value(v));
         return this;
     }
 
+    public ButtonModelBuilder withShowName(Object v) {
+        this.model.setKnownProperty(context, ButtonModel.PROP_SHOWNAME, new Value(v));
+        return this;
+    }
+
+    public ButtonModelBuilder withHilite(Object v) {
+        this.model.setKnownProperty(context, ButtonModel.PROP_HILITE, new Value(v));
+        return this;
+    }
+
+    public ButtonModelBuilder withAutoHilite(Object v) {
+        this.model.setKnownProperty(context, ButtonModel.PROP_AUTOHILIGHT, new Value(v));
+        return this;
+    }
 
     @Override
     public ButtonModel build() {

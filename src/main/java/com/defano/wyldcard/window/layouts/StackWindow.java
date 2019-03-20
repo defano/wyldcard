@@ -86,6 +86,7 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
         if (this.stack != null) {
             stack.removeObserver(this);
             stack.removeNavigationObserver(this);
+            stack.getCurtainManager().removeScreenCurtainObserver(this);
         }
 
         this.stack = data;

@@ -10,9 +10,6 @@ import java.util.Base64;
 
 public class HyperCardIcon implements ButtonIcon {
 
-    public static final int ICON_WIDTH = 32;
-    public static final int ICON_HEIGHT = 32;
-
     private final int resourceId;
     private final String resourceName;
     private final int resourceFlags;
@@ -112,8 +109,7 @@ public class HyperCardIcon implements ButtonIcon {
         g2d.dispose();
 
         FloodFillTransform transform = new FloodFillTransform();
-        transform.setBoundaryFunction(new BoundaryFunction() {
-        });
+        transform.setBoundaryFunction(new BoundaryFunction() {});
         transform.setFill(new FillFunction() {
             @Override
             public void fill(BufferedImage image, int x, int y, Paint fillPaint) {

@@ -6,23 +6,23 @@ import com.defano.wyldcard.parts.model.PartModel;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PartsTable<T extends Part> {
+public class PartTable<PartType extends Part> {
 
-    private final ConcurrentHashMap<PartModel,T> parts = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<PartModel, PartType> parts = new ConcurrentHashMap<>();
 
-    public void removePart(T p) {
+    public void remove(PartType p) {
         parts.remove(p.getPartModel());
     }
 
-    public void addPart(T p) {
+    public void add(PartType p) {
         parts.put(p.getPartModel(), p);
     }
 
-    public Collection<T> getParts() {
+    public Collection<PartType> getAll() {
         return parts.values();
     }
 
-    public T getPart(PartModel model) {
+    public PartType get(PartModel model) {
         return parts.get(model);
     }
 

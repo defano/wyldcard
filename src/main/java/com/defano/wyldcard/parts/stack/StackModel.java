@@ -9,7 +9,6 @@ import com.defano.wyldcard.icons.UserIcon;
 import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.builder.BackgroundModelBuilder;
-import com.defano.wyldcard.parts.builder.CardModelBuilder;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.StackPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -26,8 +25,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class StackModel extends PartModel implements StackPartFinder, NamedPart {
@@ -64,33 +63,6 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
 
         initialize();
     }
-
-//    public StackModel(String name, int width, int height, boolean resizable, boolean cantPeek) {
-//        super(PartType.STACK, Owner.HYPERCARD, null);
-//
-//        newProperty(PROP_NAME, new Value(name), false);
-//        newProperty(PROP_WIDTH, new Value(width), false);
-//        newProperty(PROP_HEIGHT, new Value(height), false);
-//        newProperty(PROP_RESIZABLE, new Value(resizable), false);
-//        newProperty(PROP_CANTPEEK, new Value(cantPeek), false);
-//
-//        initialize();
-//    }
-//
-//    private StackModel(String stackName, Dimension dimension) {
-//        this(stackName, dimension.width, dimension.height, false, false);
-//    }
-//
-//    public static StackModel newStackModel(String stackName) {
-//        StackModel stack = new StackModel(stackName, new Dimension(640, 480));
-//
-//        stack.cardModels.add(new CardModelBuilder(stack)
-//                .withId(stack.getNextCardId())
-//                .withBackgroundId(stack.newBackgroundModel())
-//                .build());
-//
-//        return stack;
-//    }
 
     @PostConstruct
     @SuppressWarnings("unused")
@@ -185,7 +157,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         return newBackgroundId;
     }
 
-    public void deleteCardModel() {
+    public void deleteCurrentCard() {
         cardModels.remove(currentCardIndex);
         receiveMessage(new ExecutionContext(), SystemMessage.DELETE_CARD.messageName);
     }

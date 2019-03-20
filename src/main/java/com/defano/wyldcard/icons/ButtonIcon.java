@@ -9,7 +9,8 @@ import java.awt.image.BufferedImage;
  */
 public interface ButtonIcon {
 
-    int ICON_SIZE = 32;
+    int ICON_WIDTH = 32;
+    int ICON_HEIGHT = 32;
 
     int getId();
     String getName();
@@ -24,11 +25,11 @@ public interface ButtonIcon {
     }
 
     static BufferedImage scaleToIconSize(Image inputImage) {
-        BufferedImage outputImage = new BufferedImage(ICON_SIZE, ICON_SIZE, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage outputImage = new BufferedImage(ICON_WIDTH, ICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 
         // scales the input image to the output image
         Graphics2D g2d = outputImage.createGraphics();
-        g2d.drawImage(inputImage, 0, 0, ICON_SIZE, ICON_SIZE, null);
+        g2d.drawImage(inputImage, 0, 0, ICON_WIDTH, ICON_HEIGHT, null);
         g2d.dispose();
 
         return outputImage;

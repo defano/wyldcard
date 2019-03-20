@@ -9,7 +9,6 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.print.PrintCardAction;
 import com.defano.wyldcard.runtime.print.PrintStackAction;
-import com.defano.wyldcard.stackreader.HyperCardStack;
 
 import java.util.Optional;
 
@@ -30,13 +29,13 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Open Stack...")
-                .withAction(e -> WyldCard.getInstance().getStackManager().openStack(new ExecutionContext(), false, "Open Stack"))
+                .withAction(e -> WyldCard.getInstance().getStackManager().findAndOpenStack(new ExecutionContext(), false, "Open Stack"))
                 .withShortcut('O')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Open New Window...")
-                .withAction(e -> WyldCard.getInstance().getStackManager().openStack(new ExecutionContext(), true, "Open Stack in New Window"))
+                .withAction(e -> WyldCard.getInstance().getStackManager().findAndOpenStack(new ExecutionContext(), true, "Open Stack in New Window"))
                 .withShiftShortcut('O')
                 .build(this);
 

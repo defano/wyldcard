@@ -80,7 +80,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
 
             // ... and finally tonight, prompt the user to choose the stack
             if (!options.withoutDialog) {
-                StackPart openedStack = openStack(context, options.inNewWindow, "Where is stack " + specifier.getValue() + "?");
+                StackPart openedStack = findAndOpenStack(context, options.inNewWindow, "Where is stack " + specifier.getValue() + "?");
                 if (openedStack != null) {
                     return openedStack.getStackModel();
                 }
@@ -91,7 +91,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     }
 
     @Override
-    public StackPart openStack(ExecutionContext context, boolean inNewWindow, String title) {
+    public StackPart findAndOpenStack(ExecutionContext context, boolean inNewWindow, String title) {
         FileDialog fd = new FileDialog(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow(), title, FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> name.endsWith(StackModel.FILE_EXTENSION));
@@ -104,6 +104,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         return null;
     }
 
+    @Override
     public StackPart openStack(ExecutionContext context, StackModel model, boolean inNewWindow) {
         try {
             StackPart part = StackPart.fromStackModel(context, model);

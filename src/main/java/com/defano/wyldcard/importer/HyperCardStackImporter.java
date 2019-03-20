@@ -1,6 +1,5 @@
 package com.defano.wyldcard.importer;
 
-import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.builder.BackgroundModelBuilder;
@@ -16,27 +15,18 @@ import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.block.BackgroundBlock;
 import com.defano.wyldcard.stackreader.block.CardBlock;
 import com.defano.wyldcard.stackreader.block.StackBlock;
+import com.defano.wyldcard.stackreader.enums.ExtendedPartFlag;
 import com.defano.wyldcard.stackreader.enums.LayerFlag;
 import com.defano.wyldcard.stackreader.enums.PartType;
 import com.defano.wyldcard.stackreader.misc.ImportException;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.record.PartRecord;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 
 public class HyperCardStackImporter {
-
-    public static void main(String[] v) throws HtException {
-//        try {
-//            HyperCardStackImporter.importStack(new File("/Users/matt/Dropbox/Practice"));
-//        } catch (FileNotFoundException e) {
-//            throw new HtException("Unable to open file for importing.");
-//        }
-    }
 
     public static void importStack(ExecutionContext context) {
 
@@ -47,12 +37,9 @@ public class HyperCardStackImporter {
             StackModel model = buildStack(stackFile.getName(), hcStack);
             WyldCard.getInstance().getStackManager().openStack(context, model, true);
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (ImportException e) {
+        } catch (FileNotFoundException | ImportException e) {
             e.printStackTrace();
         }
-
     }
 
     private static File findFile(ExecutionContext context) {
@@ -85,6 +72,7 @@ public class HyperCardStackImporter {
 
     private static void buildCard(CardBlock cardBlock, StackModel stackModel) {
 
+        // Create card
         CardModel cardModel = new CardModelBuilder(stackModel)
                 .withId(cardBlock.getBlockId())
                 .withBackgroundId(cardBlock.getBkgndId())
@@ -97,15 +85,11 @@ public class HyperCardStackImporter {
                 .withScript(cardBlock.getScript())
                 .build();
 
+        // Create background (if does not exist)
         buildBackground(cardBlock.getBkgndBlock(), stackModel);
 
-        for (PartRecord part : cardBlock.getParts()) {
-            if (part.getPartType() == PartType.BUTTON) {
-                buildButton(part, cardModel);
-            } else {
-                buildField(part, cardModel);
-            }
-        }
+        // Create all buttons and fields
+        Arrays.stream(cardBlock.getParts()).forEach(p -> buildPart(p, cardModel));
 
         stackModel.addCard(cardModel);
     }
@@ -128,15 +112,18 @@ public class HyperCardStackImporter {
                 .withScript(backgroundBlock.getScript())
                 .build();
 
-        for (PartRecord part : backgroundBlock.getParts()) {
-            if (part.getPartType() == PartType.BUTTON) {
-                buildButton(part, backgroundModel);
-            } else {
-                buildField(part, backgroundModel);
-            }
-        }
+        // Create all buttons and fields
+        Arrays.stream(backgroundBlock.getParts()).forEach(p -> buildPart(p, backgroundModel));
 
         stackModel.addBackground(backgroundModel);
+    }
+
+    private static void buildPart(PartRecord part, PartOwner parent) {
+        if (part.getPartType() == PartType.BUTTON) {
+            buildButton(part, parent);
+        } else {
+            buildField(part, parent);
+        }
     }
 
     private static void buildButton(PartRecord partRecord, PartOwner parent) {
@@ -150,6 +137,9 @@ public class HyperCardStackImporter {
                 .withStyle(partRecord.getStyle().name())
                 .withIconId(partRecord.getIconId())
                 .withScript(partRecord.getScript())
+                .withShowName(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.SHOW_NAME))
+                .withHilite(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.HILITE))
+                .withAutoHilite(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.AUTO_HILITE))
                 .build();
 
         parent.addPartModel(buttonModel);

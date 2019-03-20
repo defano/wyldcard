@@ -22,14 +22,14 @@ public class WyldCardNavigationManager implements NavigationManager {
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
-    public CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, VisualEffectSpecifier visualEffect, boolean pushToBackstack) {
+    public CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, VisualEffectSpecifier visualEffect, boolean push) {
         CardPart currentCard;
 
         if (visualEffect == null || visualEffect.name == SegueName.PLAIN) {
-            currentCard = goCard(context, stackPart, cardIndex, pushToBackstack);
+            currentCard = stackPart.goCard(context, cardIndex, push);
         } else {
             stackPart.getCurtainManager().setScreenLocked(context, true);
-            currentCard = goCard(context, stackPart, cardIndex, pushToBackstack);
+            currentCard = stackPart.goCard(context, cardIndex, push);
             stackPart.getCurtainManager().unlockScreenWithEffect(context, visualEffect);
         }
 
@@ -123,33 +123,6 @@ public class WyldCardNavigationManager implements NavigationManager {
 
             throw new HtSemanticException("Can't find that card.");
         }, HtSemanticException.class);
-    }
-
-    /**
-     * Attempts to navigate to the specified card; has no effect if the requested card is already the current card or if
-     * the requested card refers to an invalid card index.
-     * <p>
-     * When the requested card is not the current card, has the effect of deactivating the current card and activating
-     * the requested card.
-     *
-     * @param context   The execution context
-     * @param cardIndex The index (0-based) card to navigate to
-     * @param push      True to add this card to the backstack
-     * @return The current card after navigation.
-     */
-    @RunOnDispatch
-    private CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, boolean push) {
-
-        // Nothing to do if navigating to current card or an invalid card index
-        if (cardIndex == stackPart.getStackModel().getCurrentCardIndex() ||
-                cardIndex < 0 ||
-                cardIndex >= stackPart.getStackModel().getCardCount())
-        {
-            return stackPart.getDisplayedCard();
-        }
-
-        stackPart.deactivateCard(context, push);
-        return stackPart.activateCard(context, cardIndex);
     }
 
 }
