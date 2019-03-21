@@ -549,7 +549,6 @@ on commandsTest
     go card 13
     go the first card of the last background
     go card 14 of bkgnd 15
-    go next card with visual effect dissolve very slowly to black
     go to the first card of stack "another stack"
     go to the first card of the second background of stack "another stack"
     go to the first card of stack "another stack" in a new window

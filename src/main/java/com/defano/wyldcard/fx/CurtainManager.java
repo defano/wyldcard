@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledFuture;
 
 /**
  * The "screen curtain" represents a drawable layer that obscures the card with a fixed or animated graphic (for the
@@ -19,7 +19,7 @@ import java.util.concurrent.CountDownLatch;
 public class CurtainManager implements SegueAnimationObserver, SegueCompletionObserver {
 
     private final Set<CurtainObserver> curtainObservers = new HashSet<>();
-    private CountDownLatch latch = new CountDownLatch(0);
+    private ScheduledFuture animationResult;
     private AnimatedSegue activeEffect;
 
     synchronized public void lockScreen(ExecutionContext context) {
@@ -54,10 +54,14 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
     }
 
     public void waitForEffectToFinish() {
-        try {
-            this.latch.await();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        if (animationResult != null) {
+            try {
+                System.err.println("Waiting");
+                animationResult.get();
+                System.err.println("Done");
+            } catch (Throwable t) {
+                throw new RuntimeException("An error occurred rendering visual effect", t);
+            }
         }
     }
 
@@ -86,14 +90,10 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
     }
 
     private void start(AnimatedSegue effect) {
-        if (this.latch.getCount() == 0) {
-            this.latch = new CountDownLatch(1);
-        }
-
         this.activeEffect = effect;
         this.activeEffect.addAnimationObserver(this);
         this.activeEffect.addCompletionObserver(this);
-        this.activeEffect.start();
+        this.animationResult = this.activeEffect.start();
     }
 
     private void finish(boolean raiseCurtain) {
@@ -104,12 +104,12 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
 
         if (raiseCurtain) {
             fireOnCurtainUpdated(null);
-            latch.countDown();
+            animationResult.cancel(true);
         }
     }
 
     private boolean isScreenLocked() {
-        return latch.getCount() > 0;
+        return animationResult != null && !animationResult.isDone();
     }
 
     private void fireOnCurtainUpdated(BufferedImage screenCurtain) {
