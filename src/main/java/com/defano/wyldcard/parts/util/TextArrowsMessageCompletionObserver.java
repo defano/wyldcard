@@ -40,10 +40,10 @@ public class TextArrowsMessageCompletionObserver implements MessageCompletionObs
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
-                    WyldCard.getInstance().getNavigationManager().goPrevCard(new ExecutionContext(cardPart), cardPart.getOwningStack(), null);
+                    WyldCard.getInstance().getNavigationManager().goPrevCard(new ExecutionContext(cardPart), cardPart.getOwningStack());
                     break;
                 case KeyEvent.VK_RIGHT:
-                    WyldCard.getInstance().getNavigationManager().goNextCard(new ExecutionContext(cardPart), cardPart.getOwningStack(), null);
+                    WyldCard.getInstance().getNavigationManager().goNextCard(new ExecutionContext(cardPart), cardPart.getOwningStack());
                     break;
             }
         });

@@ -218,14 +218,14 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * whose visible property is true will actually become visible.
      *
      * @param context The execution context.
-     * @param visible Shows the foreground when true; hides it otherwise.
+     * @param isEditingBackground Hides the foreground when true; shows it otherwise.
      */
     @RunOnDispatch
-    void setForegroundVisible(ExecutionContext context, boolean visible) {
+    void setEditingBackground(ExecutionContext context, boolean isEditingBackground) {
         if (getForegroundCanvas() != null) {
-            getForegroundCanvasScrollPane().setVisible(visible);
+            getForegroundCanvasScrollPane().setVisible(!isEditingBackground);
 
-            setPartsOnLayerVisible(context, Owner.CARD, visible);
+            setPartsVisible(context, Owner.CARD, !isEditingBackground);
         }
     }
 
@@ -233,7 +233,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * Determines whether the foreground layer of the card is hidden, revealing only the background layer underneath it.
      * @return True if foreground layer has been hidden, false otherwise.
      */
-    public boolean isViewingBackground() {
+    public boolean isEditingBackground() {
         return getForegroundCanvas() == null || !getForegroundCanvas().isVisible();
     }
 
@@ -244,14 +244,14 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * @param context The execution context.
      * @param visible True to show card parts; false to hide them
      */
-    void setPartsOnLayerVisible(ExecutionContext context, Owner owningLayer, boolean visible) {
+    void setPartsVisible(ExecutionContext context, Owner owningLayer, boolean visible) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (PartModel thisPartModel : getPartModel().getPartModels(context)) {
                 if (thisPartModel.getOwner() == owningLayer) {
                     if (!visible) {
-                        getPart(context, thisPartModel).getComponent().setVisible(false);
+                        getPart(thisPartModel).getComponent().setVisible(false);
                     } else {
-                        getPart(context, thisPartModel).getComponent().setVisible(thisPartModel.getKnownProperty(context, PartModel.PROP_VISIBLE).booleanValue());
+                        getPart(thisPartModel).getComponent().setVisible(thisPartModel.getKnownProperty(context, PartModel.PROP_VISIBLE).booleanValue());
                     }
                 }
             }
@@ -269,7 +269,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
             getBackgroundCanvas().setVisible(isVisible);
         }
 
-        setPartsOnLayerVisible(context, Owner.BACKGROUND, isVisible);
+        setPartsVisible(context, Owner.BACKGROUND, isVisible);
     }
 
     /**
@@ -335,9 +335,35 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         // Redraw all parts in their display order
         SwingUtilities.invokeLater(() -> {
             for (PartModel thisPart : getPartModel().getPartsInDisplayOrder(context)) {
-                moveToFront(getPart(context, thisPart).getComponent());
+                moveToFront(getPart(thisPart).getComponent());
             }
         });
+    }
+
+    /**
+     * Gets a screenshot of this card; a pixel accurate rendering of the card as would be visible to the user when the
+     * card is visible in the stack window including graphics and part layers (the rendering of which will differ
+     * based on Swing's current look-and-feel setting).
+     *
+     * @return A screenshot image of this card.
+     */
+    public BufferedImage getScreenshot() {
+
+        // Swing cannot print components that are not actively displayed in a window (this is a side effect of the
+        // native component peering architecture). Therefore, if this card is not already being displayed in a
+        // window, we will need to create a window and place ourselves inside of it before attempting to print. However,
+        // note that a card (or any component) cannot be the content pane of multiple frames simultaneously, so we
+        // utilize the screenshot buffer frame only when not already attached to a card window.
+        if (getRootPane() == null) {
+            WyldCard.getInstance().getWindowManager().getScreenshotBufferWindow().setContentPane(this);
+        }
+
+        BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = screenshot.createGraphics();
+        ThreadUtils.invokeAndWaitAsNeeded(() -> CardPart.this.printAll(g));
+        g.dispose();
+
+        return screenshot;
     }
 
     /** {@inheritDoc} */
@@ -380,32 +406,6 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
         MarqueeTool tool = (MarqueeTool) WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.SELECT, false);
         tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
-    }
-
-    /**
-     * Gets a screenshot of this card; a pixel accurate rendering of the card as would be visible to the user when the
-     * card is visible in the stack window including graphics and part layers (the rendering of which will differ
-     * based on Swing's current look-and-feel setting).
-     *
-     * @return A screenshot image of this card.
-     */
-    public BufferedImage getScreenshot() {
-
-        // Swing cannot print components that are not actively displayed in a window (this is a side effect of the
-        // native component peering architecture). Therefore, if this card is not already being displayed in a
-        // window, we will need to create a window and place ourselves inside of it before attempting to print. However,
-        // note that a card (or any component) cannot be the content pane of multiple frames simultaneously, so we
-        // utilize the screenshot buffer frame only when not already attached to a card window.
-        if (getRootPane() == null) {
-            WyldCard.getInstance().getWindowManager().getScreenshotBufferWindow().setContentPane(this);
-        }
-
-        BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = screenshot.createGraphics();
-        ThreadUtils.invokeAndWaitAsNeeded(() -> CardPart.this.printAll(g));
-
-        g.dispose();
-        return screenshot;
     }
 
     /** {@inheritDoc} */
@@ -496,13 +496,15 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         setTransferHandler(new CardPartTransferHandler(this));
 
         // Setup the foreground paint canvas
-        setForegroundCanvas(new JMonetScrollPane(new JMonetCanvas(cardModel.getCardImage(dimension), CANVAS_UNDO_DEPTH)));
+        BufferedImage cardImage = cardModel.getCardImage(dimension);
+        setForegroundCanvas(new JMonetScrollPane(new JMonetCanvas(cardImage, CANVAS_UNDO_DEPTH)));
         getForegroundCanvas().addCanvasCommitObserver(this);
         getForegroundCanvas().setTransferHandler(new CanvasTransferHandler(getForegroundCanvas(), this));
         getForegroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
 
         // Setup the background paint canvas
-        setBackgroundCanvas(new JMonetScrollPane(new JMonetCanvas(getPartModel().getBackgroundModel().getBackgroundImage(dimension), CANVAS_UNDO_DEPTH)));
+        BufferedImage backgroundImage = getPartModel().getBackgroundModel().getBackgroundImage(dimension);
+        setBackgroundCanvas(new JMonetScrollPane(new JMonetCanvas(backgroundImage, CANVAS_UNDO_DEPTH)));
         getBackgroundCanvas().addCanvasCommitObserver(this);
         getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(getBackgroundCanvas(), this));
         getBackgroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
@@ -577,12 +579,11 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     /**
      * Returns the CardLayerPart represented by the given PartModel.
      *
-     * @param context The execution context.
      * @param partModel The PartModel associated with the desired Part.
      * @throws IllegalArgumentException Thrown if no such part exists on this card
      * @return The matching CardLayerPart
      */
-    public CardLayerPart getPart(ExecutionContext context, PartModel partModel) {
+    public CardLayerPart getPart(PartModel partModel) {
         CardLayerPart part = null;
 
         if (partModel instanceof FieldModel) {

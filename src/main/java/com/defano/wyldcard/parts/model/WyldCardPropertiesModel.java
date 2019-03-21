@@ -138,7 +138,7 @@ public class WyldCardPropertiesModel implements PropertiesModel {
         Value oldValue = getProperty(context, propertyName);
 
         if (!quietly) {
-            fireOnPropertyWillChange(propertyName, oldValue, value);
+            fireOnPropertyWillChange(context, propertyName, oldValue, value);
         }
 
         if (computerSetters.keySet().contains(propertyName)) {
@@ -265,9 +265,9 @@ public class WyldCardPropertiesModel implements PropertiesModel {
         return changeObservers.remove(listener);
     }
 
-    private void fireOnPropertyWillChange(String property, Value oldValue, Value value) {
+    private void fireOnPropertyWillChange(ExecutionContext context, String property, Value oldValue, Value value) {
         for (PropertyWillChangeObserver listener : willChangeObservers) {
-            listener.onPropertyWillChange(property, oldValue, value);
+            listener.onPropertyWillChange(context, property, oldValue, value);
         }
     }
 

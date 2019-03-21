@@ -165,10 +165,8 @@ commandStmnt
     | 'find' expression? 'international'? expression of 'marked' cards                                                  # findMarkedCards
     | 'find' expression? 'international'? expression                                                                    # findAnywhere
     | 'get' expression                                                                                                  # getCmdStmnt
-    | 'go' 'to'? expression 'with' 'visual' expression                                                                  # goVisualEffectCmdStmnd
     | 'go' 'to'? expression remoteNavOption                                                                             # goCmdStmnt
     | 'go' 'back'                                                                                                       # goBackCmdStmt
-    | 'go' 'back' 'with' 'visual' expression                                                                            # goBackVisualEffectCmdStmt
     | 'hide' card picture                                                                                               # hideThisCardPictCmd
     | 'hide' background picture                                                                                         # hideThisBkgndPictCmd
     | 'hide' picture of expression                                                                                      # hidePictCmd

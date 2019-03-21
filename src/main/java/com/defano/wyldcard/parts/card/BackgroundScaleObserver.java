@@ -15,6 +15,6 @@ class BackgroundScaleObserver implements Consumer<Double> {
 
     @Override
     public void accept(Double scale) {
-        SwingUtilities.invokeLater(() -> cardPart.setPartsOnLayerVisible(new ExecutionContext(), Owner.BACKGROUND, (scale) == 1.0));
+        SwingUtilities.invokeLater(() -> cardPart.setPartsVisible(new ExecutionContext(), Owner.BACKGROUND, (scale) == 1.0));
     }
 }

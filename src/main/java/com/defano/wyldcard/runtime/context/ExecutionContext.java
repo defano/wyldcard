@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.model.Chunk;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
@@ -58,6 +59,8 @@ public class ExecutionContext {
     private CardPart card;                                  // "Current" card in the context of this execution
     private PartSpecifier theTarget;                        // Part that the message was initially sent
     private boolean isStaticContext;                        // Is message box evaluation?
+    private VisualEffectSpecifier visualEffect;             // Visual effect to use to unlock screen
+
 
     /**
      * Creates an unbound execution context. Scripts executing with a unbound context will operate on whichever stack
@@ -204,6 +207,10 @@ public class ExecutionContext {
      */
     public void popStackFrame() {
         callStack.pop();
+
+        if (callStack.size() ==0 ) {
+            expire();
+        }
     }
 
     /**
@@ -523,6 +530,32 @@ public class ExecutionContext {
      */
     public void setStaticContext(boolean staticContext) {
         isStaticContext = staticContext;
+    }
+
+    /**
+     * Gets the visual effect to use when next unlocking the screen within the current execution frame.
+     *
+     * @return The visual effect.
+     */
+    public VisualEffectSpecifier getVisualEffect() {
+        return visualEffect;
+    }
+
+    /**
+     * Sets the visual effect to use when next unlocking the screen within the current execution frame.
+     *
+     * @param visualEffect The visual effect specification
+     */
+    public void setVisualEffect(VisualEffectSpecifier visualEffect) {
+        this.visualEffect = visualEffect;
+    }
+
+    /**
+     * Invoked to indicate that the last message handler has completed executing (i.e., the stack depth has returned to
+     * zero), and any behaviors are expected to occur when all handlers are finished should fire.
+     */
+    private void expire() {
+        WyldCard.getInstance().getWyldCardProperties().resetProperties(this);
     }
 
     @Override

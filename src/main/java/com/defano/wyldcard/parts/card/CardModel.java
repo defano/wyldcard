@@ -68,43 +68,6 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
         initialize();
     }
 
-//    public CardModel(StackModel stack,
-//                     int cardId,
-//                     int backgroundId,
-//                     String name,
-//                     BufferedImage cardImage,
-//                     boolean isMarked,
-//                     boolean cantDelete,
-//                     boolean dontSearch,
-//                     boolean showPict,
-//                     Object contents) {
-//
-//        super(PartType.CARD, Owner.STACK, stack);
-//        this.backgroundId = backgroundId;
-//
-//        newProperty(PROP_ID, new Value(cardId), true);
-//        newProperty(PROP_MARKED, new Value(isMarked), false);
-//        newProperty(PROP_CANTDELETE, new Value(cantDelete), false);
-//        newProperty(PROP_DONTSEARCH, new Value(dontSearch), false);
-//        newProperty(PROP_NAME, new Value(name), false);
-//        newProperty(PROP_CONTENTS, new Value(contents), false);
-//        newProperty(PROP_SHOWPICT, new Value(showPict), false);
-//        setCardImage(cardImage);
-//
-//        initialize();
-//    }
-
-//    /**
-//     * Returns a new CardModel containing no parts and and empty foreground canvas but which inherits the
-//     * specified background.
-//     *
-//     * @param backgroundId The ID of the background this card should inherit.
-//     * @return The new CardModel
-//     */
-//    public static CardModel emptyCardModel(int cardId, int backgroundId, StackModel parentPartModel) {
-//        return new CardModel(parentPartModel, cardId, backgroundId, "", null, false, false, false, false, "");
-//    }
-
     @Override
     @PostConstruct
     public void initialize() {

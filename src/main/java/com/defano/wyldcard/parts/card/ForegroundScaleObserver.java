@@ -15,8 +15,8 @@ class ForegroundScaleObserver implements Consumer<Double> {
     @Override
     public void accept(Double scale) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            cardPart.setPartsOnLayerVisible(new ExecutionContext(), Owner.CARD, scale == 1.0);
-            cardPart.setPartsOnLayerVisible(new ExecutionContext(), Owner.BACKGROUND, scale == 1.0);
+            cardPart.setPartsVisible(new ExecutionContext(), Owner.CARD, scale == 1.0);
+            cardPart.setPartsVisible(new ExecutionContext(), Owner.BACKGROUND, scale == 1.0);
             cardPart.setBackgroundVisible(new ExecutionContext(), scale == 1.0);
         });
     }

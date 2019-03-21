@@ -26,7 +26,7 @@ public interface SearchResultHighlighter {
 
             // Search result is on a different card; go there
             if (result.getCardIndex() != context.getCurrentCard().getPartModel().getCardIndexInStack()) {
-                WyldCard.getInstance().getNavigationManager().goCard(context, context.getCurrentStack(), result.getCardIndex(), null, false);
+                WyldCard.getInstance().getNavigationManager().goCard(context, context.getCurrentStack(), result.getCardIndex(), false);
             }
 
             // Box the found text
@@ -36,7 +36,7 @@ public interface SearchResultHighlighter {
                             (FieldModel) context.getCurrentCard().getPartModel().findPart(context, result.getLocalPartSpecifier(context)) :
                             (FieldModel) context.getCurrentCard().getPartModel().getBackgroundModel().findPart(context, result.getLocalPartSpecifier(context));
 
-                    FieldPart foundField = (FieldPart) context.getCurrentCard().getPart(context, foundFieldModel);
+                    FieldPart foundField = (FieldPart) context.getCurrentCard().getPart(foundFieldModel);
 
                     foundField.applySearchHilight(result.getRange());
                     foundField.getHyperCardTextPane().setCaretPosition(result.getRange().start);

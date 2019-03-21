@@ -41,6 +41,7 @@ public class HandlerExecutionFutureCallback implements FutureCallback<Boolean> {
 
         // Other error occurred that we're ill-equipped to deal with
         else {
+            t.printStackTrace();
             completionObserver.onHandlerRan(me, script, message, true, new HtSemanticException("Bug! An unexpected error occurred:" + t.getMessage()));
         }
     }

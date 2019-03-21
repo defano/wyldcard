@@ -80,7 +80,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
         stackWindow.bindModel(this);
 
         // Display the current card
-        navigationManager.goCard(context, this, stackModel.getCurrentCardIndex(), null, false);
+        navigationManager.goCard(context, this, stackModel.getCurrentCardIndex(), false);
 
         // Resize the window to fit this stack
         fireOnCardDimensionChanged(stackModel.getDimension(context));
@@ -162,7 +162,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
         cardCountProvider.onNext(stackModel.getCardCount());
         fireOnCardOrderChanged();
 
-        return navigationManager.goNextCard(context, this, null);
+        return navigationManager.goNextCard(context, this);
     }
 
     /**
@@ -184,7 +184,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
         cardCountProvider.onNext(stackModel.getCardCount());
         fireOnCardOrderChanged();
 
-        return navigationManager.goNextCard(context, this, null);
+        return navigationManager.goNextCard(context, this);
     }
 
     /**
@@ -228,7 +228,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
             cardCountProvider.onNext(stackModel.getCardCount());
             fireOnCardOrderChanged();
 
-            navigationManager.goNextCard(context, this, null);
+            navigationManager.goNextCard(context, this);
         }
     }
 
@@ -265,7 +265,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
         this.cardCountProvider.onNext(stackModel.getCardCount());
 
         fireOnCardOrderChanged();
-        navigationManager.goCard(context, this, cardIndex, null, false);
+        navigationManager.goCard(context, this, cardIndex, false);
     }
 
     /**

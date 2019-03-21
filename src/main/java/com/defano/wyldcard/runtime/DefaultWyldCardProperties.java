@@ -82,21 +82,22 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
         });
         newComputedGetterProperty(PROP_PATTERN, (context, model, propertyName) -> new Value (WyldCard.getInstance().getToolsManager().getFillPattern() + 1));
 
-        addPropertyWillChangeObserver((property, oldValue, newValue) -> {
+        addPropertyWillChangeObserver((context, property, oldValue, newValue) -> {
             if (PROP_LOCKSCREEN.equals(property.toLowerCase())) {
-                WyldCard.getInstance()
-                        .getStackManager().getFocusedStack()
-                        .getCurtainManager()
-                        .setScreenLocked(new ExecutionContext(), newValue.booleanValue());
+                if (newValue.booleanValue()) {
+                    WyldCard.getInstance().getStackManager().getFocusedStack().getCurtainManager().lockScreen(new ExecutionContext());
+                } else {
+                    WyldCard.getInstance().getStackManager().getFocusedStack().getCurtainManager().unlockScreen(new ExecutionContext(), context.getVisualEffect());
+                }
             }
         });
     }
 
     @Override
-    public void resetProperties() {
-        setKnownProperty(new ExecutionContext(), PROP_ITEMDELIMITER, new Value(","));
-        setKnownProperty(new ExecutionContext(), PROP_LOCKSCREEN, new Value(false));
-        setKnownProperty(new ExecutionContext(), PROP_LOCKMESSAGES, new Value(false));
+    public void resetProperties(ExecutionContext context) {
+        setKnownProperty(context, PROP_ITEMDELIMITER, new Value(","));
+        setKnownProperty(context, PROP_LOCKSCREEN, new Value(false));
+        setKnownProperty(context, PROP_LOCKMESSAGES, new Value(false));
 
         WyldCard.getInstance().getCursorManager().setActiveCursor(HyperCardCursor.HAND);
     }

@@ -22,26 +22,16 @@ public class WyldCardNavigationManager implements NavigationManager {
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
-    public CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, VisualEffectSpecifier visualEffect, boolean push) {
-        CardPart currentCard;
-
-        if (visualEffect == null || visualEffect.name == SegueName.PLAIN) {
-            currentCard = stackPart.goCard(context, cardIndex, push);
-        } else {
-            stackPart.getCurtainManager().setScreenLocked(context, true);
-            currentCard = stackPart.goCard(context, cardIndex, push);
-            stackPart.getCurtainManager().unlockScreenWithEffect(context, visualEffect);
-        }
-
-        return currentCard;
+    public CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, boolean push) {
+        return stackPart.goCard(context, cardIndex, push);
     }
 
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
-    public CardPart goNextCard(ExecutionContext context, StackPart stackPart, VisualEffectSpecifier visualEffect) {
+    public CardPart goNextCard(ExecutionContext context, StackPart stackPart) {
         if (stackPart.getStackModel().getCurrentCardIndex() + 1 < stackPart.getStackModel().getCardCount()) {
-            return goCard(context, stackPart, stackPart.getStackModel().getCurrentCardIndex() + 1, visualEffect, true);
+            return goCard(context, stackPart, stackPart.getStackModel().getCurrentCardIndex() + 1, true);
         } else {
             return null;
         }
@@ -50,9 +40,9 @@ public class WyldCardNavigationManager implements NavigationManager {
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
-    public CardPart goPrevCard(ExecutionContext context, StackPart stackPart, VisualEffectSpecifier visualEffect) {
+    public CardPart goPrevCard(ExecutionContext context, StackPart stackPart) {
         if (stackPart.getStackModel().getCurrentCardIndex() - 1 >= 0) {
-            return goCard(context, stackPart, stackPart.getStackModel().getCurrentCardIndex() - 1, visualEffect, true);
+            return goCard(context, stackPart, stackPart.getStackModel().getCurrentCardIndex() - 1, true);
         } else {
             return null;
         }
@@ -61,12 +51,12 @@ public class WyldCardNavigationManager implements NavigationManager {
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
-    public CardPart goPopCard(ExecutionContext context, StackPart stackPart, VisualEffectSpecifier visualEffect) {
+    public CardPart goPopCard(ExecutionContext context, StackPart stackPart) {
         if (!WyldCard.getInstance().getStackManager().getBackstack().isEmpty()) {
             try {
                 Destination poppedDestination = WyldCard.getInstance().getStackManager().getBackstack().pop();
                 CardModel model = (CardModel) poppedDestination.getStack().findPart(context, new PartIdSpecifier(Owner.STACK, PartType.CARD, poppedDestination.getCardId()));
-                return goCard(context, stackPart, stackPart.getStackModel().getIndexOfCard(model), visualEffect, false);
+                return goCard(context, stackPart, stackPart.getStackModel().getIndexOfCard(model), false);
             } catch (PartException e) {
                 return null;
             }
@@ -78,15 +68,15 @@ public class WyldCardNavigationManager implements NavigationManager {
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
-    public CardPart goFirstCard(ExecutionContext context, StackPart stackPart, VisualEffectSpecifier visualEffect) {
-        return goCard(context, stackPart, 0, visualEffect, true);
+    public CardPart goFirstCard(ExecutionContext context, StackPart stackPart) {
+        return goCard(context, stackPart, 0, true);
     }
 
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
-    public CardPart goLastCard(ExecutionContext context, StackPart stackPart, VisualEffectSpecifier visualEffect) {
-        return goCard(context, stackPart, stackPart.getStackModel().getCardCount() - 1, visualEffect, true);
+    public CardPart goLastCard(ExecutionContext context, StackPart stackPart) {
+        return goCard(context, stackPart, stackPart.getStackModel().getCardCount() - 1, true);
     }
 
     /** {@inheritDoc} */
@@ -100,7 +90,7 @@ public class WyldCardNavigationManager implements NavigationManager {
                 return null;
             }
 
-            return goDestination(new ExecutionContext(), stackDestination, null);
+            return goDestination(new ExecutionContext(), stackDestination);
         } catch (HtSemanticException e) {
             return null;
         }
@@ -108,7 +98,7 @@ public class WyldCardNavigationManager implements NavigationManager {
 
     /** {@inheritDoc} */
     @Override
-    public CardPart goDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) throws HtSemanticException {
+    public CardPart goDestination(ExecutionContext context, Destination destination) throws HtSemanticException {
         // This code needs to run on the Swing dispatch thread
         return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
             StackWindow stackWindow = WyldCard.getInstance().getWindowManager().findWindowForStack(destination.getStack());
@@ -118,7 +108,7 @@ public class WyldCardNavigationManager implements NavigationManager {
 
             Integer cardIndex = destination.getStack().getIndexOfCardId(destination.getCardId());
             if (cardIndex != null) {
-                return ThreadUtils.callAndWaitAsNeeded(() -> goCard(context, stackWindow.getStack(), cardIndex, visualEffect, true));
+                return ThreadUtils.callAndWaitAsNeeded(() -> goCard(context, stackWindow.getStack(), cardIndex,true));
             }
 
             throw new HtSemanticException("Can't find that card.");

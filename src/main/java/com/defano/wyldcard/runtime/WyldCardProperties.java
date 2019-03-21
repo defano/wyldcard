@@ -1,6 +1,7 @@
 package com.defano.wyldcard.runtime;
 
 import com.defano.wyldcard.parts.model.PropertiesModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 public interface WyldCardProperties extends PropertiesModel {
 
@@ -32,7 +33,7 @@ public interface WyldCardProperties extends PropertiesModel {
      *
      * TODO: Ephemeral properties should not be global, as this allows cross-thread side effects. Move to ExecutionContext instead?
      */
-    void resetProperties();
+    void resetProperties(ExecutionContext context);
 
     /**
      * Gets the state of the textArrows property.

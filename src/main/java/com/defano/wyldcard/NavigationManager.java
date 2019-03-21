@@ -19,66 +19,60 @@ public interface NavigationManager {
      *
      * @param context      The execution context.
      * @param cardIndex    The zero-based index of the card to navigate to.
-     * @param visualEffect The visual effect to apply to the transition
      * @return The destination card (now visible in the stack window).
      */
     @RunOnDispatch
-    CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, VisualEffectSpecifier visualEffect, boolean pushToBackstack);
+    CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, boolean pushToBackstack);
 
     /**
      * Navigates to the next card in the stack (index + 1); has no affect if the current card is the last card.
      *
      * @param context      The execution context
      * @param stackPart    The stack in which navigation should occur
-     * @param visualEffect The visual effect to apply, or null for no visual effect
      * @return The card now visible in the stack window or null if no next card.
      */
     @RunOnDispatch
-    CardPart goNextCard(ExecutionContext context, StackPart stackPart, VisualEffectSpecifier visualEffect);
+    CardPart goNextCard(ExecutionContext context, StackPart stackPart);
 
     /**
      * Navigates to the previous card in the stack (index - 1); has no affect if the current card is the first card.
      *
      * @param context      The execution context
      * @param stackPart    The stack in which navigation should occur
-     * @param visualEffect The visual effect to apply, or null for no visual effect
      * @return The card now visible in the stack window or null if no previous card.
      */
     @RunOnDispatch
-    CardPart goPrevCard(ExecutionContext context, StackPart stackPart, VisualEffectSpecifier visualEffect);
+    CardPart goPrevCard(ExecutionContext context, StackPart stackPart);
 
     /**
      * Navigates to the last card on the backstack; has no affect if the backstack is empty.
      *
      * @param context      The execution context
      * @param stackPart    The stack in which navigation should occur
-     * @param visualEffect The visual effect to apply, or null for no visual effect
      * @return The card now visible in the stack window, or null if no card available to pop
      */
     @RunOnDispatch
-    CardPart goPopCard(ExecutionContext context, StackPart stackPart, VisualEffectSpecifier visualEffect);
+    CardPart goPopCard(ExecutionContext context, StackPart stackPart);
 
     /**
      * Navigates to the first card in the stack.
      *
      * @param context      The execution context
      * @param stackPart    The stack in which navigation should occur
-     * @param visualEffect The visual effect to apply, or null for no visual effect
      * @return The first card in the stack
      */
     @RunOnDispatch
-    CardPart goFirstCard(ExecutionContext context, StackPart stackPart, VisualEffectSpecifier visualEffect);
+    CardPart goFirstCard(ExecutionContext context, StackPart stackPart);
 
     /**
      * Navigates to the last card in the stack.
      *
      * @param context      The execution context
      * @param stackPart    The stack in which navigation should occur
-     * @param visualEffect The visual effect to apply, or null for no visual effect
      * @return The last card in the stack
      */
     @RunOnDispatch
-    CardPart goLastCard(ExecutionContext context, StackPart stackPart, VisualEffectSpecifier visualEffect);
+    CardPart goLastCard(ExecutionContext context, StackPart stackPart);
 
     /**
      * Attempts to navigate to a stack (displaying that stack's current card in the stack window).
@@ -98,9 +92,8 @@ public interface NavigationManager {
      *
      * @param context      The execution context
      * @param destination  The destination to navigate to
-     * @param visualEffect The optional visual effect (null for no effect)
      * @return The destination card
      */
-    CardPart goDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) throws HtSemanticException;
+    CardPart goDestination(ExecutionContext context, Destination destination) throws HtSemanticException;
 
 }

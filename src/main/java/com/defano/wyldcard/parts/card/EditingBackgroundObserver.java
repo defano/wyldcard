@@ -21,6 +21,6 @@ class EditingBackgroundObserver implements Consumer<Boolean> {
             cardPart.getBackgroundCanvas().setScale(1.0);
         }
 
-        ThreadUtils.invokeAndWaitAsNeeded(() -> cardPart.setForegroundVisible(new ExecutionContext(), !isEditingBackground));
+        ThreadUtils.invokeAndWaitAsNeeded(() -> cardPart.setEditingBackground(new ExecutionContext(), isEditingBackground));
     }
 }

@@ -17,7 +17,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goPopCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack(), null))
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goPopCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
                 .withShortcut('\\')
                 .build(this);
 
@@ -42,25 +42,25 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("First")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goFirstCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack(), null))
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goFirstCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
                 .withShortcut('1')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Prev")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goPrevCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack(),null))
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goPrevCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
                 .withShortcut('2')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goNextCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack(), null))
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goNextCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
                 .withShortcut('3')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Last")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goLastCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack(), null))
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goLastCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
                 .withShortcut('4')
                 .build(this);
 

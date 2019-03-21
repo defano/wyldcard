@@ -60,7 +60,6 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
         try {
             // Send 'idle' message to card if no other scripts are pending
             if (Interpreter.getPendingScriptCount() == 0) {
-                WyldCard.getInstance().getWyldCardProperties().resetProperties();
                 DebugContext.getInstance().resume();
                 send(SystemMessage.IDLE, new ExecutionContext().getCurrentCard().getPartModel());
             }

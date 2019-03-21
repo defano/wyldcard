@@ -27,15 +27,15 @@ public class UnlockScreenCmd extends Command {
 
         // User unlocked screen with form 'unlock screen with visual effect...'
         if (effectExp != null) {
-            context.getCurrentStack().getCurtainManager().unlockScreenWithEffect(context, effectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier);
+            context.getCurrentStack().getCurtainManager().unlockScreen(context, effectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier);
             context.getCurrentStack().getCurtainManager().waitForEffectToFinish();
         }
 
         else {
             // User unlocked screen without visual effect arg ('unlock screen') or specified the effect earlier in the
             // script (via the visual command... 'visual effect dissolve')
-            VisualEffectSpecifier ves = context.getStackFrame().getVisualEffect();
-            context.getCurrentStack().getCurtainManager().unlockScreenWithEffect(context, ves);
+            VisualEffectSpecifier ves = context.getVisualEffect();
+            context.getCurrentStack().getCurtainManager().unlockScreen(context, ves);
             context.getCurrentStack().getCurtainManager().waitForEffectToFinish();
         }
     }

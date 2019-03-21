@@ -601,16 +601,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitGoBackVisualEffectCmdStmt(HyperTalkParser.GoBackVisualEffectCmdStmtContext ctx) {
-        return new GoCmd(ctx, null, (Expression) visit(ctx.expression()), new RemoteNavigationOptions(false, false));
-    }
-
-    @Override
-    public Object visitGoVisualEffectCmdStmnd(HyperTalkParser.GoVisualEffectCmdStmndContext ctx) {
-        return new GoCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), new RemoteNavigationOptions(false, false));
-    }
-
-    @Override
     public Object visitNextPosition(HyperTalkParser.NextPositionContext ctx) {
         return Position.NEXT;
     }

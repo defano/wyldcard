@@ -4,7 +4,6 @@ import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.jsegue.AnimatedSegue;
 import com.defano.jsegue.SegueAnimationObserver;
 import com.defano.jsegue.SegueCompletionObserver;
-import com.defano.jsegue.renderers.PlainEffect;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
@@ -23,46 +22,35 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
     private CountDownLatch latch = new CountDownLatch(0);
     private AnimatedSegue activeEffect;
 
-    public void setScreenLocked(ExecutionContext context, boolean locked) {
-
+    synchronized public void lockScreen(ExecutionContext context) {
         // Nothing to do when trying to lock a locked screen
-        if (locked && isScreenLocked()) {
-            return;
-        }
-
-        if (locked) {
-            startEffect(VisualEffectFactory.createScreenLock(context));
-        } else if (this.activeEffect instanceof PlainEffect) {
-            cancelEffect();
+        if (!isScreenLocked()) {
+            start(VisualEffectFactory.createScreenLock(context));
         }
     }
 
-    public void unlockScreenWithEffect(ExecutionContext context, VisualEffectSpecifier effectSpecifier) {
+    synchronized public void unlockScreen(ExecutionContext context, VisualEffectSpecifier effectSpecifier) {
         if (isScreenLocked()) {
-            this.activeEffect.stop();
 
-            // Unlock with effect
-            if (effectSpecifier != null) {
-                BufferedImage from = activeEffect.getSource();
-                BufferedImage to = context.getCurrentStack().getDisplayedCard().getScreenshot();
-                startEffect(VisualEffectFactory.create(effectSpecifier, from, to));
+            // Unlock without effect
+            if (effectSpecifier == null) {
+                finish(true);
             }
 
-            // Just unlock (no effect)
+            // Unlock with animated visual effect
             else {
-                cancelEffect();
+                BufferedImage src = activeEffect.getSource();
+                BufferedImage dest = context.getCurrentStack().getDisplayedCard().getScreenshot();
+
+                // Stop screen locking effect
+                finish(false);
+
+                // Start unlock animation
+                start(VisualEffectFactory.create(effectSpecifier, src, dest));
             }
         }
 
         // Nothing to do if screen is not locked
-    }
-
-    private void startEffect(AnimatedSegue effect) {
-        this.latch = new CountDownLatch(1);
-        this.activeEffect = effect;
-        this.activeEffect.addAnimationObserver(this);
-        this.activeEffect.addCompletionObserver(this);
-        this.activeEffect.start();
     }
 
     public void waitForEffectToFinish() {
@@ -73,22 +61,6 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
         }
     }
 
-    private void cancelEffect() {
-        if (activeEffect != null) {
-            activeEffect.stop();
-            activeEffect.removeAnimationObserver(this);
-            activeEffect.removeCompletionObserver(this);
-            latch.countDown();
-        }
-
-        activeEffect = null;
-        fireOnCurtainUpdated(null);
-    }
-
-    private boolean isScreenLocked() {
-        return this.activeEffect != null && this.activeEffect instanceof PlainEffect;
-    }
-
     public void addScreenCurtainObserver(CurtainObserver observer) {
         curtainObservers.add(observer);
     }
@@ -97,19 +69,52 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
         curtainObservers.remove(observer);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onSegueAnimationCompleted(AnimatedSegue effect) {
-        cancelEffect();
+        finish(true);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onFrameRendered(AnimatedSegue segue, BufferedImage image) {
         fireOnCurtainUpdated(image);
     }
 
+    private void start(AnimatedSegue effect) {
+        if (this.latch.getCount() == 0) {
+            this.latch = new CountDownLatch(1);
+        }
+
+        this.activeEffect = effect;
+        this.activeEffect.addAnimationObserver(this);
+        this.activeEffect.addCompletionObserver(this);
+        this.activeEffect.start();
+    }
+
+    private void finish(boolean raiseCurtain) {
+        activeEffect.stop();
+        activeEffect.removeAnimationObserver(this);
+        activeEffect.removeCompletionObserver(this);
+        activeEffect = null;
+
+        if (raiseCurtain) {
+            fireOnCurtainUpdated(null);
+            latch.countDown();
+        }
+    }
+
+    private boolean isScreenLocked() {
+        return latch.getCount() > 0;
+    }
+
     private void fireOnCurtainUpdated(BufferedImage screenCurtain) {
         SwingUtilities.invokeLater(() -> {
-            for (CurtainObserver thisObserver : curtainObservers) {
+            for (CurtainObserver thisObserver : curtainObservers.toArray(new CurtainObserver[0])) {
                 thisObserver.onCurtainUpdated(screenCurtain);
             }
         });

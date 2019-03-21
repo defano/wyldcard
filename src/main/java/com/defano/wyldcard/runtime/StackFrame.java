@@ -3,7 +3,6 @@ package com.defano.wyldcard.runtime;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.symbol.CompositeSymbolTable;
@@ -22,11 +21,8 @@ public class StackFrame {
     private long creationTime = System.currentTimeMillis();             // Time when this frame was created
     private List<Value> params = new ArrayList<>();                     // Arguments passed to this function/handler
     private String message = "";                                        // The name of this function/handler
-    private String passedMessage;                                       // Name of the message passed (via 'pass' command)
-    private VisualEffectSpecifier visualEffect;                         // Visual effect to use to unlock screen
     private Value returnValue = new Value();                            // Value returned from this function
     private PartSpecifier me;                                           // The part that 'me' refers to
-
 
     /**
      * Create a stack frame representing the invocation of unbound script text (i.e., text entered into the message
@@ -178,24 +174,6 @@ public class StackFrame {
      */
     public void setReturnValue(Value returnValue) {
         this.returnValue = returnValue;
-    }
-
-    /**
-     * Gets the visual effect to use when next unlocking the screen within the current execution frame.
-     *
-     * @return The visual effect.
-     */
-    public VisualEffectSpecifier getVisualEffect() {
-        return visualEffect;
-    }
-
-    /**
-     * Sets the visual effect to use when next unlocking the screen within the current execution frame.
-     *
-     * @param visualEffect The visual effect specification
-     */
-    public void setVisualEffect(VisualEffectSpecifier visualEffect) {
-        this.visualEffect = visualEffect;
     }
 
     /**

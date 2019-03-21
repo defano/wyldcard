@@ -56,7 +56,7 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
         int cardNumber = card.getPartModel().getCardIndexInStack() + 1;
         int cardCount = stack.getCardCountProvider().blockingFirst();
 
-        if (card.isViewingBackground()) {
+        if (card.isEditingBackground()) {
             getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount + " (Background)");
         } else {
             getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount);

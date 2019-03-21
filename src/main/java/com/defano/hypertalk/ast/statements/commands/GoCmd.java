@@ -28,20 +28,14 @@ public class GoCmd extends Command {
 
     private final Expression destinationExp;
     private final RemoteNavigationOptions navigationOptions;
-    private Expression visualEffectExp;
 
     @Inject
     private NavigationManager navigationManager;
 
     public GoCmd(ParserRuleContext context, Expression destinationExp, RemoteNavigationOptions navigationOptions) {
-        this(context, destinationExp, null, navigationOptions);
-    }
-
-    public GoCmd(ParserRuleContext context, Expression destinationExp, Expression visualEffectExp, RemoteNavigationOptions navigationOptions) {
         super(context, "go");
 
         this.destinationExp = destinationExp;
-        this.visualEffectExp = visualEffectExp;
         this.navigationOptions = navigationOptions;
     }
 
@@ -49,7 +43,7 @@ public class GoCmd extends Command {
 
         // Special case: No destination means 'go back'
         if (destinationExp == null) {
-            navigationManager.goPopCard(context, context.getCurrentStack(), getVisualEffect(context));
+            navigationManager.goPopCard(context, context.getCurrentStack());
             return;
         }
 
@@ -60,7 +54,7 @@ public class GoCmd extends Command {
             Destination destination = Destination.ofPart(context, model);
 
             if (destination != null) {
-                navigationManager.goDestination(context, destination, getVisualEffect(context));
+                navigationManager.goDestination(context, destination);
                 return;
             }
 
@@ -70,28 +64,14 @@ public class GoCmd extends Command {
         // Case 2: Navigate to a card in this stack ('go to card 3', 'go to card 3 of next bg')
         Destination destination = Destination.ofPart(context, destinationExp.partFactor(context, CardModel.class));
         if (destination != null) {
-            VisualEffectSpecifier visual = getVisualEffect(context);
-            CardPart card = navigationManager.goDestination(context, destination, visual);
-
-            // Wait for applied visual effect to end
-            if (visual != null) {
-                card.getOwningStack().getCurtainManager().waitForEffectToFinish();
-            }
-
+            navigationManager.goDestination(context, destination);
             return;
         }
 
         // Case 3: Navigate to a background in this stack ('go to next background')
         destination = Destination.ofPart(context, destinationExp.partFactor(context, BackgroundModel.class));
         if (destination != null) {
-            VisualEffectSpecifier visual = getVisualEffect(context);
-            CardPart card = navigationManager.goDestination(context, destination, visual);
-
-            // Wait for applied visual effect to end
-            if (visual != null) {
-                card.getOwningStack().getCurtainManager().waitForEffectToFinish();
-            }
-
+            navigationManager.goDestination(context, destination);
             return;
         }
 
@@ -114,7 +94,7 @@ public class GoCmd extends Command {
                 // We found the remote stack, now try to find the card
                 destination = Destination.ofPart(context, model.findPart(context, cps));
                 if (destination != null) {
-                    navigationManager.goDestination(context, destination, getVisualEffect(context));
+                    navigationManager.goDestination(context, destination);
                     return;
                 } else {
                     context.setResult(new Value("No such card."));
@@ -124,14 +104,6 @@ public class GoCmd extends Command {
         }
 
         context.setResult(new Value("No such card."));
-    }
-
-    private VisualEffectSpecifier getVisualEffect(ExecutionContext context) throws HtException {
-        if (visualEffectExp == null) {
-            return context.getStackFrame().getVisualEffect();
-        } else {
-            return visualEffectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier;
-        }
     }
 
 }
