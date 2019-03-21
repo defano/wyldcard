@@ -596,6 +596,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitGoPositionStmt(HyperTalkParser.GoPositionStmtContext ctx) {
+        return new GoPositionCmd(ctx, (Position) visit(ctx.position()));
+    }
+
+    @Override
+    public Object visitGoOrdinalStmt(HyperTalkParser.GoOrdinalStmtContext ctx) {
+        return new GoOrdinalCmd(ctx, (Ordinal) visit(ctx.ordinal()));
+    }
+
+    @Override
     public Object visitGoBackCmdStmt(HyperTalkParser.GoBackCmdStmtContext ctx) {
         return new GoCmd(ctx, null, new RemoteNavigationOptions(false, false));
     }

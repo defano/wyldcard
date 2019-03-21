@@ -165,8 +165,10 @@ commandStmnt
     | 'find' expression? 'international'? expression of 'marked' cards                                                  # findMarkedCards
     | 'find' expression? 'international'? expression                                                                    # findAnywhere
     | 'get' expression                                                                                                  # getCmdStmnt
+    | 'go' 'to'? position                                                                                               # goPositionStmt
+    | 'go' 'to'? ordinal                                                                                                # goOrdinalStmt
+    | 'go' 'to'? 'back'                                                                                                 # goBackCmdStmt
     | 'go' 'to'? expression remoteNavOption                                                                             # goCmdStmnt
-    | 'go' 'back'                                                                                                       # goBackCmdStmt
     | 'hide' card picture                                                                                               # hideThisCardPictCmd
     | 'hide' background picture                                                                                         # hideThisBkgndPictCmd
     | 'hide' picture of expression                                                                                      # hidePictCmd
@@ -296,10 +298,10 @@ sortStyle
     ;
 
 repeatRange
-    : duration                                                                                                          # durationLoop
-    | count                                                                                                             # countLoop
+    : 'forever'                                                                                                         # infiniteLoop
     | 'with' ID '=' range                                                                                               # withLoop
-    | 'forever'                                                                                                         # infiniteLoop
+    | duration                                                                                                          # durationLoop
+    | count                                                                                                             # countLoop
     |                                                                                                                   # infiniteLoop
     ;
 
