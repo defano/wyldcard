@@ -23,6 +23,16 @@ public class ButtonModelBuilder extends PartModelBuilder<ButtonModel, ButtonMode
         return this;
     }
 
+    public ButtonModelBuilder withTextStyle(Object v) {
+        this.model.setKnownProperty(context, ButtonModel.PROP_TEXTSTYLE, new Value(v));
+        return this;
+    }
+
+    public ButtonModelBuilder withTextAlign(Object v) {
+        this.model.setKnownProperty(context, ButtonModel.PROP_TEXTALIGN, new Value(v));
+        return this;
+    }
+
     public ButtonModelBuilder withTextFont(Object v) {
         this.model.setKnownProperty(context, ButtonModel.PROP_TEXTFONT, new Value(v));
         return this;
@@ -45,6 +55,16 @@ public class ButtonModelBuilder extends PartModelBuilder<ButtonModel, ButtonMode
 
     public ButtonModelBuilder withAutoHilite(Object v) {
         this.model.setKnownProperty(context, ButtonModel.PROP_AUTOHILIGHT, new Value(v));
+        return this;
+    }
+
+    public ButtonModelBuilder withIsEnabled(Object v) {
+        this.model.setKnownProperty(context, ButtonModel.PROP_ENABLED, new Value(v));
+        return this;
+    }
+
+    public ButtonModelBuilder withFamily(Object v) {
+        this.model.setKnownProperty(context, ButtonModel.PROP_FAMILY, new Value(v));
         return this;
     }
 

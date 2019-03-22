@@ -7,6 +7,7 @@ import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.record.FontRecord;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public class FontTableBlock extends Block {
@@ -24,6 +25,12 @@ public class FontTableBlock extends Block {
 
     public FontRecord[] getFonts() {
         return fonts;
+    }
+
+    public FontRecord getFont(int fontId) {
+        return Arrays.stream(getFonts())
+                .filter(f -> f.getFontId() == fontId).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No such font id: " + fontId));
     }
 
     @Override

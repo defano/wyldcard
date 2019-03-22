@@ -6,6 +6,7 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.parts.model.PropertyWillChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.annotation.PostConstruct;
@@ -103,6 +104,14 @@ public class ButtonModel extends CardLayerPartModel {
 
         newPropertyAlias(PROP_HILITE, PROP_HIGHLITE, PROP_HILIGHT, PROP_HIGHLIGHT);
         newPropertyAlias(PROP_AUTOHILITE, PROP_AUTOHIGHLITE, PROP_AUTOHILIGHT, PROP_AUTOHIGHLIGHT);
+
+        // When an icon has been applied to a button, HyperCard automatically forces the button font to 10pt Geneva
+        addPropertyWillChangeObserver((context, property, oldValue, newValue) -> {
+            if (property.equalsIgnoreCase(PROP_ICON) && !newValue.isEmpty()) {
+                setKnownProperty(context, PROP_TEXTSIZE, new Value(10));
+                setKnownProperty(context, PROP_TEXTFONT, new Value("Geneva"));
+            }
+        });
     }
 
     @Override
