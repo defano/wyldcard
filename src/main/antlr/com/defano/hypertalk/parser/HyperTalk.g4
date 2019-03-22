@@ -74,21 +74,21 @@ statementList
     ;
 
 statement
-    : commandStmnt                                                                                                      # nonEmptyCommandStmnt
-    | functionCall                                                                                                      # nonEmptyFuncStmnt
-    | messageStatement                                                                                                  # nonEmptyMsgStmnt
-    | expression                                                                                                        # nonEmptyExpStmnt
-    | ifStatement                                                                                                       # nonEmptyIfStmnt
-    | repeatStatement                                                                                                   # nonEmptyRepeatStmnt
-    | globalStmnt                                                                                                       # nonEmptyGlobalStmnt
-    | returnStmnt                                                                                                       # nonEmptyReturnStmnt
+    : commandStatement                                                                                                  # commandStmnt
+    | functionCall                                                                                                      # funcStmnt
+    | messageStatement                                                                                                  # msgStmnt
+    | expression                                                                                                        # expStmnt
+    | ifStatement                                                                                                       # ifStmnt
+    | repeatStatement                                                                                                   # repeatStmnt
+    | globalStatement                                                                                                   # globalStmnt
+    | returnStatement                                                                                                   # returnStmnt
     ;
 
-globalStmnt
+globalStatement
     : 'global' parameterList
     ;
 
-returnStmnt
+returnStatement
     : 'return' expression                                                                                               # eprReturnStmnt
     | 'return'                                                                                                          # voidReturnStmnt
     ;
@@ -118,8 +118,8 @@ messageStatement
     | ID listExpression                                                                                                 # argMsgCmdStmt
     ;
 
-commandStmnt
-    : 'add' expression 'to' expression                                                                                  # addCmdStmnt
+commandStatement
+    : 'add' expression 'to' expression                                                                                  # addCmd
     | 'answer' expression 'with' term 'or' term 'or' term                                                               # answerThreeButtonCmd
     | 'answer' expression 'with' term 'or' term                                                                         # answerTwoButtonCmd
     | 'answer' expression 'with' term                                                                                   # answerOneButtonCmd
@@ -129,78 +129,78 @@ commandStmnt
     | 'ask' expression                                                                                                  # askExpCmd
     | 'ask' 'file' expression                                                                                           # askFileCmd
     | 'ask' 'file' expression 'with' expression                                                                         # askFileWithCmd
-    | 'beep'                                                                                                            # beepCmdStmt
-    | 'beep' expression                                                                                                 # beepMultipleStmt
-    | 'choose' toolExpression 'tool'?                                                                                   # chooseToolCmdStmt
-    | 'choose' 'tool' toolExpression                                                                                    # chooseToolNumberCmdStmt
-    | 'click' 'at' listExpression                                                                                       # clickCmdStmt
-    | 'click' 'at' listExpression 'with' listExpression                                                                 # clickWithKeyCmdStmt
-    | 'close' 'file' expression                                                                                         # closeFileCmdStmt
-    | 'commandkeydown' expression                                                                                       # commandKeyDownCmdStmt
-    | 'controlkey' expression                                                                                           # controlKeyCmdStmt
+    | 'beep'                                                                                                            # beepCmd
+    | 'beep' expression                                                                                                 # beepMultipleCmd
+    | 'choose' toolExpression 'tool'?                                                                                   # chooseToolCmd
+    | 'choose' 'tool' toolExpression                                                                                    # chooseToolNumberCmd
+    | 'click' 'at' listExpression                                                                                       # clickCmd
+    | 'click' 'at' listExpression 'with' listExpression                                                                 # clickWithKeyCmd
+    | 'close' 'file' expression                                                                                         # closeFileCmd
+    | 'commandkeydown' expression                                                                                       # commandKeyDownCmd
+    | 'controlkey' expression                                                                                           # controlKeyCmd
     | 'convert' container 'to' convertible                                                                              # convertContainerToCmd
     | 'convert' container 'from' convertible 'to' convertible                                                           # convertContainerFromToCmd
     | 'convert' expression 'to' convertible                                                                             # convertToCmd
     | 'convert' expression 'from' convertible 'to' convertible                                                          # convertFromToCmd
-    | 'create' 'menu' expression                                                                                        # createMenuCmdStmt
-    | 'debug' 'checkpoint'                                                                                              # debugCheckpointCmdStmt
-    | 'delete' expression                                                                                               # deleteCmdStmt
-    | 'dial' expression                                                                                                 # dialCmdStmt
-    | 'disable' expression                                                                                              # disableExprStmt
-    | 'divide' expression 'by' expression                                                                               # divideCmdStmnt
-    | 'do' expression                                                                                                   # doCmdStmt
-    | 'domenu' expression                                                                                               # doMenuCmdStmt
-    | 'drag' 'from' listExpression 'to' listExpression                                                                  # dragCmdStmt
-    | 'drag' 'from' listExpression 'to' listExpression 'with' listExpression                                            # dragWithKeyCmdStmt
-    | 'edit' 'the'? 'script' of expression                                                                              # editScriptCmdStmt
-    | 'enable' expression                                                                                               # enableExpStmnt
-    | 'enterinfield'                                                                                                    # enterInFieldCmdStmt
-    | 'enterkey'                                                                                                        # enterKeyCmdStmt
-    | 'exit' symbol                                                                                                     # exitCmdStmt
-    | 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
-    | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
-    | 'export' 'paint' 'to' 'file' expression                                                                           # exportPaintCmdStmt
-    | 'find' expression? 'international'? expression of expression of 'marked' cards                                    # findFieldMarkedCards
-    | 'find' expression? 'international'? expression of expression                                                      # findField
-    | 'find' expression? 'international'? expression of 'marked' cards                                                  # findMarkedCards
-    | 'find' expression? 'international'? expression                                                                    # findAnywhere
-    | 'get' expression                                                                                                  # getCmdStmnt
-    | 'go' 'to'? position                                                                                               # goPositionStmt
-    | 'go' 'to'? ordinal                                                                                                # goOrdinalStmt
-    | 'go' 'to'? 'back'                                                                                                 # goBackCmdStmt
-    | 'go' 'to'? expression remoteNavOption                                                                             # goCmdStmnt
+    | 'create' 'menu' expression                                                                                        # createMenuCmd
+    | 'debug' 'checkpoint'                                                                                              # debugCheckpointCmd
+    | 'delete' expression                                                                                               # deleteCmd
+    | 'dial' expression                                                                                                 # dialCmd
+    | 'disable' expression                                                                                              # disableCmd
+    | 'divide' expression 'by' expression                                                                               # divideCmd
+    | 'do' expression                                                                                                   # doCmd
+    | 'domenu' expression                                                                                               # doMenuCmd
+    | 'drag' 'from' listExpression 'to' listExpression                                                                  # dragCmd
+    | 'drag' 'from' listExpression 'to' listExpression 'with' listExpression                                            # dragWithKeyCmd
+    | 'edit' 'the'? 'script' of expression                                                                              # editScriptCmd
+    | 'enable' expression                                                                                               # enableCmd
+    | 'enterinfield'                                                                                                    # enterInFieldCmd
+    | 'enterkey'                                                                                                        # enterKeyCmd
+    | 'exit' symbol                                                                                                     # exitCmd
+    | 'exit' 'repeat'                                                                                                   # exitRepeatCmd
+    | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmd
+    | 'export' 'paint' 'to' 'file' expression                                                                           # exportPaintCmd
+    | 'find' expression? 'international'? expression of expression of 'marked' cards                                    # findFieldMarkedCardsCmd
+    | 'find' expression? 'international'? expression of expression                                                      # findFieldCmd
+    | 'find' expression? 'international'? expression of 'marked' cards                                                  # findMarkedCardsCmd
+    | 'find' expression? 'international'? expression                                                                    # findAnywhereCmd
+    | 'get' expression                                                                                                  # getCmd
+    | 'go' 'to'? position                                                                                               # goPosition
+    | 'go' 'to'? ordinal                                                                                                # goOrdinal
+    | 'go' 'to'? 'back'                                                                                                 # goBackCmd
+    | 'go' 'to'? expression navigationOption                                                                            # goCmd
     | 'hide' card picture                                                                                               # hideThisCardPictCmd
     | 'hide' background picture                                                                                         # hideThisBkgndPictCmd
     | 'hide' picture of expression                                                                                      # hidePictCmd
-    | 'hide' expression                                                                                                 # hideCmdStmnt
-    | 'hide' 'the'? 'titlebar'                                                                                          # hideTitleBar
+    | 'hide' expression                                                                                                 # hideCmd
+    | 'hide' 'the'? 'titlebar'                                                                                          # hideTitleBarCmd
     | 'hide' 'the'? 'menubar'                                                                                           # hideMenubarCmd
-    | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmdStmt
-    | 'keydown' expression                                                                                              # keydownCmdStmt
-    | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
-    | 'mark' 'all' cards                                                                                                # markAllCardsCmdStmt
-    | 'mark' expression                                                                                                 # markCardCmdStmt
-    | 'mark' cards 'where' expression                                                                                   # markCardsWhereCmdStmt
-    | 'mark' cards 'by' 'finding' expression? 'international'? expression of expression                                 # markCardsFindingInFieldCmdStmt
-    | 'mark' cards 'by' 'finding' expression? 'international'? expression                                               # markCardsFindingCmdStmt
-    | 'multiply' expression 'by' expression                                                                             # multiplyCmdStmnt
-    | 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
-    | 'open' 'file' expression                                                                                          # openFileCmdStmt
-    | 'pass' symbol                                                                                                     # passCmdStmt
-    | 'play' musicExpression                                                                                            # playCmdStmt
-    | 'pop' card                                                                                                        # popCardCmdStmt
-    | 'push' card                                                                                                       # pushCardCmdStmt
-    | 'push' expression                                                                                                 # pushDestCmdStmt
+    | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmd
+    | 'keydown' expression                                                                                              # keydownCmd
+    | 'lock' 'screen'                                                                                                   # lockScreenCmd
+    | 'mark' 'all' cards                                                                                                # markAllCardsCmd
+    | 'mark' expression                                                                                                 # markCardCmd
+    | 'mark' cards 'where' expression                                                                                   # markCardsWhereCmd
+    | 'mark' cards 'by' 'finding' expression? 'international'? expression of expression                                 # markCardsFindingInFieldCmd
+    | 'mark' cards 'by' 'finding' expression? 'international'? expression                                               # markCardsFindingCmd
+    | 'multiply' expression 'by' expression                                                                             # multiplyCmd
+    | 'next' 'repeat'                                                                                                   # nextRepeatCmd
+    | 'open' 'file' expression                                                                                          # openFileCmd
+    | 'pass' symbol                                                                                                     # passCmd
+    | 'play' musicExpression                                                                                            # playCmd
+    | 'pop' card                                                                                                        # popCardCmd
+    | 'push' card                                                                                                       # pushCardCmd
+    | 'push' expression                                                                                                 # pushDestCmd
     | 'put' listExpression                                                                                              # putIntoCmd
     | 'put' listExpression preposition expression                                                                       # putPrepositionCmd
     | 'read' 'from' 'file' expression                                                                                   # readFileCmd
     | 'read' 'from' 'file' expression 'for' expression                                                                  # readFileForCmd
     | 'read' 'from' 'file' expression 'at' expression 'for' expression                                                  # readFileAtCmd
     | 'read' 'from' 'file' expression 'until' expression                                                                # readFileUntil
-    | 'reset' 'the'? 'menubar'                                                                                          # resetMenuCmdStmt
-    | 'reset' 'paint'                                                                                                   # resetPaintCmdStmt
-    | 'save' 'this'? 'stack' 'as' 'stack'? expression                                                                   # saveThisStackAsCmdStmt
-    | 'save' 'stack' expression 'as' 'stack'? expression                                                                # saveStackAsCmdStmt
+    | 'reset' 'the'? 'menubar'                                                                                          # resetMenuCmd
+    | 'reset' 'paint'                                                                                                   # resetPaintCmd
+    | 'save' 'this'? 'stack' 'as' 'stack'? expression                                                                   # saveThisStackAsCmd
+    | 'save' 'stack' expression 'as' 'stack'? expression                                                                # saveStackAsCmd
     | 'select' 'empty'                                                                                                  # selectEmptyCmd
     | 'select' 'text' of expression                                                                                     # selectTextCmd
     | 'select' 'before' 'text' of expression                                                                            # selectBeforeCmd
@@ -228,18 +228,18 @@ commandStmnt
     | 'speak' expression                                                                                                # speakCmd
     | 'speak' expression 'with' gender=('male'|'female'|'neuter'|'robotic') 'voice'                                     # speakGenderCmd
     | 'speak' expression 'with' 'voice' expression                                                                      # speakVoiceCmd
-    | 'subtract' expression 'from' expression                                                                           # subtractCmdStmnt
-    | 'tabkey'                                                                                                          # tabKeyCmdStmnt
-    | 'type' expression                                                                                                 # typeCmdStmt
-    | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmdStmt
-    | 'unlock' 'screen'                                                                                                 # unlockScreenCmdStmt
-    | 'unlock' 'screen' 'with' 'visual' expression                                                                      # unlockScreenVisualCmdStmt
-    | 'unmark' 'all' cards                                                                                              # unmarkAllCardsCmdStmt
-    | 'unmark' expression                                                                                               # unmarkCardCmdStmt
-    | 'unmark' cards 'where' expression                                                                                 # unmarkCardsWhereCmdStmt
-    | 'unmark' cards 'by' 'finding' expression? 'international'? expression of expression                               # unmarkCardsFindingInFieldCmdStmt
-    | 'unmark' cards 'by' 'finding' expression? 'international'? expression                                             # unmarkCardsFindingCmdStmt
-    | 'visual' expression                                                                                               # visualEffectCmdStmt
+    | 'subtract' expression 'from' expression                                                                           # subtractCmd
+    | 'tabkey'                                                                                                          # tabKeyCmd
+    | 'type' expression                                                                                                 # typeCmd
+    | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmd
+    | 'unlock' 'screen'                                                                                                 # unlockScreenCmd
+    | 'unlock' 'screen' 'with' 'visual' expression                                                                      # unlockScreenVisualCmd
+    | 'unmark' 'all' cards                                                                                              # unmarkAllCardsCmd
+    | 'unmark' expression                                                                                               # unmarkCardCmd
+    | 'unmark' cards 'where' expression                                                                                 # unmarkCardsWhereCmd
+    | 'unmark' cards 'by' 'finding' expression? 'international'? expression of expression                               # unmarkCardsFindingInFieldCmd
+    | 'unmark' cards 'by' 'finding' expression? 'international'? expression                                             # unmarkCardsFindingCmd
+    | 'visual' expression                                                                                               # visualEffectCmd
     | 'wait' expression timeUnit                                                                                        # waitCountCmd
     | 'wait' 'for' expression timeUnit                                                                                  # waitForCountCmd
     | 'wait' 'until' expression                                                                                         # waitUntilCmd
@@ -249,7 +249,7 @@ commandStmnt
     | 'write' expression 'to' 'file' expression 'at' expression                                                         # writeAtFileCmd
     ;
 
-remoteNavOption
+navigationOption
     : IN_A_NEW 'window'                                                                                                 # remoteInNewWindow
     | IN_A_NEW 'window' 'without' 'dialog'                                                                              # remoteInNewWindowWithoutDialog
     | 'without' 'dialog'                                                                                                # remoteWithoutDialog
@@ -450,24 +450,23 @@ expression
     ;
 
 term
-    : literal                                                                                                           # literalFactor
-    | '-' literal                                                                                                       # negativeLiteralFactor
-    | '(' expression ')'                                                                                                # expressionFactor
-    | effectExpression                                                                                                  # visualEffectFactor
-    | functionCall                                                                                                      # functionExp
-    | container                                                                                                         # containerFactor
-    | chunk term                                                                                                        # chunkFactorChunk
+    : literal                                                                                                           # literalTerm
+    | '-' literal                                                                                                       # negativeLiteralTerm
+    | '(' expression ')'                                                                                                # expressionTerm
+    | effectExpression                                                                                                  # visualEffectTerm
+    | functionCall                                                                                                      # functionTerm
+    | container                                                                                                         # containerTerm
+    | chunk term                                                                                                        # chunkTerm
     ;
 
 container
-    : symbol                                                                                                            # variableDest
-    | 'the'? 'selection'                                                                                                # selectionDest
-    | 'target'                                                                                                          # targetDest
-    | property                                                                                                          # propertyDest
-    | menu                                                                                                              # menuDest
-    | menuItem                                                                                                          # menuItemDest
-    | part                                                                                                              # partDest
-    | chunk container                                                                                                   # chunkContainerDest
+    : symbol                                                                                                            # variableContainer
+    | 'the'? 'selection'                                                                                                # selectionContainer
+    | 'target'                                                                                                          # targetContainer
+    | property                                                                                                          # propertyContainer
+    | menu                                                                                                              # menuContainer
+    | menuItem                                                                                                          # menuItemContainer
+    | part                                                                                                              # partContainer
     ;
 
 musicExpression
@@ -515,12 +514,8 @@ builtInFunc
     | 'the'? oneArgFunc of term                                                                                         # builtinFuncOneArgs
     | oneArgFunc '(' listExpression ')'                                                                                 # builtinFuncOneArgs
     | multiArgFunc '(' listExpression ')'                                                                               # builtinFuncArgList
-    | numberFunc                                                                                                        # builtinNumberFunc
-    ;
-
-numberFunc
-    : 'the'? 'number' of countable                                                                                      # numberOfCountable
-    | 'number' '(' countable ')'                                                                                        # numberOfCountable
+    | 'the'? 'number' of countable                                                                                      # builtinFuncNumber
+    | 'number' '(' countable ')'                                                                                        # builtinFuncNumber
     ;
 
 zeroArgFunc
@@ -643,23 +638,19 @@ cardinalValue
     ;
 
 ordinal
-    : 'the'? ordinalValue                                                                                               # theOrdinalVal
-    ;
-
-ordinalValue
-    : 'first'
-    | 'second'
-    | 'third'
-    | 'fourth'
-    | 'fifth'
-    | 'sixth'
-    | 'seventh'
-    | 'eighth'
-    | 'ninth'
-    | 'tenth'
-    | ('mid' | 'middle')
-    | 'last'
-    | 'any'
+    : 'the'? 'first'
+    | 'the'? 'second'
+    | 'the'? 'third'
+    | 'the'? 'fourth'
+    | 'the'? 'fifth'
+    | 'the'? 'sixth'
+    | 'the'? 'seventh'
+    | 'the'? 'eighth'
+    | 'the'? 'ninth'
+    | 'the'? 'tenth'
+    | 'the'? ('mid' | 'middle')
+    | 'the'? 'last'
+    | 'the'? 'any'
     ;
 
 countable
@@ -671,11 +662,11 @@ countable
     | card button of expression                                                                                         # cardButtonsOfCount
     | card field                                                                                                        # cardFieldCount
     | card field of expression                                                                                          # cardFieldsOfCount
-    | card? 'parts'                                                                                                      # cardPartCount
+    | card? 'parts'                                                                                                     # cardPartCount
     | card 'parts' of expression                                                                                        # cardPartsOfCount
     | background button                                                                                                 # bkgndButtonCount
     | background button of expression                                                                                   # bkgndButtonsOfCount
-    | background? field                                                                                                  # bkgndFieldCount
+    | background? field                                                                                                 # bkgndFieldCount
     | background field of expression                                                                                    # bkgndFieldsOfCount
     | background 'parts'                                                                                                # bkgndPartCount
     | background 'parts' of expression                                                                                  # bkgndPartsOfCount
@@ -748,8 +739,8 @@ keyword
     | 'selectedtext' | 'shiftkey' | 'sound' | 'speech' | 'stacks' | 'systemversion' | 'ticks' | 'paramcount' | 'params'
     | 'voices' | 'windows' | 'average' | 'min' | 'max' | 'sum' | 'random' | 'sqrt' | 'trunc' | 'sin' | 'cos' | 'tan'
     | 'atan' | 'exp' | 'exp1' | 'exp2' | 'ln' | 'ln1' | 'log2' | 'abs' | 'chartonum' | 'numtochar' | 'value' | 'length'
-    | 'param' | 'annuity' | 'compound' | 'offset' | 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth' | 'seventh'
-    | 'eighth' | 'ninth' | 'tenth'
+    | 'param' | 'annuity' | 'compound' | 'offset' | 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth'
+    | 'seventh' | 'eighth' | 'ninth' | 'tenth'
     | 'mid' | 'middle' | 'last' | 'any' | 'parts' | 'menuitems' | 'integer' | 'point' | 'logical' | 'boolean' | 'bool'
     | 'word' | 'chars' | 'whole' | 'string' | 'bottom' | 'top' | 'center' | 'scroll' | 'plain' | 'picture' | 'pict'
     | 'seconds' | 'secs' | 'sec' | 'fast' | 'slow' | 'slowly' | 'very' | 'black' | 'card' | 'gray' | 'grey' | 'inverse'

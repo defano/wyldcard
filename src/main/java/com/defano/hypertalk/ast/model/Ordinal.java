@@ -30,6 +30,10 @@ public enum Ordinal {
     }
 
     public static Ordinal fromHyperTalkIdentifier(String identifier) {
+        if (identifier.startsWith("the")) {
+            identifier = identifier.substring(3);
+        }
+
         for (Ordinal thisOrdinal : values()) {
             for (String thisIdentifier : thisOrdinal.hyperTalkIdentifiers) {
                 if (thisIdentifier.equalsIgnoreCase(identifier)) {
