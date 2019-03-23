@@ -15,7 +15,7 @@ public class PartContentRecord {
     private short partId;
     private boolean isPlaintext;
     private StyleSpanRecord[] styleSpans = new StyleSpanRecord[0];
-    private String contents;
+    private String text;
 
     public static PartContentRecord deserialize(Block parent, short partId, byte[] data, ImportResult report) throws ImportException {
         PartContentRecord partContent = new PartContentRecord();
@@ -48,7 +48,9 @@ public class PartContentRecord {
                 partContent.isPlaintext = true;
             }
 
-            partContent.contents = sis.readString(length - styleLength);
+            partContent.text = sis.readString(length - styleLength);
+
+            System.err.println(partContent);
 
         } catch (IOException e) {
             report.throwError(parent, "Malformed part content record; stack is corrupt.");
@@ -69,8 +71,8 @@ public class PartContentRecord {
         return styleSpans;
     }
 
-    public String getContents() {
-        return contents;
+    public String getText() {
+        return text;
     }
 
     @Override

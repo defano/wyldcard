@@ -8,6 +8,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.DeferredKeyEventComponent;
+import com.defano.wyldcard.parts.builder.FieldModelBuilder;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.card.CardPart;
@@ -347,7 +348,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
 
         if (cardPart != null) {
             int id = cardPart.getPartModel().getStackModel().getNextFieldId();
-            partModel = FieldModel.newFieldModel(context, id, geometry, owner, parentPartModel);
+            partModel = new FieldModelBuilder(owner, parentPartModel).withId(id).withBounds(geometry).build();
             partModel.addPropertyChangedObserver(this);
         }
     }

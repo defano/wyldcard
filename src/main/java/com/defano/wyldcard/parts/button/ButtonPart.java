@@ -3,6 +3,7 @@ package com.defano.wyldcard.parts.button;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseStillDown;
+import com.defano.wyldcard.parts.builder.ButtonModelBuilder;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -57,7 +58,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         }
 
         ButtonPart button = new ButtonPart(ButtonStyle.ROUND_RECT, parent, owner);
-        button.initProperties(context, rectangle, parent.getPartModel());
+        button.initProperties(rectangle, parent.getPartModel());
         return button;
     }
 
@@ -214,11 +215,11 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         }
     }
 
-    private void initProperties(ExecutionContext context, Rectangle geometry, PartModel parentPartModel) {
+    private void initProperties(Rectangle geometry, PartModel parentPartModel) {
         CardPart cardPart = parent.get();
         if (cardPart != null) {
             int id = cardPart.getPartModel().getStackModel().getNextButtonId();
-            partModel = ButtonModel.newButtonModel(context, id, geometry, owner, parentPartModel);
+            partModel = new ButtonModelBuilder(owner, parentPartModel).withId(id).withBounds(geometry).build();
         }
     }
 }

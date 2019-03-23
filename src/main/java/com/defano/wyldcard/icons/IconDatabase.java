@@ -2,11 +2,9 @@ package com.defano.wyldcard.icons;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
-import com.thoughtworks.xstream.XStream;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * A factory for creating {@link ButtonIcon} objects by name or id.

@@ -49,7 +49,7 @@ public class ButtonModelBuilder extends PartModelBuilder<ButtonModel, ButtonMode
     }
 
     public ButtonModelBuilder withHilite(Object v) {
-        this.model.setKnownProperty(context, ButtonModel.PROP_HILITE, new Value(v));
+        this.model.setKnownProperty(context, ButtonModel.PROP_HIGHLIGHT, new Value(v));
         return this;
     }
 

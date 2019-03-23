@@ -1,28 +1,27 @@
 package com.defano.wyldcard.parts.field;
 
-import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.fonts.TextStyleSpecifier;
-import com.defano.wyldcard.parts.card.CardLayerPartModel;
-import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
-import com.defano.wyldcard.parts.finder.LayeredPartFinder;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
-import com.defano.wyldcard.parts.model.DispatchComputedSetter;
-import com.defano.wyldcard.parts.model.LogicalLinkObserver;
-import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.util.FieldUtilities;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.fonts.TextStyleSpecifier;
+import com.defano.wyldcard.parts.card.CardLayerPartModel;
+import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
+import com.defano.wyldcard.parts.finder.LayeredPartFinder;
+import com.defano.wyldcard.parts.model.DispatchComputedSetter;
+import com.defano.wyldcard.parts.model.LogicalLinkObserver;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
+import com.defano.wyldcard.parts.util.FieldUtilities;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import javax.swing.text.*;
-import java.awt.*;
 import java.util.*;
 
 /**
@@ -59,7 +58,6 @@ import java.util.*;
  * thread-local {@link #setCurrentCardId(int)} property that determines which card is "active" for the purposes of
  * getting or setting text. To support remote field references in script (i.e., 'put "ugh" into bg fld 3 of the last
  * card'), we can't simply query HyperCard for the displayed card.
- *
  */
 public class FieldModel extends CardLayerPartModel implements AddressableSelection, SelectableTextModel {
 
@@ -76,51 +74,47 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public static final String PROP_SCROLLING = "scrolling";
     public static final String PROP_SCROLL = "scroll";
 
-    private StyledDocument sharedText = new DefaultStyledDocument();
     private final Map<Integer, StyledDocument> unsharedText = new HashMap<>();
     private final Set<Integer> sharedAutoSelection = new HashSet<>();
     private final Map<Integer, Set<Integer>> unsharedAutoSelection = new HashMap<>();
-
+    private StyledDocument sharedText = new DefaultStyledDocument();
+    
     private transient FieldModelObserver observer;
     private transient Range selection;
 
     public FieldModel(Owner owner, PartModel parentPartModel) {
         super(PartType.FIELD, owner, parentPartModel);
+
+        this.setCurrentCardId(parentPartModel.getId(new ExecutionContext()));
+
+        this.newProperty(PROP_SCRIPT, new Value(), false);
+        this.newProperty(PROP_ID, new Value(), true);
+        this.newProperty(PROP_NAME, new Value("Text Field"), false);
+        this.newProperty(PROP_LEFT, new Value(), false);
+        this.newProperty(PROP_TOP, new Value(), false);
+        this.newProperty(PROP_WIDTH, new Value(), false);
+        this.newProperty(PROP_HEIGHT, new Value(), false);
+        this.newProperty(PROP_DONTWRAP, new Value(false), false);
+        this.newProperty(PROP_VISIBLE, new Value(true), false);
+        this.newProperty(PROP_LOCKTEXT, new Value(false), false);
+        this.newProperty(PROP_SHOWLINES, new Value(true), false);
+        this.newProperty(PROP_STYLE, new Value(FieldStyle.TRANSPARENT.getName()), false);
+        this.newProperty(PROP_TEXTALIGN, new Value("left"), false);
+        this.newProperty(PROP_CONTENTS, new Value(""), false);
+        this.newProperty(PROP_SHAREDTEXT, new Value(false), false);
+        this.newProperty(PROP_WIDEMARGINS, new Value(false), false);
+        this.newProperty(PROP_AUTOTAB, new Value(false), false);
+        this.newProperty(PROP_AUTOSELECT, new Value(false), false);
+        this.newProperty(PROP_MULTIPLELINES, new Value(false), false);
+        this.newProperty(PROP_SCROLLING, new Value(false), false);
+        this.newProperty(PROP_SCROLL, new Value(0), false);
+
+        this.initialize();
     }
 
-    public static FieldModel newFieldModel(ExecutionContext context, int id, Rectangle geometry, Owner owner, PartModel parentPartModel) {
-        FieldModel partModel = new FieldModel(owner, parentPartModel);
-
-        partModel.setCurrentCardId(parentPartModel.getId(context));
-
-        partModel.newProperty(PROP_SCRIPT, new Value(), false);
-        partModel.newProperty(PROP_ID, new Value(id), true);
-        partModel.newProperty(PROP_NAME, new Value("Text Field " + id), false);
-        partModel.newProperty(PROP_LEFT, new Value(geometry.x), false);
-        partModel.newProperty(PROP_TOP, new Value(geometry.y), false);
-        partModel.newProperty(PROP_WIDTH, new Value(geometry.width), false);
-        partModel.newProperty(PROP_HEIGHT, new Value(geometry.height), false);
-        partModel.newProperty(PROP_DONTWRAP, new Value(false), false);
-        partModel.newProperty(PROP_VISIBLE, new Value(true), false);
-        partModel.newProperty(PROP_LOCKTEXT, new Value(false), false);
-        partModel.newProperty(PROP_SHOWLINES, new Value(true), false);
-        partModel.newProperty(PROP_STYLE, new Value(FieldStyle.TRANSPARENT.getName()), false);
-        partModel.newProperty(PROP_TEXTALIGN, new Value("left"), false);
-        partModel.newProperty(PROP_CONTENTS, new Value(""), false);
-        partModel.newProperty(PROP_SHAREDTEXT, new Value(false), false);
-        partModel.newProperty(PROP_WIDEMARGINS, new Value(false), false);
-        partModel.newProperty(PROP_AUTOTAB, new Value(false), false);
-        partModel.newProperty(PROP_AUTOSELECT, new Value(false), false);
-        partModel.newProperty(PROP_MULTIPLELINES, new Value(false), false);
-        partModel.newProperty(PROP_SCROLLING, new Value(true), false);
-        partModel.newProperty(PROP_SCROLL, new Value(0), false);
-
-        partModel.initialize();
-
-        return partModel;
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @PostConstruct
     @Override
     public void initialize() {
@@ -151,7 +145,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     /**
      * Sets the observer of scripted changes to the field's document model. Only a single observer is supported (and
      * should always be the field view object, {@link HyperCardTextField}.
-     *
+     * <p>
      * In most every other case, a special observer interface is not required because observable attributes are modeled
      * by {@link WyldCardPropertiesModel}. Unfortunately, this technique requires properties
      * to be modeled as a HyperTalk {@link Value}. Coercing a byte array into and out of a Value would be ugly.
@@ -165,8 +159,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     /**
      * Gets a Swing {@link StyledDocument} representing the rich text displayed in this field.
      *
-     * @return A StyledDocument representation of the contents of this field.
      * @param context The execution context.
+     * @return A StyledDocument representation of the contents of this field.
      */
     public StyledDocument getStyledDocument(ExecutionContext context) {
         if (useSharedText(context)) {
@@ -189,7 +183,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * data depending on whether the field is in the background and has the sharedText property.
      *
      * @param context The execution context.
-     * @param doc The styled document data to persist into the model.
+     * @param doc     The styled document data to persist into the model.
      */
     public void setStyledDocument(ExecutionContext context, StyledDocument doc) {
         if (useSharedText(context)) {
@@ -202,8 +196,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     /**
      * Determine if the model should use the sharedText document data.
      *
-     * @return True if the model should use sharedText data; false otherwise.
      * @param context The execution context.
+     * @return True if the model should use sharedText data; false otherwise.
      */
     private boolean useSharedText(ExecutionContext context) {
         return getOwner() == Owner.CARD || getKnownProperty(context, PROP_SHAREDTEXT).booleanValue();
@@ -212,8 +206,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     /**
      * Gets a plaintext representation of the text held in this model.
      *
-     * @return A plaintext representation of the contents of this field.
      * @param context The execution context.
+     * @return A plaintext representation of the contents of this field.
      */
     @Override
     public String getText(ExecutionContext context) {
@@ -286,7 +280,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     /**
      * Produces a set of differences between the existing and replacement strings.
      *
-     * @param existing The existing text to analyze
+     * @param existing    The existing text to analyze
      * @param replacement The new/replacement text to compare
      * @return A list of differences
      */
@@ -299,7 +293,9 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         return diffs;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setTextStyle(ExecutionContext context, TextStyleSpecifier tss) {
         StyledDocument doc = getStyledDocument(context);
@@ -309,8 +305,9 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         fireDocumentChangeObserver(context, doc);
     }
 
-    /** {@inheritDoc}
-     * @param context*/
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TextStyleSpecifier getTextStyle(ExecutionContext context) {
         return TextStyleSpecifier.fromAttributeSet(getStyledDocument(context).getCharacterElement(0).getAttributes());
@@ -320,7 +317,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * Sets the font family of the indicated range of characters in this field; has no effect if the font family
      * is not available on this system.
      *
-     * @param context The execution context.
+     * @param context       The execution context.
      * @param startPosition The index of the first character whose style should change
      * @param length        The number of characters after the start position to apply the style to.
      * @param fontFamily    The new font family to apply.
@@ -348,7 +345,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     /**
      * Sets the font size (in points) of the indicated range of characters in this field.
      *
-     * @param context The execution context.
+     * @param context       The execution context.
      * @param startPosition The index of the first character whose style should change
      * @param length        The number of characters after the start position to apply the style to.
      * @param fontSize      The new font size to apply.
@@ -377,7 +374,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * Sets the font style of the indicated range of characters in this field; style should be 'italic', 'bold',
      * 'bold,italic' or 'plain'.
      *
-     * @param context The execution context.
+     * @param context       The execution context.
      * @param startPosition The index of the first character whose style should change
      * @param length        The number of characters after the start position to apply the style to.
      * @param fontStyle     The new font style to apply.
@@ -409,11 +406,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * Gets the font family of the indicated range of characters in the field, or 'mixed' if multiple fonts are present
      * in the range.
      *
-     *
-     * @param context The execution context.
+     * @param context       The execution context.
      * @param startPosition The index of the first character whose style should change
      * @param length        The number of characters after the start position to apply the style to.
-     * @return              The name of the font family present in the range of characters or 'mixed' if there are
+     * @return The name of the font family present in the range of characters or 'mixed' if there are
      * multiple fonts
      */
     public Value getTextFontFamily(ExecutionContext context, int startPosition, int length) {
@@ -433,11 +429,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * Gets the font size of the indicated range of characters in the field, or 'mixed' if multiple sizes are present
      * in the range.
      *
-     *
-     * @param context The execution context.
+     * @param context       The execution context.
      * @param startPosition The index of the first character whose style should change
      * @param length        The number of characters after the start position to apply the style to.
-     * @return              The size of the font present in the range of characters or 'mixed' if there are multiple
+     * @return The size of the font present in the range of characters or 'mixed' if there are multiple
      * sizes.
      */
     public Value getTextFontSize(ExecutionContext context, int startPosition, int length) {
@@ -457,11 +452,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * Gets the font style of the indicated range of characters in the field, or 'mixed' if multiple styles are present
      * in the range.
      *
-     *
-     * @param context The execution context.
+     * @param context       The execution context.
      * @param startPosition The index of the first character whose style should change
      * @param length        The number of characters after the start position to apply the style to.
-     * @return              The font style present in the range of characters or 'mixed' if there are multiple styles
+     * @return The font style present in the range of characters or 'mixed' if there are multiple styles
      */
     public Value getTextFontStyle(ExecutionContext context, int startPosition, int length) {
         for (int index = startPosition; index < startPosition + length - 1; index++) {
@@ -481,7 +475,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * Auto-selects the given line number. Auto-selecting the line highlights the entire width of the line and places
      * the contents of the line into the selection, Has no effect if the field has no such line.
      *
-     * @param context The execution context.
+     * @param context    The execution context.
      * @param lineNumber The line number to auto-select
      */
     public void autoSelectLine(ExecutionContext context, int lineNumber, boolean appendSelection) {
@@ -499,9 +493,9 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     /**
      * Auto-selects the given range of lines.
      *
-     * @param context The execution context.
+     * @param context   The execution context.
      * @param startLine The first line in the auto-selection, counting from 1, inclusive.
-     * @param endLine The last line in the auto-selection, counting from 1, inclusive.
+     * @param endLine   The last line in the auto-selection, counting from 1, inclusive.
      */
     private void autoSelectLines(ExecutionContext context, int startLine, int endLine) {
         Set<Integer> autoSelection = getAutoSelectedLines(context);
@@ -518,8 +512,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * Returns the set of lines currently that are currently auto-selected, or an empty set if auto-selection is
      * disabled.
      *
-     * @return The auto-selected lines.
      * @param context The execution context.
+     * @return The auto-selected lines.
      */
     public Set<Integer> getAutoSelectedLines(ExecutionContext context) {
         if (isAutoSelection(context)) {
@@ -537,8 +531,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * Returns the range of characters in the field document represented by the auto-selection, or an empty range
      * if auto-selection is disabled.
      *
-     * @return The range of characters in the auto selection.
      * @param context The execution context.
+     * @return The range of characters in the auto selection.
      */
     private Range getAutoSelectionRange(ExecutionContext context) {
         if (isAutoSelection(context)) {
@@ -551,8 +545,9 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     /**
      * Determines if the auto-selection property is enabled on this field.
-     * @return True if auto-selection is enabled; false otherwise
+     *
      * @param context The execution context.
+     * @return True if auto-selection is enabled; false otherwise
      */
     public boolean isAutoSelection(ExecutionContext context) {
         return getKnownProperty(context, FieldModel.PROP_AUTOSELECT).booleanValue();
@@ -573,6 +568,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     /**
      * {@inheritDoc}
+     *
      * @param context The execution context.
      */
     @Override
@@ -600,6 +596,9 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         return PROP_TEXT;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void relinkParentPartModel(PartModel parentPartModel) {
         setParentPartModel(parentPartModel);
@@ -607,6 +606,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     /**
      * {@inheritDoc}
+     *
      * @param context The execution context.
      */
     @Override
@@ -620,14 +620,6 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     @Override
     public FieldModel getSelectableTextModel() {
         return this;
-    }
-
-    public long getFieldNumber(ExecutionContext context) {
-        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(context, this, PartType.FIELD);
-    }
-
-    public long getFieldCount(ExecutionContext context) {
-        return ((LayeredPartFinder) getParentPartModel()).getPartCount(context, PartType.FIELD, getOwner());
     }
 
     private void fireAutoSelectChangeObserver(ExecutionContext context, Set<Integer> selectedLines) {

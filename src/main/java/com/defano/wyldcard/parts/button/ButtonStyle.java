@@ -12,7 +12,7 @@ public enum ButtonStyle {
     CHECKBOX("Checkbox"),
     RADIO("Radio"),
     POPUP("Popup"),
-    RECTANGULAR("Rectangular"),
+    RECTANGULAR("Rectangle"),
     OVAL("Oval"),
     TRANSPARENT("Transparent"),
     OPAQUE("Opaque"),

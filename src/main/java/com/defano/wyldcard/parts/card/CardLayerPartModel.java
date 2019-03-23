@@ -148,13 +148,25 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
     }
 
     /**
-     * Gets the "number" of this part (equivalent to its z-order within its layer).
+     * Gets the "number" of this part (equivalent to its z-order within its layer), relative to all parts on the same
+     * layer.
      *
      * @return The part number.
      * @param context The execution context.
      */
     public long getPartNumber(ExecutionContext context) {
         return ((LayeredPartFinder) getParentPartModel()).getPartNumber(context, this);
+    }
+
+    /**
+     * Gets the number of this part (equivalent to its z-order within its layer) relative only to other parts of the
+     * same kind (button or field) on this layer.
+     *
+     * @param context The exeuction context
+     * @return The number of this part relative to other parts of the same kind
+     */
+    public long getButtonOrFieldNumber(ExecutionContext context) {
+        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(context, this, getType());
     }
 
     /**
@@ -165,6 +177,17 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
      */
     public long getPartCount(ExecutionContext context) {
         return ((LayeredPartFinder) getParentPartModel()).getPartCount(context, null, getOwner());
+    }
+
+    /**
+     * Gets the number of parts of this type (i.e., number of buttons or number of fields) on the same layer (card or
+     * background) as this part.
+     *
+     * @param context The execution context
+     * @return The number of the same kind of part as this on the same layer
+     */
+    public long getButtonOrFieldCount(ExecutionContext context) {
+        return ((LayeredPartFinder) getParentPartModel()).getPartCount(context, getType(), getOwner());
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.expressions.VisualEffectExp;
 import com.defano.hypertalk.ast.expressions.parts.CompositePartExp;
 import com.defano.hypertalk.ast.expressions.parts.StackPartExp;
 import com.defano.hypertalk.ast.model.Destination;
@@ -10,15 +9,12 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.NavigationManager;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.google.inject.Inject;

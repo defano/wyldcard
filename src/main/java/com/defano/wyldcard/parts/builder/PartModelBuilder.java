@@ -4,56 +4,65 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
-public abstract class PartModelBuilder<T extends PartModel, B extends PartModelBuilder> {
+import java.awt.*;
+
+public abstract class PartModelBuilder<ModelType extends PartModel, BuilderType extends PartModelBuilder> {
 
     protected final ExecutionContext context = new ExecutionContext();
 
-    public abstract T build();
-    public abstract B getBuilder();
+    public abstract ModelType build();
+    public abstract BuilderType getBuilder();
 
-    public B withId(Object id) {
+    public BuilderType withId(Object id) {
         build().newProperty(PartModel.PROP_ID, new Value(id), true);
         return getBuilder();
     }
 
-    public B withScript(Object script) {
+    public BuilderType withScript(Object script) {
         build().setKnownProperty(context, PartModel.PROP_SCRIPT, new Value(script));
         return getBuilder();
     }
 
-    public B withName(Object name) {
+    public BuilderType withName(Object name) {
         build().setKnownProperty(context, PartModel.PROP_NAME, new Value(name));
         return getBuilder();
     }
 
-    public B withContents(Object contents) {
+    public BuilderType withContents(Object contents) {
         build().setKnownProperty(context, PartModel.PROP_CONTENTS, new Value(contents));
         return getBuilder();
     }
 
-    public B withIsVisible(Object isVisible) {
+    public BuilderType withIsVisible(Object isVisible) {
         build().setKnownProperty(context, PartModel.PROP_VISIBLE, new Value(isVisible));
         return getBuilder();
     }
 
-    public B withTop(Object top) {
+    public BuilderType withTop(Object top) {
         build().setKnownProperty(context, PartModel.PROP_TOP, new Value(top));
         return getBuilder();
     }
 
-    public B withLeft(Object left) {
+    public BuilderType withLeft(Object left) {
         build().setKnownProperty(context, PartModel.PROP_LEFT, new Value(left));
         return getBuilder();
     }
 
-    public B withHeight(Object height) {
+    public BuilderType withHeight(Object height) {
         build().setKnownProperty(context, PartModel.PROP_HEIGHT, new Value(height));
         return getBuilder();
     }
 
-    public B withWidth(Object width) {
+    public BuilderType withWidth(Object width) {
         build().setKnownProperty(context, PartModel.PROP_WIDTH, new Value(width));
         return getBuilder();
     }
 
+    public BuilderType withBounds(Rectangle rectangle) {
+        withTop(rectangle.y);
+        withLeft(rectangle.x);
+        withWidth(rectangle.width);
+        withHeight(rectangle.height);
+        return getBuilder();
+    }
 }

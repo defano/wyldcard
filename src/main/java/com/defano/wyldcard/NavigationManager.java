@@ -1,7 +1,6 @@
 package com.defano.wyldcard;
 
 import com.defano.hypertalk.ast.model.Destination;
-import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.card.CardPart;

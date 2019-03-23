@@ -26,8 +26,6 @@ import com.defano.jsegue.SegueName;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.awt.*;
-
 /**
  * Converts an Antlr parse tree into a HyperTalk abstract syntax tree using Antlr's visitor pattern. The HyperTalk
  * grammar is defined in HyperTalk.g4.

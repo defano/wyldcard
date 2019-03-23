@@ -89,8 +89,8 @@ public class FieldPropertyEditor extends WyldCardDialog<FieldModel> implements A
         this.model = data;
 
         long partNumber = model.getPartNumber(context);
-        long fieldNumber = model.getFieldNumber(context);
-        long fieldCount = model.getFieldCount(context);
+        long fieldNumber = model.getButtonOrFieldNumber(context);
+        long fieldCount = model.getButtonOrFieldCount(context);
         long partCount = model.getPartCount(context);
         String layer = model.getOwner().hyperTalkName;
 

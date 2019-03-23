@@ -5,8 +5,10 @@ import com.defano.wyldcard.stackreader.enums.LayerFlag;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
+import com.defano.wyldcard.stackreader.record.PartContentRecord;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public class CardBlock extends AbstractCardBlock {
@@ -65,6 +67,15 @@ public class CardBlock extends AbstractCardBlock {
      */
     public BackgroundBlock getBkgndBlock() {
         return getStack().getBlock(BackgroundBlock.class, getBkgndId());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PartContentRecord getPartContents(int partId) {
+        return Arrays.stream(getContents())
+                .filter(pcr -> pcr.getPartId() == -partId)
+                .findFirst()
+                .orElse(new PartContentRecord());
     }
 
     /** {@inheritDoc} */

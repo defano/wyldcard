@@ -9,7 +9,6 @@ import com.defano.wyldcard.stackreader.record.PartContentRecord;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Represents the fields common to CARD and BKGD blocks.
@@ -37,6 +36,8 @@ public abstract class AbstractCardBlock extends Block {
      * @return The card part count
      */
     public abstract short getPartCount();
+
+    public abstract PartContentRecord getPartContents(int partId);
 
     /**
      * Get the number of corresponding BMAP block containing this card's image. Use {@link #getImage()} to retrieve

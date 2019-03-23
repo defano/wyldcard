@@ -1,16 +1,14 @@
 package com.defano.wyldcard.parts.button;
 
-import com.defano.wyldcard.parts.card.CardLayerPartModel;
-import com.defano.wyldcard.parts.finder.LayeredPartFinder;
-import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.parts.model.PropertyWillChangeObserver;
+import com.defano.wyldcard.parts.card.CardLayerPartModel;
+import com.defano.wyldcard.parts.finder.LayeredPartFinder;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.annotation.PostConstruct;
-import java.awt.*;
 import java.util.List;
 
 /**
@@ -38,6 +36,8 @@ public class ButtonModel extends CardLayerPartModel {
     public ButtonModel(Owner owner, PartModel parentPartModel) {
         super(PartType.BUTTON, owner, parentPartModel);
 
+        setCurrentCardId(parentPartModel.getId(new ExecutionContext()));
+
         newProperty(PROP_SCRIPT, new Value(), false);
         newProperty(PROP_ID, new Value(), true);
         newProperty(PROP_NAME, new Value("New Button"), false);
@@ -58,31 +58,9 @@ public class ButtonModel extends CardLayerPartModel {
         initialize();
     }
 
-    public static ButtonModel newButtonModel(ExecutionContext context, Integer id, Rectangle geometry, Owner owner, PartModel parentPartModel) {
-        ButtonModel partModel = new ButtonModel(owner, parentPartModel);
-
-        partModel.setCurrentCardId(parentPartModel.getId(context));
-
-        partModel.newProperty(PROP_SCRIPT, new Value(), false);
-        partModel.newProperty(PROP_ID, new Value(id), true);
-        partModel.newProperty(PROP_NAME, new Value("New Button"), false);
-        partModel.newProperty(PROP_LEFT, new Value(geometry.x), false);
-        partModel.newProperty(PROP_TOP, new Value(geometry.y), false);
-        partModel.newProperty(PROP_WIDTH, new Value(geometry.width), false);
-        partModel.newProperty(PROP_HEIGHT, new Value(geometry.height), false);
-        partModel.newProperty(PROP_SHOWNAME, new Value(true), false);
-        partModel.newProperty(PROP_STYLE, new Value(ButtonStyle.ROUND_RECT.toString()), false);
-        partModel.newProperty(PROP_FAMILY, new Value(), false);
-        partModel.newProperty(PROP_HILITE, new Value(false), false);
-        partModel.newProperty(PROP_AUTOHILITE, new Value(true), false);
-        partModel.newProperty(PROP_CONTENTS, new Value(), false);
-        partModel.newProperty(PROP_ICON, new Value(), false);
-        partModel.newProperty(PROP_ICONALIGN, new Value("default"), false);
-        partModel.newProperty(PROP_SELECTEDITEM, new Value(), false);
-
-        return partModel;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @PostConstruct
     @Override
     public void initialize() {
@@ -114,17 +92,12 @@ public class ButtonModel extends CardLayerPartModel {
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void relinkParentPartModel(PartModel parentPartModel) {
         setParentPartModel(parentPartModel);
-    }
-
-    public long getButtonNumber(ExecutionContext context) {
-        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(context, this, PartType.BUTTON);
-    }
-
-    public long getButtonCount(ExecutionContext context) {
-        return ((LayeredPartFinder) getParentPartModel()).getPartCount(context, PartType.BUTTON, getOwner());
     }
 
     private String getSelectedLineExpression(ExecutionContext context) {

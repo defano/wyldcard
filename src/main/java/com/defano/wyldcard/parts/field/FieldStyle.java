@@ -26,7 +26,7 @@ public enum FieldStyle {
             }
         }
 
-        throw new IllegalArgumentException("No such field style: " + name);
+        return RECTANGLE;
     }
 
 }

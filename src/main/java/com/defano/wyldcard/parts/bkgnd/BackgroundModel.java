@@ -55,35 +55,6 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder, Par
         initialize();
     }
 
-//    public BackgroundModel(int backgroundId,
-//                           StackModel stackModel,
-//                           BufferedImage backgroundImage,
-//                           String name,
-//                           boolean cantDelete,
-//                           boolean dontSearch,
-//                           boolean showPict,
-//                           Object contents)
-//    {
-//        super(PartType.BACKGROUND, Owner.STACK, stackModel);
-//
-//        buttonModels = new ArrayList<>();
-//        fieldModels = new ArrayList<>();
-//
-//        newProperty(PROP_ID, new Value(backgroundId), true);
-//        newProperty(PROP_NAME, new Value(name), false);
-//        newProperty(PROP_CANTDELETE, new Value(cantDelete), false);
-//        newProperty(PROP_DONTSEARCH, new Value(dontSearch), false);
-//        newProperty(PROP_CONTENTS, new Value(contents), false);
-//        newProperty(PROP_SHOWPICT, new Value(showPict), false);
-//        setBackgroundImage(backgroundImage);
-//
-//        initialize();
-//    }
-
-//    public static BackgroundModel emptyBackground(int backgroundId, StackModel stackModel) {
-//        return new BackgroundModel(backgroundId, stackModel, null, "", false, false, false, "");
-//    }
-
     @Override
     @PostConstruct
     public void initialize() {

@@ -2,7 +2,6 @@ package com.defano.wyldcard.parts.util;
 
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.MessageCompletionObserver;

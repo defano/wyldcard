@@ -99,8 +99,8 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         ExecutionContext context = new ExecutionContext();
 
         long partNumber = model.getPartNumber(context);
-        long buttonNumber = model.getButtonNumber(context);
-        long buttonCount = model.getButtonCount(context);
+        long buttonNumber = model.getButtonOrFieldNumber(context);
+        long buttonCount = model.getButtonOrFieldCount(context);
         long partCount = model.getPartCount(context);
         String layer = model.getOwner().hyperTalkName;
 

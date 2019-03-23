@@ -2,20 +2,15 @@ package com.defano.wyldcard.importer;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
-import com.defano.wyldcard.parts.builder.BackgroundModelBuilder;
-import com.defano.wyldcard.parts.builder.ButtonModelBuilder;
-import com.defano.wyldcard.parts.builder.CardModelBuilder;
-import com.defano.wyldcard.parts.builder.StackModelBuilder;
+import com.defano.wyldcard.parts.builder.*;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.PartOwner;
+import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.stackreader.HyperCardStack;
-import com.defano.wyldcard.stackreader.block.BackgroundBlock;
-import com.defano.wyldcard.stackreader.block.CardBlock;
-import com.defano.wyldcard.stackreader.block.FontTableBlock;
-import com.defano.wyldcard.stackreader.block.StackBlock;
+import com.defano.wyldcard.stackreader.block.*;
 import com.defano.wyldcard.stackreader.enums.ExtendedPartFlag;
 import com.defano.wyldcard.stackreader.enums.LayerFlag;
 import com.defano.wyldcard.stackreader.enums.PartFlag;
@@ -63,6 +58,7 @@ public class HyperCardStackImporter {
                 .withName(name)
                 .withWidth(stackBlock.getWidth())
                 .withHeight(stackBlock.getHeight())
+                .withScript(stackBlock.getStackScript())
                 .build();
 
         for (CardBlock cardBlock : hcStack.getCardBlocks()) {
@@ -91,7 +87,7 @@ public class HyperCardStackImporter {
         buildBackground(cardBlock.getBkgndBlock(), stackModel);
 
         // Create all buttons and fields
-        Arrays.stream(cardBlock.getParts()).forEach(p -> buildPart(p, cardModel, cardBlock.getStack()));
+        Arrays.stream(cardBlock.getParts()).forEach(p -> buildPart(p, cardModel, cardBlock));
 
         stackModel.addCard(cardModel);
     }
@@ -115,20 +111,20 @@ public class HyperCardStackImporter {
                 .build();
 
         // Create all buttons and fields
-        Arrays.stream(backgroundBlock.getParts()).forEach(p -> buildPart(p, backgroundModel, backgroundBlock.getStack()));
+        Arrays.stream(backgroundBlock.getParts()).forEach(p -> buildPart(p, backgroundModel, backgroundBlock));
 
         stackModel.addBackground(backgroundModel);
     }
 
-    private static void buildPart(PartRecord part, PartOwner parent, HyperCardStack stack) {
+    private static void buildPart(PartRecord part, PartOwner parent, AbstractCardBlock block) {
         if (part.getPartType() == PartType.BUTTON) {
-            buildButton(part, parent, stack);
+            buildButton(part, parent, block);
         } else {
-            buildField(part, parent, stack);
+            buildField(part, parent, block);
         }
     }
 
-    private static void buildButton(PartRecord partRecord, PartOwner parent, HyperCardStack stack) {
+    private static void buildButton(PartRecord partRecord, PartOwner parent, AbstractCardBlock block) {
 
         ButtonModel buttonModel = new ButtonModelBuilder(parent.getType().asOwner(), parent.getParentPartModel())
                 .withTop(partRecord.getTop())
@@ -139,7 +135,7 @@ public class HyperCardStackImporter {
                 .withId(partRecord.getPartId())
                 .withStyle(partRecord.getStyle().name())
                 .withFamily(partRecord.getFamily())
-                .withTextFont(stack.getBlock(FontTableBlock.class).getFont(partRecord.getTextFontId()).getFontName())
+                .withTextFont(block.getStack().getBlock(FontTableBlock.class).getFont(partRecord.getTextFontId()).getFontName())
                 .withTextSize(partRecord.getTextSize())
                 .withTextAlign(partRecord.getTextAlign().toString())
 //                .withTextStyle(partRecord.getFontStyles())  // TODO
@@ -151,12 +147,37 @@ public class HyperCardStackImporter {
                 .withIsVisible(Arrays.stream(partRecord.getFlags()).noneMatch(f -> f == PartFlag.HIDDEN))
                 .withIsEnabled(Arrays.stream(partRecord.getFlags()).noneMatch(f -> f == PartFlag.DISABLED))
                 .build();
-        
+
+
+
         parent.addPartModel(buttonModel);
     }
 
-    private static void buildField(PartRecord partRecord, PartOwner parent, HyperCardStack stack) {
+    private static void buildField(PartRecord partRecord, PartOwner parent, AbstractCardBlock block) {
 
+        FieldModel fieldModel = new FieldModelBuilder(parent.getType().asOwner(), parent.getParentPartModel())
+                .withTop(partRecord.getTop())
+                .withLeft(partRecord.getLeft())
+                .withWidth(partRecord.getRight() - partRecord.getLeft())
+                .withHeight(partRecord.getBottom() - partRecord.getTop())
+                .withName(partRecord.getName())
+                .withId(partRecord.getPartId())
+                .withStyle(partRecord.getStyle().name())
+                .withIsHidden(Arrays.stream(partRecord.getFlags()).noneMatch(f -> f == PartFlag.HIDDEN))
+                .withDontWrap(Arrays.stream(partRecord.getFlags()).anyMatch(f -> f == PartFlag.DONT_WRAP))
+//                .withDontSearch(Arrays.stream(partRecord.getFlags()).anyMatch(f -> f == PartFlag.DONT_SEARCH))
+                .withSharedText(Arrays.stream(partRecord.getFlags()).anyMatch(f -> f == PartFlag.SHARED_TEXT))
+                .withAutoTab(Arrays.stream(partRecord.getFlags()).anyMatch(f -> f == PartFlag.AUTO_TAB))
+                .withLockText(Arrays.stream(partRecord.getFlags()).anyMatch(f -> f == PartFlag.LOCK_TEXT))
+                .withAutoSelect(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.AUTO_SELECT))
+                .withShowLines(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.SHOW_LINES))
+                .withWideMargins(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.WIDE_MARGINS))
+                .withMultipleLines(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.MULTIPLE_LINES))
+                .withText(block.getPartContents(partRecord.getPartId()).getText())
+                .withScript(partRecord.getScript())
+                .build();
+
+        parent.addPartModel(fieldModel);
     }
 
 }

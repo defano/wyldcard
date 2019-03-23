@@ -7,7 +7,6 @@ import com.defano.hypertalk.ast.model.specifiers.PropertySpecifier;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.MenuPropertiesDelegate;
 import com.defano.hypertalk.utils.ChunkPropertiesDelegate;
 import org.antlr.v4.runtime.ParserRuleContext;
