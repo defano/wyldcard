@@ -50,8 +50,6 @@ public class PartContentRecord {
 
             partContent.text = sis.readString(length - styleLength);
 
-            System.err.println(partContent);
-
         } catch (IOException e) {
             report.throwError(parent, "Malformed part content record; stack is corrupt.");
         }

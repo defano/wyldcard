@@ -14,6 +14,7 @@ public class Destination {
 
     private final StackModel stack;
     private final int cardId;
+    private Direction direction;
 
     public Destination(StackModel stackModel, int cardIndex) {
         this.stack = stackModel;
@@ -59,6 +60,14 @@ public class Destination {
         return cardId;
     }
 
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -72,5 +81,4 @@ public class Destination {
     public int hashCode() {
         return Objects.hash(stack, cardId);
     }
-
 }

@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.finder;
 
+import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.ast.model.specifiers.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
@@ -24,6 +25,8 @@ public interface PartFinder {
     default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws PartException {
         if (ps instanceof WindowSpecifier) {
             return new WindowProxyPartModel(WyldCard.getInstance().getWindowManager().findWindow(context, (WindowSpecifier) ps));
+        } else if (ps instanceof PartDirectionSpecifier) {
+            return findPartByDirection((PartDirectionSpecifier) ps);
         } else if (ps instanceof PartMessageSpecifier) {
             return WyldCard.getInstance().getWindowManager().getMessageWindow().getPartModel();
         } else if (ps instanceof StackPartSpecifier) {
@@ -58,6 +61,29 @@ public interface PartFinder {
         }
 
         return context.getCurrentStack().getStackModel();
+    }
+
+    /**
+     * Finds a card based on navigation direction (i.e., back, forth or recent).
+     *
+     * @param ps The direction specifier
+     * @return The card in the specified direction
+     */
+    default PartModel findPartByDirection(PartDirectionSpecifier ps) {
+        Destination destination;
+
+        switch (ps.getValue()) {
+            case BACK:
+                destination = WyldCard.getInstance().getStackManager().getBackstack().peekBack();
+                break;
+            case FORTH:
+                destination = WyldCard.getInstance().getStackManager().getBackstack().peekForward();
+                break;
+            default:
+                throw new IllegalStateException("Bug! Unimplemented direction: " + ps.getValue());
+        }
+
+        return destination.getStack().getCardModel(destination.getCardId());
     }
 
     /**

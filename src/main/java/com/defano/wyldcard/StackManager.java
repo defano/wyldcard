@@ -1,13 +1,12 @@
 package com.defano.wyldcard;
 
-import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.LimitedDepthStack;
+import com.defano.wyldcard.util.NavigationStack;
 import io.reactivex.Observable;
 
 import java.io.File;
@@ -186,5 +185,5 @@ public interface StackManager {
 
     void onCardOpened(CardPart newCard);
 
-    LimitedDepthStack<Destination> getBackstack();
+    NavigationStack getBackstack();
 }

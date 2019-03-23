@@ -17,7 +17,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goPopCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
+                .withAction(e -> WyldCard.getInstance().getNavigationManager().goBack(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
                 .withShortcut('\\')
                 .build(this);
 

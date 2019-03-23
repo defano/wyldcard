@@ -167,7 +167,6 @@ commandStatement
     | 'get' expression                                                                                                  # getCmd
     | 'go' 'to'? position                                                                                               # goPosition
     | 'go' 'to'? ordinal                                                                                                # goOrdinal
-    | 'go' 'to'? 'back'                                                                                                 # goBackCmd
     | 'go' 'to'? expression navigationOption                                                                            # goCmd
     | 'hide' card picture                                                                                               # hideThisCardPictCmd
     | 'hide' background picture                                                                                         # hideThisBkgndPictCmd
@@ -408,6 +407,8 @@ cardPart
     | card term                                                                                                         # expressionCardPart
     | cardPart of bkgndPart                                                                                             # cardOfBkgndPart
     | cardPart of stackPart                                                                                             # cardOfStackPart
+    | 'recent' card                                                                                                     # recentCardPart
+    | direction                                                                                                         # directionCardPart
     ;
 
 bkgndPart
@@ -723,7 +724,7 @@ keyword
     | 'commandkeydown' | 'controlkey' | 'convert' | 'from' | 'create' | 'menu' | 'debug' | 'checkpoint' | 'delete'
     | 'dial' | 'disable' | 'divide' | 'by' | 'domenu' | 'drag' | 'edit' | 'script' | 'enable'
     | 'enterinfield' | 'enterkey' | 'hypercard' | 'export' | 'paint' | 'find' | 'international' | 'marked'
-    | 'get' | 'go' | 'visual' | 'back' | 'hide' | 'titlebar' | 'menubar' | 'import' | 'keydown' | 'lock' | 'screen'
+    | 'get' | 'go' | 'visual' | 'hide' | 'titlebar' | 'menubar' | 'import' | 'keydown' | 'lock' | 'screen'
     | 'mark' | 'all' | 'where' | 'finding' | 'multiply' | 'next' | 'open' | 'pass' | 'play' | 'pop' | 'push' | 'put'
     | 'read' | 'for' | 'until' | 'reset' | 'save' | 'this' | 'stack' | 'as' | 'select' | 'text'
     | 'set' | 'send' | 'show' | 'sort' | 'speak' | 'male' | 'female' | 'neuter' | 'robotic' | 'voice'
@@ -821,6 +822,11 @@ position
     : 'the'? 'next'                                                                                                     # nextPosition
     | 'the'? ('prev' | 'previous')                                                                                      # prevPosition
     | 'this'                                                                                                            # thisPosition
+    ;
+
+direction
+    : 'back'                                                                                                            # backDirection
+    | 'forth'                                                                                                           # forthDirection
     ;
 
 message

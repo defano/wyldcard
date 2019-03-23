@@ -604,11 +604,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitGoBackCmd(HyperTalkParser.GoBackCmdContext ctx) {
-        return new GoCmd(ctx, null, new RemoteNavigationOptions(false, false));
-    }
-
-    @Override
     public Object visitNextPosition(HyperTalkParser.NextPositionContext ctx) {
         return Position.NEXT;
     }
@@ -621,6 +616,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitThisPosition(HyperTalkParser.ThisPositionContext ctx) {
         return Position.THIS;
+    }
+
+    @Override
+    public Object visitBackDirection(HyperTalkParser.BackDirectionContext ctx) {
+        return Direction.BACK;
+    }
+
+    @Override
+    public Object visitForthDirection(HyperTalkParser.ForthDirectionContext ctx) {
+        return Direction.FORTH;
     }
 
     @Override
@@ -1731,8 +1736,18 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitRecentCardPart(HyperTalkParser.RecentCardPartContext ctx) {
+        return new PartDirectionExp(ctx, Direction.BACK);
+    }
+
+    @Override
     public Object visitCardOfStackPart(HyperTalkParser.CardOfStackPartContext ctx) {
         return new CompositePartExp(ctx, (PartExp) visit(ctx.cardPart()), (PartExp) visit(ctx.stackPart()));
+    }
+
+    @Override
+    public Object visitDirectionCardPart(HyperTalkParser.DirectionCardPartContext ctx) {
+        return new PartDirectionExp(ctx, (Direction) visit(ctx.direction()));
     }
 
     @Override

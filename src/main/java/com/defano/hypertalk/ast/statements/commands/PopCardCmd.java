@@ -17,6 +17,6 @@ public class PopCardCmd extends Command {
 
     @Override
     protected void onExecute(ExecutionContext context) {
-        navigationManager.goPopCard(context, context.getCurrentStack());
+        navigationManager.goBack(context, context.getCurrentStack());
     }
 }

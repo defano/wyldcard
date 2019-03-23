@@ -78,7 +78,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     private final Set<Integer> sharedAutoSelection = new HashSet<>();
     private final Map<Integer, Set<Integer>> unsharedAutoSelection = new HashMap<>();
     private StyledDocument sharedText = new DefaultStyledDocument();
-    
+
     private transient FieldModelObserver observer;
     private transient Range selection;
 

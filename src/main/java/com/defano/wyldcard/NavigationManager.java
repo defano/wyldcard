@@ -51,7 +51,7 @@ public interface NavigationManager {
      * @return The card now visible in the stack window, or null if no card available to pop
      */
     @RunOnDispatch
-    CardPart goPopCard(ExecutionContext context, StackPart stackPart);
+    CardPart goBack(ExecutionContext context, StackPart stackPart);
 
     /**
      * Navigates to the first card in the stack.

@@ -95,11 +95,10 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
      *
      * @param context   The execution context
      * @param cardIndex The index (0-based) card to navigate to
-     * @param push      True to add this card to the backstack
      * @return The current card after navigation.
      */
     @RunOnDispatch
-    public CardPart goCard(ExecutionContext context, int cardIndex, boolean push) {
+    public CardPart goCard(ExecutionContext context, int cardIndex) {
 
         // Nothing to do if navigating to current card or an invalid card index
         if (cardIndex == getStackModel().getCurrentCardIndex() ||
@@ -109,7 +108,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
             return getDisplayedCard();
         }
 
-        closeCard(context, push);
+        closeCard(context);
         return openCard(context, cardIndex);
     }
 
@@ -334,7 +333,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
                 fireOnCardDimensionChanged(getStackModel().getDimension(context));
 
                 // Re-load the card model into the size
-                closeCard(context, false);
+                closeCard(context);
                 openCard(context, stackModel.getCurrentCardIndex());
                 break;
 
@@ -369,10 +368,9 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
      * closed.
      *
      * @param context The execution context
-     * @param push    True to indicate this card should be added to the backstack
      */
     @RunOnDispatch
-    private void closeCard(ExecutionContext context, boolean push) {
+    private void closeCard(ExecutionContext context) {
         CardPart displayedCard = getDisplayedCard();
 
         // Deactivate paint tool before doing anything (to commit in-fight changes)
@@ -380,12 +378,6 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
 
         // Stop editing background when card changes
         WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
-
-        // When requested, push the current card onto the backstack
-        if (push) {
-            Destination destination = new Destination(this.getStackModel(), displayedCard.getId(context));
-            WyldCard.getInstance().getStackManager().getBackstack().push(destination);
-        }
 
         // Notify observers that current card is going away
         fireOnCardClosing(displayedCard);
@@ -503,6 +495,6 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
 
     @Override
     public void partClosed(ExecutionContext context) {
-        closeCard(context, false);
+        closeCard(context);
     }
 }
