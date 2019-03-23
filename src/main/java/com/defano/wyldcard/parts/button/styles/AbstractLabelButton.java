@@ -61,6 +61,7 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
             case ButtonModel.PROP_SHOWNAME:
                 boolean showName = toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_SHOWNAME).booleanValue();
                 label.setText(showName ? toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_NAME).toString() : "");
+                break;
 
             case ButtonModel.PROP_HILITE:
                 isHilited = newValue.booleanValue() && isEnabled();
