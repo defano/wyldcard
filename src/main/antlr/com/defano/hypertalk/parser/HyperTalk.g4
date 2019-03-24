@@ -199,7 +199,7 @@ commandStatement
     | 'push' expression                                                                                                 # pushDestCmd
     | 'put' listExpression                                                                                              # putIntoCmd
     | 'put' listExpression preposition expression                                                                       # putPrepositionCmd
-    | 'put' listExpression preposition expression 'with' ('menumessages' | 'menumessage') listExpression                # putWithMenuMessagesCmd
+    | 'put' listExpression preposition expression 'with' menuMessage listExpression                                     # putWithMenuMessagesCmd
     | 'read' 'from' 'file' expression                                                                                   # readFileCmd
     | 'read' 'from' 'file' expression 'for' expression                                                                  # readFileForCmd
     | 'read' 'from' 'file' expression 'at' expression 'for' expression                                                  # readFileAtCmd
@@ -241,7 +241,7 @@ commandStatement
     | 'type' expression                                                                                                 # typeCmd
     | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmd
     | 'unlock' 'screen'                                                                                                 # unlockScreenCmd
-    | 'unlock' 'screen' 'with' 'visual' expression                                                                      # unlockScreenVisualCmd
+    | 'unlock' 'screen' 'with' expression                                                                               # unlockScreenVisualCmd
     | 'unmark' 'all' cards                                                                                              # unmarkAllCardsCmd
     | 'unmark' expression                                                                                               # unmarkCardCmd
     | 'unmark' cards 'where' expression                                                                                 # unmarkCardsWhereCmd
@@ -507,10 +507,10 @@ arrowExpression
     ;
 
 effectExpression
-    : 'effect'? effect                                                                                                  # effectDefault
-    | 'effect'? effect 'to' image                                                                                       # effectTo
-    | 'effect'? effect speed                                                                                            # effectSpeed
-    | 'effect'? effect speed 'to' image                                                                                 # effectSpeedTo
+    : 'visual'? 'effect'? effect                                                                                        # effectDefault
+    | 'visual'? 'effect'? effect 'to' image                                                                             # effectTo
+    | 'visual'? 'effect'? effect speed                                                                                  # effectSpeed
+    | 'visual'? 'effect'? effect speed 'to' image                                                                       # effectSpeedTo
     ;
 
 functionCall
@@ -836,6 +836,13 @@ position
 direction
     : 'back'                                                                                                            # backDirection
     | 'forth'                                                                                                           # forthDirection
+    ;
+
+menuMessage
+    : 'menumessage'
+    | 'menumessages'
+    | 'menumsgs'
+    | 'menumsg'
     ;
 
 message

@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledFuture;
 
 /**
@@ -57,8 +59,12 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
         if (animationResult != null) {
             try {
                 animationResult.get();
-            } catch (Throwable t) {
-                throw new RuntimeException("An error occurred rendering visual effect", t);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            } catch (ExecutionException e) {
+                throw new RuntimeException("An error occurred rendering visual effect", e);
+            } catch (CancellationException ce) {
+                // Nothing to do
             }
         }
     }
@@ -102,7 +108,7 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
 
         if (raiseCurtain) {
             fireOnCurtainUpdated(null);
-            animationResult.cancel(true);
+            animationResult.cancel(false);
         }
     }
 

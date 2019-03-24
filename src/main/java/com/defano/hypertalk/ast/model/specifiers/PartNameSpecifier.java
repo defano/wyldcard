@@ -50,7 +50,9 @@ public class PartNameSpecifier implements PartSpecifier {
         }
 
         if (name != null) {
+            builder.append("\"");
             builder.append(name);
+            builder.append("\"");
         }
 
         return builder.toString();

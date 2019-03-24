@@ -33,6 +33,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
 
     public final static String FILE_EXTENSION = ".stack";
     public final static String PROP_CANTPEEK = "cantpeek";
+    public final static String PROP_CANTABORT = "cantabort";
     public static final String PROP_RESIZABLE = "resizable";
     public static final String PROP_SHORTNAME = "short name";
     public static final String PROP_ABBREVNAME = "abbreviated name";
@@ -60,6 +61,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         newProperty(PROP_HEIGHT, new Value(480), false);
         newProperty(PROP_RESIZABLE, new Value(false), false);
         newProperty(PROP_CANTPEEK, new Value(false), false);
+        newProperty(PROP_CANTABORT, new Value(false), false);       // TODO: Not implemented
 
         initialize();
     }

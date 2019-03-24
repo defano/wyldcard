@@ -27,6 +27,8 @@ public interface WyldCardProperties extends PropertiesModel {
     String PROP_THEMS = "themes";
     String PROP_TEXTARROWS = "textarrows";
     String PROP_USERLEVEL = "userlevel";
+    String PROP_BLINDTYPING = "blindtyping";
+    String PROP_POWERKEYS = "powerkeys";
 
     /**
      * Resets those properties whose value is ephemeral (like the itemDelimiter) back to their default values.
