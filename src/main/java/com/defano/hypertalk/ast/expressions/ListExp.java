@@ -22,7 +22,7 @@ public class ListExp extends Expression {
      * @param ctx The Antlr context where this expression was encountered, or null
      */
     public ListExp(ParserRuleContext ctx) {
-        this(ctx, new LiteralExp(null));
+        this(ctx, new LiteralExp(ctx));
     }
 
     /**
@@ -73,9 +73,7 @@ public class ListExp extends Expression {
 
     @Override
     public List<Value> evaluateAsList(ExecutionContext context) throws HtException {
-        ArrayList<Value> values = new ArrayList<>();
-
-        values.add(car.evaluate(context));
+        ArrayList<Value> values = new ArrayList<>(car.evaluateAsList(context));
 
         if (cdr != null) {
             values.addAll(cdr.evaluateAsList(context));
@@ -84,15 +82,4 @@ public class ListExp extends Expression {
         return values;
     }
 
-    public Value car(ExecutionContext context) throws HtException {
-        return car.evaluate(context);
-    }
-
-    public List<Value> cdr(ExecutionContext context) throws HtException {
-        if (cdr == null) {
-            return new ArrayList<>();
-        } else {
-            return cdr.evaluateAsList(context);
-        }
-    }
 }

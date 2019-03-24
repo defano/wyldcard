@@ -57,9 +57,9 @@ public class MenuItemSpecifier {
                 for (int index = 0; index < menu.getItemCount(); index++) {
                     JMenuItem thisItem = menu.getItem(index);
 
-                    if (thisItem == null || thisItem.getText() == null && exprValue.toString().equals("-")) {
+                    if (isSeparator(thisItem) && exprValue.toString().equals("-")) {
                         return index;
-                    } else if (exprValue.toString().equalsIgnoreCase(thisItem.getText())) {
+                    } else if (!isSeparator(thisItem) && exprValue.toString().equalsIgnoreCase(thisItem.getText())) {
                         return index;
                     }
                 }
@@ -86,5 +86,9 @@ public class MenuItemSpecifier {
         }
 
         throw new HtSemanticException("No such menu item.");
+    }
+
+    private boolean isSeparator(JMenuItem item) {
+        return item == null || item.getText() == null;
     }
 }

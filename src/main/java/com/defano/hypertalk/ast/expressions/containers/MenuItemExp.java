@@ -9,6 +9,8 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MenuItemExp extends ContainerExp {
 
@@ -21,7 +23,11 @@ public class MenuItemExp extends ContainerExp {
 
     @Override
     public void putValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
-        putMenuItemValue(context, value, preposition);
+        putMenuItemValue(context, value, preposition, new ArrayList<>());
+    }
+
+    public void putValue(ExecutionContext context, Value value, Preposition preposition, List<Value> menuMessages) throws HtException {
+        putMenuItemValue(context, value, preposition, menuMessages);
     }
 
     @Override
@@ -52,28 +58,32 @@ public class MenuItemExp extends ContainerExp {
     /**
      * Puts a Value into a menu relative to a given menu item. See {@link MenuExp#addValueToMenu(ExecutionContext, Value, JMenu, int)}
      *
-     *
      * @param context The execution context.
      * @param value the value representing new menu items.
      * @param preposition The preposition representing where items should be added relative to the given menu item.
      * @throws HtSemanticException Thrown if an error occurs adding items.
      */
-    private void putMenuItemValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
+    private void putMenuItemValue(ExecutionContext context, Value value, Preposition preposition, List<Value> menuMessages) throws HtException {
         JMenu menu = item.getSpecifiedMenu(context);
         int itemIndex = item.getSpecifiedItemIndex(context);       // Location of specified item
-
-        if (preposition == Preposition.AFTER) {
-            itemIndex++;
-        }
 
         if (itemIndex < 0 || itemIndex > menu.getItemCount()) {
             throw new HtSemanticException("No such menu item.");
         }
 
-        if (preposition == Preposition.INTO) {
-            menu.remove(itemIndex);
+        switch (preposition) {
+            case BEFORE:
+                itemIndex--;
+                break;
+            case AFTER:
+                itemIndex++;
+                break;
+            case INTO:
+            case REPLACING:
+                menu.remove(itemIndex);
+                break;
         }
 
-        MenuExp.addValueToMenu(context, value, menu, itemIndex);
+        MenuExp.addValueToMenu(context, value, menu, itemIndex, menuMessages);
     }
 }

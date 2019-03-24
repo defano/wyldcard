@@ -1,11 +1,11 @@
 package com.defano.hypertalk.ast.expressions.containers;
 
-import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.MenuSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -31,7 +31,11 @@ public class MenuExp extends ContainerExp {
 
     @Override
     public void putValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
-        putMenuValue(context, value, preposition);
+        putMenuValue(context, value, preposition, new ArrayList<>());
+    }
+
+    public void putValue(ExecutionContext context, Value value, Preposition preposition, List<Value> menuMessages) throws HtException {
+        putMenuValue(context, value, preposition, menuMessages);
     }
 
     /**
@@ -63,19 +67,19 @@ public class MenuExp extends ContainerExp {
      * @param preposition The preposition representing where items should be added
      * @throws HtSemanticException Thrown if an error occurs adding items.
      */
-    private void putMenuValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
+    private void putMenuValue(ExecutionContext context, Value value, Preposition preposition, List<Value> menuMessages) throws HtException {
         JMenu menu = this.menu.getSpecifiedMenu(context);
 
         switch (preposition) {
             case BEFORE:
-                addValueToMenu(context, value, menu, 0);
+                addValueToMenu(context, value, menu, 0, menuMessages);
                 break;
             case AFTER:
-                addValueToMenu(context, value, menu, menu.getItemCount());
+                addValueToMenu(context, value, menu, menu.getItemCount(), menuMessages);
                 break;
             case INTO:
                 menu.removeAll();
-                addValueToMenu(context, value, menu, 0);
+                addValueToMenu(context, value, menu, 0, menuMessages);
                 break;
         }
     }
@@ -89,7 +93,11 @@ public class MenuExp extends ContainerExp {
      * @param menu The menu into which items should be added
      * @param index The index at which the menu items should be added.
      */
-    public static void addValueToMenu(ExecutionContext context, Value v, JMenu menu, int index) {
+    public static void addValueToMenu(ExecutionContext context, Value v, JMenu menu, int index) throws HtSemanticException {
+        addValueToMenu(context, v, menu, index, new ArrayList<>());
+    }
+
+    public static void addValueToMenu(ExecutionContext context, Value v, JMenu menu, int index, List<Value> menuMessages) throws HtSemanticException {
         List<Value> menuItems = v.getLines(context);
 
         // If value contains a single line, then attempt to onEvaluate it as items
@@ -98,15 +106,27 @@ public class MenuExp extends ContainerExp {
         }
 
         Collections.reverse(menuItems);
+        Collections.reverse(menuMessages);
 
-        for (Value thisItem : menuItems) {
+        if (!menuMessages.isEmpty() && menuItems.size() != menuMessages.size()) {
+            throw new HtSemanticException("The number of menu messages does not equal the number of menu items.");
+        }
+
+        for (int idx = 0; idx < menuItems.size(); idx++) {
+            Value thisItem = menuItems.get(idx);
+
             if (thisItem.toString().equals("-")) {
                 menu.add(new JSeparator(), index);
             } else {
+                int messageIdx = idx;
                 MenuItemBuilder.ofDefaultType()
                         .named(thisItem.toString())
                         .atIndex(index)
-                        .withAction(e -> {})        // No-op action
+                        .withAction(e -> {
+                            if (!menuMessages.isEmpty()) {
+                                context.getCurrentCard().getPartModel().receiveMessage(context, menuMessages.get(messageIdx).toString());
+                            }
+                        })
                         .build(menu);
             }
         }
