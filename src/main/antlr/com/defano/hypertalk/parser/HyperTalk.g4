@@ -188,6 +188,7 @@ commandStatement
     | 'pass' symbol                                                                                                     # passCmd
     | 'play' musicExpression                                                                                            # playCmd
     | 'pop' card                                                                                                        # popCardCmd
+    | 'pop' card preposition expression                                                                                 # popCardIntoCmd
     | 'push' card                                                                                                       # pushCardCmd
     | 'push' expression                                                                                                 # pushDestCmd
     | 'put' listExpression                                                                                              # putIntoCmd

@@ -56,9 +56,7 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
     public void waitForEffectToFinish() {
         if (animationResult != null) {
             try {
-                System.err.println("Waiting");
                 animationResult.get();
-                System.err.println("Done");
             } catch (Throwable t) {
                 throw new RuntimeException("An error occurred rendering visual effect", t);
             }

@@ -74,16 +74,16 @@ public interface PartFinder {
 
         switch (ps.getValue()) {
             case BACK:
-                destination = WyldCard.getInstance().getStackManager().getBackstack().peekBack();
+                destination = WyldCard.getInstance().getNavigationManager().getNavigationStack().peekBack();
                 break;
             case FORTH:
-                destination = WyldCard.getInstance().getStackManager().getBackstack().peekForward();
+                destination = WyldCard.getInstance().getNavigationManager().getNavigationStack().peekForward();
                 break;
             default:
                 throw new IllegalStateException("Bug! Unimplemented direction: " + ps.getValue());
         }
 
-        return destination.getStack().getCardModel(destination.getCardId());
+        return destination.getStack().getCardModel(destination.getCardIndex());
     }
 
     /**

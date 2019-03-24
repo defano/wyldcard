@@ -13,12 +13,11 @@ import java.util.Objects;
 public class Destination {
 
     private final StackModel stack;
-    private final int cardId;
-    private Direction direction;
+    private final int cardIndex;
 
     public Destination(StackModel stackModel, int cardIndex) {
         this.stack = stackModel;
-        this.cardId = cardIndex;
+        this.cardIndex = cardIndex;
     }
 
     public static Destination ofStack(ExecutionContext context, String stackName, RemoteNavigationOptions navigationOptions) {
@@ -56,16 +55,12 @@ public class Destination {
         return stack;
     }
 
-    public int getCardId() {
-        return cardId;
+    public int getCardIndex() {
+        return cardIndex;
     }
 
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public void setDirection(Direction direction) {
-        this.direction = direction;
+    public String getHypertalkIdentifier(ExecutionContext context) {
+        return "card " + (cardIndex + 1) + " of " + stack.getLongName(context);
     }
 
     @Override
@@ -73,12 +68,12 @@ public class Destination {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Destination that = (Destination) o;
-        return cardId == that.cardId &&
+        return cardIndex == that.cardIndex &&
                 Objects.equals(stack, that.stack);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stack, cardId);
+        return Objects.hash(stack, cardIndex);
     }
 }

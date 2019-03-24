@@ -7,10 +7,31 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.NavigationStack;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.layouts.StackWindow;
 
+import java.util.Set;
+
 public class WyldCardNavigationManager implements NavigationManager {
+
+    private final static NavigationStack navigationStack = new NavigationStack(20);
+    private final static NavigationStack pushPopStack = new NavigationStack(20);
+
+    @Override
+    public NavigationStack getNavigationStack() {
+        return navigationStack;
+    }
+
+    @Override
+    public NavigationStack getPushPopStack() {
+        return pushPopStack;
+    }
+
+    @Override
+    public Set<Destination> getRecentCards() {
+        return getNavigationStack().asSet();
+    }
 
     /**
      * {@inheritDoc}
@@ -23,7 +44,7 @@ public class WyldCardNavigationManager implements NavigationManager {
         // When requested, push the current card onto the backstack
         if (push) {
             Destination destination = new Destination(stackPart.getStackModel(), cardPart.getId(context));
-            WyldCard.getInstance().getStackManager().getBackstack().push(destination);
+            getNavigationStack().push(destination);
         }
 
         return cardPart;
@@ -55,14 +76,37 @@ public class WyldCardNavigationManager implements NavigationManager {
         }
     }
 
+    @Override
+    public void push(Destination destination) {
+        pushPopStack.push(destination);
+    }
+
+    @Override
+    public Destination pop() {
+        return pushPopStack.pop();
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     @RunOnDispatch
-    public CardPart goBack(ExecutionContext context, StackPart stackPart) {
+    public CardPart goBack(ExecutionContext context) {
         try {
-            return goDestination(context, WyldCard.getInstance().getStackManager().getBackstack().peekBack());
+            return goDestination(context, getNavigationStack().back(), false);
+        } catch (HtSemanticException e) {
+            throw new IllegalStateException("Bug! Backstack contains bogus destination.", e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @RunOnDispatch
+    public CardPart goForth(ExecutionContext context) {
+        try {
+            return goDestination(context, getNavigationStack().forward(), false);
         } catch (HtSemanticException e) {
             throw new IllegalStateException("Bug! Backstack contains bogus destination.", e);
         }
@@ -110,21 +154,22 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goDestination(ExecutionContext context, Destination destination) throws HtSemanticException {
+        return goDestination(context, destination, true);
+    }
+
+    private CardPart goDestination(ExecutionContext context, Destination destination, boolean push) throws HtSemanticException {
         return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
             StackWindow stackWindow = WyldCard.getInstance().getWindowManager().findWindowForStack(destination.getStack());
             context.bind(stackWindow.getStack());
             stackWindow.setVisible(true);
             stackWindow.requestFocus();
 
-            Integer cardIndex = destination.getStack().getIndexOfCardId(destination.getCardId());
+            Integer cardIndex = destination.getStack().getIndexOfCardId(destination.getCardIndex());
             if (cardIndex != null) {
-                CardPart card = goCard(context, stackWindow.getStack(), cardIndex, destination.getDirection() == null);
-                WyldCard.getInstance().getStackManager().getBackstack().adjust(destination.getDirection());
-                return card;
+                return goCard(context, stackWindow.getStack(), cardIndex, push);
             }
 
             throw new HtSemanticException("Can't find that card.");
         }, HtSemanticException.class);
     }
-
 }

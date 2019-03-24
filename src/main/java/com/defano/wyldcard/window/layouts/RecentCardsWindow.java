@@ -24,7 +24,7 @@ public class RecentCardsWindow extends WyldCardDialog<Object> {
     public RecentCardsWindow() {
 
         // Add call cards currently on the backstack
-        Set<Destination> recentCards = WyldCard.getInstance().getStackManager().getBackstack().asSet();
+        Set<Destination> recentCards = WyldCard.getInstance().getNavigationManager().getRecentCards();
 
         // Add currently visible cards on all open stacks (which may not yet appear in the backstack)
         for (StackPart thisOpenStack : WyldCard.getInstance().getStackManager().getOpenStacks()) {
@@ -63,7 +63,7 @@ public class RecentCardsWindow extends WyldCardDialog<Object> {
 
     private void addDestinationThumbnail(Destination destination, boolean focused) {
         StackPart stack = WyldCard.getInstance().getStackManager().getOpenStack(destination.getStack());
-        int cardNumber = stack.getStackModel().getIndexOfCardId(destination.getCardId());
+        int cardNumber = stack.getStackModel().getIndexOfCardId(destination.getCardIndex());
 
         CardPart loadedCard = stack.loadCard(new ExecutionContext(), cardNumber);
 

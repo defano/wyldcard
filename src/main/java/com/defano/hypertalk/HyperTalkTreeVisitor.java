@@ -964,6 +964,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitPopCardIntoCmd(HyperTalkParser.PopCardIntoCmdContext ctx) {
+        return new PopIntoCmd(ctx, (Preposition) visit(ctx.preposition()), (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitPushCardCmd(HyperTalkParser.PushCardCmdContext ctx) {
         return new PushCardCmd(ctx);
     }

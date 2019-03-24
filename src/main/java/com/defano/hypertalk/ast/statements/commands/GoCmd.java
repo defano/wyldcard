@@ -122,7 +122,7 @@ public class GoCmd extends Command {
         }
     }
 
-    private boolean attemptToGoDirection(ExecutionContext context) throws HtSemanticException {
+    private boolean attemptToGoDirection(ExecutionContext context) {
         PartDirectionExp directionExp = destinationExp.factor(context, PartDirectionExp.class);
 
         if (directionExp != null) {
@@ -130,10 +130,10 @@ public class GoCmd extends Command {
 
             switch (ps.getValue()) {
                 case BACK:
-                    navigationManager.goDestination(context, WyldCard.getInstance().getStackManager().getBackstack().peekBack());
+                    navigationManager.goBack(context);
                     break;
                 case FORTH:
-                    navigationManager.goDestination(context, WyldCard.getInstance().getStackManager().getBackstack().peekForward());
+                    navigationManager.goForth(context);
                     break;
             }
 

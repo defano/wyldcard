@@ -6,9 +6,14 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.NavigationStack;
+
+import java.util.Set;
 
 @SuppressWarnings("UnusedReturnValue")
 public interface NavigationManager {
+
+    Set<Destination> getRecentCards();
 
     /**
      * Navigates to the given card index, applying a visual effect to the transition. Has no affect if no card with the
@@ -21,7 +26,7 @@ public interface NavigationManager {
      * @return The destination card (now visible in the stack window).
      */
     @RunOnDispatch
-    CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, boolean pushToBackstack);
+    CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, boolean push);
 
     /**
      * Navigates to the next card in the stack (index + 1); has no affect if the current card is the last card.
@@ -47,11 +52,19 @@ public interface NavigationManager {
      * Navigates to the last card on the backstack; has no affect if the backstack is empty.
      *
      * @param context      The execution context
-     * @param stackPart    The stack in which navigation should occur
      * @return The card now visible in the stack window, or null if no card available to pop
      */
     @RunOnDispatch
-    CardPart goBack(ExecutionContext context, StackPart stackPart);
+    CardPart goBack(ExecutionContext context);
+
+    @RunOnDispatch
+    CardPart goForth(ExecutionContext context);
+
+    @RunOnDispatch
+    void push(Destination destination);
+
+    @RunOnDispatch
+    Destination pop();
 
     /**
      * Navigates to the first card in the stack.
@@ -95,4 +108,7 @@ public interface NavigationManager {
      */
     CardPart goDestination(ExecutionContext context, Destination destination) throws HtSemanticException;
 
+    NavigationStack getNavigationStack();
+
+    NavigationStack getPushPopStack();
 }

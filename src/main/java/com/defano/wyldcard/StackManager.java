@@ -6,7 +6,6 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.NavigationStack;
 import io.reactivex.Observable;
 
 import java.io.File;
@@ -182,8 +181,4 @@ public interface StackManager {
     Observable<Boolean> getIsSelectableProvider();
 
     Observable<Double> getScaleProvider();
-
-    void onCardOpened(CardPart newCard);
-
-    NavigationStack getBackstack();
 }

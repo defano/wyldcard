@@ -15,7 +15,6 @@ import com.defano.wyldcard.patterns.WyldCardPatternFactory;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ImageLayerUtils;
-import com.defano.wyldcard.util.NavigationStack;
 import com.defano.wyldcard.util.ProxyObservable;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowDock;
@@ -39,7 +38,6 @@ import java.util.Optional;
 public class WyldCardStackManager implements StackNavigationObserver, StackManager {
 
     private final ArrayList<StackPart> openedStacks = new ArrayList<>();
-    private final NavigationStack backstack = new NavigationStack(20);
 
     private final BehaviorSubject<StackPart> focusedStack = BehaviorSubject.create();
     private final ProxyObservable<Integer> cardCount = new ProxyObservable<>(BehaviorSubject.createDefault(1));
@@ -269,7 +267,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
                                 !ImageLayerUtils.layersRemovesPaint(getFocusedCard().getActiveCanvas().peek(0).getImageLayers()))
         );
 
-        WyldCard.getInstance().getStackManager().getBackstack().push(new Destination(stackPart.getStackModel(), focusedStack.blockingFirst().getDisplayedCard().getId(null)));
+        WyldCard.getInstance().getNavigationManager().getNavigationStack().push(new Destination(stackPart.getStackModel(), focusedStack.blockingFirst().getDisplayedCard().getId(null)));
 
         stackPart.addNavigationObserver(this);
     }
@@ -337,11 +335,6 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         isUndoable.setSource(newCard.getActiveCanvas().isUndoableObservable());
         isRedoable.setSource(newCard.getActiveCanvas().isRedoableObservable());
         canvasScale.setSource(newCard.getActiveCanvas().getScaleObservable());
-    }
-
-    @Override
-    public NavigationStack getBackstack() {
-        return backstack;
     }
 
     /**
