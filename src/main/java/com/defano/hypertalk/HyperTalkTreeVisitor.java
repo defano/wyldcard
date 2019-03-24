@@ -1379,6 +1379,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitAnswerFileCmd(HyperTalkParser.AnswerFileCmdContext ctx) {
+        return new AnswerFileCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitAnswerFileTypeCmd(HyperTalkParser.AnswerFileTypeCmdContext ctx) {
+        return new AnswerFileCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+    }
+
+    @Override
     public Object visitArrowKeyCmd(HyperTalkParser.ArrowKeyCmdContext ctx) {
         return new ArrowKeyCmd(ctx, (Expression) visit(ctx.arrowExpression()));
     }
@@ -1401,6 +1411,26 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitAskFileWithCmd(HyperTalkParser.AskFileWithCmdContext ctx) {
         return new AskFileCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+    }
+
+    @Override
+    public Object visitAskPasswordCmd(HyperTalkParser.AskPasswordCmdContext ctx) {
+        return new AskPasswordCmd(ctx, false, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitAskPasswordWithCmd(HyperTalkParser.AskPasswordWithCmdContext ctx) {
+        return new AskPasswordCmd(ctx, false, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+    }
+
+    @Override
+    public Object visitAskPasswordClearCmd(HyperTalkParser.AskPasswordClearCmdContext ctx) {
+        return new AskPasswordCmd(ctx, true, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitAskPasswordClearWithCmd(HyperTalkParser.AskPasswordClearWithCmdContext ctx) {
+        return new AskPasswordCmd(ctx, true, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override

@@ -124,11 +124,17 @@ commandStatement
     | 'answer' expression 'with' term 'or' term                                                                         # answerTwoButtonCmd
     | 'answer' expression 'with' term                                                                                   # answerOneButtonCmd
     | 'answer' expression                                                                                               # answerDefaultCmd
+    | 'answer' 'file' expression                                                                                        # answerFileCmd
+    | 'answer' 'file' expression 'of' 'type' expression                                                                 # answerFileTypeCmd
     | 'arrowkey' arrowExpression                                                                                        # arrowKeyCmd
     | 'ask' expression 'with' expression                                                                                # askExpWithCmd
     | 'ask' expression                                                                                                  # askExpCmd
     | 'ask' 'file' expression                                                                                           # askFileCmd
     | 'ask' 'file' expression 'with' expression                                                                         # askFileWithCmd
+    | 'ask' 'password' expression                                                                                       # askPasswordCmd
+    | 'ask' 'password' expression 'with' expression                                                                     # askPasswordWithCmd
+    | 'ask' 'password' 'clear' expression                                                                               # askPasswordClearCmd
+    | 'ask' 'password' 'clear' expression 'with' expression                                                             # askPasswordClearWithCmd
     | 'beep'                                                                                                            # beepCmd
     | 'beep' expression                                                                                                 # beepMultipleCmd
     | 'choose' toolExpression 'tool'?                                                                                   # chooseToolCmd
