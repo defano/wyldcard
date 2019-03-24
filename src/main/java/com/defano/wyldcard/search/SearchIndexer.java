@@ -138,6 +138,12 @@ public class SearchIndexer {
      * @param results A mutable list of search results; each hit in the indexed field will be appended to this list
      */
     private static void indexField(ExecutionContext context, SearchQuery query, FieldModel fieldModel, int cardIndex, List<SearchResult> results) {
+
+        // Ignore fields marked "don't search"
+        if (fieldModel.getKnownProperty(context, FieldModel.PROP_DONTSEARCH).booleanValue()) {
+            return;
+        }
+
         int searchFrom = 0;
         Range result;
 
@@ -169,4 +175,5 @@ public class SearchIndexer {
                 !cardModel.getKnownProperty(context, CardModel.PROP_DONTSEARCH).booleanValue()
                 && !cardModel.getBackgroundModel().getKnownProperty(context, BackgroundModel.PROP_DONTSEARCH).booleanValue();
     }
+
 }

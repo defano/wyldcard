@@ -28,6 +28,11 @@ public class FieldModelBuilder extends PartModelBuilder<FieldModel, FieldModelBu
         return this;
     }
 
+    public FieldModelBuilder withDontSearch(Object v) {
+        this.fieldModel.setKnownProperty(context, FieldModel.PROP_DONTSEARCH, new Value(v));
+        return this;
+    }
+
     public FieldModelBuilder withSharedText(Object v) {
         this.fieldModel.setKnownProperty(context, FieldModel.PROP_SHAREDTEXT, new Value(v));
         return this;

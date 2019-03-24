@@ -49,6 +49,7 @@ public class FieldPropertyEditor extends WyldCardDialog<FieldModel> implements A
     private JCheckBox autoSelect;
     private JCheckBox multipleLines;
     private JCheckBox scrolling;
+    private JCheckBox dontSearch;
 
     public FieldPropertyEditor() {
         editScriptButton.addActionListener(e -> {
@@ -118,7 +119,7 @@ public class FieldPropertyEditor extends WyldCardDialog<FieldModel> implements A
         autoSelect.setSelected(model.getKnownProperty(context, FieldModel.PROP_AUTOSELECT).booleanValue());
         multipleLines.setSelected(model.getKnownProperty(context, FieldModel.PROP_MULTIPLELINES).booleanValue());
         scrolling.setSelected(model.getKnownProperty(context, FieldModel.PROP_SCROLLING).booleanValue());
-
+        dontSearch.setSelected(model.getKnownProperty(context, FieldModel.PROP_DONTSEARCH).booleanValue());
         sharedText.setEnabled(model.getOwner() == Owner.BACKGROUND);
         sharedText.setSelected(model.getKnownProperty(context, FieldModel.PROP_SHAREDTEXT).booleanValue());
         multipleLines.setEnabled(model.getKnownProperty(context, FieldModel.PROP_AUTOSELECT).booleanValue());
@@ -146,6 +147,7 @@ public class FieldPropertyEditor extends WyldCardDialog<FieldModel> implements A
                 enabled,
                 autoSelect,
                 multipleLines,
+                dontSearch,
                 scrolling);
     }
 
@@ -169,6 +171,7 @@ public class FieldPropertyEditor extends WyldCardDialog<FieldModel> implements A
         model.setKnownProperty(context, FieldModel.PROP_AUTOSELECT, new Value(autoSelect.isSelected()));
         model.setKnownProperty(context, FieldModel.PROP_MULTIPLELINES, new Value(multipleLines.isSelected()));
         model.setKnownProperty(context, FieldModel.PROP_SCROLLING, new Value(scrolling.isSelected()));
+        model.setKnownProperty(context, FieldModel.PROP_DONTSEARCH, new Value(dontSearch.isSelected()));
     }
 
     private void onEnabledChanged() {
@@ -302,6 +305,9 @@ public class FieldPropertyEditor extends WyldCardDialog<FieldModel> implements A
         scrolling.setText("Scrolling");
         scrolling.setToolTipText("Allow the field to scroll vertically if text exceeds visual bounds.");
         panel3.add(scrolling, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        dontSearch = new JCheckBox();
+        dontSearch.setText("Don't Search");
+        panel3.add(dontSearch, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editScriptButton = new JButton();
         editScriptButton.setText("Edit Script...");
         fieldEditor.add(editScriptButton, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

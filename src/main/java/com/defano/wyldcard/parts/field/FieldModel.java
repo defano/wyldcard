@@ -73,6 +73,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public static final String PROP_MULTIPLELINES = "multiplelines";
     public static final String PROP_SCROLLING = "scrolling";
     public static final String PROP_SCROLL = "scroll";
+    public static final String PROP_DONTSEARCH = "dontsearch";
 
     private final Map<Integer, StyledDocument> unsharedText = new HashMap<>();
     private final Set<Integer> sharedAutoSelection = new HashSet<>();
@@ -108,6 +109,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         this.newProperty(PROP_MULTIPLELINES, new Value(false), false);
         this.newProperty(PROP_SCROLLING, new Value(false), false);
         this.newProperty(PROP_SCROLL, new Value(0), false);
+        this.newProperty(PROP_DONTSEARCH, new Value(false), false);
 
         this.initialize();
     }
