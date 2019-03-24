@@ -235,6 +235,7 @@ commandStatement
     | 'speak' expression 'with' gender=('male'|'female'|'neuter'|'robotic') 'voice'                                     # speakGenderCmd
     | 'speak' expression 'with' 'voice' expression                                                                      # speakVoiceCmd
     | 'subtract' expression 'from' expression                                                                           # subtractCmd
+    | 'start' 'using' expression                                                                                        # startUsingCmd
     | 'tabkey'                                                                                                          # tabKeyCmd
     | 'type' expression                                                                                                 # typeCmd
     | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmd
@@ -738,7 +739,7 @@ keyword
     | 'subtract' | 'tabkey' | 'type' | 'commandkey' | 'cmdkey' | 'unlock' | 'unmark' | 'wait' | 'while' | 'write'
     | 'window' | 'without' | 'dialog' | 'dateitems' | 'date' | 'time' | 'english' | 'long' | 'abbreviated'
     | 'abbrev' | 'abbr' | 'short' | 'ascending' | 'descending' | 'numeric' | 'datetime' | 'forever' | 'times'
-    | 'down' | 'menuitem' | 'part' | 'id' | 'pattern' | 'watcher' | 'variable'
+    | 'down' | 'menuitem' | 'part' | 'id' | 'pattern' | 'watcher' | 'variable' | 'start' | 'using' | 'password'
     | 'selection' | 'tempo' | 'field' | 'button' | 'line' | 'reg' | 'regular'
     | 'poly' | 'polygon' | 'round' | 'rect' | 'rectangle' | 'spray' | 'can' | 'up' | 'left' | 'right' | 'effect'
     | 'number' | 'clickh' | 'clickchunk' | 'clickloc' | 'clickline' | 'clicktext' | 'clickv' | 'diskspace'

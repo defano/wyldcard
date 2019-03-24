@@ -824,6 +824,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitStartUsingCmd(HyperTalkParser.StartUsingCmdContext ctx) {
+        return new StartUsingCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitTabKeyCmd(HyperTalkParser.TabKeyCmdContext ctx) {
         return new TabKeyCmd(ctx);
     }

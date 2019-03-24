@@ -22,6 +22,7 @@ public class NavigationStack {
 
             if (contents.size() > maxDepth) {
                 contents.remove(0);
+                pointer--;
             }
         }
     }
