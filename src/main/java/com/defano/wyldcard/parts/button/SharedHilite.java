@@ -8,7 +8,10 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
  * A mixin providing reusable functionality for enabling shared highlight features (i.e., selecting radio buttons by
  * group).
  */
-public interface SharedHilight {
+public interface SharedHilite {
+
+    int MIN_FAMILY = 1;
+    int MAX_FAMILY = 7;
 
     default void setSharedHilite(ExecutionContext context, ButtonPart button, boolean hilite) {
 
@@ -22,12 +25,11 @@ public interface SharedHilight {
         if (isSharingHilite(context, button)) {
 
             for (ButtonPart thisButton : button.getCard().getButtons()) {
-
                 if (thisButton.getId(context) == button.getId(context)) {
                     continue;
                 }
 
-                if (isSharingHilite(context, thisButton) && sharedHiliteFamily(context, thisButton) == sharedHiliteFamily(context, button)) {
+                if (isSharingHilite(context, thisButton) && getSharedHiliteFamily(context, thisButton) == getSharedHiliteFamily(context, button)) {
                     thisButton.getPartModel().setKnownProperty(context, ButtonModel.PROP_HILITE, new Value(false));
                 }
             }
@@ -35,10 +37,11 @@ public interface SharedHilight {
     }
 
     default boolean isSharingHilite(ExecutionContext context, ButtonPart buttonPart) {
-        return buttonPart.getPartModel().getKnownProperty(context, ButtonModel.PROP_FAMILY).isInteger();
+        int family = buttonPart.getPartModel().getKnownProperty(context, ButtonModel.PROP_FAMILY).integerValue();
+        return family >= MIN_FAMILY && family <= MAX_FAMILY;
     }
 
-    default int sharedHiliteFamily(ExecutionContext context, ButtonPart buttonPart) {
+    default int getSharedHiliteFamily(ExecutionContext context, ButtonPart buttonPart) {
         return buttonPart.getPartModel().getKnownProperty(context, ButtonModel.PROP_FAMILY).integerValue();
     }
 }

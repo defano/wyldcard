@@ -267,7 +267,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
                                 !ImageLayerUtils.layersRemovesPaint(getFocusedCard().getActiveCanvas().peek(0).getImageLayers()))
         );
 
-        WyldCard.getInstance().getNavigationManager().getNavigationStack().push(new Destination(stackPart.getStackModel(), focusedStack.blockingFirst().getDisplayedCard().getId(null)));
+        WyldCard.getInstance().getNavigationManager().getBackstack().push(new Destination(stackPart.getStackModel(), focusedStack.blockingFirst().getDisplayedCard().getId(null)));
 
         stackPart.addNavigationObserver(this);
     }

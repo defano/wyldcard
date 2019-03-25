@@ -2,11 +2,10 @@ package com.defano.wyldcard;
 
 import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.NavigationStack;
+import com.defano.wyldcard.util.CircleStack;
 
 import java.util.Set;
 
@@ -25,7 +24,6 @@ public interface NavigationManager {
      * @param cardIndex    The zero-based index of the card to navigate to.
      * @return The destination card (now visible in the stack window).
      */
-    @RunOnDispatch
     CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, boolean push);
 
     /**
@@ -35,7 +33,6 @@ public interface NavigationManager {
      * @param stackPart    The stack in which navigation should occur
      * @return The card now visible in the stack window or null if no next card.
      */
-    @RunOnDispatch
     CardPart goNextCard(ExecutionContext context, StackPart stackPart);
 
     /**
@@ -45,25 +42,26 @@ public interface NavigationManager {
      * @param stackPart    The stack in which navigation should occur
      * @return The card now visible in the stack window or null if no previous card.
      */
-    @RunOnDispatch
     CardPart goPrevCard(ExecutionContext context, StackPart stackPart);
 
     /**
-     * Navigates to the last card on the backstack; has no affect if the backstack is empty.
+     * Navigates to the previous destination in the {@link CircleStack}.
      *
      * @param context      The execution context
      * @return The card now visible in the stack window, or null if no card available to pop
      */
-    @RunOnDispatch
     CardPart goBack(ExecutionContext context);
 
-    @RunOnDispatch
+    /**
+     * Navigates to the next card in the navigation backstack. If the current card is already at the head (top) of the
+     * stack, then this method navigates the
+     * @param context
+     * @return
+     */
     CardPart goForth(ExecutionContext context);
 
-    @RunOnDispatch
     void push(Destination destination);
 
-    @RunOnDispatch
     Destination pop();
 
     /**
@@ -73,7 +71,6 @@ public interface NavigationManager {
      * @param stackPart    The stack in which navigation should occur
      * @return The first card in the stack
      */
-    @RunOnDispatch
     CardPart goFirstCard(ExecutionContext context, StackPart stackPart);
 
     /**
@@ -83,7 +80,6 @@ public interface NavigationManager {
      * @param stackPart    The stack in which navigation should occur
      * @return The last card in the stack
      */
-    @RunOnDispatch
     CardPart goLastCard(ExecutionContext context, StackPart stackPart);
 
     /**
@@ -95,7 +91,6 @@ public interface NavigationManager {
      * @param withoutDialog True to prompt the user to find the stack if WyldCard can't locate it
      * @return The card of the new stack now active in the stack window, or null if the stack could not be located or opened.
      */
-    @RunOnDispatch
     CardPart goStack(ExecutionContext context, String stackName, boolean inNewWindow, boolean withoutDialog);
 
     /**
@@ -108,7 +103,5 @@ public interface NavigationManager {
      */
     CardPart goDestination(ExecutionContext context, Destination destination) throws HtSemanticException;
 
-    NavigationStack getNavigationStack();
-
-    NavigationStack getPushPopStack();
+    CircleStack<Destination> getBackstack();
 }

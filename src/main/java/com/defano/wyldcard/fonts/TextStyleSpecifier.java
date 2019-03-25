@@ -196,6 +196,20 @@ public class TextStyleSpecifier {
             sas.removeAttribute(StyleConstants.Subscript);
         }
 
+        if (align != null) {
+            switch (align.toLowerCase()) {
+                case "right":
+                    sas.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_RIGHT);
+                    break;
+                case "center":
+                    sas.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_CENTER);
+                    break;
+                case "left":
+                    sas.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
+                    break;
+            }
+        }
+
         return sas;
     }
 

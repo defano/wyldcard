@@ -99,13 +99,13 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
 
     /** {@inheritDoc} */
     @Override
-    public void clearSearchHilights() {
+    public void clearSearchHilites() {
         getHyperCardTextPane().clearSearchHilights();
     }
 
     /** {@inheritDoc} */
     @Override
-    public void applySearchHilight(Range range) {
+    public void applySearchHilite(Range range) {
         getHyperCardTextPane().applySearchHilight(range);
     }
 

@@ -122,7 +122,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
         this.isFocused = true;
 
         if (isAutoHilited()) {
-            if (!(buttonComponent instanceof SharedHilight)) {
+            if (!(buttonComponent instanceof SharedHilite)) {
                 getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(true));
             }
         }
@@ -138,7 +138,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
         }
 
         if (isAutoHilited() && isFocused) {
-            if (!(buttonComponent instanceof SharedHilight)) {
+            if (!(buttonComponent instanceof SharedHilite)) {
                 getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(true));
             }
         }
@@ -150,7 +150,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
         ToolEditablePart.super.mouseExited(e);
 
         if (isAutoHilited()) {
-            if (!(buttonComponent instanceof SharedHilight)) {
+            if (!(buttonComponent instanceof SharedHilite)) {
                 getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(false));
             }
         }
@@ -163,7 +163,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
         this.isFocused = false;
 
         if (!isSelectedForEditing() && isAutoHilited()) {
-            if (!(buttonComponent instanceof SharedHilight)) {
+            if (!(buttonComponent instanceof SharedHilite)) {
                 getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(false));
             }
         }

@@ -5,8 +5,8 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 public interface Searchable {
 
-    void clearSearchHilights();
-    void applySearchHilight(Range range);
+    void clearSearchHilites();
+    void applySearchHilite(Range range);
 
     String getText(ExecutionContext context);
 }

@@ -118,7 +118,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      */
     @RunOnDispatch
     public ButtonPart newButton(ExecutionContext context, Rectangle rectangle) {
-        ButtonPart newButton = ButtonPart.newButton(context, this, CardLayerPart.getActivePartLayer().asOwner(), rectangle);
+        ButtonPart newButton = ButtonPart.newButton(this, CardLayerPart.getActivePartLayer().asOwner(), rectangle);
         addNewPartToCard(context, newButton);
         return newButton;
     }

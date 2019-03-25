@@ -1,6 +1,8 @@
 package com.defano.wyldcard.importer;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.builder.*;
 import com.defano.wyldcard.parts.button.ButtonModel;
@@ -16,7 +18,10 @@ import com.defano.wyldcard.stackreader.enums.LayerFlag;
 import com.defano.wyldcard.stackreader.enums.PartFlag;
 import com.defano.wyldcard.stackreader.enums.PartType;
 import com.defano.wyldcard.stackreader.misc.ImportException;
+import com.defano.wyldcard.stackreader.record.PartContentRecord;
 import com.defano.wyldcard.stackreader.record.PartRecord;
+import com.defano.wyldcard.stackreader.record.StyleRecord;
+import com.defano.wyldcard.stackreader.record.StyleSpanRecord;
 
 import java.awt.*;
 import java.io.File;
@@ -89,6 +94,20 @@ public class HyperCardStackImporter {
         // Create all buttons and fields
         Arrays.stream(cardBlock.getParts()).forEach(p -> buildPart(p, cardModel, cardBlock));
 
+        // Set unshared text on background fields
+        for (PartContentRecord pcr : cardBlock.getContents()) {
+            if (pcr.getPartId() >= 0) {
+                FieldModel fm = cardModel.getBackgroundModel().getField(pcr.getPartId());
+
+                if (fm != null) {
+                    int cardId = cardModel.getId(new ExecutionContext());
+                    fm.setCurrentCardId(cardId);
+                    fm.setKnownProperty(new ExecutionContext(), FieldModel.PROP_TEXT, new Value(pcr.getText()));
+                }
+            }
+        }
+
+
         stackModel.addCard(cardModel);
     }
 
@@ -148,8 +167,6 @@ public class HyperCardStackImporter {
                 .withIsVisible(Arrays.stream(partRecord.getFlags()).noneMatch(f -> f == PartFlag.HIDDEN))
                 .build();
 
-
-
         parent.addPartModel(buttonModel);
     }
 
@@ -177,7 +194,36 @@ public class HyperCardStackImporter {
                 .withScript(partRecord.getScript())
                 .build();
 
+        fieldModel.setTextStyle(new ExecutionContext(), getTextStyleSpecifier(partRecord, block.getStack()));
+
         parent.addPartModel(fieldModel);
+    }
+
+    private static TextStyleSpecifier getTextStyleSpecifier(PartRecord partRecord, HyperCardStack stack) {
+        FontTableBlock fontTableBlock = stack.getBlock(FontTableBlock.class);
+
+        return TextStyleSpecifier.fromAlignNameStyleSize(
+                new Value(partRecord.getTextAlign().name()),
+                new Value(fontTableBlock.getFont(partRecord.getTextFontId()).getFontName()),
+                new Value(Arrays.toString(partRecord.getFontStyles())),
+                new Value(partRecord.getTextSize())
+        );
+    }
+
+    private static void applyTextStyles(FieldModel fieldModel, int cardId, HyperCardStack stack, StyleSpanRecord[] styleSpans) {
+
+        FontTableBlock fontTableBlock = stack.getBlock(FontTableBlock.class);
+        StyleTableBlock styleTableBlock = stack.getBlock(StyleTableBlock.class);
+
+        for (StyleSpanRecord record : styleSpans) {
+            StyleRecord style = styleTableBlock.getStyle(record.getStyleId());
+
+            String fontName = fontTableBlock.getFont(style.getFontId()).getFontName();
+            int fontSize = style.getFontSize();
+            int position = record.getTextPosition();
+
+            fieldModel.applyStyle(new ExecutionContext(), cardId, position, new Value(fontName), new Value(fontSize), new Value());
+        }
     }
 
 }

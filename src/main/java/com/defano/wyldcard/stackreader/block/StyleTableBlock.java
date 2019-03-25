@@ -7,6 +7,7 @@ import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.record.StyleRecord;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public class StyleTableBlock extends Block {
@@ -29,6 +30,13 @@ public class StyleTableBlock extends Block {
 
     public StyleRecord[] getStyles() {
         return styles;
+    }
+
+    public StyleRecord getStyle(int styleId) {
+        return Arrays.stream(getStyles())
+                .filter(s -> s.getStyleId() == styleId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No style with id " + styleId));
     }
 
     @Override

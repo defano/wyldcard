@@ -225,6 +225,12 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         }
     }
 
+    public void applyStyle(ExecutionContext context, int forCardId, int pos, Value fontName, Value fontSize, Value fontStyle) {
+        StyledDocument doc = getStyledDocument(context, forCardId);
+        TextStyleSpecifier tss = TextStyleSpecifier.fromAlignNameStyleSize(new Value("left"), fontName, fontStyle, fontSize);
+        doc.setCharacterAttributes(pos, doc.getLength() - pos, tss.toAttributeSet(), true);
+    }
+
     /**
      * Replaces the field's text with the given String value, attempting as best as possible to intelligently
      * maintain the field's existing style.

@@ -43,12 +43,11 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
     /**
      * Creates a new button on the given card with a given geometry.
      *
-     * @param context The execution context.
      * @param parent The card that this button will belong to.
      * @param rectangle The location and size of this button; when null, the default size and location will be assumed.
      * @return The new button.
      */
-    public static ButtonPart newButton(ExecutionContext context, CardPart parent, Owner owner, Rectangle rectangle) {
+    public static ButtonPart newButton(CardPart parent, Owner owner, Rectangle rectangle) {
         if (rectangle == null) {
             rectangle = new Rectangle(
                     parent.getWidth() / 2 - (DEFAULT_WIDTH / 2),

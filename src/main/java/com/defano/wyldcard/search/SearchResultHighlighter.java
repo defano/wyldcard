@@ -38,7 +38,7 @@ public interface SearchResultHighlighter {
 
                     FieldPart foundField = (FieldPart) context.getCurrentCard().getPart(foundFieldModel);
 
-                    foundField.applySearchHilight(result.getRange());
+                    foundField.applySearchHilite(result.getRange());
                     foundField.getHyperCardTextPane().setCaretPosition(result.getRange().start);
                 } catch (Exception e) {
                     throw new IllegalStateException("Bug! Search result refers to a bogus part.", e);

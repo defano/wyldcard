@@ -4,7 +4,7 @@ import com.defano.wyldcard.border.PartBorderFactory;
 import com.defano.wyldcard.parts.button.HyperCardButton;
 import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.ToolEditablePart;
-import com.defano.wyldcard.parts.button.SharedHilight;
+import com.defano.wyldcard.parts.button.SharedHilite;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
@@ -16,7 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class CheckboxButton extends JCheckBox implements SharedHilight, HyperCardButton, ActionListener {
+public class CheckboxButton extends JCheckBox implements SharedHilite, HyperCardButton, ActionListener {
 
     private final ToolEditablePart toolEditablePart;
 
