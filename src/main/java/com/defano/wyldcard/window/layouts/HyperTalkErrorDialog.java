@@ -30,7 +30,11 @@ public class HyperTalkErrorDialog {
             errorDialogVisible = true;
 
             if (isEditable(e)) {
-                showEditableError(e.getMessage(), e.getBreadcrumb().getContext().getCurrentStack(), e.getBreadcrumb().getPartModel(), e.getBreadcrumb().getToken());
+                // Suppress further error messages while user is editing script of this part
+                ScriptEditor scriptEditor = WyldCard.getInstance().getWindowManager().findScriptEditorForPart(e.getBreadcrumb().getPartModel());
+                if (scriptEditor == null || !scriptEditor.isVisible()) {
+                    showEditableError(e.getMessage(), e.getBreadcrumb().getContext().getCurrentStack(), e.getBreadcrumb().getPartModel(), e.getBreadcrumb().getToken());
+                }
             } else {
                 showUneditableError(e.getMessage());
             }
@@ -64,9 +68,7 @@ public class HyperTalkErrorDialog {
                 options[0]);
 
         if (selection == 1) {
-            // Invoke later to allow the error dialog to go away first; otherwise, script editor may display behind
-            // stack window
-            SwingUtilities.invokeLater(() -> offendingPart.editScript(new ExecutionContext(), offendingToken.getStartIndex()));
+            offendingPart.editScript(new ExecutionContext(), offendingToken.getStartIndex());
         }
     }
 
@@ -74,7 +76,7 @@ public class HyperTalkErrorDialog {
         Breadcrumb breadcrumb = e.getBreadcrumb();
 
         return breadcrumb != null &&
-                breadcrumb.getPart() != null &&
+                breadcrumb.getPartModel() != null &&
                 breadcrumb.getToken() != null &&
                 breadcrumb.getPart().getType() != null &&
                 breadcrumb.getPart().getType() != PartType.MESSAGE_BOX;

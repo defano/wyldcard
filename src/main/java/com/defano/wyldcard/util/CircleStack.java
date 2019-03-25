@@ -61,19 +61,11 @@ public class CircleStack<T> {
     }
 
     private int prevPointer() {
-        int next = pointer + 1;
-        if (next >= contents.size()) {
-            next = 0;
-        }
-        return next;
+        return (pointer + 1) % contents.size();
     }
 
     private int nextPointer() {
-        int prev = pointer - 1;
-        if (prev < 0) {
-            prev = contents.size() - 1;
-        }
-        return prev;
+        return (pointer - 1) % contents.size();
     }
 
 }

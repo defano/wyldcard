@@ -72,7 +72,6 @@ public class Interpreter {
     /**
      * Compiles the given script on the current thread.
      *
-     *
      * @param compilationUnit The type of script/scriptlet to compile
      * @param scriptText The script text to parse.
      * @return The compiled Script object (the root of the abstract syntax tree)

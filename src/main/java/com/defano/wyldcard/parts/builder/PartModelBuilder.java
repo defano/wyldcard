@@ -19,7 +19,7 @@ public abstract class PartModelBuilder<ModelType extends PartModel, BuilderType 
     }
 
     public BuilderType withScript(Object script) {
-        build().setKnownProperty(context, PartModel.PROP_SCRIPT, new Value(script));
+        build().setKnownProperty(context, PartModel.PROP_SCRIPTTEXT, new Value(script));
         return getBuilder();
     }
 

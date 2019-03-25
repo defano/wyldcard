@@ -42,7 +42,7 @@ import java.util.Set;
  */
 public abstract class HyperCardTextField extends JScrollPane implements PropertyChangeObserver, DocumentListener, CaretListener, FieldModelObserver {
 
-    protected final static int WIDE_MARGIN_PX = 5;
+    protected final static int WIDE_MARGIN_PX = 6;
     protected final static int NARROW_MARGIN_PX = 1;
 
     private final HyperCardTextPane textPane;

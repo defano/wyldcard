@@ -1,5 +1,12 @@
 package com.defano.wyldcard.parts.model;
 
+import com.defano.hypertalk.ast.expressions.parts.LiteralPartExp;
+import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.Messagable;
 import com.defano.wyldcard.parts.button.ButtonModel;
@@ -14,13 +21,6 @@ import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layouts.ButtonPropertyEditor;
 import com.defano.wyldcard.window.layouts.FieldPropertyEditor;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
-import com.defano.hypertalk.ast.expressions.parts.LiteralPartExp;
-import com.defano.hypertalk.ast.model.*;
-import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A base model object for all HyperCard "parts" that Defines properties common to all part objects.
+ *
  */
 public abstract class PartModel extends WyldCardPropertiesModel implements Messagable {
 
@@ -64,6 +65,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
 
     private transient PartModel parentPartModel;
     private transient Script script;
+    private transient long deferCompilation = 0;
 
     public PartModel(PartType type, Owner owner, PartModel parentPartModel) {
         super();
@@ -195,11 +197,10 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
 
         newComputedGetterProperty(PROP_SCRIPT, (context, model, propertyName) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
         newComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> {
+            script = null;
             model.setKnownProperty(context, PROP_SCRIPTTEXT, value);
-            precompile(context);
+            compile(context, false);
         });
-
-        precompile(new ExecutionContext());
     }
 
     /**
@@ -243,27 +244,39 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
         return type;
     }
 
-    private void precompile(ExecutionContext context) {
+    private void compile(ExecutionContext context, boolean reportErrors) {
         if (hasProperty(PROP_SCRIPTTEXT)) {
             Interpreter.asyncCompile(CompilationUnit.SCRIPT, getKnownProperty(context, PROP_SCRIPTTEXT).toString(), (scriptText, compiledScript, generatedError) -> {
-                if (generatedError == null) {
-                    script = (Script) compiledScript;
-                    script.applyBreakpoints(getBreakpoints());
+                if (generatedError != null && reportErrors) {
+                    generatedError.getBreadcrumb().setContext(context);
+                    generatedError.getBreadcrumb().setPart(getPartSpecifier(context));
+                    WyldCard.getInstance().showErrorDialog(generatedError);
+                } else {
+                    setScript(script);
                 }
             });
         }
     }
 
-    public Script getScript(ExecutionContext context) {
-        if (script == null) {
+    /** {@inheritDoc} */
+    @Override
+    public synchronized Script getScript(ExecutionContext context) {
+        if (script == null && System.currentTimeMillis() > deferCompilation) {
             try {
-                script = Interpreter.blockingCompile(CompilationUnit.SCRIPT, getScriptText(context));
-                script.applyBreakpoints(getBreakpoints());
+                setScript(Interpreter.blockingCompile(CompilationUnit.SCRIPT, getScriptText(context)));
             } catch (HtException e) {
-                e.printStackTrace();
+                deferCompilation = System.currentTimeMillis() + 5000;
+                e.getBreadcrumb().setContext(context);
+                e.getBreadcrumb().setPart(getPartSpecifier(context));
+                WyldCard.getInstance().showErrorDialog(e);
             }
         }
         return script;
+    }
+
+    private synchronized void setScript(Script script) {
+        this.script = script;
+        this.script.applyBreakpoints(getBreakpoints());
     }
 
     public String getScriptText(ExecutionContext context) {

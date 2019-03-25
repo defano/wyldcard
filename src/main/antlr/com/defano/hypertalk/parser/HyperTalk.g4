@@ -412,8 +412,11 @@ cardPart
     : 'this'? card                                                                                                      # thisCardPart
     | card 'id' term                                                                                                    # cardIdPart
     | position card                                                                                                     # positionCardPart
+    | position 'marked' card                                                                                            # positionMarkedCardPart
     | ordinal card                                                                                                      # ordinalCardPart
+    | ordinal 'marked' card                                                                                             # ordinalMarkedCardPart
     | card term                                                                                                         # expressionCardPart
+    | 'marked' card term                                                                                                # markedCardExpressionPart
     | cardPart of bkgndPart                                                                                             # cardOfBkgndPart
     | cardPart of stackPart                                                                                             # cardOfStackPart
     | 'recent' card                                                                                                     # recentCardPart

@@ -9,9 +9,9 @@ import org.antlr.v4.runtime.Token;
 
 public class Breadcrumb {
 
-    private final ExecutionContext context;
-    private final Token token;
-    private final PartSpecifier part;
+    private ExecutionContext context;
+    private Token token;
+    private PartSpecifier part;
 
     public Breadcrumb (ExecutionContext context, Token token) {
         this.context = context;
@@ -21,8 +21,6 @@ public class Breadcrumb {
 
     public Breadcrumb (Token token) {
         this.token = token;
-        this.part = null;
-        this.context = null;
     }
 
     public Range getCharRange() {
@@ -34,6 +32,18 @@ public class Breadcrumb {
         }
 
         return null;
+    }
+
+    public void setContext(ExecutionContext context) {
+        this.context = context;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
+    }
+
+    public void setPart(PartSpecifier part) {
+        this.part = part;
     }
 
     public Token getToken() {

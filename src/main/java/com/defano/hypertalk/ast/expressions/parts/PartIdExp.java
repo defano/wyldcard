@@ -27,8 +27,7 @@ public class PartIdExp extends PartExp {
         this.id = id;
     }
     
-    public PartSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException
-    {        
+    public PartSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException {
         return new PartIdSpecifier(layer, type, id.evaluate(context).integerValue());
     }
     

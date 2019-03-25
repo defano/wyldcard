@@ -9,6 +9,7 @@ import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.PartOwner;
 import com.defano.wyldcard.parts.field.FieldModel;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.stackreader.HyperCardStack;
@@ -107,7 +108,6 @@ public class HyperCardStackImporter {
             }
         }
 
-
         stackModel.addCard(cardModel);
     }
 
@@ -131,7 +131,6 @@ public class HyperCardStackImporter {
 
         // Create all buttons and fields
         Arrays.stream(backgroundBlock.getParts()).forEach(p -> buildPart(p, backgroundModel, backgroundBlock));
-
         stackModel.addBackground(backgroundModel);
     }
 
