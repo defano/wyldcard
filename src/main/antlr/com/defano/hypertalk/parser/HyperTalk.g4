@@ -544,6 +544,8 @@ zeroArgFunc
     | 'foundtext'                                                                                                       # foundTextFunc
     | 'menus'                                                                                                           # menusFunc
     | 'mouse'                                                                                                           # mouseFunc
+    | 'mouseh'                                                                                                          # mouseHFunc
+    | 'mousev'                                                                                                          # mouseVFunc
     | 'mouseclick'                                                                                                      # mouseClickFunc
     | 'mouseloc'                                                                                                        # mouseLocFunc
     | 'optionkey'                                                                                                       # optionKeyFunc

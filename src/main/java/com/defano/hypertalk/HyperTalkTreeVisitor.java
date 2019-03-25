@@ -1,15 +1,13 @@
 package com.defano.hypertalk;
 
+import com.defano.hypertalk.ast.expressions.*;
+import com.defano.hypertalk.ast.expressions.containers.*;
 import com.defano.hypertalk.ast.expressions.functions.NumberFunc;
-import com.defano.hypertalk.ast.expressions.parts.*;
 import com.defano.hypertalk.ast.expressions.operators.BinaryOperator;
 import com.defano.hypertalk.ast.expressions.operators.BinaryOperatorExp;
 import com.defano.hypertalk.ast.expressions.operators.UnaryOperator;
 import com.defano.hypertalk.ast.expressions.operators.UnaryOperatorExp;
-import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
-import com.defano.hypertalk.ast.expressions.*;
-import com.defano.hypertalk.ast.expressions.containers.*;
+import com.defano.hypertalk.ast.expressions.parts.*;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.MenuSpecifier;
@@ -23,6 +21,8 @@ import com.defano.hypertalk.ast.statements.repeat.*;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -626,6 +626,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitForthDirection(HyperTalkParser.ForthDirectionContext ctx) {
         return Direction.FORTH;
+    }
+
+    @Override
+    public Object visitMenuMessage(HyperTalkParser.MenuMessageContext ctx) {
+        return super.visitMenuMessage(ctx);
     }
 
     @Override
@@ -1939,6 +1944,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMouseFunc(HyperTalkParser.MouseFuncContext ctx) {
         return BuiltInFunction.MOUSE;
+    }
+
+    @Override
+    public Object visitMouseHFunc(HyperTalkParser.MouseHFuncContext ctx) {
+        return BuiltInFunction.MOUSEH;
+    }
+
+    @Override
+    public Object visitMouseVFunc(HyperTalkParser.MouseVFuncContext ctx) {
+        return BuiltInFunction.MOUSEV;
     }
 
     @Override
