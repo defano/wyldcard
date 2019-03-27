@@ -1816,6 +1816,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitPositionMarkedCardPart(HyperTalkParser.PositionMarkedCardPartContext ctx) {
+        return new PartPositionExp(ctx, PartType.CARD, (Position) visit(ctx.position()), true);
+    }
+
+    @Override
     public Object visitExpressionBkgndPart(HyperTalkParser.ExpressionBkgndPartContext ctx) {
         return new PartNameExp(ctx, PartType.BACKGROUND, (Expression) visit(ctx.term()));
     }

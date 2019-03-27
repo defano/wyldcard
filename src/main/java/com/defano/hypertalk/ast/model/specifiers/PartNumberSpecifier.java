@@ -2,12 +2,18 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
+import com.defano.wyldcard.parts.PartException;
+import com.defano.wyldcard.parts.finder.OrderedPartFindingSpecifier;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Specifies a button, field, card or background part by cardinal number. For example, 'card 14' or 'button 2'
  */
-public class PartNumberSpecifier implements PartSpecifier {
+public class PartNumberSpecifier implements PartSpecifier, OrderedPartFindingSpecifier {
 
     private final PartType type;
     private final Owner layer;
@@ -17,6 +23,21 @@ public class PartNumberSpecifier implements PartSpecifier {
         this.layer = layer;
         this.number = number;
         this.type = type;
+    }
+
+    public PartModel findSpecifiedPart(ExecutionContext context, List<PartModel> parts) throws PartException {
+        List<PartModel> foundParts = parts.stream()
+                .filter(p -> getType() == null || p.getType() == getType())
+                .filter(p -> getOwner() == null || p.getOwner() == getOwner())
+                .collect(Collectors.toList());
+
+        int partIndex = (int) getValue() - 1;
+
+        if (partIndex >= foundParts.size() || partIndex < 0) {
+            throw new PartException("No " + getHyperTalkIdentifier(context) + " found.");
+        } else {
+            return foundParts.get(partIndex);
+        }
     }
 
     @Override

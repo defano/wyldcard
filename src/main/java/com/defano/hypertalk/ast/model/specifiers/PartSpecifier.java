@@ -1,13 +1,17 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
-import com.defano.hypertalk.ast.expressions.parts.CompositePartExp;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
+import com.defano.hypertalk.ast.expressions.parts.CompositePartExp;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.parts.PartException;
+import com.defano.wyldcard.parts.finder.StackPartFinder;
+import com.defano.wyldcard.parts.finder.StackPartFindingSpecifier;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
-public interface PartSpecifier {
+public interface PartSpecifier extends StackPartFindingSpecifier {
 
     /**
      * Gets the "value" of this specification. The exact type returned and its meaning depends on the type of
@@ -68,6 +72,17 @@ public interface PartSpecifier {
      * @return A valid HyperTalk expression referring to the specified part.
      */
     String getHyperTalkIdentifier(ExecutionContext context);
+
+    @Override
+    default PartModel find(ExecutionContext context, StackPartFinder partFinder) throws PartException {
+        if (isCardPartSpecifier()) {
+            return context.getCurrentCard().getPartModel().findPart(context, this);
+        } else if (isBackgroundPartSpecifier()) {
+            return context.getCurrentCard().getPartModel().getBackgroundModel().findPart(context, this);
+        }
+
+        return partFinder.findPartInDisplayedOrder(context, this);
+    }
 
     /**
      * Traverses the chain of owning parts until we reach the root owner of the part; returns a specifier identifying

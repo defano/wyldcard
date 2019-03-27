@@ -1,6 +1,5 @@
 package com.defano.wyldcard.parts.finder;
 
-import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.ast.model.specifiers.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
@@ -11,6 +10,9 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
+/**
+ * Provides routines for finding WyldCard parts (windows, cards, backgrounds, stacks, buttons and fields).
+ */
 public interface PartFinder {
 
     /**
@@ -18,42 +20,45 @@ public interface PartFinder {
      * etc.).
      *
      * @param context The execution context in which to find the part (identifies the current stack)
-     * @param ps The PartSpecifier identifying the part to find.
+     * @param ps      The PartSpecifier identifying the part to find.
      * @return The model associated with the specified part.
      * @throws PartException Thrown if the requested part does not exist or if the specification is otherwise invalid.
      */
     default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws PartException {
+        // Looking for a window
         if (ps instanceof WindowSpecifier) {
             return new WindowProxyPartModel(WyldCard.getInstance().getWindowManager().findWindow(context, (WindowSpecifier) ps));
-        } else if (ps instanceof PartDirectionSpecifier) {
-            return findPartByDirection((PartDirectionSpecifier) ps);
-        } else if (ps instanceof PartMessageSpecifier) {
-            return WyldCard.getInstance().getWindowManager().getMessageWindow().getPartModel();
-        } else if (ps instanceof StackPartSpecifier) {
-            return findStackPart(context, (StackPartSpecifier) ps);
-        } else {
-            return getStackInScope(context, ps).findPart(context, ps);
+        }
+
+        // Looking for a stack
+        else if (ps instanceof StackPartSpecifier) {
+            return ((StackPartSpecifier) ps).find(context, WyldCard.getInstance().getStackManager().getOpenStacks());
+        }
+
+        // Looking for a part in the scoped-stack
+        else {
+            return findReferredStack(context, ps).findPart(context, ps);
         }
     }
 
     /**
      * Returns the model associated with the stack referred to (explicitly or implicitly) by the given part specifier.
-     *
+     * <p>
      * For example, the stack associated with 'btn 1 of card 1' would return the current stack identified by the
      * execution context; however, 'btn 1 of card 1 of stack "Yo Mama"' would return the StackModel associated with the
      * "Yo Mama" stack.
      *
      * @param context The execution context in which the specifier is being evaluated
-     * @param ps The part specifier
+     * @param ps      The part specifier
      * @return The referred stack model
      * @throws PartException Thrown if the stack does not exist or if the specification is otherwise invalid.
      */
-    default StackModel getStackInScope(ExecutionContext context, PartSpecifier ps) throws PartException {
+    default StackModel findReferredStack(ExecutionContext context, PartSpecifier ps) throws PartException {
         if (ps instanceof CompositePartSpecifier) {
             try {
                 PartSpecifier root = ps.getRootOwningPartSpecifier(context);
                 if (root instanceof StackPartSpecifier) {
-                    return findStackPart(context, (StackPartSpecifier) ps.getRootOwningPartSpecifier(context));
+                    return findStack(context, (StackPartSpecifier) ps.getRootOwningPartSpecifier(context));
                 }
             } catch (HtException e) {
                 throw new PartException(e);
@@ -64,37 +69,15 @@ public interface PartFinder {
     }
 
     /**
-     * Finds a card based on navigation direction (i.e., back, forth or recent).
-     *
-     * @param ps The direction specifier
-     * @return The card in the specified direction
-     */
-    default PartModel findPartByDirection(PartDirectionSpecifier ps) {
-        Destination destination;
-
-        switch (ps.getValue()) {
-            case BACK:
-                destination = WyldCard.getInstance().getNavigationManager().getBackstack().peekBack();
-                break;
-            case FORTH:
-                destination = WyldCard.getInstance().getNavigationManager().getBackstack().peekForward();
-                break;
-            default:
-                throw new IllegalStateException("Bug! Unimplemented direction: " + ps.getValue());
-        }
-
-        return destination.getStack().getCardModel(destination.getCardIndex());
-    }
-
-    /**
-     * Finds the model associated with the identified stack.
+     * Finds the model associated with the identified stack, looking only within the set of open stacks (this method
+     * will never prompt to find a stack).
      *
      * @param context The execution context
-     * @param ps A stack specifier
+     * @param ps      A stack specifier
      * @return The found stack model
      * @throws PartException Thrown if the requested part does not exist or if the specification is otherwise invalid.
      */
-    default StackModel findStackPart(ExecutionContext context, StackPartSpecifier ps) throws PartException {
+    default StackModel findStack(ExecutionContext context, StackPartSpecifier ps) throws PartException {
         if (ps.isThisStack()) {
             return context.getCurrentStack().getStackModel();
         } else {

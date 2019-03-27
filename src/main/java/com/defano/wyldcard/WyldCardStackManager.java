@@ -67,7 +67,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     public StackModel findStack(ExecutionContext context, StackPartSpecifier specifier, RemoteNavigationOptions options) {
         try {
             // Try to find the requested stack among those already opened...
-            return WyldCard.getInstance().findStackPart(context, specifier);
+            return WyldCard.getInstance().findStack(context, specifier);
         } catch (PartException e) {
 
             // ... if that fails, interpret the specifier as a file name

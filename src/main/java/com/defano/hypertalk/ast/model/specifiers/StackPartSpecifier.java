@@ -2,7 +2,12 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
+import com.defano.wyldcard.parts.PartException;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+
+import java.util.List;
 
 public class StackPartSpecifier implements PartSpecifier {
 
@@ -18,6 +23,26 @@ public class StackPartSpecifier implements PartSpecifier {
 
     public boolean isThisStack() {
         return stackName == null;
+    }
+
+    public PartModel find(ExecutionContext context, List<StackPart> parts) throws PartException {
+        if (isThisStack()) {
+            return context.getCurrentStack().getStackModel();
+        } else {
+            String stackName = String.valueOf(getValue());
+
+            for (StackPart thisOpenStack : parts) {
+                String shortName = thisOpenStack.getStackModel().getShortName(context);
+                String abbrevName = thisOpenStack.getStackModel().getAbbreviatedName(context);
+                String longName = thisOpenStack.getStackModel().getLongName(context);
+
+                if (stackName.equalsIgnoreCase(shortName) || stackName.equalsIgnoreCase(longName) || stackName.equalsIgnoreCase(abbrevName)) {
+                    return thisOpenStack.getStackModel();
+                }
+            }
+        }
+
+        throw new PartException("No such stack.");
     }
 
     @Override

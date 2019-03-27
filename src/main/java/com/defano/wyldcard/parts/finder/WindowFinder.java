@@ -1,21 +1,21 @@
 package com.defano.wyldcard.parts.finder;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.model.specifiers.*;
+import com.defano.hypertalk.ast.model.specifiers.WindowSpecifier;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WyldCardDialog;
-import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.wyldcard.window.WyldCardFrame;
-import com.defano.wyldcard.window.layouts.StackWindow;
+import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
+import com.defano.wyldcard.window.layouts.StackWindow;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,58 +24,24 @@ import java.util.stream.Collectors;
  */
 public interface WindowFinder {
 
+    /**
+     * Finds the window identified by the given window specifier.
+     *
+     * @param context   The execution context
+     * @param specifier The window specifier identifying the desired window.
+     * @return The specified window
+     * @throws PartException Thrown if the specified window cannot be found or doesn't exist.
+     */
     default WyldCardFrame findWindow(ExecutionContext context, WindowSpecifier specifier) throws PartException {
-        if (specifier instanceof WindowTypeSpecifier) {
-            return ((WindowTypeSpecifier) specifier).getWindowType().getWindow(context);
-        } else if (specifier instanceof WindowNameSpecifier) {
-            return findWindowByName(String.valueOf(specifier.getValue()));
-        } else if (specifier instanceof WindowIdSpecifier) {
-            return findWindowById((int) specifier.getValue());
-        } else if (specifier instanceof WindowNumberSpecifier) {
-            return findWindowByNumber((int) specifier.getValue());
-        }
-
-        throw new IllegalArgumentException("Bug! Unimplemented WindowSpecifier.");
+        return specifier.find(context, getFrames(false));
     }
 
-    @RunOnDispatch
-    default WyldCardFrame findWindowById(int id) throws PartException {
-        Optional<WyldCardFrame> foundWindow = getFrames(false).stream()
-                .filter(p -> p instanceof WyldCardWindow)
-                .filter(p -> System.identityHashCode(p) == id)
-                .findFirst();
-
-        if (foundWindow.isPresent()) {
-            return foundWindow.get();
-        } else {
-            throw new PartException("No such window.");
-        }
-    }
-
-    @RunOnDispatch
-    default WyldCardFrame findWindowByName(String name) throws PartException {
-        Optional<WyldCardFrame> foundWindow = getFrames(false).stream()
-                .filter(p -> p.getTitle().equalsIgnoreCase(name))
-                .findFirst();
-
-        if (foundWindow.isPresent()) {
-            return foundWindow.get();
-        } else {
-            throw new PartException("No such window.");
-        }
-    }
-
-    @RunOnDispatch
-    default WyldCardFrame findWindowByNumber(int windowNumber) throws PartException {
-        List<WyldCardFrame> windows = getFrames(false);
-
-        if (windowNumber < 1 || windowNumber >= windows.size()) {
-            throw new PartException("No such window.");
-        } else {
-            return windows.get(windowNumber - 1);
-        }
-    }
-
+    /**
+     * Gets the script editor window associated with the given part.
+     *
+     * @param model The part whose script editor should be found.
+     * @return The script editor, or null if there is no script editor window currently in existence for this part.
+     */
     @RunOnDispatch
     default ScriptEditor findScriptEditorForPart(PartModel model) {
         if (model != null) {
@@ -88,6 +54,13 @@ public interface WindowFinder {
         return null;
     }
 
+    /**
+     * Gets the window associated with a given stack, or null if the stack does not appear to be currently bound to a
+     * window.
+     *
+     * @param stackModel The stack whose window should be found.
+     * @return The stack's window, or null if the stack is bound to a window.
+     */
     @RunOnDispatch
     default StackWindow findWindowForStack(StackModel stackModel) {
         return (StackWindow) getFrames(false).stream()
@@ -174,18 +147,4 @@ public interface WindowFinder {
                 .filter(wyldCardFrame -> !wyldCardFrame.isPalette())
                 .collect(Collectors.toList());
     }
-
-    /**
-     * Gets a list of all WyldCard dialog boxes.
-     *
-     * @param onlyVisible When true, only visible dialogs are returned.
-     * @return A list of WyldCard dialog windows.
-     */
-    @RunOnDispatch
-    default List<WyldCardFrame> getDialogs(boolean onlyVisible) {
-        return getFrames(onlyVisible).stream()
-                .filter(wyldCardFrame -> wyldCardFrame instanceof WyldCardDialog)
-                .collect(Collectors.toList());
-    }
-
 }

@@ -2,9 +2,15 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
+import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.window.WyldCardFrame;
+
+import java.util.List;
 
 public abstract class WindowSpecifier implements PartSpecifier {
+
+    public abstract WyldCardFrame find(ExecutionContext context, List<WyldCardFrame> windows) throws PartException;
 
     @Override
     public Owner getOwner() {

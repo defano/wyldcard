@@ -155,9 +155,7 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goDestination(ExecutionContext context, Destination destination) throws HtSemanticException {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
-            return goDestination(context, destination, true);
-        });
+        return ThreadUtils.callAndWaitAsNeeded(() -> goDestination(context, destination, true));
     }
 
     private CardPart goDestination(ExecutionContext context, Destination destination, boolean push) throws HtSemanticException {

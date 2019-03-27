@@ -1,7 +1,11 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.SingletonWindowType;
+import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.window.WyldCardFrame;
+
+import java.util.List;
 
 public class WindowTypeSpecifier extends WindowSpecifier {
 
@@ -11,6 +15,11 @@ public class WindowTypeSpecifier extends WindowSpecifier {
     public WindowTypeSpecifier(ExecutionContext context, SingletonWindowType type) {
         this.windowType = type;
         this.context = context;
+    }
+
+    @Override
+    public WyldCardFrame find(ExecutionContext context, List<WyldCardFrame> windows) throws PartException {
+        return getWindowType().getWindow(context);
     }
 
     @Override

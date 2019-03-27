@@ -2,14 +2,20 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
+import com.defano.wyldcard.parts.PartException;
+import com.defano.wyldcard.parts.finder.OrderedPartFindingSpecifier;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Specifies a button, field, card or background by name. For example, 'card "Nifty Card"' or 'card button 'Press me!"'
  * Note that names are not unique; multiple parts can have the same name. HyperCard assumes the user is referring to
  * the part with the lowest number when ambiguously referring to parts by name.
  */
-public class PartNameSpecifier implements PartSpecifier {
+public class PartNameSpecifier implements PartSpecifier, OrderedPartFindingSpecifier {
 
     private final Owner layer;
     private final PartType type;
@@ -19,6 +25,20 @@ public class PartNameSpecifier implements PartSpecifier {
         this.layer = layer;
         this.type = type;
         this.name = name;
+    }
+
+    public PartModel findSpecifiedPart(ExecutionContext context, List<PartModel> parts) throws PartException {
+        Optional<PartModel> foundPart = parts.stream()
+                .filter(p -> getType() == null || p.getType() == getType())
+                .filter(p -> getOwner() == null || p.getOwner() == getOwner())
+                .filter(p -> p.getName(context).equalsIgnoreCase(getValue()))
+                .findFirst();
+
+        if (foundPart.isPresent()) {
+            return foundPart.get();
+        } else {
+            throw new PartException("No " + getHyperTalkIdentifier(context) + " found.");
+        }
     }
 
     @Override
