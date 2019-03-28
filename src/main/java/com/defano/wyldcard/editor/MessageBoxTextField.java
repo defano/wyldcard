@@ -6,9 +6,9 @@ import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
-import com.defano.wyldcard.runtime.interpreter.Interpreter;
-import com.defano.wyldcard.runtime.interpreter.MessageEvaluationObserver;
+import com.defano.wyldcard.runtime.compiler.CompilationUnit;
+import com.defano.wyldcard.runtime.compiler.Compiler;
+import com.defano.wyldcard.runtime.compiler.MessageEvaluationObserver;
 import com.defano.wyldcard.util.SquigglePainter;
 import com.defano.wyldcard.util.ThreadUtils;
 
@@ -76,7 +76,7 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
     private void checkSyntax() {
         try {
             getHighlighter().removeAllHighlights();
-            Interpreter.blockingCompile(CompilationUnit.SCRIPTLET, getText());
+            Compiler.blockingCompile(CompilationUnit.SCRIPTLET, getText());
         } catch (HtException e) {
             squiggleHighlight(e);
         }
@@ -105,7 +105,7 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
     public void evaluate() {
         if (!getText().trim().isEmpty()) {
             String messageText = getText();
-            Interpreter.asyncStaticContextEvaluate(staticContext, messageText, messageEvaluationObserver);
+            Compiler.asyncStaticContextEvaluate(staticContext, messageText, messageEvaluationObserver);
 
             // Special case: Message may have set the stack context; unset it after evaluation (un-bind the context)
             staticContext.unbind();

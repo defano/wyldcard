@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.wyldcard.parts.PartException;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.FindInCollectionSpecifier;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -20,11 +21,17 @@ public class PartNameSpecifier implements FindInCollectionSpecifier {
     private final Owner layer;
     private final PartType type;
     private final String name;
+    private final boolean marked;
 
-    public PartNameSpecifier (Owner layer, PartType type, String name) {
+    public PartNameSpecifier (Owner layer, PartType type, String name, boolean marked) {
         this.layer = layer;
         this.type = type;
         this.name = name;
+        this.marked = marked;
+
+        if (marked && type != PartType.CARD) {
+            throw new IllegalStateException("Bug! Can only find marked cards; other parts disallowed.");
+        }
     }
 
     public PartModel findInCollection(ExecutionContext context, List<PartModel> parts) throws PartException {
@@ -32,6 +39,7 @@ public class PartNameSpecifier implements FindInCollectionSpecifier {
                 .filter(p -> getType() == null || p.getType() == getType())
                 .filter(p -> getOwner() == null || p.getOwner() == getOwner())
                 .filter(p -> p.getName(context).equalsIgnoreCase(getValue()))
+                .filter(p -> !marked || ( ((CardModel) p).isMarked(context) || p.equals(context.getCurrentCard().getPartModel())))
                 .findFirst();
 
         if (foundPart.isPresent()) {

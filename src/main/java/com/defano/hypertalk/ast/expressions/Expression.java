@@ -9,7 +9,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.interpreter.Interpreter;
+import com.defano.wyldcard.runtime.compiler.Compiler;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
@@ -110,7 +110,7 @@ public abstract class Expression extends ASTNode {
             if (clazz.isAssignableFrom(model.getClass())) {
                 return (T) model;
             } else {
-                PartExp refExp = Interpreter.blockingDereference(partExp.evaluate(context), PartExp.class);
+                PartExp refExp = Compiler.blockingDereference(partExp.evaluate(context), PartExp.class);
                 return refExp == null ? null : refExp.partFactor(context, clazz);
             }
         } catch (HtException e) {
@@ -237,7 +237,7 @@ public abstract class Expression extends ASTNode {
     /**
      * Attempts to evaluate this expression as an {@link Expression} of the requested subtype.
      * <p>
-     * Evaluates this expression as a HyperTalk {@link Value}, then invokes the {@link Interpreter} to re-parse the
+     * Evaluates this expression as a HyperTalk {@link Value}, then invokes the {@link Compiler} to re-parse the
      * value. If the re-interpreted value matches the requested type then it is returned. Otherwise, null is returned.
      *
      * @param <T>     The requested Expression subtype.
@@ -252,7 +252,7 @@ public abstract class Expression extends ASTNode {
         }
 
         try {
-            return Interpreter.blockingDereference(this.evaluate(context), klazz);
+            return Compiler.blockingDereference(this.evaluate(context), klazz);
         } catch (HtException e) {
             return null;
         }

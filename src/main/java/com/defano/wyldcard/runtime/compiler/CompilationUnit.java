@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.interpreter;
+package com.defano.wyldcard.runtime.compiler;
 
 import com.defano.hypertalk.parser.HyperTalkParser;
 import org.antlr.v4.runtime.tree.ParseTree;

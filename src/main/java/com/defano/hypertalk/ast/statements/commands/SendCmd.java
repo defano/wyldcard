@@ -9,7 +9,7 @@ import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.interpreter.Interpreter;
+import com.defano.wyldcard.runtime.compiler.Compiler;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class SendCmd extends Command {
         ArrayList<Value> arguments = new ArrayList<>();
 
         for (String component : text.trim().substring(message.length()).split(",")) {
-            arguments.add(Interpreter.blockingEvaluate(component.trim(), context));
+            arguments.add(Compiler.blockingEvaluate(component.trim(), context));
         }
 
         return new MessageCmd(null, message, ListExp.fromValues(null, arguments.toArray(new Value[]{})));

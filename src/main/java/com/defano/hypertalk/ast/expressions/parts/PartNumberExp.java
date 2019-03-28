@@ -18,9 +18,10 @@ public class PartNumberExp extends PartExp {
     public final PartType type;
     public final Expression number;
     public final Ordinal ordinal;
+    public final boolean marked;
 
-    public PartNumberExp(ParserRuleContext context, Owner owner, PartType type, Ordinal ordinal) {
-        this(context, owner, type, null, ordinal);
+    public PartNumberExp(ParserRuleContext context, Owner owner, PartType type, Ordinal ordinal, boolean marked) {
+        this(context, owner, type, null, ordinal, marked);
     }
 
     /**
@@ -31,27 +32,28 @@ public class PartNumberExp extends PartExp {
      * @param expression An integer expression referring to the part number.
      */
     public PartNumberExp(ParserRuleContext context, Owner owner, Expression expression) {
-        this(context, owner,  null, expression, null);
+        this(context, owner,  null, expression, null, false);
     }
 
-    public PartNumberExp(ParserRuleContext context, PartType type, Ordinal ordinal) {
-        this(context, null, type, null, ordinal);
+    public PartNumberExp(ParserRuleContext context, PartType type, Ordinal ordinal, boolean marked) {
+        this(context, null, type, null, ordinal, marked);
     }
 
-    private PartNumberExp(ParserRuleContext context, Owner layer, PartType type, Expression number, Ordinal ordinal) {
+    private PartNumberExp(ParserRuleContext context, Owner layer, PartType type, Expression number, Ordinal ordinal, boolean marked) {
         super(context);
         this.layer = layer;
         this.number = number;
         this.type = type;
         this.ordinal = ordinal;
+        this.marked = marked;
     }
 
     @Override
     public PartSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException {
         if (ordinal != null) {
-            return new PartOrdinalSpecifier(layer, type, ordinal);
+            return new PartOrdinalSpecifier(layer, type, ordinal, marked);
         } else {
-            return new PartNumberSpecifier(layer, type, number.evaluate(context).integerValue());
+            return new PartNumberSpecifier(layer, type, number.evaluate(context).integerValue(), marked);
         }
     }
 }

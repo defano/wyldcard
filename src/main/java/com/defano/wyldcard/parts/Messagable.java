@@ -8,8 +8,8 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.interpreter.Interpreter;
-import com.defano.wyldcard.runtime.interpreter.MessageCompletionObserver;
+import com.defano.wyldcard.runtime.compiler.Compiler;
+import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -86,7 +86,7 @@ public interface Messagable {
         }
 
         // Attempt to invoke command handler in this part and listen for completion
-        Interpreter.asyncExecuteHandler(context, getMe(context), getScript(context), message, arguments, (me, script, handler, trappedMessage, exception) -> {
+        Compiler.asyncExecuteHandler(context, getMe(context), getScript(context), message, arguments, (me, script, handler, trappedMessage, exception) -> {
 
             // Did message generate an error
             if (exception != null) {
@@ -167,7 +167,7 @@ public interface Messagable {
             function = target.getScript(context).getFunction(functionName);
         }
 
-        return Interpreter.blockingExecuteFunction(context, target.getMe(context), function, arguments);
+        return Compiler.blockingExecuteFunction(context, target.getMe(context), function, arguments);
     }
 
     /**

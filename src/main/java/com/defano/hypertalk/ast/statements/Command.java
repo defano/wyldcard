@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.interpreter.MessageCompletionObserver;
+import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;

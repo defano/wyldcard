@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.wyldcard.parts.PartException;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.FindInCollectionSpecifier;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -18,17 +19,25 @@ public class PartNumberSpecifier implements FindInCollectionSpecifier {
     private final PartType type;
     private final Owner layer;
     private final int number;
+    private final boolean marked;
 
-    public PartNumberSpecifier(Owner layer, PartType type, int number) {
+    public PartNumberSpecifier(Owner layer, PartType type, int number, boolean marked) {
         this.layer = layer;
         this.number = number;
         this.type = type;
+        this.marked = marked;
+
+        if (marked && type != PartType.CARD) {
+            throw new IllegalStateException("Bug! Can only find marked cards; other parts disallowed.");
+        }
     }
 
+    @Override
     public PartModel findInCollection(ExecutionContext context, List<PartModel> parts) throws PartException {
         List<PartModel> foundParts = parts.stream()
                 .filter(p -> getType() == null || p.getType() == getType())
                 .filter(p -> getOwner() == null || p.getOwner() == getOwner())
+                .filter(p -> !marked || ( ((CardModel) p).isMarked(context) || p.equals(context.getCurrentCard().getPartModel())))
                 .collect(Collectors.toList());
 
         int partIndex = (int) getValue() - 1;

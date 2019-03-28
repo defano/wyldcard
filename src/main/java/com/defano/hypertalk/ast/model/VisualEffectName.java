@@ -16,7 +16,7 @@ public enum VisualEffectName {
     SCROLL("scroll"),
     SHRINK("shrinkto"),
     STRETCH("stretchfrom"),
-    VENETIAN_BLINDS("venetian blinds"),
+    VENETIAN_BLINDS("venetianblinds"),
     WIPE("wipe"),
     ZOOM("zoom");
 

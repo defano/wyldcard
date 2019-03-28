@@ -1,7 +1,7 @@
 package com.defano.wyldcard.editor;
 
 import com.defano.hypertalk.parser.HyperTalkLexer;
-import com.defano.wyldcard.runtime.interpreter.CaseInsensitiveInputStream;
+import com.defano.wyldcard.runtime.compiler.CaseInsensitiveInputStream;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMaker;
 import org.fife.ui.rsyntaxtextarea.Token;

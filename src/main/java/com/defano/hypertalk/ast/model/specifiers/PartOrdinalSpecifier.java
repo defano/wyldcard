@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.model.Ordinal;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.wyldcard.parts.PartException;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.FindInCollectionSpecifier;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -21,17 +22,24 @@ public class PartOrdinalSpecifier implements FindInCollectionSpecifier {
     private final PartType type;
     private final Owner layer;
     private final Ordinal ordinal;
+    private final boolean marked;
 
-    public PartOrdinalSpecifier(Owner layer, PartType type, Ordinal ordinal) {
+    public PartOrdinalSpecifier(Owner layer, PartType type, Ordinal ordinal, boolean marked) {
         this.type = type;
         this.layer = layer;
         this.ordinal = ordinal;
+        this.marked = marked;
+
+        if (marked && type != PartType.CARD) {
+            throw new IllegalStateException("Bug! Can only find marked cards; other parts disallowed.");
+        }
     }
 
     public PartModel findInCollection(ExecutionContext context, List<PartModel> parts) throws PartException {
         List<PartModel> foundParts = parts.stream()
                 .filter(p -> getType() == null || p.getType() == getType())
                 .filter(p -> getOwner() == null || p.getOwner() == getOwner())
+                .filter(p -> !marked || ( ((CardModel)p).isMarked(context) || p.equals(context.getCurrentCard().getPartModel())))
                 .collect(Collectors.toList());
 
         int index = ((Ordinal) getValue()).intValue() - 1;

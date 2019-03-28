@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.interpreter;
+package com.defano.wyldcard.runtime.compiler;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.IntStream;

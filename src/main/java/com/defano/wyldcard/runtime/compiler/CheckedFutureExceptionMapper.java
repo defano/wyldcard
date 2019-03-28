@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.interpreter;
+package com.defano.wyldcard.runtime.compiler;
 
 import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;

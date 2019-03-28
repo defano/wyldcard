@@ -14,8 +14,8 @@ import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
-import com.defano.wyldcard.runtime.interpreter.Interpreter;
+import com.defano.wyldcard.runtime.compiler.CompilationUnit;
+import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layouts.ButtonPropertyEditor;
@@ -249,7 +249,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
 
     private void compile(ExecutionContext context, boolean reportErrors) {
         if (hasProperty(PROP_SCRIPTTEXT)) {
-            Interpreter.asyncCompile(CompilationUnit.SCRIPT, getKnownProperty(context, PROP_SCRIPTTEXT).toString(), (scriptText, compiledScript, generatedError) -> {
+            Compiler.asyncCompile(CompilationUnit.SCRIPT, getKnownProperty(context, PROP_SCRIPTTEXT).toString(), (scriptText, compiledScript, generatedError) -> {
                 if (generatedError != null && reportErrors) {
                     generatedError.getBreadcrumb().setContext(context);
                     generatedError.getBreadcrumb().setPart(getPartSpecifier(context));
@@ -266,7 +266,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
     public synchronized Script getScript(ExecutionContext context) {
         if (script == null && System.currentTimeMillis() > deferCompilation) {
             try {
-                Script script = Interpreter.blockingCompile(CompilationUnit.SCRIPT, getScriptText(context));
+                Script script = Compiler.blockingCompile(CompilationUnit.SCRIPT, getScriptText(context));
                 script.applyBreakpoints(getBreakpoints());
                 setScript(script);
             } catch (HtException e) {

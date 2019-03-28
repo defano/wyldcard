@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.interpreter;
+package com.defano.wyldcard.runtime.compiler;
 
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;

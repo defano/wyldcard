@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.interpreter;
+package com.defano.wyldcard.runtime.compiler;
 
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.ListExp;
@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * A facade and thread model for executing HyperTalk scripts. All script compilation and execution should flow through
  * this class to assure proper threading.
  */
-public class Interpreter {
+public class Compiler {
 
     private final static int MAX_COMPILE_THREADS = 6;          // Simultaneous background parse tasks
     private final static int MAX_EXECUTOR_THREADS = 8;         // Simultaneous scripts executing
@@ -131,7 +131,7 @@ public class Interpreter {
         ThreadUtils.assertWorkerThread();
 
         try {
-            Statement statement = Interpreter.blockingCompile(CompilationUnit.SCRIPTLET, value.toString()).getStatements().list.get(0);
+            Statement statement = Compiler.blockingCompile(CompilationUnit.SCRIPTLET, value.toString()).getStatements().list.get(0);
 
             // Simple case; statement matches requested type
             if (statement.getClass().isAssignableFrom(klass)) {
@@ -334,6 +334,9 @@ public class Interpreter {
                 compiledScript = TwoPhaseParser.parseScript(compilationUnit, scriptText);
             } catch (HtException e) {
                 generatedError = e;
+            } catch (Throwable t) {
+                t.printStackTrace();
+                generatedError = new HtException("An unexpected error occurred: " + t.getMessage());
             }
 
             observer.onCompileCompleted(scriptText, compiledScript, generatedError);

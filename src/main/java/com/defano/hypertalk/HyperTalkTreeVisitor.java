@@ -1455,7 +1455,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitBkgndFieldOrdinalPart(HyperTalkParser.BkgndFieldOrdinalPartContext ctx) {
-        return new PartNumberExp(ctx, Owner.BACKGROUND, PartType.FIELD, (Ordinal) visit(ctx.ordinal()));
+        return new PartNumberExp(ctx, Owner.BACKGROUND, PartType.FIELD, (Ordinal) visit(ctx.ordinal()), false);
     }
 
     @Override
@@ -1475,7 +1475,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitBkgndButtonOrdinalPart(HyperTalkParser.BkgndButtonOrdinalPartContext ctx) {
-        return new PartNumberExp(ctx, Owner.BACKGROUND, PartType.BUTTON, (Ordinal) visit(ctx.ordinal()));
+        return new PartNumberExp(ctx, Owner.BACKGROUND, PartType.BUTTON, (Ordinal) visit(ctx.ordinal()), false);
     }
 
     @Override
@@ -1495,7 +1495,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitCardFieldOrdinalPart(HyperTalkParser.CardFieldOrdinalPartContext ctx) {
-        return new PartNumberExp(ctx, Owner.CARD, PartType.FIELD, (Ordinal) visit(ctx.ordinal()));
+        return new PartNumberExp(ctx, Owner.CARD, PartType.FIELD, (Ordinal) visit(ctx.ordinal()), false);
     }
 
     @Override
@@ -1510,7 +1510,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitCardButtonOrdinalPart(HyperTalkParser.CardButtonOrdinalPartContext ctx) {
-        return new PartNumberExp(ctx, Owner.CARD, PartType.BUTTON, (Ordinal) visit(ctx.ordinal()));
+        return new PartNumberExp(ctx, Owner.CARD, PartType.BUTTON, (Ordinal) visit(ctx.ordinal()), false);
     }
 
     @Override
@@ -1614,6 +1614,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitOrdinalMarkedCardPart(HyperTalkParser.OrdinalMarkedCardPartContext ctx) {
+        return new PartNumberExp(ctx, PartType.CARD, (Ordinal) visit(ctx.ordinal()), true);
+    }
+
+    @Override
     public Object visitPositionBkgndPart(HyperTalkParser.PositionBkgndPartContext ctx) {
         return new PartPositionExp(ctx, PartType.BACKGROUND, (Position) visit(ctx.position()));
     }
@@ -1625,7 +1630,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitOrdinalCardPart(HyperTalkParser.OrdinalCardPartContext ctx) {
-        return new PartNumberExp(ctx, PartType.CARD, (Ordinal) visit(ctx.ordinal()));
+        return new PartNumberExp(ctx, PartType.CARD, (Ordinal) visit(ctx.ordinal()), false);
     }
 
     @Override
@@ -1645,12 +1650,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitOrdinalBkgndPart(HyperTalkParser.OrdinalBkgndPartContext ctx) {
-        return new PartNumberExp(ctx, PartType.BACKGROUND, (Ordinal) visit(ctx.ordinal()));
+        return new PartNumberExp(ctx, PartType.BACKGROUND, (Ordinal) visit(ctx.ordinal()), false);
     }
 
     @Override
     public Object visitExpressionCardPart(HyperTalkParser.ExpressionCardPartContext ctx) {
-        return new PartNameExp(ctx, PartType.CARD, (Expression) visit(ctx.term()));
+        return new PartNameExp(ctx, PartType.CARD, (Expression) visit(ctx.term()), false);
     }
 
     @Override
@@ -1664,8 +1669,13 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitMarkedCardExpressionPart(HyperTalkParser.MarkedCardExpressionPartContext ctx) {
+        return new PartNameExp(ctx, PartType.CARD, (Expression) visit(ctx.term()), true);
+    }
+
+    @Override
     public Object visitExpressionBkgndPart(HyperTalkParser.ExpressionBkgndPartContext ctx) {
-        return new PartNameExp(ctx, PartType.BACKGROUND, (Expression) visit(ctx.term()));
+        return new PartNameExp(ctx, PartType.BACKGROUND, (Expression) visit(ctx.term()), false);
     }
 
     @Override

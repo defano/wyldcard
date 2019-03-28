@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.interpreter;
+package com.defano.wyldcard.runtime.compiler;
 
 import com.defano.hypertalk.ast.preemptions.PassPreemption;
 import com.defano.hypertalk.ast.preemptions.Preemption;
