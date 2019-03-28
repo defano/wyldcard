@@ -190,7 +190,10 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
         // When breakpoints change, automatically apply them to the script
         addPropertyChangedObserver((context, model, property, oldValue, newValue) -> {
             if (property.equalsIgnoreCase(PROP_BREAKPOINTS)) {
-                getScript(context).applyBreakpoints(getBreakpoints());
+                Script script = getScript(context);
+                if (script != null) {
+                    script.applyBreakpoints(getBreakpoints());
+                }
             }
         });
         newPropertyAlias(PROP_BREAKPOINTS, PROP_CHECKPOINTS);
@@ -263,7 +266,9 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
     public synchronized Script getScript(ExecutionContext context) {
         if (script == null && System.currentTimeMillis() > deferCompilation) {
             try {
-                setScript(Interpreter.blockingCompile(CompilationUnit.SCRIPT, getScriptText(context)));
+                Script script = Interpreter.blockingCompile(CompilationUnit.SCRIPT, getScriptText(context));
+                script.applyBreakpoints(getBreakpoints());
+                setScript(script);
             } catch (HtException e) {
                 deferCompilation = System.currentTimeMillis() + 5000;
                 e.getBreadcrumb().setContext(context);

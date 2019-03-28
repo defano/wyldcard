@@ -12,7 +12,6 @@ import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.MenuSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PropertySpecifier;
-import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.ast.statements.*;
 import com.defano.hypertalk.ast.statements.commands.*;
 import com.defano.hypertalk.ast.statements.conditional.IfStatement;
@@ -20,7 +19,6 @@ import com.defano.hypertalk.ast.statements.conditional.ThenElseBlock;
 import com.defano.hypertalk.ast.statements.repeat.*;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
-import com.defano.jsegue.SegueName;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -214,6 +212,26 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitVisualEffectExpr(HyperTalkParser.VisualEffectExprContext ctx) {
+        return new VisualEffectExp(ctx, (Expression) visit(ctx.effectName()), (Expression) visit(ctx.effectDirection()), null, null);
+    }
+
+    @Override
+    public Object visitVisualEffectImageExpr(HyperTalkParser.VisualEffectImageExprContext ctx) {
+        return new VisualEffectExp(ctx, (Expression) visit(ctx.effectName()), (Expression) visit(ctx.effectDirection()), null, (Expression) visit(ctx.effectImage()));
+    }
+
+    @Override
+    public Object visitVisualEffectSpeedExpr(HyperTalkParser.VisualEffectSpeedExprContext ctx) {
+        return new VisualEffectExp(ctx, (Expression) visit(ctx.effectName()), (Expression) visit(ctx.effectDirection()), (Expression) visit(ctx.effectSpeed()), null);
+    }
+
+    @Override
+    public Object visitVisualEffectSpeedImageExpr(HyperTalkParser.VisualEffectSpeedImageExprContext ctx) {
+        return new VisualEffectExp(ctx, (Expression) visit(ctx.effectName()), (Expression) visit(ctx.effectDirection()), (Expression) visit(ctx.effectSpeed()), (Expression) visit(ctx.effectImage()));
+    }
+
+    @Override
     public Object visitConvertContainerFromToCmd(HyperTalkParser.ConvertContainerFromToCmdContext ctx) {
         return new ConvertCmd(ctx, (ContainerExp) visit(ctx.container()), (Convertible) visit(ctx.convertible(0)), (Convertible) visit(ctx.convertible(1)));
     }
@@ -329,26 +347,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitEffectDefault(HyperTalkParser.EffectDefaultContext ctx) {
-        return new VisualEffectExp(ctx, new VisualEffectSpecifier((SegueName) visit(ctx.effect())));
-    }
-
-    @Override
-    public Object visitEffectTo(HyperTalkParser.EffectToContext ctx) {
-        return new VisualEffectExp(ctx, new VisualEffectSpecifier((SegueName) visit(ctx.effect()), (VisualEffectImage) visit(ctx.image())));
-    }
-
-    @Override
-    public Object visitEffectSpeed(HyperTalkParser.EffectSpeedContext ctx) {
-        return new VisualEffectExp(ctx, new VisualEffectSpecifier((SegueName) visit(ctx.effect()), (VisualEffectSpeed) visit(ctx.speed())));
-    }
-
-    @Override
-    public Object visitEffectSpeedTo(HyperTalkParser.EffectSpeedToContext ctx) {
-        return new VisualEffectExp(ctx, new VisualEffectSpecifier((SegueName) visit(ctx.effect()), (VisualEffectSpeed) visit(ctx.speed()), (VisualEffectImage) visit(ctx.image())));
-    }
-
-    @Override
     public Object visitCardWindowExpr(HyperTalkParser.CardWindowExprContext ctx) {
         return new WindowTypeExp(ctx, SingletonWindowType.CARD);
     }
@@ -381,201 +379,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitWindowIdExpr(HyperTalkParser.WindowIdExprContext ctx) {
         return new WindowIdExp(ctx, (Expression) visit(ctx.expression()));
-    }
-
-    @Override
-    public Object visitFastSpeed(HyperTalkParser.FastSpeedContext ctx) {
-        return VisualEffectSpeed.FAST;
-    }
-
-    @Override
-    public Object visitSlowSpeed(HyperTalkParser.SlowSpeedContext ctx) {
-        return VisualEffectSpeed.SLOW;
-    }
-
-    @Override
-    public Object visitVeryFastSpeed(HyperTalkParser.VeryFastSpeedContext ctx) {
-        return VisualEffectSpeed.VERY_FAST;
-    }
-
-    @Override
-    public Object visitVerySlowSpeed(HyperTalkParser.VerySlowSpeedContext ctx) {
-        return VisualEffectSpeed.SLOW;
-    }
-
-    @Override
-    public Object visitBlackImage(HyperTalkParser.BlackImageContext ctx) {
-        return VisualEffectImage.BLACK;
-    }
-
-    @Override
-    public Object visitCardImage(HyperTalkParser.CardImageContext ctx) {
-        return VisualEffectImage.CARD;
-    }
-
-    @Override
-    public Object visitGrayImage(HyperTalkParser.GrayImageContext ctx) {
-        return VisualEffectImage.GRAY;
-    }
-
-    @Override
-    public Object visitInverseImage(HyperTalkParser.InverseImageContext ctx) {
-        return VisualEffectImage.INVERSE;
-    }
-
-    @Override
-    public Object visitWhiteImage(HyperTalkParser.WhiteImageContext ctx) {
-        return VisualEffectImage.WHITE;
-    }
-
-    @Override
-    public Object visitDissolveEffect(HyperTalkParser.DissolveEffectContext ctx) {
-        return SegueName.DISSOLVE;
-    }
-
-    @Override
-    public Object visitBarnDoorOpenEffect(HyperTalkParser.BarnDoorOpenEffectContext ctx) {
-        return SegueName.BARN_DOOR_OPEN;
-    }
-
-    @Override
-    public Object visitBarnDoorCloseEffect(HyperTalkParser.BarnDoorCloseEffectContext ctx) {
-        return SegueName.BARN_DOOR_CLOSE;
-    }
-
-    @Override
-    public Object visitCheckerboardEffect(HyperTalkParser.CheckerboardEffectContext ctx) {
-        return SegueName.CHECKERBOARD;
-    }
-
-    @Override
-    public Object visitIrisOpenEffect(HyperTalkParser.IrisOpenEffectContext ctx) {
-        return SegueName.IRIS_OPEN;
-    }
-
-    @Override
-    public Object visitIrisCloseEffect(HyperTalkParser.IrisCloseEffectContext ctx) {
-        return SegueName.IRIS_CLOSE;
-    }
-
-    @Override
-    public Object visitPlainEffect(HyperTalkParser.PlainEffectContext ctx) {
-        return SegueName.PLAIN;
-    }
-
-    @Override
-    public Object visitPushUpEffect(HyperTalkParser.PushUpEffectContext ctx) {
-        return SegueName.SCROLL_UP;
-    }
-
-    @Override
-    public Object visitPushDownEffect(HyperTalkParser.PushDownEffectContext ctx) {
-        return SegueName.SCROLL_DOWN;
-    }
-
-    @Override
-    public Object visitPushLeftEffect(HyperTalkParser.PushLeftEffectContext ctx) {
-        return SegueName.SCROLL_LEFT;
-    }
-
-    @Override
-    public Object visitPushRightEffect(HyperTalkParser.PushRightEffectContext ctx) {
-        return SegueName.SCROLL_RIGHT;
-    }
-
-    @Override
-    public Object visitScrollDownEffect(HyperTalkParser.ScrollDownEffectContext ctx) {
-        return SegueName.SCROLL_DOWN;
-    }
-
-    @Override
-    public Object visitScrollUpEffect(HyperTalkParser.ScrollUpEffectContext ctx) {
-        return SegueName.SCROLL_UP;
-    }
-
-    @Override
-    public Object visitScrollLeftEffect(HyperTalkParser.ScrollLeftEffectContext ctx) {
-        return SegueName.SCROLL_LEFT;
-    }
-
-    @Override
-    public Object visitScrollRightEffect(HyperTalkParser.ScrollRightEffectContext ctx) {
-        return SegueName.SCROLL_RIGHT;
-    }
-
-    @Override
-    public Object visitShrinkToTopEffect(HyperTalkParser.ShrinkToTopEffectContext ctx) {
-        return SegueName.SHRINK_TO_TOP;
-    }
-
-    @Override
-    public Object visitShrinkToCenterEffect(HyperTalkParser.ShrinkToCenterEffectContext ctx) {
-        return SegueName.SHRINK_TO_CENTER;
-    }
-
-    @Override
-    public Object visitShrinkToBottomEffect(HyperTalkParser.ShrinkToBottomEffectContext ctx) {
-        return SegueName.SHRINK_TO_BOTTOM;
-    }
-
-    @Override
-    public Object visitStretchFromTopEffect(HyperTalkParser.StretchFromTopEffectContext ctx) {
-        return SegueName.STRETCH_FROM_TOP;
-    }
-
-    @Override
-    public Object visitStretchFromCenterEffect(HyperTalkParser.StretchFromCenterEffectContext ctx) {
-        return SegueName.STRETCH_FROM_CENTER;
-    }
-
-    @Override
-    public Object visitStretchFromBottomEffect(HyperTalkParser.StretchFromBottomEffectContext ctx) {
-        return SegueName.STRETCH_FROM_BOTTOM;
-    }
-
-    @Override
-    public Object visitVenitianBlindsEffect(HyperTalkParser.VenitianBlindsEffectContext ctx) {
-        return SegueName.VENETIAN_BLINDS;
-    }
-
-    @Override
-    public Object visitZoomInEffect(HyperTalkParser.ZoomInEffectContext ctx) {
-        return SegueName.ZOOM_IN;
-    }
-
-    @Override
-    public Object visitZoomOutEffect(HyperTalkParser.ZoomOutEffectContext ctx) {
-        return SegueName.ZOOM_OUT;
-    }
-
-    @Override
-    public Object visitZoomOpenEffect(HyperTalkParser.ZoomOpenEffectContext ctx) {
-        return SegueName.ZOOM_OUT;
-    }
-
-    @Override
-    public Object visitZoomCloseEffect(HyperTalkParser.ZoomCloseEffectContext ctx) {
-        return SegueName.ZOOM_IN;
-    }
-
-    @Override
-    public Object visitWipeUpEffect(HyperTalkParser.WipeUpEffectContext ctx) {
-        return SegueName.WIPE_UP;
-    }
-
-    @Override
-    public Object visitWipeDownEffect(HyperTalkParser.WipeDownEffectContext ctx) {
-        return SegueName.WIPE_DOWN;
-    }
-
-    @Override
-    public Object visitWipeLeftEffect(HyperTalkParser.WipeLeftEffectContext ctx) {
-        return SegueName.WIPE_LEFT;
-    }
-
-    @Override
-    public Object visitWipeRightEffect(HyperTalkParser.WipeRightEffectContext ctx) {
-        return SegueName.WIPE_RIGHT;
     }
 
     @Override
@@ -1224,11 +1027,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitVisualEffectCmd(HyperTalkParser.VisualEffectCmdContext ctx) {
-        return new VisualEffectCmd(ctx, (Expression) visit(ctx.expression()));
-    }
-
-    @Override
     public Object visitResetMenuCmd(HyperTalkParser.ResetMenuCmdContext ctx) {
         return new ResetMenuCmd(ctx);
     }
@@ -1563,6 +1361,51 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitSeconds(HyperTalkParser.SecondsContext ctx) {
         return super.visitSeconds(ctx);
+    }
+
+    @Override
+    public Object visitLiteralEffectName(HyperTalkParser.LiteralEffectNameContext ctx) {
+        return new LiteralExp(ctx, ctx.getText());
+    }
+
+    @Override
+    public Object visitExpressionEffectName(HyperTalkParser.ExpressionEffectNameContext ctx) {
+        return visit(ctx.expression());
+    }
+
+    @Override
+    public Object visitLiteralEffectDirection(HyperTalkParser.LiteralEffectDirectionContext ctx) {
+        return new LiteralExp(ctx, ctx.getText());
+    }
+
+    @Override
+    public Object visitEmptyEffectDirection(HyperTalkParser.EmptyEffectDirectionContext ctx) {
+        return new LiteralExp(ctx, "");
+    }
+
+    @Override
+    public Object visitExpressionEffectDirection(HyperTalkParser.ExpressionEffectDirectionContext ctx) {
+        return visit(ctx.expression());
+    }
+
+    @Override
+    public Object visitLiteralEffectSpeed(HyperTalkParser.LiteralEffectSpeedContext ctx) {
+        return new LiteralExp(ctx, ctx.getText());
+    }
+
+    @Override
+    public Object visitExpressionEffectSpeed(HyperTalkParser.ExpressionEffectSpeedContext ctx) {
+        return visit(ctx.expression());
+    }
+
+    @Override
+    public Object visitLiteralEffectImage(HyperTalkParser.LiteralEffectImageContext ctx) {
+        return new LiteralExp(ctx, ctx.getText());
+    }
+
+    @Override
+    public Object visitExpressionEffectImage(HyperTalkParser.ExpressionEffectImageContext ctx) {
+        return visit(ctx.expression());
     }
 
     @Override

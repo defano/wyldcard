@@ -241,13 +241,12 @@ commandStatement
     | 'type' expression                                                                                                 # typeCmd
     | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmd
     | 'unlock' 'screen'                                                                                                 # unlockScreenCmd
-    | 'unlock' 'screen' 'with' expression                                                                               # unlockScreenVisualCmd
+    | 'unlock' 'screen' 'with' 'visual'? 'effect'? expression                                                           # unlockScreenVisualCmd
     | 'unmark' 'all' cards                                                                                              # unmarkAllCardsCmd
     | 'unmark' expression                                                                                               # unmarkCardCmd
     | 'unmark' cards 'where' expression                                                                                 # unmarkCardsWhereCmd
     | 'unmark' cards 'by' 'finding' expression? 'international'? expression of expression                               # unmarkCardsFindingInFieldCmd
     | 'unmark' cards 'by' 'finding' expression? 'international'? expression                                             # unmarkCardsFindingCmd
-    | 'visual' expression                                                                                               # visualEffectCmd
     | 'wait' expression timeUnit                                                                                        # waitCountCmd
     | 'wait' 'for' expression timeUnit                                                                                  # waitForCountCmd
     | 'wait' 'until' expression                                                                                         # waitUntilCmd
@@ -482,6 +481,13 @@ container
     | menuItem                                                                                                          # menuItemContainer
     ;
 
+effectExpression
+    : 'visual' 'effect'? effectName effectDirection                                                                     # visualEffectExpr
+    | 'visual' 'effect'? effectName effectDirection 'to' effectImage                                                    # visualEffectImageExpr
+    | 'visual' 'effect'? effectName effectDirection effectSpeed                                                         # visualEffectSpeedExpr
+    | 'visual' 'effect'? effectName effectDirection effectSpeed 'to' effectImage                                        # visualEffectSpeedImageExpr
+    ;
+
 musicExpression
     : expression expression                                                                                             # musicInstrumentNotes
     | expression 'tempo' expression expression                                                                          # musicInstrumentNotesTempo
@@ -507,13 +513,6 @@ arrowExpression
     | 'left'                                                                                                            # arrowLiteralExpr
     | 'right'                                                                                                           # arrowLiteralExpr
     | expression                                                                                                        # arrowExpr
-    ;
-
-effectExpression
-    : 'visual'? 'effect'? effect                                                                                        # effectDefault
-    | 'visual'? 'effect'? effect 'to' image                                                                             # effectTo
-    | 'visual'? 'effect'? effect speed                                                                                  # effectSpeed
-    | 'visual'? 'effect'? effect speed 'to' image                                                                       # effectSpeedTo
     ;
 
 functionCall
@@ -777,52 +776,53 @@ seconds
     | 'sec'
     ;
 
-speed
-    : 'fast'                                                                                                            # fastSpeed
-    | ('slow' | 'slowly')                                                                                               # slowSpeed
-    | 'very' 'fast'                                                                                                     # veryFastSpeed
-    | 'very' ('slow' | 'slowly')                                                                                        # verySlowSpeed
+effectName
+    : 'dissolve'                                                                                                        # literalEffectName
+    | 'barn' 'door'                                                                                                     # literalEffectName
+    | 'checkerboard'                                                                                                    # literalEffectName
+    | 'iris'                                                                                                            # literalEffectName
+    | 'plain'                                                                                                           # literalEffectName
+    | 'push'                                                                                                            # literalEffectName
+    | 'scroll'                                                                                                          # literalEffectName
+    | 'shrink' 'to'                                                                                                     # literalEffectName
+    | 'stretch' 'from'                                                                                                  # literalEffectName
+    | 'venetian' 'blinds'                                                                                               # literalEffectName
+    | 'wipe'                                                                                                            # literalEffectName
+    | 'zoom'                                                                                                            # literalEffectName
+    | expression                                                                                                        # expressionEffectName
     ;
 
-image
-    : 'black'                                                                                                           # blackImage
-    | 'card'                                                                                                            # cardImage
-    | ('gray' | 'grey')                                                                                                 # grayImage
-    | 'inverse'                                                                                                         # inverseImage
-    | 'white'                                                                                                           # whiteImage
+effectDirection
+    : 'open'                                                                                                            # literalEffectDirection
+    | 'close'                                                                                                           # literalEffectDirection
+    | 'up'                                                                                                              # literalEffectDirection
+    | 'down'                                                                                                            # literalEffectDirection
+    | 'left'                                                                                                            # literalEffectDirection
+    | 'right'                                                                                                           # literalEffectDirection
+    | 'top'                                                                                                             # literalEffectDirection
+    | 'center'                                                                                                          # literalEffectDirection
+    | 'bottom'                                                                                                          # literalEffectDirection
+    | 'in'                                                                                                              # literalEffectDirection
+    | 'out'                                                                                                             # literalEffectDirection
+    |                                                                                                                   # emptyEffectDirection
+    | expression                                                                                                        # expressionEffectDirection
     ;
 
-effect
-    : 'dissolve'                                                                                                        # dissolveEffect
-    | 'barn' 'door' 'open'                                                                                              # barnDoorOpenEffect
-    | 'barn' 'door' 'close'                                                                                             # barnDoorCloseEffect
-    | 'checkerboard'                                                                                                    # checkerboardEffect
-    | 'iris' 'open'                                                                                                     # irisOpenEffect
-    | 'iris' 'close'                                                                                                    # irisCloseEffect
-    | 'plain'                                                                                                           # plainEffect
-    | 'push' 'up'                                                                                                       # pushUpEffect
-    | 'push' 'down'                                                                                                     # pushDownEffect
-    | 'push' 'left'                                                                                                     # pushLeftEffect
-    | 'push' 'right'                                                                                                    # pushRightEffect
-    | 'scroll' 'down'                                                                                                   # scrollDownEffect
-    | 'scroll' 'up'                                                                                                     # scrollUpEffect
-    | 'scroll' 'left'                                                                                                   # scrollLeftEffect
-    | 'scroll' 'right'                                                                                                  # scrollRightEffect
-    | 'shrink' 'to' 'top'                                                                                               # shrinkToTopEffect
-    | 'shrink' 'to' 'center'                                                                                            # shrinkToCenterEffect
-    | 'shrink' 'to' 'bottom'                                                                                            # shrinkToBottomEffect
-    | 'stretch' 'from' 'top'                                                                                            # stretchFromTopEffect
-    | 'stretch' 'from' 'center'                                                                                         # stretchFromCenterEffect
-    | 'stretch' 'from' 'bottom'                                                                                         # stretchFromBottomEffect
-    | 'venetian' 'blinds'                                                                                               # venitianBlindsEffect
-    | 'wipe' 'up'                                                                                                       # wipeUpEffect
-    | 'wipe' 'down'                                                                                                     # wipeDownEffect
-    | 'wipe' 'left'                                                                                                     # wipeLeftEffect
-    | 'wipe' 'right'                                                                                                    # wipeRightEffect
-    | 'zoom' 'in'                                                                                                       # zoomInEffect
-    | 'zoom' 'out'                                                                                                      # zoomOutEffect
-    | 'zoom' 'open'                                                                                                     # zoomOpenEffect
-    | 'zoom' 'close'                                                                                                    # zoomCloseEffect
+effectSpeed
+    : 'fast'                                                                                                            # literalEffectSpeed
+    | ('slow' | 'slowly')                                                                                               # literalEffectSpeed
+    | 'very' 'fast'                                                                                                     # literalEffectSpeed
+    | 'very' ('slow' | 'slowly')                                                                                        # literalEffectSpeed
+    | expression                                                                                                        # expressionEffectSpeed
+    ;
+
+effectImage
+    : 'black'                                                                                                           # literalEffectImage
+    | 'card'                                                                                                            # literalEffectImage
+    | ('gray' | 'grey')                                                                                                 # literalEffectImage
+    | 'inverse'                                                                                                         # literalEffectImage
+    | 'white'                                                                                                           # literalEffectImage
+    | expression # expressionEffectImage
     ;
 
 timeUnit
