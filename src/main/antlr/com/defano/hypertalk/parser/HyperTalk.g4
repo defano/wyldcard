@@ -476,10 +476,10 @@ container
     : symbol                                                                                                            # variableContainer
     | 'the'? 'selection'                                                                                                # selectionContainer
     | 'target'                                                                                                          # targetContainer
+    | part                                                                                                              # partContainer
     | property                                                                                                          # propertyContainer
     | menu                                                                                                              # menuContainer
     | menuItem                                                                                                          # menuItemContainer
-    | part                                                                                                              # partContainer
     ;
 
 musicExpression
@@ -851,7 +851,7 @@ menuMessage
     ;
 
 message
-    : 'the'? ('message' | 'msg') ('box' | 'window' | )
+    : 'the'? ('message' | 'msg') ('box' | 'window')?
     ;
 
 cards
@@ -969,6 +969,7 @@ WHITESPACE
 
 IN_A_NEW
     : 'in' WHITESPACE 'a' WHITESPACE 'new'
+    | 'in' WHITESPACE 'new'
     ;
 
 THERE_IS_A

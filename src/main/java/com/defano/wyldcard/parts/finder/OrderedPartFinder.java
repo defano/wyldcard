@@ -1,7 +1,7 @@
 package com.defano.wyldcard.parts.finder;
 
 import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.ast.model.specifiers.*;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
@@ -26,8 +26,7 @@ public interface OrderedPartFinder {
     List<PartModel> getPartsInDisplayOrder(ExecutionContext context);
 
     /**
-     * Finds any part returned by {@link #getPartsInDisplayOrder(ExecutionContext)} by ID, name, number, or ordinal. Can also find the
-     * message box.
+     * Finds any part returned by {@link #getPartsInDisplayOrder(ExecutionContext)} by ID, name, number, or ordinal.
      *
      * @param context The execution context.
      * @param ps      A part specifier indicating the part to find.
@@ -42,16 +41,17 @@ public interface OrderedPartFinder {
      * Finds any part by ID, name, number, or ordinal within an ordered collection of parts.
      *
      * @param context The execution context.
-     * @param ps      The part specifier representing the part to fetch
+     * @param ps      The part specifier representing the part to fetch; should a subclass of
+     *                {@link FindInCollectionSpecifier} for success.
      * @param parts   The list of parts to search
      * @return The specified part
-     * @throws PartException Thrown if no such part exists on this card.
+     * @throws PartException Thrown if no such part exists, or if the specifier refers to a non-ordered part type.
      */
     default PartModel findPart(ExecutionContext context, PartSpecifier ps, List<PartModel> parts) throws PartException {
         PartModel foundPart;
 
-        if (ps instanceof OrderedPartFindingSpecifier) {
-            foundPart = ((OrderedPartFindingSpecifier) ps).findSpecifiedPart(context, parts);
+        if (ps instanceof FindInCollectionSpecifier) {
+            foundPart = ((FindInCollectionSpecifier) ps).findInCollection(context, parts);
         } else {
             throw new PartException("Can't find that.");
         }
@@ -98,7 +98,6 @@ public interface OrderedPartFinder {
 
         throw new IllegalArgumentException("No such part on this card.");
     }
-
 
     /**
      * Gets the "number" of the specified part relative to all other parts in the same layer of a given collection of

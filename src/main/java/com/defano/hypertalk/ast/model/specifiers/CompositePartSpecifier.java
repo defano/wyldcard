@@ -9,18 +9,18 @@ import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
-import com.defano.wyldcard.parts.finder.StackPartFinder;
-import com.defano.wyldcard.parts.finder.StackPartFindingSpecifier;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
- * Specifies a button or field part that is not on the current card. For example, 'button 3 of card 19'
+ * Specifies a part in the context of an owning part. For example, 'cd btn 1 of the next card' or 'the third card of
+ * the second bkgnd of stack "My Other Stack"'
  */
-public class CompositePartSpecifier implements PartSpecifier, StackPartFindingSpecifier {
+public class CompositePartSpecifier implements PartSpecifier {
 
-    private final PartSpecifier part;      // The button or field
-    private final PartExp owningPart;      // The card the button or field can be found on
+    private final PartSpecifier part;           // The part we're looking for
+    private final PartExp owningPart;           // Where we're looking for it
     private final ExecutionContext context;
 
     public CompositePartSpecifier(ExecutionContext context, PartSpecifier part, PartExp owningPart) {
@@ -30,7 +30,7 @@ public class CompositePartSpecifier implements PartSpecifier, StackPartFindingSp
     }
 
     @Override
-    public PartModel find(ExecutionContext context, StackPartFinder finder) throws PartException {
+    public PartModel findInStack(ExecutionContext context, StackModel stack) throws PartException {
         try {
             PartModel foundPart;
             PartSpecifier owningPartSpecifier = getOwningPartExp().evaluateAsSpecifier(context);
@@ -38,29 +38,29 @@ public class CompositePartSpecifier implements PartSpecifier, StackPartFindingSp
             // Special case: This finder assumes the stack portion of the specifier expression refers to the current
             // stack, but does not verify that's true; it simply ignores the "owning stack" and finds the part itself
             if (owningPartSpecifier.getType() == PartType.STACK) {
-                return finder.findPart(context, getPart());
+                return stack.findPart(context, getPart());
             }
 
             // Recursively find the card or background containing the requested part
-            PartModel owningPart = finder.findPart(context, owningPartSpecifier);
+            PartModel owningPart = stack.findPart(context, owningPartSpecifier);
 
             // Looking for a background button or field on a remote card or background
-            if (isBackgroundPartSpecifier()) {
+            if (isSpecifyingBackgroundPart()) {
                 if (owningPart instanceof CardModel) {
-                    foundPart = finder.findPart(context, getPart(), ((CardModel) owningPart).getBackgroundModel().getPartsInDisplayOrder(context, getOwner()));
+                    foundPart = stack.findPart(context, getPart(), ((CardModel) owningPart).getBackgroundModel().getPartsInDisplayOrder(context, getOwner()));
                 } else {
-                    foundPart = finder.findPart(context, getPart(), ((BackgroundModel) owningPart).getPartsInDisplayOrder(context, getOwner()));
+                    foundPart = stack.findPart(context, getPart(), ((BackgroundModel) owningPart).getPartsInDisplayOrder(context, getOwner()));
                 }
             }
 
             // Looking for button or field on a remote card
-            else if (isCardPartSpecifier()) {
-                foundPart = finder.findPart(context, getPart(), ((CardModel) owningPart).getPartsInDisplayOrder(context));
+            else if (isSpecifyingCardPart()) {
+                foundPart = stack.findPart(context, getPart(), ((CardModel) owningPart).getPartsInDisplayOrder(context));
             }
 
             // Looking for a card in a remote background
             else {
-                foundPart = finder.findPart(context, getPart(), ((LayeredPartFinder) owningPart).getPartsInDisplayOrder(context));
+                foundPart = stack.findPart(context, getPart(), ((LayeredPartFinder) owningPart).getPartsInDisplayOrder(context));
             }
 
             // Special case: Field needs to be evaluated in the context of the requested card

@@ -24,8 +24,7 @@ public class HyperTalkErrorDialog {
         return instance;
     }
 
-    @RunOnDispatch
-    public void showError(HtException e) {
+    public synchronized void showError(HtException e) {
         if (!errorDialogVisible) {
             errorDialogVisible = true;
 

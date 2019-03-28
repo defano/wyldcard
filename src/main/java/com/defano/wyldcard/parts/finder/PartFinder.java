@@ -11,7 +11,8 @@ import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
- * Provides routines for finding WyldCard parts (windows, cards, backgrounds, stacks, buttons and fields).
+ * Provides routines for finding any kind of WyldCard part or object, like windows, cards, backgrounds, stacks, buttons
+ * and fields.
  */
 public interface PartFinder {
 
@@ -26,18 +27,19 @@ public interface PartFinder {
      */
     default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws PartException {
         // Looking for a window
-        if (ps instanceof WindowSpecifier) {
+        if (ps.isSpecifyingWindow()) {
             return new WindowProxyPartModel(WyldCard.getInstance().getWindowManager().findWindow(context, (WindowSpecifier) ps));
         }
 
         // Looking for a stack
-        else if (ps instanceof StackPartSpecifier) {
+        else if (ps.isSpecifyingStack()) {
             return ((StackPartSpecifier) ps).find(context, WyldCard.getInstance().getStackManager().getOpenStacks());
         }
 
-        // Looking for a part in the scoped-stack
+        // Looking for a part in a stack
         else {
-            return findReferredStack(context, ps).findPart(context, ps);
+            StackModel stackOwningPart = findReferredStack(context, ps);
+            return stackOwningPart.findPart(context, ps);
         }
     }
 

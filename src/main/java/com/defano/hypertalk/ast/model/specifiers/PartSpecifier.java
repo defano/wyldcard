@@ -5,13 +5,13 @@ import com.defano.hypertalk.ast.expressions.parts.CompositePartExp;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.PartException;
-import com.defano.wyldcard.parts.finder.StackPartFinder;
-import com.defano.wyldcard.parts.finder.StackPartFindingSpecifier;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
-public interface PartSpecifier extends StackPartFindingSpecifier {
+public interface PartSpecifier {
 
     /**
      * Gets the "value" of this specification. The exact type returned and its meaning depends on the type of
@@ -43,7 +43,7 @@ public interface PartSpecifier extends StackPartFindingSpecifier {
      *
      * @return True if this specifier specifies a button or field.
      */
-    default boolean isButtonOrFieldSpecifier() {
+    default boolean isSpecifyingButtonOrField() {
         return getType() == PartType.BUTTON || getType() == PartType.FIELD || getType() == null;
     }
 
@@ -52,8 +52,8 @@ public interface PartSpecifier extends StackPartFindingSpecifier {
      *
      * @return True if this specifier specifies a background.
      */
-    default boolean isBackgroundPartSpecifier() {
-        return isButtonOrFieldSpecifier() && getOwner() == Owner.BACKGROUND;
+    default boolean isSpecifyingBackgroundPart() {
+        return isSpecifyingButtonOrField() && getOwner() == Owner.BACKGROUND;
     }
 
     /**
@@ -61,8 +61,20 @@ public interface PartSpecifier extends StackPartFindingSpecifier {
      *
      * @return True if this specifier specifies a card.
      */
-    default boolean isCardPartSpecifier() {
-        return isButtonOrFieldSpecifier() && getOwner() == Owner.CARD;
+    default boolean isSpecifyingCardPart() {
+        return isSpecifyingButtonOrField() && getOwner() == Owner.CARD;
+    }
+
+    default boolean isSpecifyingWindow() {
+        return this instanceof WindowSpecifier;
+    }
+
+    default boolean isSpecifyingStack() {
+        return this instanceof StackPartSpecifier;
+    }
+
+    default boolean isSpecifyingMessageBox() {
+        return this instanceof PartMessageSpecifier;
     }
 
     /**
@@ -73,15 +85,25 @@ public interface PartSpecifier extends StackPartFindingSpecifier {
      */
     String getHyperTalkIdentifier(ExecutionContext context);
 
-    @Override
-    default PartModel find(ExecutionContext context, StackPartFinder partFinder) throws PartException {
-        if (isCardPartSpecifier()) {
+    /**
+     * Attempts to find the part identified by this specifier in a given stack.
+     *
+     * @param context    The execution context
+     * @param stackModel The model of the stack to look within
+     * @return The found stack model
+     * @throws PartException Thrown if the part cannot be found.
+     */
+    default PartModel findInStack(ExecutionContext context, StackModel stackModel) throws PartException {
+        if (isSpecifyingCardPart()) {
             return context.getCurrentCard().getPartModel().findPart(context, this);
-        } else if (isBackgroundPartSpecifier()) {
+        } else if (isSpecifyingBackgroundPart()) {
             return context.getCurrentCard().getPartModel().getBackgroundModel().findPart(context, this);
+        } else if (isSpecifyingMessageBox()) {
+            return WyldCard.getInstance().getWindowManager().getMessageWindow().getPartModel();
         }
 
-        return partFinder.findPartInDisplayedOrder(context, this);
+        // Not a button or a field that we're looking for...
+        return stackModel.findPartInDisplayedOrder(context, this);
     }
 
     /**

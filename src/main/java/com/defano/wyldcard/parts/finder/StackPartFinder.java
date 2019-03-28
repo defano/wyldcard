@@ -1,7 +1,6 @@
 package com.defano.wyldcard.parts.finder;
 
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.WindowSpecifier;
 import com.defano.wyldcard.parts.PartException;
@@ -18,8 +17,7 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
  * identified the specified stack and directed the {@link #findPart(ExecutionContext, PartSpecifier)} call to the
  * correct {@link StackPartFinder}.
  * <p>
- * This finder does not handle requests for {@link WindowSpecifier} or {@link PartMessageSpecifier} types, as these
- * are not stack-owned parts.
+ * This finder does not handle requests for {@link WindowSpecifier} types, as these are not stack-owned parts.
  */
 public interface StackPartFinder extends OrderedPartFinder {
 
@@ -41,7 +39,7 @@ public interface StackPartFinder extends OrderedPartFinder {
      */
     @Override
     default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws PartException {
-        return ps.find(context, this);
+        return ps.findInStack(context, getStackModel());
     }
 
     /**

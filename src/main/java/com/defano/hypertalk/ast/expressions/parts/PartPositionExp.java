@@ -4,7 +4,7 @@ import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Position;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
-import com.defano.hypertalk.ast.model.specifiers.PartPositionSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.CardPositionSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -33,6 +33,6 @@ public class PartPositionExp extends PartExp {
 
     @Override
     public PartSpecifier evaluateAsSpecifier(ExecutionContext context) {
-        return new PartPositionSpecifier(Owner.STACK, type, position, marked);
+        return new CardPositionSpecifier(Owner.STACK, type, position, marked);
     }
 }

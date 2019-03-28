@@ -3,7 +3,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.wyldcard.parts.PartException;
-import com.defano.wyldcard.parts.finder.OrderedPartFindingSpecifier;
+import com.defano.wyldcard.parts.finder.FindInCollectionSpecifier;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Specifies a button, field, card or background part by cardinal number. For example, 'card 14' or 'button 2'
  */
-public class PartNumberSpecifier implements PartSpecifier, OrderedPartFindingSpecifier {
+public class PartNumberSpecifier implements FindInCollectionSpecifier {
 
     private final PartType type;
     private final Owner layer;
@@ -25,7 +25,7 @@ public class PartNumberSpecifier implements PartSpecifier, OrderedPartFindingSpe
         this.type = type;
     }
 
-    public PartModel findSpecifiedPart(ExecutionContext context, List<PartModel> parts) throws PartException {
+    public PartModel findInCollection(ExecutionContext context, List<PartModel> parts) throws PartException {
         List<PartModel> foundParts = parts.stream()
                 .filter(p -> getType() == null || p.getType() == getType())
                 .filter(p -> getOwner() == null || p.getOwner() == getOwner())

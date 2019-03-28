@@ -13,7 +13,6 @@ public interface ComputedGetter {
      * in the model (e.g., converting top, left, height and width coordinates into a top-left and bottom-right
      * rectangle).
      *
-     *
      * @param context      The execution context
      * @param model        The {@link WyldCardPropertiesModel} whose property is being retrieved.
      * @param propertyName The name of the property which is to be calculated.

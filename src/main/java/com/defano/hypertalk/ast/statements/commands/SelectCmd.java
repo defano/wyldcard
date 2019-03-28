@@ -113,7 +113,7 @@ public class SelectCmd extends Command {
     private void selectPart(ExecutionContext context) throws HtException {
         PartSpecifier specifier = this.expression.factor(context, PartExp.class, new HtSemanticException("Cannot select that.")).evaluateAsSpecifier(context);
 
-        if (specifier.getType() == null || !specifier.isButtonOrFieldSpecifier()) {
+        if (specifier.getType() == null || !specifier.isSpecifyingButtonOrField()) {
             throw new HtSemanticException("Expected a button or field here.");
         }
 

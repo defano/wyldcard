@@ -3,7 +3,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.wyldcard.parts.PartException;
-import com.defano.wyldcard.parts.finder.OrderedPartFindingSpecifier;
+import com.defano.wyldcard.parts.finder.FindInCollectionSpecifier;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
@@ -15,7 +15,7 @@ import java.util.Optional;
  * Note that names are not unique; multiple parts can have the same name. HyperCard assumes the user is referring to
  * the part with the lowest number when ambiguously referring to parts by name.
  */
-public class PartNameSpecifier implements PartSpecifier, OrderedPartFindingSpecifier {
+public class PartNameSpecifier implements FindInCollectionSpecifier {
 
     private final Owner layer;
     private final PartType type;
@@ -27,7 +27,7 @@ public class PartNameSpecifier implements PartSpecifier, OrderedPartFindingSpeci
         this.name = name;
     }
 
-    public PartModel findSpecifiedPart(ExecutionContext context, List<PartModel> parts) throws PartException {
+    public PartModel findInCollection(ExecutionContext context, List<PartModel> parts) throws PartException {
         Optional<PartModel> foundPart = parts.stream()
                 .filter(p -> getType() == null || p.getType() == getType())
                 .filter(p -> getOwner() == null || p.getOwner() == getOwner())

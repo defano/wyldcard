@@ -9,7 +9,7 @@ public interface DelegatedProperty {
     /**
      * Get the {@link WyldCardPropertiesModel} that the given property should be delegated to. Get and set operations to this
      * property will be forwarded to the returned DefaultPropertiesModel.
-     *
+     * <p>
      * Useful for properties which are inherited from another model. For example, a card's size property is inherited
      * from the stack model.
      *
