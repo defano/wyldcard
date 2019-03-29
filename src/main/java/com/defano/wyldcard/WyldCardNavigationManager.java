@@ -10,6 +10,7 @@ import com.defano.wyldcard.util.CircleStack;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.layouts.StackWindow;
 
+import java.util.EmptyStackException;
 import java.util.Set;
 import java.util.Stack;
 
@@ -82,7 +83,11 @@ public class WyldCardNavigationManager implements NavigationManager {
 
     @Override
     public Destination pop() {
-        return pushPopStack.pop();
+        try {
+            return pushPopStack.pop();
+        } catch (EmptyStackException e) {
+            return Destination.ofStack(new ExecutionContext(), "Home", new RemoteNavigationOptions(false, false));
+        }
     }
 
     /**

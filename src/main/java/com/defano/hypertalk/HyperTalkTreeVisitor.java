@@ -212,7 +212,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitVisualEffectExpr(HyperTalkParser.VisualEffectExprContext ctx) {
+    public Object visitVisualEffectName(HyperTalkParser.VisualEffectNameContext ctx) {
         return new VisualEffectExp(ctx, (Expression) visit(ctx.effectName()), (Expression) visit(ctx.effectDirection()), null, null);
     }
 
@@ -229,6 +229,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitVisualEffectSpeedImageExpr(HyperTalkParser.VisualEffectSpeedImageExprContext ctx) {
         return new VisualEffectExp(ctx, (Expression) visit(ctx.effectName()), (Expression) visit(ctx.effectDirection()), (Expression) visit(ctx.effectSpeed()), (Expression) visit(ctx.effectImage()));
+    }
+
+    @Override
+    public Object visitLiteralEffectNameExpr(HyperTalkParser.LiteralEffectNameExprContext ctx) {
+        return new LiteralExp(ctx, ctx.getText());
+    }
+
+    @Override
+    public Object visitExprEffectNameExpr(HyperTalkParser.ExprEffectNameExprContext ctx) {
+        return visit(ctx.expression());
     }
 
     @Override
@@ -1007,6 +1017,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitVisualEffectCmd(HyperTalkParser.VisualEffectCmdContext ctx) {
+        return new VisualEffectCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitUnlockScreenCmd(HyperTalkParser.UnlockScreenCmdContext ctx) {
         return new UnlockScreenCmd(ctx);
     }
@@ -1364,13 +1379,28 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitLiteralEffectName(HyperTalkParser.LiteralEffectNameContext ctx) {
-        return new LiteralExp(ctx, ctx.getText());
+    public Object visitVisualEffectNameExpr(HyperTalkParser.VisualEffectNameExprContext ctx) {
+        return new VisualEffectExp(ctx, (Expression) visit(ctx.effectNameExpresssion()), (Expression) visit(ctx.effectDirection()), null, null);
     }
 
     @Override
-    public Object visitExpressionEffectName(HyperTalkParser.ExpressionEffectNameContext ctx) {
-        return visit(ctx.expression());
+    public Object visitVisualEffectNameImageExpr(HyperTalkParser.VisualEffectNameImageExprContext ctx) {
+        return new VisualEffectExp(ctx, (Expression) visit(ctx.effectNameExpresssion()), (Expression) visit(ctx.effectDirection()), null, (Expression) visit(ctx.effectImage()));
+    }
+
+    @Override
+    public Object visitVisualEffectNameSpeedExpr(HyperTalkParser.VisualEffectNameSpeedExprContext ctx) {
+        return new VisualEffectExp(ctx, (Expression) visit(ctx.effectNameExpresssion()), (Expression) visit(ctx.effectDirection()), (Expression) visit(ctx.effectSpeed()), null);
+    }
+
+    @Override
+    public Object visitVisualEffectNameSpeedImageExpr(HyperTalkParser.VisualEffectNameSpeedImageExprContext ctx) {
+        return new VisualEffectExp(ctx, (Expression) visit(ctx.effectNameExpresssion()), (Expression) visit(ctx.effectDirection()), (Expression) visit(ctx.effectSpeed()), (Expression) visit(ctx.effectImage()));
+    }
+
+    @Override
+    public Object visitLiteralEffectName(HyperTalkParser.LiteralEffectNameContext ctx) {
+        return new LiteralExp(ctx, ctx.getText());
     }
 
     @Override
@@ -1935,13 +1965,13 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitProperty(HyperTalkParser.PropertyContext ctx) {
-        return super.visitProperty(ctx);
+    public Object visitVisualEffectTerm(HyperTalkParser.VisualEffectTermContext ctx) {
+        return visit(ctx.effectExpression());
     }
 
     @Override
-    public Object visitVisualEffectTerm(HyperTalkParser.VisualEffectTermContext ctx) {
-        return visit(ctx.effectExpression());
+    public Object visitProperty(HyperTalkParser.PropertyContext ctx) {
+        return super.visitProperty(ctx);
     }
 
     @Override
@@ -2147,7 +2177,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
         // Drop quotes from quoted string literal when converting a value
         if (literal.startsWith("\"") && literal.endsWith("\"")) {
-            return Value.ofQuotedLiteral(String.valueOf(literal.substring(1, literal.length() - 1)));
+            return Value.ofQuotedLiteral(literal.substring(1, literal.length() - 1));
         }
 
         return new Value(ctx.getText());
@@ -2200,7 +2230,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitBackgroundsOfCount(HyperTalkParser.BackgroundsOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.BACKGROUNDS, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.BACKGROUNDS, (Expression) visit(ctx.term()));
     }
 
     @Override
@@ -2210,7 +2240,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitCardButtonsOfCount(HyperTalkParser.CardButtonsOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.CARD_BUTTONS, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.CARD_BUTTONS, (Expression) visit(ctx.term()));
     }
 
     @Override
@@ -2220,7 +2250,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitCardFieldsOfCount(HyperTalkParser.CardFieldsOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.CARD_FIELDS, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.CARD_FIELDS, (Expression) visit(ctx.term()));
     }
 
     @Override
@@ -2230,7 +2260,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitCardPartsOfCount(HyperTalkParser.CardPartsOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.CARD_PARTS, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.CARD_PARTS, (Expression) visit(ctx.term()));
     }
 
     @Override
@@ -2240,7 +2270,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitBkgndButtonsOfCount(HyperTalkParser.BkgndButtonsOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.BKGND_BUTTONS, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.BKGND_BUTTONS, (Expression) visit(ctx.term()));
     }
 
     @Override
@@ -2250,7 +2280,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitBkgndFieldsOfCount(HyperTalkParser.BkgndFieldsOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.BKGND_FIELDS, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.BKGND_FIELDS, (Expression) visit(ctx.term()));
     }
 
     @Override
@@ -2260,7 +2290,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitBkgndPartsOfCount(HyperTalkParser.BkgndPartsOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.BKGND_PARTS, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.BKGND_PARTS, (Expression) visit(ctx.term()));
     }
 
     @Override
@@ -2270,32 +2300,32 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitMarkedCardsOfCount(HyperTalkParser.MarkedCardsOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.MARKED_CARDS_OF, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.MARKED_CARDS_OF, (Expression) visit(ctx.term()));
     }
 
     @Override
     public Object visitCardsOfCount(HyperTalkParser.CardsOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.CARDS_OF, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.CARDS_OF, (Expression) visit(ctx.term()));
     }
 
     @Override
     public Object visitCharsOfCount(HyperTalkParser.CharsOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.CHARS_OF, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.CHARS_OF, (Expression) visit(ctx.term()));
     }
 
     @Override
     public Object visitItemsOfCount(HyperTalkParser.ItemsOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.ITEMS_OF, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.ITEMS_OF, (Expression) visit(ctx.term()));
     }
 
     @Override
     public Object visitWordsOfCount(HyperTalkParser.WordsOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.WORDS_OF, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.WORDS_OF, (Expression) visit(ctx.term()));
     }
 
     @Override
     public Object visitLinesOfCount(HyperTalkParser.LinesOfCountContext ctx) {
-        return new CountableExp(ctx, Countable.LINES_OF, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.LINES_OF, (Expression) visit(ctx.term()));
     }
 
     @Override
@@ -2310,7 +2340,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitMenuItemsCount(HyperTalkParser.MenuItemsCountContext ctx) {
-        return new CountableExp(ctx, Countable.MENU_ITEMS, (Expression) visit(ctx.expression()));
+        return new CountableExp(ctx, Countable.MENU_ITEMS, (Expression) visit(ctx.term()));
     }
 
     @Override

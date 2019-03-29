@@ -241,12 +241,13 @@ commandStatement
     | 'type' expression                                                                                                 # typeCmd
     | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmd
     | 'unlock' 'screen'                                                                                                 # unlockScreenCmd
-    | 'unlock' 'screen' 'with' 'visual'? 'effect'? expression                                                           # unlockScreenVisualCmd
+    | 'unlock' 'screen' 'with' 'visual'? 'effect'? expression                                                     # unlockScreenVisualCmd
     | 'unmark' 'all' cards                                                                                              # unmarkAllCardsCmd
     | 'unmark' expression                                                                                               # unmarkCardCmd
     | 'unmark' cards 'where' expression                                                                                 # unmarkCardsWhereCmd
     | 'unmark' cards 'by' 'finding' expression? 'international'? expression of expression                               # unmarkCardsFindingInFieldCmd
     | 'unmark' cards 'by' 'finding' expression? 'international'? expression                                             # unmarkCardsFindingCmd
+    | 'visual' 'effect'? expression                                                                               # visualEffectCmd
     | 'wait' expression timeUnit                                                                                        # waitCountCmd
     | 'wait' 'for' expression timeUnit                                                                                  # waitForCountCmd
     | 'wait' 'until' expression                                                                                         # waitUntilCmd
@@ -481,13 +482,6 @@ container
     | menuItem                                                                                                          # menuItemContainer
     ;
 
-effectExpression
-    : 'visual' 'effect'? effectName effectDirection                                                                     # visualEffectExpr
-    | 'visual' 'effect'? effectName effectDirection 'to' effectImage                                                    # visualEffectImageExpr
-    | 'visual' 'effect'? effectName effectDirection effectSpeed                                                         # visualEffectSpeedExpr
-    | 'visual' 'effect'? effectName effectDirection effectSpeed 'to' effectImage                                        # visualEffectSpeedImageExpr
-    ;
-
 musicExpression
     : expression expression                                                                                             # musicInstrumentNotes
     | expression 'tempo' expression expression                                                                          # musicInstrumentNotesTempo
@@ -669,30 +663,30 @@ ordinal
 
 countable
     : cards (of 'this' 'stack')?                                                                                        # cardsCount
-    | cards of expression                                                                                               # cardsOfCount
+    | cards of term                                                                                               # cardsOfCount
     | background (of 'this' 'stack')?                                                                                   # backgroundCount
-    | background of expression                                                                                          # backgroundsOfCount
+    | background of term                                                                                          # backgroundsOfCount
     | card button                                                                                                       # cardButtonCount
-    | card button of expression                                                                                         # cardButtonsOfCount
+    | card button of term                                                                                         # cardButtonsOfCount
     | card field                                                                                                        # cardFieldCount
-    | card field of expression                                                                                          # cardFieldsOfCount
+    | card field of term                                                                                          # cardFieldsOfCount
     | card? 'parts'                                                                                                     # cardPartCount
-    | card 'parts' of expression                                                                                        # cardPartsOfCount
+    | card 'parts' of term                                                                                        # cardPartsOfCount
     | background button                                                                                                 # bkgndButtonCount
-    | background button of expression                                                                                   # bkgndButtonsOfCount
+    | background button of term                                                                                   # bkgndButtonsOfCount
     | background? field                                                                                                 # bkgndFieldCount
-    | background field of expression                                                                                    # bkgndFieldsOfCount
+    | background field of term                                                                                    # bkgndFieldsOfCount
     | background 'parts'                                                                                                # bkgndPartCount
-    | background 'parts' of expression                                                                                  # bkgndPartsOfCount
+    | background 'parts' of term                                                                                  # bkgndPartsOfCount
     | 'marked' cards (of 'this' 'stack')?                                                                               # markedCardsCount
-    | 'marked' cards of expression                                                                                      # markedCardsOfCount
-    | character of expression                                                                                           # charsOfCount
-    | item of expression                                                                                                # itemsOfCount
-    | word of expression                                                                                                # wordsOfCount
-    | line of expression                                                                                                # linesOfCount
+    | 'marked' cards of term                                                                                      # markedCardsOfCount
+    | character of term                                                                                           # charsOfCount
+    | item of term                                                                                                # itemsOfCount
+    | word of term                                                                                                # wordsOfCount
+    | line of term                                                                                                # linesOfCount
     | 'windows'                                                                                                         # windowsCount
     | 'menus'                                                                                                           # menusCount
-    | 'menuitems' of 'menu' expression                                                                                  # menuItemsCount
+    | 'menuitems' of 'menu' term                                                                                  # menuItemsCount
     ;
 
 mouseState
@@ -776,6 +770,22 @@ seconds
     | 'sec'
     ;
 
+effectExpression
+    : 'visual' 'effect'? effectNameExpresssion effectDirection                                                          # visualEffectNameExpr
+    | 'visual' 'effect'? effectNameExpresssion effectDirection 'to' effectImage                                         # visualEffectNameImageExpr
+    | 'visual' 'effect'? effectNameExpresssion effectDirection effectSpeed                                              # visualEffectNameSpeedExpr
+    | 'visual' 'effect'? effectNameExpresssion effectDirection effectSpeed 'to' effectImage                             # visualEffectNameSpeedImageExpr
+    | 'visual'? 'effect'? effectName effectDirection                                                                    # visualEffectName
+    | 'visual'? 'effect'? effectName effectDirection 'to' effectImage                                                   # visualEffectImageExpr
+    | 'visual'? 'effect'? effectName effectDirection effectSpeed                                                        # visualEffectSpeedExpr
+    | 'visual'? 'effect'? effectName effectDirection effectSpeed 'to' effectImage                                       # visualEffectSpeedImageExpr
+    ;
+
+effectNameExpresssion
+    : effectName                                                                                                        # literalEffectNameExpr
+    | expression                                                                                                        # exprEffectNameExpr
+    ;
+
 effectName
     : 'dissolve'                                                                                                        # literalEffectName
     | 'barn' 'door'                                                                                                     # literalEffectName
@@ -789,7 +799,6 @@ effectName
     | 'venetian' 'blinds'                                                                                               # literalEffectName
     | 'wipe'                                                                                                            # literalEffectName
     | 'zoom'                                                                                                            # literalEffectName
-    | expression                                                                                                        # expressionEffectName
     ;
 
 effectDirection
@@ -822,7 +831,7 @@ effectImage
     | ('gray' | 'grey')                                                                                                 # literalEffectImage
     | 'inverse'                                                                                                         # literalEffectImage
     | 'white'                                                                                                           # literalEffectImage
-    | expression # expressionEffectImage
+    | expression                                                                                                        # expressionEffectImage
     ;
 
 timeUnit
