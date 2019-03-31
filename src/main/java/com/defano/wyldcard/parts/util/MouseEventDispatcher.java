@@ -38,7 +38,7 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
         this.source = source;
     }
 
-    public static MouseEventDispatcher bindTo(Component source, ComponentEnumerator delegate) {
+    public static MouseEventDispatcher boundTo(Component source, ComponentEnumerator delegate) {
         MouseEventDispatcher instance = new MouseEventDispatcher(source, delegate);
         source.addMouseListener(instance);
         source.addMouseMotionListener(instance);

@@ -80,10 +80,14 @@ public abstract class  CardLayeredPane extends JLayeredPane {
             remove(foregroundCanvas);
         }
 
+        if (mouseEventDispatcher != null) {
+            mouseEventDispatcher.unbind();
+        }
+
         this.foregroundCanvas = canvas;
 
         // Pass mouse events to parts obscured behind the canvas.
-        mouseEventDispatcher = MouseEventDispatcher.bindTo(this.foregroundCanvas.getCanvas(), () -> getComponentsInCardLayer(CardLayer.BACKGROUND_PARTS));
+        mouseEventDispatcher = MouseEventDispatcher.boundTo(this.foregroundCanvas.getCanvas(), () -> getComponentsInCardLayer(CardLayer.BACKGROUND_PARTS));
 
         setLayer(foregroundCanvas, CardLayer.CARD_GRAPHICS.paneLayer);
         add(foregroundCanvas);
