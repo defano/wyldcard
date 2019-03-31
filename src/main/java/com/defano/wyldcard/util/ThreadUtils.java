@@ -61,6 +61,13 @@ public class ThreadUtils {
         return (V) value[0];
     }
 
+    public static <E extends Exception> void invokeCheckedAndWaitAsNeeded(CheckedRunnable<E> r, Class<E> exceptionClass) throws E {
+        callCheckedAndWaitAsNeeded((Callable<Void>) () -> {
+            r.run();
+            return null;
+        }, exceptionClass);
+    }
+
     /**
      * Invokes the given runnable on the Swing UI dispatch thread, blocking until the runnable has completed. If the
      * current thread is the dispatch thread, the runnable is simply executed. If the current thread is not the dispatch
@@ -79,6 +86,10 @@ public class ThreadUtils {
                 Thread.currentThread().interrupt();
             }
         }
+    }
+
+    public interface CheckedRunnable<E extends Exception> {
+        void run() throws E;
     }
 
     private static void assertByThrowing(boolean condition, String errorMessage) {

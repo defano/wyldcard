@@ -537,7 +537,8 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         getPartModel().getBackgroundModel().addPropertyChangedObserver(this);
         getPartModel().getBackgroundModel().notifyPropertyChangedObserver(context, this);
 
-        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD.messageName);
+        // Send openCard message after UI elements are ready
+        SwingUtilities.invokeLater(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD.messageName));
     }
 
     /** {@inheritDoc} */

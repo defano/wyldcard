@@ -47,6 +47,8 @@ public class MenuItemSpecifier {
                 JMenuItem foundItem = menu.getItem(itemIndex);
                 if (foundItem != null) {
                     return foundItem;
+                } else {
+                    return new JMenuItem("-");
                 }
             }
 

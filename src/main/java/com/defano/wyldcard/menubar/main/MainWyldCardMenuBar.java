@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 /**
  * An extension of {@link JMenuBar} representing the WyldCard menu bar.
@@ -93,7 +92,7 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
 
     @Override
     public void createMenu(String name) throws HtSemanticException {
-        ThreadUtils.callCheckedAndWaitAsNeeded((Callable<Void>) () -> {
+        ThreadUtils.invokeCheckedAndWaitAsNeeded(() -> {
             if (findMenuByName(name) != null) {
                 throw new HtSemanticException("A menu named " + name + " already exists.");
             }
@@ -104,8 +103,6 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
 
             // Required on non-macOS systems when menu is modified by message window
             WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow().pack();
-
-            return null;
         }, HtSemanticException.class);
     }
 

@@ -19,6 +19,7 @@ import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.ThreadUtils;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class DeleteCmd extends Command {
@@ -69,7 +70,7 @@ public class DeleteCmd extends Command {
 
     private void deleteMenuItem(ExecutionContext context, MenuItemExp menuItemExp) throws HtException {
         MenuItemSpecifier specifier = menuItemExp.item;
-        specifier.getSpecifiedMenu(context).remove(specifier.getSpecifiedItemIndex(context));
+        ThreadUtils.invokeCheckedAndWaitAsNeeded(() -> specifier.getSpecifiedMenu(context).remove(specifier.getSpecifiedItemIndex(context)), HtException.class);
     }
 
     private void deleteMenu(ExecutionContext context, MenuExp menuExp) throws HtException {
