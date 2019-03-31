@@ -65,7 +65,7 @@ public class CircleStack<T> {
     }
 
     private int nextPointer() {
-        return (pointer - 1) % contents.size();
+        return Math.abs((pointer - 1) % contents.size());
     }
 
 }

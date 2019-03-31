@@ -112,8 +112,11 @@ public class WyldCardNavigationManager implements NavigationManager {
         return ThreadUtils.callAndWaitAsNeeded(() -> {
             try {
                 return goDestination(context, getBackstack().back(), false);
-            } catch (HtSemanticException e) {
-                throw new IllegalStateException("Bug! Backstack contains bogus destination.", e);
+            }
+
+            // Indicates card on stack was deleted; go back again
+            catch (HtSemanticException e) {
+                return goBack(context);
             }
         });
     }
@@ -126,8 +129,11 @@ public class WyldCardNavigationManager implements NavigationManager {
         return ThreadUtils.callAndWaitAsNeeded(() -> {
             try {
                 return goDestination(context, getBackstack().forward(), false);
-            } catch (HtSemanticException e) {
-                throw new IllegalStateException("Bug! Backstack contains bogus destination.", e);
+            }
+
+            // Indicates card on stack was deleted; go forth again
+            catch (HtSemanticException e) {
+                return goForth(context);
             }
         });
     }

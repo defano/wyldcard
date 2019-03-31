@@ -36,8 +36,8 @@ public class RecentCardsWindow extends WyldCardDialog<Object> {
 
         // Which card currently has focus? (We'll focus the associated button)
         Destination focusedCard = new Destination(
-            WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel(),
-            WyldCard.getInstance().getStackManager().getFocusedCard().getId(new ExecutionContext())
+                WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel(),
+                WyldCard.getInstance().getStackManager().getFocusedCard().getId(new ExecutionContext())
         );
 
         // Generate thumbnails for each card
@@ -63,34 +63,37 @@ public class RecentCardsWindow extends WyldCardDialog<Object> {
 
     private void addDestinationThumbnail(Destination destination, boolean focused) {
         StackPart stack = WyldCard.getInstance().getStackManager().getOpenStack(destination.getStack());
-        int cardNumber = stack.getStackModel().getIndexOfCardId(destination.getCardIndex());
+        Integer cardNumber = stack.getStackModel().getIndexOfCardId(destination.getCardIndex());
 
-        CardPart loadedCard = stack.loadCard(new ExecutionContext(), cardNumber);
+        // Null means card doesn't exist (likely deleted)
+        if (cardNumber != null) {
+            CardPart loadedCard = stack.loadCard(new ExecutionContext(), cardNumber);
 
-        SwingUtilities.invokeLater(() -> {
-            int cardWidth = loadedCard.getWidth();
-            int cardHeight = loadedCard.getHeight();
+            SwingUtilities.invokeLater(() -> {
+                int cardWidth = loadedCard.getWidth();
+                int cardHeight = loadedCard.getHeight();
 
-            BufferedImage image = loadedCard.getScreenshot();
-            image = new ScaleTransform(new Dimension((int) (cardWidth * .1), (int) (cardHeight * .1))).apply(image);
+                BufferedImage image = loadedCard.getScreenshot();
+                image = new ScaleTransform(new Dimension((int) (cardWidth * .1), (int) (cardHeight * .1))).apply(image);
 
-            ImageIcon icon = new ImageIcon(image);
-            JButton button = new JButton();
-            button.addActionListener(e -> {
-                WyldCard.getInstance().getNavigationManager().goCard(new ExecutionContext(), stack, cardNumber, true);
-                stack.getOwningStackWindow().requestFocus();
-                RecentCardsWindow.this.dispose();
+                ImageIcon icon = new ImageIcon(image);
+                JButton button = new JButton();
+                button.addActionListener(e -> {
+                    WyldCard.getInstance().getNavigationManager().goCard(new ExecutionContext(), stack, cardNumber, true);
+                    stack.getOwningStackWindow().requestFocus();
+                    RecentCardsWindow.this.dispose();
+                });
+                button.setIcon(icon);
+
+                thumbnailsPanel.add(button);
+
+                if (focused) {
+                    button.requestFocus();
+                }
+
+                loadedCard.dispose();
             });
-            button.setIcon(icon);
-
-            thumbnailsPanel.add(button);
-
-            if (focused) {
-                button.requestFocus();
-            }
-
-            loadedCard.dispose();
-        });
+        }
     }
 
     {
@@ -124,4 +127,5 @@ public class RecentCardsWindow extends WyldCardDialog<Object> {
     public JComponent $$$getRootComponent$$$() {
         return windowPanel;
     }
+
 }
