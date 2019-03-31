@@ -28,6 +28,15 @@ public class MenuItemSpecifier {
         this.expression = null;
     }
 
+    public boolean exists(ExecutionContext context) {
+        try {
+            getSpecifiedMenuItem(context);
+            return true;
+        } catch (HtException e) {
+            return false;
+        }
+    }
+
     public JMenuItem getSpecifiedMenuItem(ExecutionContext context) throws HtException {
         JMenu menu = getSpecifiedMenu(context);
         int itemIndex = getSpecifiedItemIndex(context);

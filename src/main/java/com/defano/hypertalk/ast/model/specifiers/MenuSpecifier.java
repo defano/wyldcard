@@ -26,6 +26,15 @@ public class MenuSpecifier {
         this.menuExpr = null;
     }
 
+    public boolean exists(ExecutionContext context) {
+        try {
+            getSpecifiedMenu(context);
+            return true;
+        } catch (HtException e) {
+            return false;
+        }
+    }
+
     public JMenu getSpecifiedMenu(ExecutionContext context) throws HtException {
 
         if (menuExpr != null) {
