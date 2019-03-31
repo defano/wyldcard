@@ -13,9 +13,10 @@ import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.stack.StackModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.compiler.Compiler;
+import com.defano.wyldcard.runtime.compiler.TwoPhaseParser;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layouts.ButtonPropertyEditor;
@@ -23,16 +24,13 @@ import com.defano.wyldcard.window.layouts.FieldPropertyEditor;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
 
 import javax.annotation.PostConstruct;
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A base model object for all HyperCard "parts" that Defines properties common to all part objects.
- *
  */
 public abstract class PartModel extends WyldCardPropertiesModel implements Messagable {
 
@@ -200,7 +198,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
         newPropertyAlias(PROP_BREAKPOINTS, PROP_CHECKPOINTS);
 
         newComputedGetterProperty(PROP_SCRIPT, (context, model, propertyName) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
-        newComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> model.setKnownProperty(context, PROP_SCRIPTTEXT, value));
+        newComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> model.setKnownProperty(context, PROP_SCRIPTTEXT, new Value(TwoPhaseParser.commentNonHandlerLines(value.toString()))));
     }
 
     /**
@@ -244,28 +242,16 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
         return type;
     }
 
-    private void compile(ExecutionContext context, boolean reportErrors) {
-        if (hasProperty(PROP_SCRIPTTEXT)) {
-            Compiler.asyncCompile(CompilationUnit.SCRIPT, getKnownProperty(context, PROP_SCRIPTTEXT).toString(), (scriptText, compiledScript, generatedError) -> {
-                if (generatedError != null && reportErrors) {
-                    generatedError.getBreadcrumb().setContext(context);
-                    generatedError.getBreadcrumb().setPart(getPartSpecifier(context));
-                    WyldCard.getInstance().showErrorDialogAndAbort(generatedError);
-                } else {
-                    setScript(script);
-                }
-            });
-        }
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized Script getScript(ExecutionContext context) {
         if (isScriptDirty(context) && System.currentTimeMillis() > deferCompilation) {
             try {
                 String scriptText = getScriptText(context);
                 setScript(Compiler.blockingCompile(CompilationUnit.SCRIPT, scriptText));
-                System.err.println("Compiled " +scriptText.length() +" " + getLongName(context));
+                System.err.println("Compiled " + scriptText.length() + " " + getLongName(context));
                 this.scriptHash = scriptText.hashCode();
             } catch (HtException e) {
                 deferCompilation = System.currentTimeMillis() + 5000;
@@ -328,7 +314,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
     public String getName(ExecutionContext context) {
         return getKnownProperty(context, PROP_NAME).toString();
     }
-    
+
     public PartSpecifier getPartSpecifier(ExecutionContext context) {
         return new PartIdSpecifier(getOwner(), getType(), getId(context));
     }
@@ -444,40 +430,36 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
      * @param caretPosition The location where the caret should be positioned in the text or null to use the last saved
      */
     public ScriptEditor editScript(ExecutionContext context, Integer caretPosition) {
-        ScriptEditor editor = WyldCard.getInstance().getWindowManager().findScriptEditorForPart(this);
+        return ThreadUtils.callAndWaitAsNeeded(() -> {
+            ScriptEditor editor = WyldCard.getInstance().getWindowManager().findScriptEditorForPart(PartModel.this);
 
-        // Existing script editor for this part; show it
-        if (editor != null) {
-            SwingUtilities.invokeLater(() -> {
+            if (caretPosition != null) {
+                setScriptEditorCaretPosition(caretPosition);
+            }
+
+            // Existing script editor for this part; show it
+            if (editor != null) {
                 editor.setVisible(true);
                 editor.requestFocus();
-            });
+            }
 
-            return editor;
-        }
+            // Create new editor
+            else {
+                editor = new ScriptEditor();
 
-        // Create new editor
-        else {
-            AtomicReference<ScriptEditor> newEditor = new AtomicReference<>();
-            ThreadUtils.invokeAndWaitAsNeeded(() -> {
-                newEditor.set(new ScriptEditor());
-
-                if (caretPosition != null) {
-                    setScriptEditorCaretPosition(caretPosition);
-                }
-
-                new WindowBuilder<>(newEditor.get())
-                        .withModel(this)
-                        .withTitle("Script of " + getName(context))
+                new WindowBuilder<>(editor)
+                        .withModel(PartModel.this)
+                        .withTitle("Script of " + getLongName(context))
                         .ownsMenubar()
                         .resizeable(true)
                         .withLocationStaggeredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                         .build();
-            });
 
-            SwingUtilities.invokeLater(() -> newEditor.get().requestFocus());
-            return newEditor.get();
-        }
+                editor.requestFocus();
+            }
+
+            return editor;
+        });
     }
 
     /**
@@ -490,23 +472,23 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
      */
     public void editProperties(ExecutionContext context) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-                if (getType() == PartType.FIELD) {
-                    new WindowBuilder<>(new FieldPropertyEditor())
-                            .withModel((FieldModel) this)
-                            .asModal()
-                            .withTitle(getName(context))
-                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
-                            .resizeable(false)
-                            .build();
-                } else {
-                    new WindowBuilder<>(new ButtonPropertyEditor())
-                            .withModel((ButtonModel) this)
-                            .asModal()
-                            .withTitle(getName(context))
-                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
-                            .resizeable(false)
-                            .build();
-                }
+            if (getType() == PartType.FIELD) {
+                new WindowBuilder<>(new FieldPropertyEditor())
+                        .withModel((FieldModel) this)
+                        .asModal()
+                        .withTitle(getName(context))
+                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                        .resizeable(false)
+                        .build();
+            } else {
+                new WindowBuilder<>(new ButtonPropertyEditor())
+                        .withModel((ButtonModel) this)
+                        .asModal()
+                        .withTitle(getName(context))
+                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                        .resizeable(false)
+                        .build();
+            }
         });
     }
 
