@@ -274,7 +274,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
                 WyldCard.getInstance().showErrorDialogAndAbort(e);
             }
         }
-        return script;
+        return script == null ? new Script() : script;
     }
 
     private synchronized void setScript(Script script) {

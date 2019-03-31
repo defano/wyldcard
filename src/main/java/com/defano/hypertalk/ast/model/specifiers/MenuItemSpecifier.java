@@ -1,11 +1,12 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
+import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Ordinal;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.ThreadUtils;
 
 import javax.swing.*;
 import java.util.Random;
@@ -38,66 +39,69 @@ public class MenuItemSpecifier {
     }
 
     public JMenuItem getSpecifiedMenuItem(ExecutionContext context) throws HtException {
-        JMenu menu = getSpecifiedMenu(context);
-        int itemIndex = getSpecifiedItemIndex(context);
+        return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
+            JMenu menu = getSpecifiedMenu(context);
+            int itemIndex = getSpecifiedItemIndex(context);
 
-        if (itemIndex >= 0 && itemIndex < menu.getItemCount()) {
-            JMenuItem foundItem = menu.getItem(itemIndex);
-            if (foundItem != null) {
-                return foundItem;
+            if (itemIndex >= 0 && itemIndex < menu.getItemCount()) {
+                JMenuItem foundItem = menu.getItem(itemIndex);
+                if (foundItem != null) {
+                    return foundItem;
+                }
             }
-        }
 
-        throw new HtSemanticException("No such menu item.");
+            throw new HtSemanticException("No such menu item.");
+        }, HtException.class);
     }
 
-    public JMenu getSpecifiedMenu(ExecutionContext context) throws HtException {
-        return this.menu.getSpecifiedMenu(context);
+    public JMenu getSpecifiedMenu(ExecutionContext context) {
+        return ThreadUtils.callAndWaitAsNeeded(() -> this.menu.getSpecifiedMenu(context));
     }
 
     public int getSpecifiedItemIndex(ExecutionContext context) throws HtException {
-        JMenu menu = getSpecifiedMenu(context);
+        return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
+            JMenu menu = getSpecifiedMenu(context);
 
-        if (expression != null) {
-            Value exprValue = expression.evaluate(context);
-            if (exprValue.isInteger()) {
-                return exprValue.integerValue() - 1;
-            } else {
-                for (int index = 0; index < menu.getItemCount(); index++) {
-                    JMenuItem thisItem = menu.getItem(index);
+            if (expression != null) {
+                Value exprValue = expression.evaluate(context);
+                if (exprValue.isInteger()) {
+                    return exprValue.integerValue() - 1;
+                } else {
+                    for (int index = 0; index < menu.getItemCount(); index++) {
+                        JMenuItem thisItem = menu.getItem(index);
 
-                    if (isSeparator(thisItem) && exprValue.toString().equals("-")) {
-                        return index;
-                    } else if (!isSeparator(thisItem) && exprValue.toString().equalsIgnoreCase(thisItem.getText())) {
-                        return index;
+                        if (isSeparator(thisItem) && exprValue.toString().equals("-")) {
+                            return index;
+                        } else if (!isSeparator(thisItem) && exprValue.toString().equalsIgnoreCase(thisItem.getText())) {
+                            return index;
+                        }
                     }
+
+                    throw new HtSemanticException("No such menu item " + exprValue.toString() + " in menu " + menu.getText());
+                }
+            }
+
+            else if (ordinal != null) {
+                if (menu.getItemCount() == 0) {
+                    throw new HtSemanticException("There are no menu items.");
                 }
 
-                throw new HtSemanticException("No such menu item " + exprValue.toString() + " in menu " + menu.getText());
+                switch (ordinal) {
+                    case LAST:
+                        return menu.getItemCount() - 1;
+                    case MIDDLE:
+                        return menu.getItemCount() / 2;
+                    case ANY:
+                        return new Random().nextInt(menu.getItemCount());
+                    default:
+                        return ordinal.intValue() - 1;
+                }
             }
-        }
 
-        else if (ordinal != null) {
-            if (menu.getItemCount() == 0) {
-                throw new HtSemanticException("There are no menu items.");
-            }
-
-            switch (ordinal) {
-                case LAST:
-                    return menu.getItemCount() - 1;
-                case MIDDLE:
-                    return menu.getItemCount() / 2;
-                case ANY:
-                    return new Random().nextInt(menu.getItemCount());
-                default:
-                    return ordinal.intValue() - 1;
-            }
-        }
-
-        throw new HtSemanticException("No such menu item.");
+            throw new HtSemanticException("No such menu item.");            }, HtException.class);
     }
 
     private boolean isSeparator(JMenuItem item) {
-        return item == null || item.getText() == null;
+        return ThreadUtils.callAndWaitAsNeeded(() -> item == null || item.getText() == null);
     }
 }

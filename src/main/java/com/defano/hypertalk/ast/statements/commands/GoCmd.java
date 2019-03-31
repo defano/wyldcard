@@ -42,10 +42,10 @@ public class GoCmd extends Command {
 
         boolean success =
                 attemptToGoDirection(context) ||
-                attemptToGoToStack(context) ||
                 attemptToGoToCardInThisStack(context) ||
                 attemptToGoToBkgndInThisStack(context) ||
-                attemptToGoToDestinationInRemoteStack(context);
+                attemptToGoToDestinationInRemoteStack(context) ||
+                attemptToGoToStack(context);
 
         if (!success) {
             context.setResult(new Value("No such card."));
@@ -104,22 +104,30 @@ public class GoCmd extends Command {
     }
 
     private boolean attemptToGoToStack(ExecutionContext context) throws HtException {
-        // Case 1: Navigate to a stack ('go to stack "My Stack"')
+
+        StackPartSpecifier stackPartSpecifier;
         StackPartExp stackPartExp = destinationExp.factor(context, StackPartExp.class);
         if (stackPartExp != null) {
-            StackModel model = WyldCard.getInstance().getStackManager().findStack(context, (StackPartSpecifier) stackPartExp.evaluateAsSpecifier(context), navigationOptions);
-            Destination destination = Destination.ofPart(context, model);
-
-            if (destination != null) {
-                navigationManager.goDestination(context, destination);
-                return true;
-            }
-
-            context.setResult(new Value("No such stack."));
-            return true;
-        } else {
-            return false;
+            stackPartSpecifier = (StackPartSpecifier) stackPartExp.evaluateAsSpecifier(context);
+        } else  {
+            stackPartSpecifier = new StackPartSpecifier(destinationExp.evaluate(context).toString());
         }
+
+        StackModel model = WyldCard.getInstance().getStackManager().findStack(context, stackPartSpecifier, navigationOptions);
+        Destination destination = Destination.ofPart(context, model);
+
+        if (destination != null) {
+            navigationManager.goDestination(context, destination);
+            return true;
+        }
+
+        if (navigationOptions.withoutDialog) {
+            context.setResult(new Value("No such stack."));
+        } else {
+            context.setResult(new Value());
+        }
+
+        return true;
     }
 
     private boolean attemptToGoDirection(ExecutionContext context) {

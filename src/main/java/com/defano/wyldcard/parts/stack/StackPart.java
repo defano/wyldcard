@@ -87,32 +87,6 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     }
 
     /**
-     * Attempts to navigate to the specified card; has no effect if the requested card is already the current card or if
-     * the requested card refers to an invalid card index.
-     * <p>
-     * When the requested card is not the current card, has the effect of deactivating the current card and activating
-     * the requested card.
-     *
-     * @param context   The execution context
-     * @param cardIndex The index (0-based) card to navigate to
-     * @return The current card after navigation.
-     */
-    @RunOnDispatch
-    public CardPart goCard(ExecutionContext context, int cardIndex) {
-
-        // Nothing to do if navigating to current card or an invalid card index
-        if (cardIndex == getStackModel().getCurrentCardIndex() ||
-                cardIndex < 0 ||
-                cardIndex >= getStackModel().getCardCount()) {
-
-            return getDisplayedCard();
-        }
-
-        closeCard(context);
-        return openCard(context, cardIndex);
-    }
-
-    /**
      * Gets the data model associated with this stack.
      *
      * @return The stack model.
@@ -370,7 +344,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
      * @param context The execution context
      */
     @RunOnDispatch
-    private void closeCard(ExecutionContext context) {
+    public void closeCard(ExecutionContext context) {
         CardPart displayedCard = getDisplayedCard();
 
         // Deactivate paint tool before doing anything (to commit in-fight changes)
@@ -393,7 +367,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
      * @return The activated card
      */
     @RunOnDispatch
-    private CardPart openCard(ExecutionContext context, int cardIndex) {
+    public CardPart openCard(ExecutionContext context, int cardIndex) {
 
         try {
             // Change card

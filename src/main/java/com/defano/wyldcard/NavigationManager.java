@@ -16,7 +16,7 @@ public interface NavigationManager {
 
     /**
      * Navigates to the given card index, applying a visual effect to the transition. Has no affect if no card with the
-     * requested index exists in this stack.
+     * requested index does not exist in this stack.
      * <p>
      * Note that card index is zero-based, but card's are numbered starting from one from a user's perspective.
      *

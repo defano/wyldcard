@@ -118,7 +118,7 @@ public class MenuItemBuilder {
     public JMenuItem build (JMenuItem intoMenu) {
 
         if (actionListeners.size() > 0) {
-            this.item.addActionListener(new DeferredMenuAction(intoMenu.getText(), this.item.getText(), actionListeners));
+            this.item.addActionListener(new DeferredMenuAction(intoMenu, item, actionListeners));
         }
 
         if (checkmarkProvider != null) {

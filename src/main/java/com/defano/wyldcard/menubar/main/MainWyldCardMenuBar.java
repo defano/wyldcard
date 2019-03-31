@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
  * An extension of {@link JMenuBar} representing the WyldCard menu bar.
@@ -51,17 +52,24 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
     }
 
     @Override
+    public void setVisible(boolean visible) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> MainWyldCardMenuBar.super.setVisible(visible));
+    }
+
+    @Override
     public List<JMenu> getVisibleMenus() {
-        List<JMenu> visibleMenus = new ArrayList<>();
+        return ThreadUtils.callAndWaitAsNeeded(() -> {
+            List<JMenu> visibleMenus = new ArrayList<>();
 
-        for (int idx = 0; idx < getMenuCount(); idx++) {
-            JMenu thisMenu = getMenu(idx);
-            if (thisMenu.isVisible()) {
-                visibleMenus.add(thisMenu);
+            for (int idx = 0; idx < getMenuCount(); idx++) {
+                JMenu thisMenu = getMenu(idx);
+                if (thisMenu.isVisible()) {
+                    visibleMenus.add(thisMenu);
+                }
             }
-        }
 
-        return visibleMenus;
+            return visibleMenus;
+        });
     }
 
     @Override
@@ -85,18 +93,20 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
 
     @Override
     public void createMenu(String name) throws HtSemanticException {
-        if (findMenuByName(name) != null) {
-            throw new HtSemanticException("A menu named " + name + " already exists.");
-        }
+        ThreadUtils.callCheckedAndWaitAsNeeded((Callable<Void>) () -> {
+            if (findMenuByName(name) != null) {
+                throw new HtSemanticException("A menu named " + name + " already exists.");
+            }
 
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
             add(new HyperCardMenu(name));
-            super.invalidate();
-            super.repaint();
+            MainWyldCardMenuBar.super.invalidate();
+            MainWyldCardMenuBar.super.repaint();
 
             // Required on non-macOS systems when menu is modified by message window
             WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow().pack();
-        });
+
+            return null;
+        }, HtSemanticException.class);
     }
 
     @Override
@@ -113,22 +123,24 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
 
     @Override
     public JMenu findMenuByNumber(int index) {
-        List<JMenu> visibleMenus = getVisibleMenus();
-
         return ThreadUtils.callAndWaitAsNeeded(() -> {
-            if (index < 0 || index >= visibleMenus.size()) {
-                return null;
-            }
+            List<JMenu> visibleMenus = getVisibleMenus();
 
-            return visibleMenus.get(index);
+            return ThreadUtils.callAndWaitAsNeeded(() -> {
+                if (index < 0 || index >= visibleMenus.size()) {
+                    return null;
+                }
+
+                return visibleMenus.get(index);
+            });
         });
     }
 
     @Override
     public JMenu findMenuByName(String name) {
-        List<JMenu> visibleMenus = getVisibleMenus();
-
         return ThreadUtils.callAndWaitAsNeeded(() -> {
+            List<JMenu> visibleMenus = getVisibleMenus();
+
             for (JMenu thisMenu : visibleMenus) {
                 if (thisMenu != null && name.equalsIgnoreCase(thisMenu.getText())) {
                     return thisMenu;
@@ -140,9 +152,10 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
     }
 
     private JMenuItem findMenuItemByName(String name) {
-        List<JMenu> visibleMenus = getVisibleMenus();
-
         return ThreadUtils.callAndWaitAsNeeded(() -> {
+
+            List<JMenu> visibleMenus = getVisibleMenus();
+
             for (JMenu thisMenu : visibleMenus) {
                 for (int thisMenuItemIndex = 0; thisMenuItemIndex < thisMenu.getItemCount(); thisMenuItemIndex++) {
                     JMenuItem thisMenuItem = thisMenu.getItem(thisMenuItemIndex);

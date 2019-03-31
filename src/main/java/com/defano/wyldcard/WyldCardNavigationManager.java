@@ -36,13 +36,27 @@ public class WyldCardNavigationManager implements NavigationManager {
     @Override
     public CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, boolean push) {
         return ThreadUtils.callAndWaitAsNeeded(() -> {
-            CardPart cardPart = stackPart.goCard(context, cardIndex);
+            CardPart cardPart;
+
+            // Nothing to do if navigating to current card or an invalid card index
+            if (cardIndex == stackPart.getStackModel().getCurrentCardIndex() ||
+                    cardIndex < 0 ||
+                    cardIndex >= stackPart.getStackModel().getCardCount()) {
+
+                cardPart = stackPart.getDisplayedCard();
+            } else {
+                stackPart.closeCard(context);
+                cardPart = stackPart.openCard(context, cardIndex);
+            }
 
             // When requested, push the current card onto the backstack
             if (push) {
                 Destination destination = new Destination(stackPart.getStackModel(), cardPart.getId(context));
                 getBackstack().push(destination);
             }
+
+            // Update the current card in the context
+            context.setCurrentCard(cardPart);
 
             return cardPart;
         });

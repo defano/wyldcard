@@ -1,11 +1,12 @@
 package com.defano.wyldcard.menubar;
 
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.ThreadUtils;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -21,15 +22,15 @@ public class DeferredMenuAction implements ActionListener {
 
     private final static ExecutorService delegatedActionExecutor = Executors.newSingleThreadExecutor();
     private final List<ActionListener> actionListeners;
-    private final String theMenu;
-    private final String theMenuItem;
+    private final JMenuItem theMenu;
+    private final JMenuItem theMenuItem;
 
     private CountDownLatch blocker;
 
-    public DeferredMenuAction(String theMenu, String theMenuItem, List<ActionListener> actionListeners) {
+    public DeferredMenuAction(JMenuItem menu, JMenuItem menuItem, List<ActionListener> actionListeners) {
         this.actionListeners = actionListeners;
-        this.theMenu = theMenu;
-        this.theMenuItem = theMenuItem;
+        this.theMenu = menu;
+        this.theMenuItem = menuItem;
     }
 
     @Override
@@ -49,6 +50,10 @@ public class DeferredMenuAction implements ActionListener {
      */
     private void actionPerformed(ExecutionContext context, ActionEvent e) {
 
+        if (theMenuItem instanceof JCheckBoxMenuItem) {
+            theMenuItem.setSelected(!theMenuItem.isSelected());
+        }
+
         // Attempts to invoke 'doMenu' handler which may require UI thread, thus, we have to wait on a background
         // thread while determining if 'doMenu' trapped menu handler.
         delegatedActionExecutor.submit(() -> {
@@ -56,7 +61,7 @@ public class DeferredMenuAction implements ActionListener {
             CountDownLatch cdl = new CountDownLatch(1);
             final boolean[] trapped = new boolean[1];
 
-            context.getCurrentStack().getDisplayedCard().getPartModel().receiveMessage(context, SystemMessage.DO_MENU.messageName, ListExp.fromValues(null, new Value(theMenu), new Value(theMenuItem)), (command, wasTrapped, err) -> {
+            context.getCurrentStack().getDisplayedCard().getPartModel().receiveMessage(context, SystemMessage.DO_MENU.messageName, ListExp.fromValues(null, new Value(theMenu.getText()), new Value(theMenuItem.getText())), (command, wasTrapped, err) -> {
                 trapped[0] = wasTrapped;
                 cdl.countDown();
             });
