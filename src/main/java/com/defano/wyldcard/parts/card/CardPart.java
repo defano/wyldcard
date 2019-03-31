@@ -529,7 +529,6 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         getForegroundCanvas().addMouseListener(this);
         getForegroundCanvas().addKeyListener(this);
 
-        getPartModel().receiveMessage(context.bind(this), SystemMessage.OPEN_CARD.messageName);
         getPartModel().setObserver(cardModelObserver);
 
         getPartModel().addPropertyChangedObserver(this);
@@ -537,13 +536,15 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
         getPartModel().getBackgroundModel().addPropertyChangedObserver(this);
         getPartModel().getBackgroundModel().notifyPropertyChangedObserver(context, this);
+
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD.messageName);
     }
 
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
     public void partClosed(ExecutionContext context) {
-        getPartModel().receiveMessage(context.bind(this), SystemMessage.CLOSE_CARD.messageName);
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.CLOSE_CARD.messageName);
 
         // Lets parts know they're about to go away
         for (ButtonPart p : buttons.getAll()) {

@@ -23,6 +23,7 @@ public class StackFrame {
     private String message = "";                                        // The name of this function/handler
     private Value returnValue = new Value();                            // Value returned from this function
     private PartSpecifier me;                                           // The part that 'me' refers to
+    private Integer lineNumber;
 
     /**
      * Create a stack frame representing the invocation of unbound script text (i.e., text entered into the message
@@ -40,10 +41,11 @@ public class StackFrame {
      * @param arguments A list of evaluated arguments to be bound the handler's parameter list. May not be null; provide
      *                  an empty list for invocations not passing arguments.
      */
-    public StackFrame(PartSpecifier me, String message, List<Value> arguments) {
+    public StackFrame(Integer lineNumber, PartSpecifier me, String message, List<Value> arguments) {
         this.message = message;
         this.me = me;
         this.params = arguments;
+        this.lineNumber = lineNumber;
     }
 
     /**
@@ -90,6 +92,14 @@ public class StackFrame {
      */
     public SymbolTable getVariables() {
         return new CompositeSymbolTable(getScopedGlobalVariables(), getLocalVariables());
+    }
+
+    /**
+     * Gets the starting line number of the handler that generated this stack frame, or null, if not defined.
+     * @return The line number of the associated handler.
+     */
+    public Integer getLineNumber() {
+        return lineNumber;
     }
 
     /**
@@ -192,5 +202,10 @@ public class StackFrame {
      */
     public void setMe(PartSpecifier me) {
         this.me = me;
+    }
+
+    @Override
+    public String toString() {
+        return getMessage() + " in " + getMe().getHyperTalkIdentifier(new ExecutionContext()) + " (line " + getLineNumber() + ")";
     }
 }

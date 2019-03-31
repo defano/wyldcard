@@ -142,11 +142,15 @@ public class WyldCard implements PartFinder {
      *
      * @param e The syntax error to display
      */
-    public void showErrorDialog(HtException e) {
-        SwingUtilities.invokeLater(() -> HyperTalkErrorDialog.getInstance().showError(e));
+    public void showErrorDialogAndAbort(HtException e) {
+        showErrorDialog(e);
 
         // Abort further script execution
         throw new ExitToHyperCardPreemption();
+    }
+
+    public void showErrorDialog(HtException e) {
+        SwingUtilities.invokeLater(() -> HyperTalkErrorDialog.getInstance().showError(e));
     }
 
     /**

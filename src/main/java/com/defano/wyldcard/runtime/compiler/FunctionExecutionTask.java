@@ -37,7 +37,7 @@ public class FunctionExecutionTask implements Callable<Value> {
 
         HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), function.name, evaluatedArguments, me, true, context.getStackDepth(), true));
 
-        context.pushStackFrame(function.name, me, evaluatedArguments);
+        context.pushStackFrame(function.getLineNumber(), function.name, me, evaluatedArguments);
 
         try {
             // Bind argument values to parameter variables in this context
@@ -57,7 +57,7 @@ public class FunctionExecutionTask implements Callable<Value> {
             }
         
         } catch (HtSemanticException e) {
-            WyldCard.getInstance().showErrorDialog(e);
+            WyldCard.getInstance().showErrorDialogAndAbort(e);
         }
 
         Value returnValue = context.getStackFrame().getReturnValue();

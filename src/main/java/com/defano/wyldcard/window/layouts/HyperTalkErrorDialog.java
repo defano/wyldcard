@@ -25,6 +25,8 @@ public class HyperTalkErrorDialog {
     }
 
     public synchronized void showError(HtException e) {
+        e.printStackTrace();
+
         if (!errorDialogVisible) {
             errorDialogVisible = true;
 
@@ -40,7 +42,6 @@ public class HyperTalkErrorDialog {
 
             errorDialogVisible = false;
         }
-        e.printStackTrace();
     }
 
     @RunOnDispatch

@@ -32,13 +32,13 @@ import java.util.Stack;
  * 'the target'; the value returned by 'the result'; and any pending visual effect to apply when the screen is next
  * unlocked.
  * <p>
- * Stack binding: When a script is executing, it must execute in the context of a specific stack (i.e., 'card 3' refers
- * to the third card of which stack?). This is problematic when multiple stacks are open and active (and each
- * potentially may have their own scripts executing concurrently). To solve this problem, an execution context is said
- * to either be 'bound' or 'unbound'. An unbound execution context refers to whichever stack is currently in focus in
- * the windowing system. A bound execution context refers to a specific stack irrespective of whether that stack has
- * window focus. UI commands (like menubar commands) should typically use an unbound context (referring to which stack
- * is in focus), but messages sent to a part or stack should utilize a bound context.
+ * Part binding: When a script is executing, it must execute in the context of a specific stack and card (i.e., 'card 3'
+ * refers to the third card of which stack?; 'cd btn 2' of which card?). This is problematic when multiple stacks are
+ * open and active (and each potentially may have their own scripts executing concurrently). To solve this problem, an
+ * execution context is said to either be 'bound' or 'unbound'. An unbound execution context refers to whichever stack
+ * is currently in focus in the windowing system. A bound execution context refers to a specific stack irrespective of
+ * whether that stack has window focus. UI commands (like menubar commands) should typically use an unbound context
+ * (referring to which stack is in focus), but messages sent to a part or stack should utilize a bound context.
  * <p>
  * A note about threading: When HyperCard sends a message to a part (like 'mouseDown') the handler associated with that
  * message executes in its own thread. Any messages sent or functions invoked from that system message handler execute
@@ -54,9 +54,9 @@ public class ExecutionContext {
     private final static SymbolTable globals = new BasicSymbolTable();
 
     private StackPart stack;                                // WyldCard stack that this script is bound to
+    private CardPart card;                                  // "Current" card in the context of this execution
     private Stack<StackFrame> callStack = new Stack<>();    // Call stack
     private Value result;                                   // Value returned by 'the result'
-    private CardPart card;                                  // "Current" card in the context of this execution
     private PartSpecifier theTarget;                        // Part that the message was initially sent
     private boolean isStaticContext;                        // Is message box evaluation?
     private VisualEffectSpecifier visualEffect;             // Visual effect to use to unlock screen
@@ -79,12 +79,12 @@ public class ExecutionContext {
      * backgrounds or stacks should use {@link #ExecutionContext(Part)}.
      */
     public ExecutionContext() {
-        this.stack = WyldCard.getInstance().getStackManager().getFocusedStack();
+        bind(WyldCard.getInstance().getStackManager().getFocusedStack());
     }
 
     /**
      * Creates a part-bound execution context. Scripts executing in a part-bound context will operate on whichever stack
-     * the given part is a component of.
+     * and card that the given part is a component of.
      * <p>
      * Scripts attached to parts, cards, backgrounds and stacks should create contexts using this constructor.
      *
@@ -136,6 +136,7 @@ public class ExecutionContext {
     public ExecutionContext bind(StackPart part) {
         if (part != null) {
             this.stack = part;
+            this.card = this.stack.getDisplayedCard();
         }
 
         return this;
@@ -178,14 +179,14 @@ public class ExecutionContext {
      * @param me        The part which the 'me' keyword refers to in this context.
      * @param arguments Evaluated arguments passed to this handler or function.
      */
-    public void pushStackFrame(String message, PartSpecifier me, List<Value> arguments) throws HtException {
+    public void pushStackFrame(Integer lineNumber, String message, PartSpecifier me, List<Value> arguments) throws HtException {
 
         // Kill script execution before we overflow JVM call stack
         if (callStack.size() == MAX_CALL_STACK_DEPTH) {
             throw new HtSemanticException("Too much recursion.");
         }
 
-        callStack.push(new StackFrame(me, message, arguments));
+        callStack.push(new StackFrame(lineNumber, me, message, arguments));
     }
 
     /**

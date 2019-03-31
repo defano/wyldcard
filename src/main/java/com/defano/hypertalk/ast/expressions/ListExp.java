@@ -17,6 +17,10 @@ public class ListExp extends Expression {
     private final Expression car;   // First item in list
     private final ListExp cdr;      // Remaining items in list
 
+    public ListExp() {
+        this(null, new LiteralExp(null));
+    }
+
     /**
      * Constructs an empty list expression.
      * @param ctx The Antlr context where this expression was encountered, or null

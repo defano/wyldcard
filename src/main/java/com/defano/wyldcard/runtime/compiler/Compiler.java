@@ -4,7 +4,6 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Script;
-import com.defano.hypertalk.ast.model.UserFunction;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
@@ -161,7 +160,7 @@ public class Compiler {
      * @return The value returned by the function (an empty string if the function does not invoke 'return')
      * @throws HtSemanticException Thrown if an error occurs executing the function.
      */
-    public static Value blockingExecuteFunction(ExecutionContext context, PartSpecifier me, UserFunction function, Expression arguments) throws HtException {
+    public static Value blockingExecuteFunction(ExecutionContext context, PartSpecifier me, NamedBlock function, Expression arguments) throws HtException {
         ThreadUtils.assertWorkerThread();
         return new FunctionExecutionTask(context, me, function, arguments).call();
     }

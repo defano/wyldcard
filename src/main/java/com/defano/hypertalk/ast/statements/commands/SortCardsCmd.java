@@ -64,7 +64,7 @@ public class SortCardsCmd extends Command {
         } catch (HtUncheckedSemanticException e) {
             // Error occurred sorting; revert all changes
             context.getCurrentStack().getStackModel().setCardModels(allCards);
-            WyldCard.getInstance().showErrorDialog(e.getHtCause());
+            WyldCard.getInstance().showErrorDialogAndAbort(e.getHtCause());
         } finally {
             // Because card order may have changed, lets navigate back to where we started
             int thisCardIdx = indexOfCardId(context, context.getCurrentStack().getStackModel().getCardModels(), thisCardId);

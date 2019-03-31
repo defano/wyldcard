@@ -66,6 +66,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
     private transient PartModel parentPartModel;
     private transient Script script;
     private transient long deferCompilation = 0;
+    private transient long scriptHash;
 
     public PartModel(PartType type, Owner owner, PartModel parentPartModel) {
         super();
@@ -199,11 +200,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
         newPropertyAlias(PROP_BREAKPOINTS, PROP_CHECKPOINTS);
 
         newComputedGetterProperty(PROP_SCRIPT, (context, model, propertyName) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
-        newComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> {
-            script = null;
-            model.setKnownProperty(context, PROP_SCRIPTTEXT, value);
-            compile(context, false);
-        });
+        newComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> model.setKnownProperty(context, PROP_SCRIPTTEXT, value));
     }
 
     /**
@@ -253,7 +250,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
                 if (generatedError != null && reportErrors) {
                     generatedError.getBreadcrumb().setContext(context);
                     generatedError.getBreadcrumb().setPart(getPartSpecifier(context));
-                    WyldCard.getInstance().showErrorDialog(generatedError);
+                    WyldCard.getInstance().showErrorDialogAndAbort(generatedError);
                 } else {
                     setScript(script);
                 }
@@ -264,16 +261,17 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
     /** {@inheritDoc} */
     @Override
     public synchronized Script getScript(ExecutionContext context) {
-        if (script == null && System.currentTimeMillis() > deferCompilation) {
+        if (isScriptDirty(context) && System.currentTimeMillis() > deferCompilation) {
             try {
-                Script script = Compiler.blockingCompile(CompilationUnit.SCRIPT, getScriptText(context));
-                script.applyBreakpoints(getBreakpoints());
-                setScript(script);
+                String scriptText = getScriptText(context);
+                setScript(Compiler.blockingCompile(CompilationUnit.SCRIPT, scriptText));
+                System.err.println("Compiled " +scriptText.length() +" " + getLongName(context));
+                this.scriptHash = scriptText.hashCode();
             } catch (HtException e) {
                 deferCompilation = System.currentTimeMillis() + 5000;
                 e.getBreadcrumb().setContext(context);
                 e.getBreadcrumb().setPart(getPartSpecifier(context));
-                WyldCard.getInstance().showErrorDialog(e);
+                WyldCard.getInstance().showErrorDialogAndAbort(e);
             }
         }
         return script;
@@ -285,7 +283,15 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
     }
 
     public String getScriptText(ExecutionContext context) {
-        return getKnownProperty(context, PROP_SCRIPTTEXT).toString();
+        if (hasProperty(PROP_SCRIPTTEXT)) {
+            return getKnownProperty(context, PROP_SCRIPTTEXT).toString();
+        } else {
+            return "";
+        }
+    }
+
+    private boolean isScriptDirty(ExecutionContext context) {
+        return getScriptText(context).hashCode() != scriptHash;
     }
 
     public Owner getOwner() {
@@ -309,6 +315,14 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
 
     public int getId(ExecutionContext context) {
         return getKnownProperty(context, PROP_ID).integerValue();
+    }
+
+    public String getLongName(ExecutionContext context) {
+        return getName(context);
+    }
+
+    public String getShortName(ExecutionContext context) {
+        return getName(context);
     }
 
     public String getName(ExecutionContext context) {

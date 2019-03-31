@@ -7,9 +7,9 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -37,7 +37,7 @@ public interface Messagable {
     PartSpecifier getMe(ExecutionContext context);
 
     /**
-     * Sends a message (i.e., 'mouseUp') to this part's message passing hierarchy.
+     * Asynchronously sends a message (i.e., 'mouseUp') to this part's message passing hierarchy.
      *
      * @param context The execution context
      * @param message The message to be passed.
@@ -45,13 +45,13 @@ public interface Messagable {
     default void receiveMessage(ExecutionContext context, String message) {
         receiveMessage(context, message, new ListExp(null), (command, trapped, err) -> {
             if (err != null) {
-                WyldCard.getInstance().showErrorDialog(err);
+                WyldCard.getInstance().showErrorDialogAndAbort(err);
             }
         });
     }
 
     /**
-     * Sends a message with bound arguments (i.e., 'doMenu') to this part's message passing hierarchy.
+     * Asynchronously sends a message with bound arguments (i.e., 'doMenu') to this part's message passing hierarchy.
      *
      * @param context   The execution context
      * @param message   The message to be passed
@@ -60,7 +60,7 @@ public interface Messagable {
     default void receiveMessage(ExecutionContext context, String message, ListExp arguments) {
         receiveMessage(context, message, arguments, (command, trapped, err) -> {
             if (err != null) {
-                WyldCard.getInstance().showErrorDialog(err);
+                WyldCard.getInstance().showErrorDialogAndAbort(err);
             }
         });
     }
@@ -87,7 +87,6 @@ public interface Messagable {
 
         // Attempt to invoke command handler in this part and listen for completion
         Compiler.asyncExecuteHandler(context, getMe(context), getScript(context), message, arguments, (me, script, handler, trappedMessage, exception) -> {
-
             // Did message generate an error
             if (exception != null) {
                 onCompletion.onMessagePassed(message, true, exception);
@@ -151,7 +150,7 @@ public interface Messagable {
      * @throws HtSemanticException Thrown if a syntax or semantic error occurs attempting to execute the function.
      */
     default Value invokeFunction(ExecutionContext context, String functionName, Expression arguments) throws HtException {
-        UserFunction function = getScript(context).getFunction(functionName);
+        NamedBlock function = getScript(context).getNamedBlock(functionName);
         Messagable target = this;
 
         while (function == null) {
@@ -164,7 +163,7 @@ public interface Messagable {
             }
 
             // Look for function in this script
-            function = target.getScript(context).getFunction(functionName);
+            function = target.getScript(context).getNamedBlock(functionName);
         }
 
         return Compiler.blockingExecuteFunction(context, target.getMe(context), function, arguments);

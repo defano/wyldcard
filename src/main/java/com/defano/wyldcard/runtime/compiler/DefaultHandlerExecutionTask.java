@@ -37,10 +37,10 @@ public class DefaultHandlerExecutionTask implements HandlerExecutionTask {
         // Arguments passed to handler must be evaluated in the context of the caller (i.e., before we push a new stack frame)
         List<Value> evaluatedArguments = arguments.evaluateAsList(context);
 
-        HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, evaluatedArguments, me, context.getTarget() == null, context.getStackDepth(), !handler.isEmptyPassBlock()));
+        HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, evaluatedArguments, me, context.getTarget() == null, context.getStackDepth(), true));
 
         // Push a new context
-        context.pushStackFrame(handler.name, me, evaluatedArguments);
+        context.pushStackFrame(handler.getLineNumber(), handler.name, me, evaluatedArguments);
 
         // Target refers to the part first receiving the message
         if (context.getTarget() == null) {
@@ -73,7 +73,7 @@ public class DefaultHandlerExecutionTask implements HandlerExecutionTask {
 
         // Script invoked some other (illegal) form of exit (like 'exit repeat')
         catch (Preemption e) {
-            WyldCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit from here."));
+            WyldCard.getInstance().showErrorDialogAndAbort(new HtSemanticException("Cannot exit from here."));
         }
 
         // Pop context

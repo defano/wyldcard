@@ -156,7 +156,8 @@ public class TwoPhaseParser {
 
             // End of a handler block?
             if (inHandler != null && line.matches(HANDLER_END)) {
-                if (line.split("\\s+")[1].equalsIgnoreCase(inHandler)) {
+                String[] tokens = line.split("\\s+");
+                if (tokens.length > 1 && tokens[1].equalsIgnoreCase(inHandler)) {
                     inHandler = null;
                 }
             }

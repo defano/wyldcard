@@ -24,9 +24,10 @@
 
 grammar HyperTalk;
 
-// Start symbol accepting only well-formed HyperTalk scripts that consist of handlers, functions, whitespace and
-// comments (representing scipts that are assignable to objects like buttons, fields and cards). Disallows statements or
-// expressions that are not inside of a handler or function block.
+/* Start symbol accepting only well-formed HyperTalk scripts that consist of handlers, functions, whitespace and
+ * comments (representing scipts that are assignable to objects like buttons, fields and cards). Disallows statements or
+ * expressions that are not inside of a handler or function block.
+ */
 script
     : handler script                                                                                                    # handlerScript
     | function script                                                                                                   # functionScript
@@ -34,8 +35,9 @@ script
     | EOF                                                                                                               # emptyScript
     ;
 
-// Start symbol accepting any sequence of HyperTalk statements, expressions, whitespace and comments. Suitable when
-// evaluating the message box or HyperTalk strings via the 'do' command and 'value of' function.
+/* Start symbol accepting any sequence of HyperTalk statements, expressions, whitespace and comments. Suitable when
+ * evaluating the message box or HyperTalk strings via the 'do' command and 'value of' function.
+ */
 scriptlet
     : statement EOF                                                                                                     # singleScriptlet
     | multilineScriptlet                                                                                                # mutliScriptlet
@@ -241,13 +243,13 @@ commandStatement
     | 'type' expression                                                                                                 # typeCmd
     | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmd
     | 'unlock' 'screen'                                                                                                 # unlockScreenCmd
-    | 'unlock' 'screen' 'with' 'visual'? 'effect'? expression                                                     # unlockScreenVisualCmd
+    | 'unlock' 'screen' 'with' 'visual'? 'effect'? expression                                                           # unlockScreenVisualCmd
     | 'unmark' 'all' cards                                                                                              # unmarkAllCardsCmd
     | 'unmark' expression                                                                                               # unmarkCardCmd
     | 'unmark' cards 'where' expression                                                                                 # unmarkCardsWhereCmd
     | 'unmark' cards 'by' 'finding' expression? 'international'? expression of expression                               # unmarkCardsFindingInFieldCmd
     | 'unmark' cards 'by' 'finding' expression? 'international'? expression                                             # unmarkCardsFindingCmd
-    | 'visual' 'effect'? expression                                                                               # visualEffectCmd
+    | 'visual' 'effect'? expression                                                                                     # visualEffectCmd
     | 'wait' expression timeUnit                                                                                        # waitCountCmd
     | 'wait' 'for' expression timeUnit                                                                                  # waitForCountCmd
     | 'wait' 'until' expression                                                                                         # waitUntilCmd
@@ -663,30 +665,30 @@ ordinal
 
 countable
     : cards (of 'this' 'stack')?                                                                                        # cardsCount
-    | cards of term                                                                                               # cardsOfCount
+    | cards of term                                                                                                     # cardsOfCount
     | background (of 'this' 'stack')?                                                                                   # backgroundCount
-    | background of term                                                                                          # backgroundsOfCount
+    | background of term                                                                                                # backgroundsOfCount
     | card button                                                                                                       # cardButtonCount
-    | card button of term                                                                                         # cardButtonsOfCount
+    | card button of term                                                                                               # cardButtonsOfCount
     | card field                                                                                                        # cardFieldCount
-    | card field of term                                                                                          # cardFieldsOfCount
+    | card field of term                                                                                                # cardFieldsOfCount
     | card? 'parts'                                                                                                     # cardPartCount
-    | card 'parts' of term                                                                                        # cardPartsOfCount
+    | card 'parts' of term                                                                                              # cardPartsOfCount
     | background button                                                                                                 # bkgndButtonCount
-    | background button of term                                                                                   # bkgndButtonsOfCount
+    | background button of term                                                                                         # bkgndButtonsOfCount
     | background? field                                                                                                 # bkgndFieldCount
-    | background field of term                                                                                    # bkgndFieldsOfCount
+    | background field of term                                                                                          # bkgndFieldsOfCount
     | background 'parts'                                                                                                # bkgndPartCount
-    | background 'parts' of term                                                                                  # bkgndPartsOfCount
+    | background 'parts' of term                                                                                        # bkgndPartsOfCount
     | 'marked' cards (of 'this' 'stack')?                                                                               # markedCardsCount
-    | 'marked' cards of term                                                                                      # markedCardsOfCount
-    | character of term                                                                                           # charsOfCount
-    | item of term                                                                                                # itemsOfCount
-    | word of term                                                                                                # wordsOfCount
-    | line of term                                                                                                # linesOfCount
+    | 'marked' cards of term                                                                                            # markedCardsOfCount
+    | character of term                                                                                                 # charsOfCount
+    | item of term                                                                                                      # itemsOfCount
+    | word of term                                                                                                      # wordsOfCount
+    | line of term                                                                                                      # linesOfCount
     | 'windows'                                                                                                         # windowsCount
     | 'menus'                                                                                                           # menusCount
-    | 'menuitems' of 'menu' term                                                                                  # menuItemsCount
+    | 'menuitems' of 'menu' term                                                                                        # menuItemsCount
     ;
 
 mouseState

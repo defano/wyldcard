@@ -27,7 +27,7 @@ public class TextArrowsMessageCompletionObserver implements MessageCompletionObs
     public void onMessagePassed(String message, boolean wasTrapped, HtException error) {
 
         if (error != null) {
-            WyldCard.getInstance().showErrorDialog(error);
+            WyldCard.getInstance().showErrorDialogAndAbort(error);
         }
 
         else if (!wasTrapped) {

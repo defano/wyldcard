@@ -26,7 +26,7 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
         newProperty(PROP_LOCKSCREEN, new Value(false), false);
         newProperty(PROP_SCRIPTTEXTFONT, new Value("Monaco"), false);
         newProperty(PROP_SCRIPTTEXTSIZE, new Value(12), false);
-        newProperty(PROP_LOCKMESSAGES, new Value(true), false);
+        newProperty(PROP_LOCKMESSAGES, new Value(false), false);
         newProperty(PROP_TEXTARROWS, new Value(true), false);
 
         newProperty(PROP_USERLEVEL, new Value(5), false);       // TODO: Not implemented

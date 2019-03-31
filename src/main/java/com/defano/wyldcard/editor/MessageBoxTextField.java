@@ -122,6 +122,6 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
 
     @Override
     public void onEvaluationError(HtException exception) {
-        WyldCard.getInstance().showErrorDialog(exception);
+        WyldCard.getInstance().showErrorDialogAndAbort(exception);
     }
 }
