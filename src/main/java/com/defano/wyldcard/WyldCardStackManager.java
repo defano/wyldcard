@@ -224,6 +224,10 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
             return;
         }
 
+        // Make focused stack first item in 'the stacks' to keep the list in z-order
+        openedStacks.remove(stackPart);
+        openedStacks.add(0, stackPart);
+
         // Remove focus from last-focused stack when applicable
         if (focusedStack.hasValue()) {
             WyldCard.getInstance().getPartToolManager().deselectAllParts();
@@ -237,9 +241,10 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         // Make the focused stack the window dock
         WindowDock.getInstance().setDock(stackPart.getOwningStackWindow());
 
+        // Notify observers that the focused stack has changed
         focusedStack.onNext(stackPart);
 
-        // Update patterns to show user-created patterns
+        // Update pattern palette to show any stack-specific patterns (i.e., user-edited patterns)
         WyldCardPatternFactory.getInstance().invalidatePatternCache();
 
         // Make the selected tool active on the focused card
@@ -252,7 +257,6 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         isUndoable.setSource(stackPart.getDisplayedCard().getActiveCanvas().isUndoableObservable());
         isRedoable.setSource(stackPart.getDisplayedCard().getActiveCanvas().isRedoableObservable());
         canvasScale.setSource(stackPart.getDisplayedCard().getActiveCanvas().getScaleObservable());
-
         isSelectable.setSource(Observable.combineLatest(
                 isUndoable.getObservable(),
                 WyldCard.getInstance().getToolsManager().getSelectedImageProvider(),
