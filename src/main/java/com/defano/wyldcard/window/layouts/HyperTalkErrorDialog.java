@@ -8,6 +8,7 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.Breadcrumb;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.ThreadUtils;
 import org.antlr.v4.runtime.Token;
 
 import javax.swing.*;
@@ -24,24 +25,29 @@ public class HyperTalkErrorDialog {
         return instance;
     }
 
-    public synchronized void showError(HtException e) {
-        e.printStackTrace();
+    public void showError(HtException e) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            e.printStackTrace();
 
-        if (!errorDialogVisible) {
-            errorDialogVisible = true;
+            if (!errorDialogVisible) {
+                errorDialogVisible = true;
 
-            if (isEditable(e)) {
-                // Suppress further error messages while user is editing script of this part
-                ScriptEditor scriptEditor = WyldCard.getInstance().getWindowManager().findScriptEditorForPart(e.getBreadcrumb().getPartModel());
-                if (scriptEditor == null || !scriptEditor.isVisible()) {
-                    showEditableError(e.getMessage(), e.getBreadcrumb().getContext().getCurrentStack(), e.getBreadcrumb().getPartModel(), e.getBreadcrumb().getToken());
+                if (isEditable(e)) {
+                    if (e.getBreadcrumb() != null)
+                        System.err.println(e.getBreadcrumb().toString());
+
+                    // Suppress further error messages while user is editing script of this part
+                    ScriptEditor scriptEditor = WyldCard.getInstance().getWindowManager().findScriptEditorForPart(e.getBreadcrumb().getPartModel());
+                    if (scriptEditor == null || !scriptEditor.isVisible()) {
+                        showEditableError(e.getMessage(), e.getBreadcrumb().getContext().getCurrentStack(), e.getBreadcrumb().getPartModel(), e.getBreadcrumb().getToken());
+                    }
+                } else {
+                    showUneditableError(e.getMessage());
                 }
-            } else {
-                showUneditableError(e.getMessage());
-            }
 
-            errorDialogVisible = false;
-        }
+                errorDialogVisible = false;
+            }
+        });
     }
 
     @RunOnDispatch

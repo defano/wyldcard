@@ -112,9 +112,9 @@ public enum VisualEffectName {
                 }
                 break;
             case ZOOM:
-                if (direction == VisualEffectDirection.IN) {
+                if (direction == VisualEffectDirection.IN || direction == VisualEffectDirection.OPEN) {
                     return SegueName.ZOOM_IN;
-                } else if (direction == VisualEffectDirection.OUT) {
+                } else if (direction == VisualEffectDirection.OUT || direction == VisualEffectDirection.CLOSE) {
                     return SegueName.ZOOM_OUT;
                 }
                 break;
