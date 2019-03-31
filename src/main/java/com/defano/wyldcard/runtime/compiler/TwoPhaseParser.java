@@ -37,7 +37,7 @@ public class TwoPhaseParser {
     public static Object parseScript(CompilationUnit compilationUnit, String scriptText) throws HtException {
 
         // Nothing to do for empty scripts
-        if (scriptText == null || scriptText.trim().length() == 0) {
+        if (scriptText == null || scriptText.trim().isEmpty()) {
             return new Script();
         }
 
@@ -130,11 +130,11 @@ public class TwoPhaseParser {
      * @param scriptText The script text
      * @return Script text with ignored lines explicitly commented out
      */
-    private static String commentNonHandlerLines(String scriptText) {
+    public static String commentNonHandlerLines(String scriptText) {
         String inHandler = null;
         StringBuilder lines = new StringBuilder();
 
-        for (String line : scriptText.split("\n")) {
+        for (String line : scriptText.trim().split("\n")) {
 
             // Beginning of a handler block?
             if (inHandler == null && (line.matches(HANDLER_START) || line.matches(FUNCTION_START))) {
@@ -142,7 +142,7 @@ public class TwoPhaseParser {
             }
 
             // Outside of handler; prepend line with "--"
-            if (inHandler == null) {
+            if (inHandler == null && !line.startsWith("--") && !line.isEmpty()) {
                 lines.append("--")
                         .append(line)
                         .append("\n");
