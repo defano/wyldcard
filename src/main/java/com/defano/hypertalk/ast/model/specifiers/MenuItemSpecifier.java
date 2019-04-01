@@ -56,8 +56,8 @@ public class MenuItemSpecifier {
         }, HtException.class);
     }
 
-    public JMenu getSpecifiedMenu(ExecutionContext context) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> this.menu.getSpecifiedMenu(context));
+    public JMenu getSpecifiedMenu(ExecutionContext context) throws HtException {
+        return ThreadUtils.callCheckedAndWaitAsNeeded(() -> this.menu.getSpecifiedMenu(context), HtException.class);
     }
 
     public int getSpecifiedItemIndex(ExecutionContext context) throws HtException {
@@ -81,9 +81,7 @@ public class MenuItemSpecifier {
 
                     throw new HtSemanticException("No such menu item " + exprValue.toString() + " in menu " + menu.getText());
                 }
-            }
-
-            else if (ordinal != null) {
+            } else if (ordinal != null) {
                 if (menu.getItemCount() == 0) {
                     throw new HtSemanticException("There are no menu items.");
                 }
@@ -100,7 +98,8 @@ public class MenuItemSpecifier {
                 }
             }
 
-            throw new HtSemanticException("No such menu item.");            }, HtException.class);
+            throw new HtSemanticException("No such menu item.");
+        }, HtException.class);
     }
 
     private boolean isSeparator(JMenuItem item) {
