@@ -1,12 +1,15 @@
 package com.defano.hypertalk.ast.model;
 
+import com.defano.wyldcard.message.Message;
+
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public enum SystemMessage {
+public enum SystemMessage implements Message {
     MOUSE_UP("mouseUp", "Sent when the user presses and releases the mouse over this part."),
     MOUSE_DOWN("mouseDown", "Sent when the user presses the mouse over this part."),
     MOUSE_STILL_DOWN("mouseStillDown", "Sent when the user presses and holds the mouse over this part."),
@@ -215,5 +218,19 @@ public enum SystemMessage {
         }
 
         return null;
+    }
+
+    @Override
+    public String getMessageName() {
+        return messageName;
+    }
+
+    @Override
+    public List<Value> getArguments() {
+        if (arguments == null) {
+            return new ArrayList<>();
+        } else {
+            return Arrays.stream(arguments).map(Value::new).collect(Collectors.toList());
+        }
     }
 }

@@ -21,9 +21,9 @@ public class DefaultHandlerExecutionTask implements HandlerExecutionTask {
     private final ExecutionContext context;
     private final NamedBlock handler;
     private final PartSpecifier me;
-    private final ListExp arguments;
+    private final List<Value> arguments;
 
-    public DefaultHandlerExecutionTask(ExecutionContext context, PartSpecifier me, NamedBlock handler, ListExp arguments) {
+    public DefaultHandlerExecutionTask(ExecutionContext context, PartSpecifier me, NamedBlock handler, List<Value> arguments) {
         this.context = context;
         this.handler = handler;
         this.me = me;
@@ -34,13 +34,10 @@ public class DefaultHandlerExecutionTask implements HandlerExecutionTask {
     public Boolean call() throws HtException {
         boolean trapped = true;
 
-        // Arguments passed to handler must be evaluated in the context of the caller (i.e., before we push a new stack frame)
-        List<Value> evaluatedArguments = arguments.evaluateAsList(context);
-
-        HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, evaluatedArguments, me, context.getTarget() == null, context.getStackDepth(), true));
+        HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, arguments, me, context.getTarget() == null, context.getStackDepth(), true));
 
         // Push a new context
-        context.pushStackFrame(handler.getLineNumber(), handler.name, me, evaluatedArguments);
+        context.pushStackFrame(handler.getLineNumber(), handler.name, me, arguments);
 
         // Target refers to the part first receiving the message
         if (context.getTarget() == null) {
@@ -52,7 +49,7 @@ public class DefaultHandlerExecutionTask implements HandlerExecutionTask {
             String theParam = handler.parameters.list.get(index);
 
             // Handlers may be invoked with missing arguments; assume empty for missing args
-            Value theArg = index >= evaluatedArguments.size() ? new Value() : evaluatedArguments.get(index);
+            Value theArg = index >= arguments.size() ? new Value() : arguments.get(index);
             context.setVariable(theParam, theArg);
         }
 

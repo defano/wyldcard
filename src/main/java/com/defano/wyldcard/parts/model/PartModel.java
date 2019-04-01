@@ -8,7 +8,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.Messagable;
+import com.defano.wyldcard.message.Messagable;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.field.FieldModel;

@@ -84,7 +84,7 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
     private void send(SystemMessage message, PartModel... models) {
         for (PartModel model : models) {
             if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BROWSE && deferCycles < 1) {
-                model.receiveMessage(new ExecutionContext(model), message.messageName, new ListExp(null), (command, wasTrapped, error) -> {
+                model.receiveMessage(new ExecutionContext(model), message, (command, wasTrapped, error) -> {
                     if (error != null) {
                         error.printStackTrace();
                         deferCycles = IDLE_DEFERRAL_CYCLES;

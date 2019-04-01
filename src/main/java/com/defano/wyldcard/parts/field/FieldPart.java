@@ -1,13 +1,12 @@
 package com.defano.wyldcard.parts.field;
 
-import com.defano.hypertalk.ast.expressions.ListExp;
-import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.DeferredKeyEventComponent;
+import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.parts.builder.FieldModelBuilder;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
@@ -197,8 +196,8 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
             setClickLine(e);
             setClickChunk(e);
 
-            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOWN.messageName);
-            MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_STILL_DOWN.messageName));
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOWN);
+            MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_STILL_DOWN));
         }
     }
 
@@ -210,7 +209,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
 
         // Do not set mouseUp if cursor is not released while over the part
         if (SwingUtilities.isLeftMouseButton(e) && isStillInFocus && !isPartToolActive()) {
-            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_UP.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_UP);
         }
     }
 
@@ -220,7 +219,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         super.mouseEntered(e);
 
         if (!isPartToolActive()) {
-            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER);
             WyldCard.getInstance().getPeriodicMessageManager().addWithin(getPartModel());
         }
     }
@@ -231,7 +230,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         super.mouseExited(e);
 
         if (!isPartToolActive()) {
-            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE);
             WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
         }
     }
@@ -242,7 +241,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         super.mouseClicked(e);
 
         if (e.getClickCount() == 2 && !isPartToolActive()) {
-            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOUBLE_CLICK);
         }
     }
 
@@ -254,7 +253,11 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         super.keyTyped(e);
 
         if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get() && !isPartToolActive()) {
-            getPartModel().receiveAndDeferKeyEvent(new ExecutionContext(this), SystemMessage.KEY_DOWN.messageName, new ListExp(null, new LiteralExp(null, String.valueOf(e.getKeyChar()))), e, this);
+            getPartModel().receiveAndDeferKeyEvent(
+                    new ExecutionContext(this),
+                    MessageBuilder.named(SystemMessage.KEY_DOWN.messageName).withArgument(e.getKeyChar()).build(),
+                    e,
+                    this);
         }
     }
 
@@ -277,7 +280,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
 
             // EnterInField message should be dispatched even during redispatchInProgress
             if (bsm != null && (!redispatchInProgress.get() || bsm.message == SystemMessage.ENTER_IN_FIELD)) {
-                getPartModel().receiveAndDeferKeyEvent(new ExecutionContext(this), bsm.message.messageName, bsm.boundArguments, e, this);
+                getPartModel().receiveAndDeferKeyEvent(new ExecutionContext(this), bsm, e, this);
             }
         }
     }
@@ -380,14 +383,14 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
     @Override
     public void focusGained(FocusEvent e) {
         if (getHyperCardTextPane().isEditable()) {
-            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_FIELD.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_FIELD);
         }
     }
 
     @Override
     public void focusLost(FocusEvent e) {
         if (getHyperCardTextPane().isEditable()) {
-            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.EXIT_FIELD.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.EXIT_FIELD);
         }
     }
 }

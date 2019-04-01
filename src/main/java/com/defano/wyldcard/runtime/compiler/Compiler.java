@@ -1,7 +1,6 @@
 package com.defano.wyldcard.runtime.compiler;
 
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.Value;
@@ -12,6 +11,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.debug.message.HandlerInvocation;
 import com.defano.wyldcard.debug.message.HandlerInvocationBridge;
+import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.google.common.util.concurrent.*;
@@ -25,6 +25,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * A facade and thread model for executing HyperTalk scripts. All script compilation and execution should flow through
  * this class to assure proper threading.
  */
+@SuppressWarnings("UnstableApiUsage")
 public class Compiler {
 
     private final static int MAX_COMPILE_THREADS = 6;          // Simultaneous background parse tasks
@@ -174,26 +175,25 @@ public class Compiler {
      * @param context            The execution context
      * @param me                 The part whose script is being executed (for the purposes of the 'me' keyword).
      * @param script             The script of the part
-     * @param message            The command handler name.
-     * @param arguments          A list of expressions representing arguments passed with the message
+     * @param message            The message whose handler should be executed.
      * @param completionObserver Invoked after the handler has executed on the same thread on which the handler ran.
      */
-    public static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, String message, ListExp arguments, HandlerCompletionObserver completionObserver) {
+    public static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, Message message, HandlerCompletionObserver completionObserver) {
 
         // Find handler for message in the script
-        NamedBlock handler = script == null ? null : script.getHandler(message);
+        NamedBlock handler = script == null ? null : script.getHandler(message.getMessageName());
         CheckedFuture<Boolean, HtException> future;
 
         // Script implements handler for message; execute it
         if (handler != null) {
-            future = getFutureForHandlerExecutionTask(new DefaultHandlerExecutionTask(context, me, handler, arguments));
+            future = getFutureForHandlerExecutionTask(new DefaultHandlerExecutionTask(context, me, handler, message.getArguments()));
         }
 
         // Special case: No handler in the script for this message; produce a "no-op" execution
         else {
             future = getFutureForHandlerExecutionTask(() -> {
                 // Synthesize handler invocation for message watcher
-                HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message, new ArrayList<>(), me, context.getTarget() == null, context.getStackDepth(), false);
+                HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message.getMessageName(), new ArrayList<>(), me, context.getTarget() == null, context.getStackDepth(), false);
                 HandlerInvocationBridge.getInstance().notifyMessageHandled(invocation);
 
                 // No handler for script, but we still need to capture that this part was the target
@@ -206,7 +206,7 @@ public class Compiler {
             });
         }
 
-        Futures.addCallback(future, new HandlerExecutionFutureCallback(me, script, message, completionObserver));
+        Futures.addCallback(future, new HandlerExecutionFutureCallback(me, script, message.getMessageName(), completionObserver));
     }
 
     /**
@@ -265,7 +265,7 @@ public class Compiler {
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
     public static CheckedFuture<Boolean, HtException> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
-        return getFutureForHandlerExecutionTask(new DefaultHandlerExecutionTask(context, me, NamedBlock.anonymousBlock(blockingCompile(CompilationUnit.SCRIPTLET, statementList).getStatements()), new ListExp(null)));
+        return getFutureForHandlerExecutionTask(new DefaultHandlerExecutionTask(context, me, NamedBlock.anonymousBlock(blockingCompile(CompilationUnit.SCRIPTLET, statementList).getStatements()), new ArrayList<>()));
     }
 
     /**

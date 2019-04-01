@@ -389,7 +389,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
 
     private void insertCard(CardModel cardModel) {
         getStackModel().addCard(cardModel, getStackModel().getCurrentCardIndex() + 1);
-        getStackModel().receiveMessage(new ExecutionContext(), SystemMessage.NEW_CARD.messageName);
+        getStackModel().receiveMessage(new ExecutionContext(), SystemMessage.NEW_CARD);
     }
 
     private boolean canDeleteCard(ExecutionContext context) {
@@ -461,7 +461,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     @Override
     public void partOpened(ExecutionContext context) {
         currentCard = loadCard(context, getStackModel().getCurrentCardIndex());
-        getStackModel().receiveMessage(context.bind(this), SystemMessage.OPEN_STACK.messageName);
+        getStackModel().receiveMessage(context.bind(this), SystemMessage.OPEN_STACK);
 
         fireOnCardOpened(getDisplayedCard());
         fireOnStackOpened();

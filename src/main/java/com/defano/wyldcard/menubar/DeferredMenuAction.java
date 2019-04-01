@@ -1,8 +1,8 @@
 package com.defano.wyldcard.menubar;
 
-import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.SystemMessage;
-import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.message.Message;
+import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 
@@ -61,7 +61,13 @@ public class DeferredMenuAction implements ActionListener {
             CountDownLatch cdl = new CountDownLatch(1);
             final boolean[] trapped = new boolean[1];
 
-            context.getCurrentStack().getDisplayedCard().getPartModel().receiveMessage(context, SystemMessage.DO_MENU.messageName, ListExp.fromValues(null, new Value(theMenu.getText()), new Value(theMenuItem.getText())), (command, wasTrapped, err) -> {
+            Message message = MessageBuilder
+                    .named(SystemMessage.DO_MENU.messageName)
+                    .withArgument(theMenu.getText())
+                    .withArgument(theMenuItem.getText())
+                    .build();
+
+            context.getCurrentStack().getDisplayedCard().getPartModel().receiveMessage(context, message, (command, wasTrapped, err) -> {
                 trapped[0] = wasTrapped;
                 cdl.countDown();
             });

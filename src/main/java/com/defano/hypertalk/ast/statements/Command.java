@@ -1,13 +1,17 @@
 package com.defano.hypertalk.ast.statements;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.preemptions.Preemption;
+import com.defano.wyldcard.message.Message;
+import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
-import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -35,7 +39,8 @@ public abstract class Command extends Statement implements MessageCompletionObse
         cdl = new CountDownLatch(1);
 
         // Send command message to current card
-        context.getCurrentCard().getPartModel().receiveMessage(context, messageName, getEvaluatedMessageArguments(context), this);
+        Message message = MessageBuilder.named(messageName).withArguments(getEvaluatedMessageArguments(context)).build();
+        context.getCurrentCard().getPartModel().receiveMessage(context, message, this);
 
         // Wait for command handler to finish executing
         try {
@@ -63,8 +68,8 @@ public abstract class Command extends Statement implements MessageCompletionObse
      * @throws HtSemanticException Thrown if an error occurs evaluating arguments
      * @param context The execution context.
      */
-    protected ListExp getEvaluatedMessageArguments(ExecutionContext context) throws HtException {
-        return new ListExp(null);
+    protected List<Value> getEvaluatedMessageArguments(ExecutionContext context) throws HtException {
+        return new ArrayList<>();
     }
 
     /** {@inheritDoc */

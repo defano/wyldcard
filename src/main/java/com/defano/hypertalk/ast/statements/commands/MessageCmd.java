@@ -2,29 +2,38 @@ package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.message.Message;
+import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import java.util.List;
+
 public class MessageCmd extends Statement {
 
-    private final String message;
+    private final String messageName;
     private final ListExp messageArgs;
     private PartExp messageRecipient;
 
-    public MessageCmd(ParserRuleContext context, PartExp messageRecipient, String message, ListExp messageArgs) {
+    public MessageCmd(ParserRuleContext context, PartExp messageRecipient, String messageName, ListExp messageArgs) {
         super(context);
-        this.message = message;
+        this.messageName = messageName;
         this.messageRecipient = messageRecipient;
         this.messageArgs = messageArgs;
     }
 
-    public MessageCmd(ParserRuleContext context, String message, ListExp messageArgs) {
-        this(context, null, message, messageArgs);
+    public MessageCmd(ParserRuleContext context, String messageName, ListExp messageArgs) {
+        this(context, null, messageName, messageArgs);
+    }
+
+    public MessageCmd(ParserRuleContext context, String messageName, List<Value> messageArgs) {
+        this(context, null, messageName, ListExp.fromValues(context, messageArgs.toArray(new Value[0])));
     }
 
     @Override
@@ -43,12 +52,14 @@ public class MessageCmd extends Statement {
 
         // Special case: Message is originating from message box; use unbound context when sending
         if (recipientModel.getParentStackModel() == null) {
-            recipientModel.receiveMessage(context.unbind(), message, messageArgs);
+            Message msg = MessageBuilder.named(messageName).withArgumentExpression(context, messageArgs).build();
+            recipientModel.receiveMessage(context.unbind(), msg);
         }
 
         // Typical case: One stack part is sending a message to another stack part
         else {
-            recipientModel.receiveMessage(context.bind(recipientModel), message, messageArgs);
+            Message msg = MessageBuilder.named(messageName).withArgumentExpression(context, messageArgs).build();
+            recipientModel.receiveMessage(context.bind(recipientModel), msg);
         }
     }
 

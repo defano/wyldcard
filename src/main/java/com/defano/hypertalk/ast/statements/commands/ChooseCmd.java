@@ -8,7 +8,11 @@ import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import com.google.common.collect.Lists;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ChooseCmd extends Command {
 
@@ -23,9 +27,10 @@ public class ChooseCmd extends Command {
         WyldCard.getInstance().getToolsManager().forceToolSelection(getChosenTool(context), false);
     }
 
-    protected ListExp getEvaluatedMessageArguments(ExecutionContext context) throws HtException {
+    @Override
+    protected List<Value> getEvaluatedMessageArguments(ExecutionContext context) throws HtException {
         ToolType theTool = getChosenTool(context);
-        return ListExp.fromValues(null, new Value(theTool.getPrimaryToolName()), new Value(theTool.getToolNumber()));
+        return Arrays.asList(new Value(theTool.getPrimaryToolName()), new Value(theTool.getToolNumber()));
     }
 
     private ToolType getChosenTool(ExecutionContext context) throws HtException {

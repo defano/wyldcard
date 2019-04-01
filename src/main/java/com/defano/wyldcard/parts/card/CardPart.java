@@ -1,7 +1,5 @@
 package com.defano.wyldcard.parts.card;
 
-import com.defano.hypertalk.ast.expressions.ListExp;
-import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.PaintCanvas;
@@ -16,8 +14,10 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseListenable;
 import com.defano.wyldcard.awt.MouseStillDown;
+import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.ToolEditablePart;
+import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.button.ButtonPart;
@@ -157,15 +157,15 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      */
     @RunOnDispatch
     public void addNewPartToCard(ExecutionContext context, ToolEditablePart newPart) {
-        String newPartMessage;
+        Message newPartMessage;
 
         // Add the part to the parts table
         if (newPart instanceof ButtonPart) {
             buttons.add((ButtonPart) newPart);
-            newPartMessage = SystemMessage.NEW_BUTTON.messageName;
+            newPartMessage = SystemMessage.NEW_BUTTON;
         } else if (newPart instanceof FieldPart) {
             fields.add((FieldPart) newPart);
-            newPartMessage = SystemMessage.NEW_FIELD.messageName;
+            newPartMessage = SystemMessage.NEW_FIELD;
         } else {
             throw new IllegalStateException("Bug! Can't add this part to a card: " + newPart);
         }
@@ -538,14 +538,14 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         getPartModel().getBackgroundModel().notifyPropertyChangedObserver(context, this);
 
         // Send openCard message after UI elements are ready
-        SwingUtilities.invokeLater(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD.messageName));
+        SwingUtilities.invokeLater(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD));
     }
 
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
     public void partClosed(ExecutionContext context) {
-        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.CLOSE_CARD.messageName);
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.CLOSE_CARD);
 
         // Lets parts know they're about to go away
         for (ButtonPart p : buttons.getAll()) {
@@ -606,7 +606,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     @RunOnDispatch
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
-            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOUBLE_CLICK);
         }
 
         // Search results are reset/cleared whenever the card is clicked
@@ -617,29 +617,29 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     @Override
     @RunOnDispatch
     public void mousePressed(MouseEvent e) {
-        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOWN.messageName);
-        MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_STILL_DOWN.messageName));
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOWN);
+        MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_STILL_DOWN));
     }
 
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
     public void mouseReleased(MouseEvent e) {
-        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_UP.messageName);
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_UP);
     }
 
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
     public void mouseEntered(MouseEvent e) {
-        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER.messageName);
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER);
     }
 
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
     public void mouseExited(MouseEvent e) {
-        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE.messageName);
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE);
     }
 
     /** {@inheritDoc} */
@@ -648,7 +648,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     public void keyTyped(KeyEvent e) {
         getPartModel().receiveMessage(
                 new ExecutionContext(this),
-                SystemMessage.KEY_DOWN.messageName, new ListExp(null, new LiteralExp(null, String.valueOf(e.getKeyChar()))));
+                MessageBuilder.named(SystemMessage.KEY_DOWN.messageName).withArgument(e.getKeyChar()).build());
     }
 
     /** {@inheritDoc} */
@@ -657,11 +657,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     public void keyPressed(KeyEvent e) {
         BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, false);
         if (bsm != null) {
-            getPartModel().receiveMessage(
-                    new ExecutionContext(this),
-                    bsm.message.messageName,
-                    bsm.boundArguments,
-                    new TextArrowsMessageCompletionObserver(this, e));
+            getPartModel().receiveMessage(new ExecutionContext(this), bsm, new TextArrowsMessageCompletionObserver(this, e));
         }
     }
 

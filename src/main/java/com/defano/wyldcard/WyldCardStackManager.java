@@ -234,8 +234,8 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
             focusedStack.blockingFirst().removeNavigationObserver(this);
 
             // Send suspendStack/resumeStack messages
-            focusedStack.blockingFirst().getDisplayedCard().getPartModel().receiveMessage(new ExecutionContext(focusedStack.blockingFirst()), SystemMessage.SUSPEND_STACK.messageName);
-            stackPart.getDisplayedCard().getPartModel().receiveMessage(new ExecutionContext(stackPart), SystemMessage.RESUME_STACK.messageName);
+            focusedStack.blockingFirst().getDisplayedCard().getPartModel().receiveMessage(new ExecutionContext(focusedStack.blockingFirst()), SystemMessage.SUSPEND_STACK);
+            stackPart.getDisplayedCard().getPartModel().receiveMessage(new ExecutionContext(stackPart), SystemMessage.RESUME_STACK);
         }
 
         // Make the focused stack the window dock

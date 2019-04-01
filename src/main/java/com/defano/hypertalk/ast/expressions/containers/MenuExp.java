@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.model.specifiers.MenuSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
+import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -130,7 +131,7 @@ public class MenuExp extends ContainerExp {
                             .atIndex(index)
                             .withAction(e -> {
                                 if (!menuMessages.isEmpty()) {
-                                    context.getCurrentCard().getPartModel().receiveMessage(context, menuMessages.get(messageIdx).toString());
+                                    context.getCurrentCard().getPartModel().receiveMessage(context, MessageBuilder.fromString(context, menuMessages.get(messageIdx).toString()));
                                 }
                             })
                             .build(menu);

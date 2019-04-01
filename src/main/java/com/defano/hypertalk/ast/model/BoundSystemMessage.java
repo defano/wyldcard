@@ -1,19 +1,32 @@
 package com.defano.hypertalk.ast.model;
 
-import com.defano.hypertalk.ast.expressions.ListExp;
+import com.defano.wyldcard.message.Message;
 
-public class BoundSystemMessage {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class BoundSystemMessage implements Message {
 
     public final SystemMessage message;
-    public final ListExp boundArguments;
+    private List<Value> boundArguments = new ArrayList<>();
 
     public BoundSystemMessage(SystemMessage message) {
         this.message = message;
-        this.boundArguments = new ListExp(null);
     }
 
     public BoundSystemMessage(SystemMessage message, Value... boundArguments) {
         this.message = message;
-        this.boundArguments = ListExp.fromValues(null, boundArguments);
+        this.boundArguments = Arrays.asList(boundArguments);
+    }
+
+    @Override
+    public String getMessageName() {
+        return message.messageName;
+    }
+
+    @Override
+    public List<Value> getArguments() {
+        return boundArguments;
     }
 }

@@ -1,12 +1,12 @@
-package com.defano.wyldcard.parts;
+package com.defano.wyldcard.message;
 
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.parts.DeferredKeyEventComponent;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -37,28 +37,13 @@ public interface Messagable {
     PartSpecifier getMe(ExecutionContext context);
 
     /**
-     * Asynchronously sends a message (i.e., 'mouseUp') to this part's message passing hierarchy.
-     *
-     * @param context The execution context
-     * @param message The message to be passed.
-     */
-    default void receiveMessage(ExecutionContext context, String message) {
-        receiveMessage(context, message, new ListExp(null), (command, trapped, err) -> {
-            if (err != null) {
-                WyldCard.getInstance().showErrorDialogAndAbort(err);
-            }
-        });
-    }
-
-    /**
      * Asynchronously sends a message with bound arguments (i.e., 'doMenu') to this part's message passing hierarchy.
      *
      * @param context   The execution context
      * @param message   The message to be passed
-     * @param arguments The arguments to the message
      */
-    default void receiveMessage(ExecutionContext context, String message, ListExp arguments) {
-        receiveMessage(context, message, arguments, (command, trapped, err) -> {
+    default void receiveMessage(ExecutionContext context, Message message) {
+        receiveMessage(context, message, (command, trapped, err) -> {
             if (err != null) {
                 WyldCard.getInstance().showErrorDialogAndAbort(err);
             }
@@ -70,31 +55,30 @@ public interface Messagable {
      * hierarchy, notifying an observer when complete.
      *
      * @param context      The execution context
-     * @param message      The name of the command; cannot be null.
-     * @param arguments    The arguments to pass to this command; cannot be null.
+     * @param message      The message to be received by this part
      * @param onCompletion A callback that will fire as soon as the command has been executed in script; cannot be null.
      *                     Note that this callback will not fire if the script terminates as a result of an error.
      */
-    default void receiveMessage(ExecutionContext context, String message, ListExp arguments, MessageCompletionObserver onCompletion) {
+    default void receiveMessage(ExecutionContext context, Message message, MessageCompletionObserver onCompletion) {
 
         // No messages are sent when cmd-option is down; some messages not sent when 'lockMessages' is true
         if (WyldCard.getInstance().getKeyboardManager().isPeeking(context) ||
-                (SystemMessage.isLockable(message)) && WyldCard.getInstance().getWyldCardProperties().isLockMessages()) {
+                (SystemMessage.isLockable(message.getMessageName())) && WyldCard.getInstance().getWyldCardProperties().isLockMessages()) {
 
-            onCompletion.onMessagePassed(message, false, null);
+            onCompletion.onMessagePassed(message.getMessageName(), false, null);
             return;
         }
 
         // Attempt to invoke command handler in this part and listen for completion
-        Compiler.asyncExecuteHandler(context, getMe(context), getScript(context), message, arguments, (me, script, handler, trappedMessage, exception) -> {
+        Compiler.asyncExecuteHandler(context, getMe(context), getScript(context), message, (me, script, handler, trappedMessage, exception) -> {
             // Did message generate an error
             if (exception != null) {
-                onCompletion.onMessagePassed(message, true, exception);
+                onCompletion.onMessagePassed(message.getMessageName(), true, exception);
             }
 
             // Did this part trap this command?
             else if (trappedMessage) {
-                onCompletion.onMessagePassed(message, true, null);
+                onCompletion.onMessagePassed(message.getMessageName(), true, null);
             }
 
             // Message not trapped, send message to next part in the hierarchy
@@ -102,9 +86,9 @@ public interface Messagable {
                 // Get next recipient in message passing order; null if no other parts receive message
                 Messagable nextRecipient = getNextMessageRecipient(context, getMe(context).getType());
                 if (nextRecipient == null) {
-                    onCompletion.onMessagePassed(message, false, null);
+                    onCompletion.onMessagePassed(message.getMessageName(), false, null);
                 } else {
-                    nextRecipient.receiveMessage(context, message, arguments, onCompletion);
+                    nextRecipient.receiveMessage(context, message, onCompletion);
                 }
             }
         });
@@ -122,16 +106,15 @@ public interface Messagable {
      * with 'false' after the message has been completely received.
      *
      * @param context   The execution context
-     * @param command   The name of the command
-     * @param arguments The arguments to pass to this command
+     * @param message   The message to be received
      * @param e         The input event to consume if the command is trapped by the part (or fails to invoke 'pass') within
      */
-    default void receiveAndDeferKeyEvent(ExecutionContext context, String command, ListExp arguments, KeyEvent e, DeferredKeyEventComponent c) {
+    default void receiveAndDeferKeyEvent(ExecutionContext context, Message message, KeyEvent e, DeferredKeyEventComponent c) {
         InputEvent eventCopy = new KeyEvent(e.getComponent(), e.getID(), e.getWhen(), e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation());
         e.consume();
 
         c.setPendingRedispatch(true);
-        receiveMessage(context, command, arguments, (command1, wasTrapped, error) -> {
+        receiveMessage(context, message, (command1, wasTrapped, error) -> {
             if (!wasTrapped) {
                 c.dispatchEvent(eventCopy);
             }

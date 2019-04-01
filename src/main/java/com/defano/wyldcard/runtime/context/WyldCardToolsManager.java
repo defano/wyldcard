@@ -1,9 +1,7 @@
 package com.defano.wyldcard.runtime.context;
 
-import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.ToolType;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.transform.dither.Ditherer;
 import com.defano.jmonet.transform.dither.FloydSteinbergDitherer;
 import com.defano.jmonet.canvas.PaintCanvas;
@@ -22,6 +20,8 @@ import com.defano.jmonet.tools.util.ImageUtils;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.PaintBrush;
 import com.defano.wyldcard.paint.ToolMode;
+import com.defano.wyldcard.message.Message;
+import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
 import com.google.inject.Singleton;
 import io.reactivex.Observable;
@@ -410,7 +410,13 @@ public class WyldCardToolsManager implements ToolsManager {
 
     @Override
     public void chooseTool(ToolType toolType) {
-        WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().receiveMessage(ExecutionContext.unboundInstance(), SystemMessage.CHOOSE.messageName, ListExp.fromValues(null, new Value(toolType.getPrimaryToolName()), new Value(toolType.getToolNumber())), (command, wasTrapped, err) -> {
+        Message message = MessageBuilder
+                .named(SystemMessage.CHOOSE.messageName)
+                .withArgument(toolType.getPrimaryToolName())
+                .withArgument(toolType.getToolNumber())
+                .build();
+
+        WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().receiveMessage(ExecutionContext.unboundInstance(), message, (command, wasTrapped, err) -> {
             if (!wasTrapped) {
                 SwingUtilities.invokeLater(() -> forceToolSelection(toolType, false));
             }
