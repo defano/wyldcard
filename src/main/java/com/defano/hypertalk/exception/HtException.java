@@ -3,7 +3,8 @@ package com.defano.hypertalk.exception;
 import com.defano.wyldcard.runtime.Breadcrumb;
 
 /**
- * A base class for all HyperTalk-related checked exceptions.
+ * A base class for all HyperTalk-related checked exceptions. HyperTalk exceptions may contain a "breadcrumb" that
+ * identifies the part script and line number where the issue originated.
  */
 public class HtException extends Exception {
 

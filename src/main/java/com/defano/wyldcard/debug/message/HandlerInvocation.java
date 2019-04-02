@@ -2,15 +2,16 @@ package com.defano.wyldcard.debug.message;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.wyldcard.message.Message;
+import com.defano.wyldcard.message.MessageBuilder;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class HandlerInvocation implements Comparable<HandlerInvocation> {
+public class HandlerInvocation implements Comparable<HandlerInvocation>, Message {
 
     private final String thread;
-    private final String message;
-    private final List<Value> arguments;
+    private final Message message;
     private final PartSpecifier recipient;
     private final int stackDepth;
     private final boolean messageHandled;
@@ -19,10 +20,13 @@ public class HandlerInvocation implements Comparable<HandlerInvocation> {
 
     private static AtomicLong globalSequence = new AtomicLong(0);
 
-    public HandlerInvocation(String thread, String message, List<Value> arguments, PartSpecifier recipient, boolean isTarget, int stackDepth, boolean msgHandled) {
+    public HandlerInvocation(String thread, String messageName, List<Value> messageArguments, PartSpecifier recipient, boolean isTarget, int stackDepth, boolean msgHandled) {
+        this(thread, MessageBuilder.named(messageName).withArguments(messageArguments).build(), recipient, isTarget, stackDepth, msgHandled);
+    }
+
+    public HandlerInvocation(String thread, Message message, PartSpecifier recipient, boolean isTarget, int stackDepth, boolean msgHandled) {
         this.thread = thread;
         this.message = message;
-        this.arguments = arguments;
         this.recipient = recipient;
         this.stackDepth = stackDepth;
         this.messageHandled = msgHandled;
@@ -35,12 +39,14 @@ public class HandlerInvocation implements Comparable<HandlerInvocation> {
         return thread;
     }
 
-    public String getMessage() {
-        return message;
+    @Override
+    public String getMessageName() {
+        return message.getMessageName();
     }
 
+    @Override
     public List<Value> getArguments() {
-        return arguments;
+        return message.getArguments();
     }
 
     public PartSpecifier getRecipient() {

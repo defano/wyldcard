@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypertalk.ast.model.Chunk;
+import com.defano.hypertalk.ast.model.chunk.Chunk;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;

@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.compiler;
+package com.defano.wyldcard.runtime.compiler.task;
 
 import com.defano.hypertalk.exception.HtException;
 

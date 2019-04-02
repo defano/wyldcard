@@ -1,4 +1,4 @@
-package com.defano.hypertalk.ast.model;
+package com.defano.hypertalk.ast.model.effect;
 
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.jsegue.SegueName;

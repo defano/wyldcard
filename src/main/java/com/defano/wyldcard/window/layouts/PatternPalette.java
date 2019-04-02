@@ -14,11 +14,12 @@ import java.awt.event.MouseEvent;
 
 public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
 
+    private final static PatternPalette instance = new PatternPalette();
+
     private final static int PATTERN_WIDTH = 30;
     private final static int PATTERN_HEIGHT = 20;
 
     private JPanel palettePanel;
-
     private PatternPaletteButton button1;
     private PatternPaletteButton button2;
     private PatternPaletteButton button3;
@@ -62,7 +63,7 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
 
     private PatternPaletteButton[] allPatterns;
 
-    public PatternPalette() {
+    private PatternPalette() {
         allPatterns = new PatternPaletteButton[]{
                 button1, button5, button9,  button13, button17, button21, button25, button29, button33, button37,
                 button2, button6, button10, button14, button18, button22, button26, button30, button34, button38,
@@ -78,6 +79,10 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
         WyldCard.getInstance().getToolsManager().getForegroundColorProvider().subscribe(this);
 
         WyldCardPatternFactory.getInstance().addPatternInvalidationObserver(this::redrawPatternButtons);
+    }
+
+    public static PatternPalette getInstance() {
+        return instance;
     }
 
     @Override

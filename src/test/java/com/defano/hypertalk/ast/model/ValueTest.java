@@ -1,6 +1,7 @@
 package com.defano.hypertalk.ast.model;
 
 import com.defano.hypertalk.GuiceTest;
+import com.defano.hypertalk.ast.model.chunk.ChunkType;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.TestChunkBuilder;

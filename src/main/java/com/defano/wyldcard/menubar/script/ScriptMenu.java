@@ -1,11 +1,11 @@
 package com.defano.wyldcard.menubar.script;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.layouts.FindDialog;
-import com.defano.wyldcard.window.layouts.ReplaceDialog;
+import com.defano.wyldcard.window.layouts.FindWindow;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
 
 public class ScriptMenu extends HyperCardMenu {
@@ -17,12 +17,7 @@ public class ScriptMenu extends HyperCardMenu {
                 .named("Find...")
                 .withShortcut('F')
                 .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
-                .withAction(e -> new WindowBuilder<>(new FindDialog())
-                        .withModel(editor)
-                        .withTitle("Find")
-                        .withLocationCenteredOver(editor)
-                        .asModal()
-                        .build())
+                .withAction(e -> WyldCard.getInstance().getWindowManager().getFindWindow().setVisible(true))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -56,12 +51,7 @@ public class ScriptMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Replace...")
                 .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
-                .withAction(e -> new WindowBuilder<>(new ReplaceDialog())
-                        .withModel(editor)
-                        .withTitle("Replace")
-                        .asModal()
-                        .withLocationCenteredOver(editor)
-                        .build())
+                .withAction(e -> WyldCard.getInstance().getWindowManager().getReplaceWindow().setVisible(true))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

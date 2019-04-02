@@ -34,23 +34,27 @@ public class WyldCardWindowManager implements WindowManager {
     private VariableWatcher variableWatcher;
     private ExpressionEvaluator expressionEvaluator;
     private MagnificationPalette magnifierPalette;
+    private FindWindow findWindow;
+    private ReplaceWindow replaceWindow;
     private JFrame hiddenPrintFrame;
 
     @RunOnDispatch
     @Override
     public void start() {
-        messageWindow = new MessageWindow();
-        paintToolsPalette = new PaintToolsPalette();
-        shapesPalette = new ShapesPalette();
-        linesPalette = new LinesPalette();
-        patternsPalette = new PatternPalette();
-        brushesPalette = new BrushesPalette();
-        colorPalette = new ColorPalette();
-        intensityPalette = new IntensityPalette();
-        messageWatcher = new MessageWatcher();
-        variableWatcher = new VariableWatcher();
-        expressionEvaluator = new ExpressionEvaluator();
-        magnifierPalette = new MagnificationPalette();
+        messageWindow = MessageWindow.getInstance();
+        paintToolsPalette = PaintToolsPalette.getInstance();
+        shapesPalette = ShapesPalette.getInstance();
+        linesPalette = LinesPalette.getInstance();
+        patternsPalette = PatternPalette.getInstance();
+        brushesPalette = BrushesPalette.getInstance();
+        colorPalette = ColorPalette.getInstance();
+        intensityPalette = IntensityPalette.getInstance();
+        messageWatcher = MessageWatcher.getInstance();
+        variableWatcher = VariableWatcher.getInstance();
+        expressionEvaluator = ExpressionEvaluator.getInstance();
+        magnifierPalette = MagnificationPalette.getInstance();
+        findWindow = FindWindow.getInstance();
+        replaceWindow = ReplaceWindow.getInstance();
         hiddenPrintFrame = WindowBuilder.buildHiddenScreenshotFrame();
 
         themeProvider.onNext(UIManager.getLookAndFeel().getName());
@@ -123,9 +127,10 @@ public class WyldCardWindowManager implements WindowManager {
                 .build();
 
         new WindowBuilder<>(expressionEvaluator)
+                .asPalette()
                 .withTitle("Evaluate Expression")
-                .asModal()
                 .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
+                .focusable(true)
                 .notInitiallyVisible()
                 .resizeable(true)
                 .build();
@@ -136,6 +141,20 @@ public class WyldCardWindowManager implements WindowManager {
                 .notInitiallyVisible()
                 .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
                 .resizeable(false)
+                .build();
+
+        new WindowBuilder<>(replaceWindow)
+                .withTitle("Replace")
+                .asPalette()
+                .focusable(true)
+                .notInitiallyVisible()
+                .build();
+
+        new WindowBuilder<>(findWindow)
+                .asPalette()
+                .withTitle("Find")
+                .focusable(true)
+                .notInitiallyVisible()
                 .build();
     }
 
@@ -241,6 +260,16 @@ public class WyldCardWindowManager implements WindowManager {
     @Override
     public MagnificationPalette getMagnifierPalette() {
         return magnifierPalette;
+    }
+
+    @Override
+    public FindWindow getFindWindow() {
+        return findWindow;
+    }
+
+    @Override
+    public ReplaceWindow getReplaceWindow() {
+        return replaceWindow;
     }
 
     @Override

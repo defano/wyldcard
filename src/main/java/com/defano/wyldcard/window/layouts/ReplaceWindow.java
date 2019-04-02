@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.layouts;
 
+import com.defano.wyldcard.util.DeepEnable;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -8,7 +9,9 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 
-public class ReplaceDialog extends WyldCardDialog<ScriptEditor> {
+public class ReplaceWindow extends WyldCardDialog<ScriptEditor> implements DeepEnable {
+
+    private final static ReplaceWindow instance = new ReplaceWindow();
 
     private JTextField findField;
     private JRadioButton wholeWordRadioButton;
@@ -24,7 +27,7 @@ public class ReplaceDialog extends WyldCardDialog<ScriptEditor> {
 
     private ScriptEditor editor;
 
-    public ReplaceDialog() {
+    private ReplaceWindow() {
         cancelButton.addActionListener(e -> this.setVisible(false));
 
         replaceButton.addActionListener(e ->
@@ -51,6 +54,10 @@ public class ReplaceDialog extends WyldCardDialog<ScriptEditor> {
                         wraparoundCheckBox.isSelected()));
     }
 
+    public static ReplaceWindow getInstance() {
+        return instance;
+    }
+
     @Override
     public JComponent getWindowPanel() {
         return replacePanel;
@@ -58,12 +65,16 @@ public class ReplaceDialog extends WyldCardDialog<ScriptEditor> {
 
     @Override
     public void bindModel(ScriptEditor scriptEditor) {
-        editor = scriptEditor;
+        setDeepEnabled(scriptEditor != null, getWindowPanel());
 
-        wholeWordRadioButton.setSelected(editor.getContext().getWholeWord());
-        caseSensitiveCheckBox.setSelected(editor.getContext().getMatchCase());
-        findField.setText(editor.getContext().getSearchFor());
-        replaceField.setText(editor.getContext().getReplaceWith());
+        if (scriptEditor != null) {
+            editor = scriptEditor;
+
+            wholeWordRadioButton.setSelected(editor.getContext().getWholeWord());
+            caseSensitiveCheckBox.setSelected(editor.getContext().getMatchCase());
+            findField.setText(editor.getContext().getSearchFor());
+            replaceField.setText(editor.getContext().getReplaceWith());
+        }
     }
 
     @Override

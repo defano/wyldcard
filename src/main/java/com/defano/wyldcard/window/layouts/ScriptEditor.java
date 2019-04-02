@@ -1,7 +1,7 @@
 package com.defano.wyldcard.window.layouts;
 
 import com.defano.hypertalk.ast.model.Script;
-import com.defano.hypertalk.ast.model.SystemMessage;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
@@ -43,7 +43,7 @@ import java.util.Collections;
 public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserDelegate, PropertyChangeObserver {
 
     private final HyperTalkTextEditor editor;
-    private final SearchContext context = new SearchContext();
+    private final SearchContext searchContext = new SearchContext();
     private final ScriptEditorMenuBar menuBar = new ScriptEditorMenuBar(this);
     private PartModel model;
     private Script compiledScript;
@@ -86,8 +86,17 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
             @Override
             public void windowClosing(WindowEvent e) {
                 ScriptEditor.this.close();
+                WyldCard.getInstance().getWindowManager().getFindWindow().bindModel(null);
+                WyldCard.getInstance().getWindowManager().getReplaceWindow().bindModel(null);
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+                WyldCard.getInstance().getWindowManager().getFindWindow().bindModel(ScriptEditor.this);
+                WyldCard.getInstance().getWindowManager().getReplaceWindow().bindModel(ScriptEditor.this);
             }
         });
+
     }
 
     @Override
@@ -276,7 +285,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
     }
 
     public SearchContext getContext() {
-        return context;
+        return searchContext;
     }
 
     @RunOnDispatch
@@ -284,37 +293,37 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
         RSyntaxTextArea textEditor = editor.getScriptField();
 
         provisionSearch(wholeWord, caseSensitive);
-        context.setSearchFor(text);
+        searchContext.setSearchFor(text);
 
-        SearchResult result = SearchEngine.find(textEditor, context);
+        SearchResult result = SearchEngine.find(textEditor, searchContext);
         if (!result.wasFound() && wrap) {
             textEditor.setCaretPosition(0);
-            SearchEngine.find(textEditor, context);
+            SearchEngine.find(textEditor, searchContext);
         }
     }
 
     @RunOnDispatch
     public void replaceAll(String findText, String replaceText, Boolean wholeWord, Boolean caseSensitive) {
         provisionSearch(wholeWord, caseSensitive);
-        context.setSearchFor(findText);
-        context.setReplaceWith(replaceText);
+        searchContext.setSearchFor(findText);
+        searchContext.setReplaceWith(replaceText);
 
-        SearchEngine.replaceAll(editor.getScriptField(), context);
+        SearchEngine.replaceAll(editor.getScriptField(), searchContext);
     }
 
     @RunOnDispatch
     public void replace(String findText, String replaceText, Boolean wholeWord, Boolean caseSensitive, boolean wrap) {
         provisionSearch(wholeWord, caseSensitive);
-        context.setSearchFor(findText);
-        context.setReplaceWith(replaceText);
+        searchContext.setSearchFor(findText);
+        searchContext.setReplaceWith(replaceText);
 
-        SearchEngine.replace(editor.getScriptField(), context);
+        SearchEngine.replace(editor.getScriptField(), searchContext);
         find(findText, wholeWord, caseSensitive, wrap);
     }
 
     @RunOnDispatch
     public void replace() {
-        replace(context.getSearchFor(), context.getReplaceWith(), null, null, true);
+        replace(searchContext.getSearchFor(), searchContext.getReplaceWith(), null, null, true);
     }
 
     @RunOnDispatch
@@ -357,16 +366,16 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
     @RunOnDispatch
     private void provisionSearch(Boolean wholeWord, Boolean caseSensitive) {
         if (wholeWord != null) {
-            context.setWholeWord(wholeWord);
+            searchContext.setWholeWord(wholeWord);
         }
 
         if (caseSensitive != null) {
-            context.setMatchCase(caseSensitive);
+            searchContext.setMatchCase(caseSensitive);
         }
 
-        context.setMarkAll(false);
-        context.setRegularExpression(false);
-        context.setSearchForward(true);
+        searchContext.setMarkAll(false);
+        searchContext.setRegularExpression(false);
+        searchContext.setSearchForward(true);
     }
 
     @RunOnDispatch
@@ -382,13 +391,13 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
     @RunOnDispatch
     public void makeSelectionFindText() {
         if (editor.getScriptField().getSelectedText().length() > 0) {
-            context.setSearchFor(editor.getScriptField().getSelectedText());
+            searchContext.setSearchFor(editor.getScriptField().getSelectedText());
         }
     }
 
     @RunOnDispatch
     public void find() {
-        find(context.getSearchFor(), null, null, true);
+        find(searchContext.getSearchFor(), null, null, true);
     }
 
     @RunOnDispatch

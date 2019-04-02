@@ -43,6 +43,10 @@ public interface WindowManager extends WindowFinder, Themeable {
 
     MagnificationPalette getMagnifierPalette();
 
+    FindWindow getFindWindow();
+
+    ReplaceWindow getReplaceWindow();
+
     void showPatternEditor();
 
     void showRecentCardsWindow();

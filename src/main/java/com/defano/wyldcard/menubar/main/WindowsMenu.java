@@ -4,6 +4,8 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.window.WyldCardFrame;
+import com.defano.wyldcard.window.layouts.FindWindow;
+import com.defano.wyldcard.window.layouts.ReplaceWindow;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
 import com.defano.wyldcard.window.layouts.StackWindow;
 
@@ -84,6 +86,8 @@ public class WindowsMenu extends HyperCardMenu {
         ((JMenu) parent).addSeparator();
 
         WyldCard.getInstance().getWindowManager().getPalettes(false)
+                .stream()
+                .filter(f -> !(f instanceof FindWindow) && !(f instanceof ReplaceWindow))
                 .forEach(wyldCardFrame -> MenuItemBuilder.ofCheckType()
                         .named(wyldCardFrame.getTitle())
                         .withAction(a -> wyldCardFrame.toggleVisible())
@@ -91,6 +95,7 @@ public class WindowsMenu extends HyperCardMenu {
                         .build(parent));
     }
 
+    @SuppressWarnings("unchecked")
     private void addScriptEditors(JMenuItem parent) {
         List<WyldCardFrame> windows = WyldCard.getInstance().getWindowManager().getWindows(true);
 
@@ -105,6 +110,7 @@ public class WindowsMenu extends HyperCardMenu {
                         .build(parent));
     }
 
+    @SuppressWarnings("unchecked")
     private void addStacks() {
         WyldCard.getInstance().getWindowManager().getWindows(true)
                 .stream()

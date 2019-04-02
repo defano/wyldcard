@@ -12,8 +12,9 @@ import java.awt.*;
 
 public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<Integer> {
 
-    private JPanel shapesPanel;
+    private final static ShapesPalette instance = new ShapesPalette();
 
+    private JPanel shapesPanel;
     private JButton triangle;
     private JButton rectangle;
     private JButton pentagon;
@@ -22,7 +23,7 @@ public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<In
 
     private JButton[] allShapes;
 
-    public ShapesPalette() {
+    private ShapesPalette() {
         allShapes = new JButton[]{triangle, rectangle, pentagon, hexagon, octogon};
 
         triangle.addActionListener(e -> selectShape(3));
@@ -32,6 +33,10 @@ public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<In
         octogon.addActionListener(e -> selectShape(8));
 
         WyldCard.getInstance().getToolsManager().getShapeSidesProvider().subscribe(this);
+    }
+
+    public static ShapesPalette getInstance() {
+        return instance;
     }
 
     @Override

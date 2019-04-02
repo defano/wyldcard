@@ -1,7 +1,6 @@
-package com.defano.wyldcard.runtime.compiler;
+package com.defano.wyldcard.runtime.compiler.task;
 
 import com.defano.hypertalk.ast.preemptions.Preemption;
-import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -9,7 +8,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.message.HandlerInvocation;
-import com.defano.wyldcard.debug.message.HandlerInvocationBridge;
+import com.defano.wyldcard.debug.message.HandlerInvocationCache;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.List;
@@ -19,23 +18,20 @@ public class FunctionExecutionTask implements Callable<Value> {
 
     private final ExecutionContext context;
     private final NamedBlock function;
-    private final Expression arguments;
+    private final List<Value> evaluatedArguments;
     private final PartSpecifier me;
 
-    public FunctionExecutionTask(ExecutionContext context, PartSpecifier me, NamedBlock function, Expression arguments) {
+    public FunctionExecutionTask(ExecutionContext context, PartSpecifier me, NamedBlock function, List<Value> arguments) {
         this.context = context;
         this.function = function;
-        this.arguments = arguments;
+        this.evaluatedArguments = arguments;
         this.me = me;
     }
 
     @Override
     public Value call() throws HtException {
 
-        // Arguments passed to function must be evaluated in the context of the caller (i.e., before we push a new stack frame)
-        List<Value> evaluatedArguments = arguments.evaluateAsList(context);
-
-        HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), function.name, evaluatedArguments, me, true, context.getStackDepth(), true));
+        HandlerInvocationCache.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), function.name, evaluatedArguments, me, true, context.getStackDepth(), true));
 
         context.pushStackFrame(function.getLineNumber(), function.name, me, evaluatedArguments);
 

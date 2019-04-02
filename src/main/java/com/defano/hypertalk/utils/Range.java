@@ -1,7 +1,7 @@
 package com.defano.hypertalk.utils;
 
-import com.defano.hypertalk.ast.model.Chunk;
-import com.defano.hypertalk.ast.model.ChunkType;
+import com.defano.hypertalk.ast.model.chunk.Chunk;
+import com.defano.hypertalk.ast.model.chunk.ChunkType;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
 
 public class Range {

@@ -1,7 +1,7 @@
 package com.defano.hypertalk.utils;
 
 import com.defano.hypertalk.GuiceTest;
-import com.defano.hypertalk.ast.model.ChunkType;
+import com.defano.hypertalk.ast.model.chunk.ChunkType;
 import com.defano.hypertalk.ast.model.Ordinal;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;

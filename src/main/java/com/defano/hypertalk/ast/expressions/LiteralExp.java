@@ -11,13 +11,13 @@ public class LiteralExp extends Expression {
     public LiteralExp(ParserRuleContext context, Object... literals) {
         super(context);
 
-        // Not just for performance, maintain "isQuotedLiteral" property of value
-        if (literals.length == 1 && literals[0] instanceof Value) {
-            this.literal = (Value) literals[0];
-        }
-
-        else if (literals.length == 1) {
-            this.literal = new Value(literals[0]);
+        if (literals.length == 1) {
+            // maintain "isQuotedLiteral" property of value
+            if (literals[0] instanceof Value) {
+                this.literal = (Value) literals[0];
+            } else {
+                this.literal = new Value(literals[0]);
+            }
         }
 
         // Special case: Produce a comma-separated list of values

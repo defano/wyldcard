@@ -144,7 +144,7 @@ public class DebugContext {
                 SwingUtilities.invokeLater(() -> {
                     editor.getEditor().finishDebugging();
                     WyldCard.getInstance().getWindowManager().getVariableWatcher().setWatchGlobalVariables();
-                    WyldCard.getInstance().getWindowManager().getExpressionEvaluator().setVisible(false);
+                    WyldCard.getInstance().getWindowManager().getExpressionEvaluator().setContext(ExecutionContext.unboundInstance());
                     clearDebugContext();
                 });
             }

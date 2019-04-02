@@ -1,5 +1,8 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.hypertalk.ast.model.chunk.Chunk;
+import com.defano.hypertalk.ast.model.chunk.ChunkType;
+import com.defano.hypertalk.ast.model.chunk.CompositeChunk;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.HyperCardButton;

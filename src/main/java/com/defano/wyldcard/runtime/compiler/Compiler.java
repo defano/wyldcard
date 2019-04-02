@@ -10,14 +10,16 @@ import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.debug.message.HandlerInvocation;
-import com.defano.wyldcard.debug.message.HandlerInvocationBridge;
+import com.defano.wyldcard.debug.message.HandlerInvocationCache;
 import com.defano.wyldcard.message.Message;
+import com.defano.wyldcard.runtime.compiler.task.*;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.google.common.util.concurrent.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -73,7 +75,7 @@ public class Compiler {
      * Compiles the given script on the current thread.
      *
      * @param compilationUnit The type of script/scriptlet to compile
-     * @param scriptText The script text to parse.
+     * @param scriptText      The script text to parse.
      * @return The compiled Script object (the root of the abstract syntax tree)
      * @throws HtException Thrown if an error (i.e., syntax error) occurs when compiling.
      */
@@ -84,7 +86,7 @@ public class Compiler {
     /**
      * Returns the result of evaluating a string as a HyperTalk expression on the current thread. An expression that
      * cannot be evaluated (i.e., invalid syntax or an execution error occurs) results in the script text itself.
-     *
+     * <p>
      * This method may not be executed on the Swing dispatch thread.
      *
      * @param expression The value of the evaluated text; based on HyperTalk language semantics, text that cannot be
@@ -161,13 +163,17 @@ public class Compiler {
      * @return The value returned by the function (an empty string if the function does not invoke 'return')
      * @throws HtSemanticException Thrown if an error occurs executing the function.
      */
-    public static Value blockingExecuteFunction(ExecutionContext context, PartSpecifier me, NamedBlock function, Expression arguments) throws HtException {
+    public static Value blockingExecuteFunction(ExecutionContext context, PartSpecifier me, NamedBlock function, List<Value> arguments) throws HtException {
         ThreadUtils.assertWorkerThread();
         return new FunctionExecutionTask(context, me, function, arguments).call();
     }
 
     /**
      * Executes a script handler on a background thread and notifies an observer when complete.
+     * <p>
+     * Note that this method is asynchronous only when invoked from the Swing dispatch thread (or any thread not
+     * associated with script execution). Script executors that invoke this method will block pending completion of the
+     * executed handler.
      * <p>
      * Any handler that does not 'pass' the handler name traps its behavior and prevents other scripts (or WyldCard)
      * from acting upon it. A script that does not implement a handler for a given message is assumed to 'pass' it.
@@ -193,8 +199,8 @@ public class Compiler {
         else {
             future = getFutureForHandlerExecutionTask(() -> {
                 // Synthesize handler invocation for message watcher
-                HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message.getMessageName(), new ArrayList<>(), me, context.getTarget() == null, context.getStackDepth(), false);
-                HandlerInvocationBridge.getInstance().notifyMessageHandled(invocation);
+                HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message, me, context.getTarget() == null, context.getStackDepth(), false);
+                HandlerInvocationCache.getInstance().notifyMessageHandled(invocation);
 
                 // No handler for script, but we still need to capture that this part was the target
                 if (context.getTarget() == null) {

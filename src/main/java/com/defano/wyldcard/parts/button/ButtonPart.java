@@ -3,6 +3,7 @@ package com.defano.wyldcard.parts.button;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseStillDown;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.parts.builder.ButtonModelBuilder;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardPart;

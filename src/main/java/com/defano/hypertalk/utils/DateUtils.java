@@ -56,11 +56,11 @@ public class DateUtils {
         }
     }
 
-    public static Date dateOf(Value value, ConvertibleDateFormat format) {
+    private static Date dateOf(Value value, ConvertibleDateFormat format) {
         return dateOf(value.toString(), format, new ParsePosition(0));
     }
 
-    public static Date dateOf(String text, ConvertibleDateFormat format, ParsePosition parsePosition) {
+    private static Date dateOf(String text, ConvertibleDateFormat format, ParsePosition parsePosition) {
         try {
             switch (format) {
                 case SECONDS:

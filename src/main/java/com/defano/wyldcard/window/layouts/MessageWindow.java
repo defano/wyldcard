@@ -20,11 +20,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MessageWindow extends WyldCardWindow<Object> implements PropertyChangeObserver {
 
+    private final static MessageWindow instance = new MessageWindow();
+
     private MsgBoxModel partModel;
     private MessageBoxTextField messageBox;
     private JPanel messageWindow;
 
-    public MessageWindow() {
+    private MessageWindow() {
         // Update selection
         messageBox.addCaretListener(e -> getPartModel().updateSelectionContext(new ExecutionContext(), Range.ofMarkAndDot(e.getDot(), e.getMark()), true));
 
@@ -32,6 +34,10 @@ public class MessageWindow extends WyldCardWindow<Object> implements PropertyCha
             partModel = new MsgBoxModel();
             partModel.addPropertyChangedObserver(MessageWindow.this);
         });
+    }
+
+    public static MessageWindow getInstance() {
+        return instance;
     }
 
     @Override

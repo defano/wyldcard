@@ -1,9 +1,10 @@
 package com.defano.wyldcard.window.layouts;
 
-import com.defano.hypertalk.ast.model.SystemMessage;
+import com.defano.wyldcard.debug.message.HandlerInvocationObserver;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.awt.MarkdownComboBox;
 import com.defano.wyldcard.debug.message.HandlerInvocation;
-import com.defano.wyldcard.debug.message.HandlerInvocationBridge;
+import com.defano.wyldcard.debug.message.HandlerInvocationCache;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WyldCardWindow;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -14,7 +15,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class MessageWatcher extends WyldCardWindow<Object> {
+public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInvocationObserver {
+
+    private final static MessageWatcher instance = new MessageWatcher();
 
     private JPanel windowPanel;
     private JCheckBox suppressIdleCheckBox;
@@ -27,7 +30,7 @@ public class MessageWatcher extends WyldCardWindow<Object> {
     private DefaultComboBoxModel<String> threadDropDownModel = new DefaultComboBoxModel<>();
     private DefaultTableModel model = new DefaultTableModel();
 
-    public MessageWatcher() {
+    private MessageWatcher() {
 
         suppressIdleCheckBox.addActionListener(a -> invalidateData());
         suppressUnusedCheckBox.addActionListener(a -> invalidateData());
@@ -40,21 +43,20 @@ public class MessageWatcher extends WyldCardWindow<Object> {
         threadDropDownModel.addElement("---");
         threadDropDown.setModel(threadDropDownModel);
 
-        HandlerInvocationBridge.getInstance().addObserver((invocation) -> {
-            if (isVisible()) {
-                if (!hasThread(invocation.getThread())) {
-                    threadDropDownModel.addElement(invocation.getThread());
-                }
-
-                if (threadDropDown.getSelectedIndex() == 0 || String.valueOf(threadDropDown.getSelectedItem()).equalsIgnoreCase(invocation.getThread())) {
-                    invalidateData();
-                    smartScroll();
-                }
-            }
-        });
-
         messagesTable.setDefaultRenderer(Object.class, new HandlerInvocationCellRenderer());
         messagesTable.setModel(model);
+
+        getWindowVisibleProvider().subscribe(isVisible -> {
+            if (isVisible) {
+                HandlerInvocationCache.getInstance().addObserver(MessageWatcher.this);
+            } else {
+                HandlerInvocationCache.getInstance().removeObserver(MessageWatcher.this);
+            }
+        });
+    }
+
+    public static MessageWatcher getInstance() {
+        return instance;
     }
 
     private boolean isPeriodicMessage(String message) {
@@ -76,15 +78,15 @@ public class MessageWatcher extends WyldCardWindow<Object> {
         model.setNumRows(0);
 
         if (threadDropDown.getSelectedIndex() == 0) {
-            HandlerInvocationBridge.getInstance().getInvocationHistory().stream()
+            HandlerInvocationCache.getInstance().getInvocationHistory().stream()
                     .filter(i -> !suppressUnusedCheckBox.isSelected() || i.isMessageHandled())
-                    .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessage()))
+                    .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessageName()))
                     .filter(i -> !showOnlyMessageTargetCheckBox.isSelected() || i.isTarget())
                     .forEach(i -> model.addRow(new Object[]{i.getThread(), i, i.getRecipient().getHyperTalkIdentifier(new ExecutionContext())}));
         } else {
-            HandlerInvocationBridge.getInstance().getInvocationHistory(String.valueOf(threadDropDown.getSelectedItem())).stream()
+            HandlerInvocationCache.getInstance().getInvocationHistory(String.valueOf(threadDropDown.getSelectedItem())).stream()
                     .filter(i -> !suppressUnusedCheckBox.isSelected() || i.isMessageHandled())
-                    .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessage()))
+                    .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessageName()))
                     .filter(i -> !showOnlyMessageTargetCheckBox.isSelected() || i.isTarget())
                     .forEach(i -> model.addRow(new Object[]{i.getThread(), i, i.getRecipient().getHyperTalkIdentifier(new ExecutionContext())}));
         }
@@ -109,6 +111,21 @@ public class MessageWatcher extends WyldCardWindow<Object> {
     public void bindModel(Object data) {
         // Nothing to do
     }
+
+    @Override
+    public void onHandlerInvoked(HandlerInvocation invocation) {
+        if (isVisible()) {
+            if (!hasThread(invocation.getThread())) {
+                threadDropDownModel.addElement(invocation.getThread());
+            }
+
+            if (threadDropDown.getSelectedIndex() == 0 || String.valueOf(threadDropDown.getSelectedItem()).equalsIgnoreCase(invocation.getThread())) {
+                invalidateData();
+                smartScroll();
+            }
+        }
+    }
+
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -188,7 +205,7 @@ public class MessageWatcher extends WyldCardWindow<Object> {
             if (value instanceof HandlerInvocation) {
                 HandlerInvocation invocation = (HandlerInvocation) value;
 
-                StringBuilder message = new StringBuilder(invocation.getMessage());
+                StringBuilder message = new StringBuilder(invocation.getMessageName());
 
                 // Indent message depth of call stack
                 for (int index = 0; index < invocation.getStackDepth() - 1; index++) {

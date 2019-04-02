@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * An expression composed of a list of other expressions seen in argument lists.
+ * An expression composed of a list of other expressions as seen in argument lists.
  */
 public class ListExp extends Expression {
 

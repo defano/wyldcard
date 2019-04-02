@@ -1,6 +1,10 @@
 package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.effect.VisualEffectDirection;
+import com.defano.hypertalk.ast.model.effect.VisualEffectImage;
+import com.defano.hypertalk.ast.model.effect.VisualEffectName;
+import com.defano.hypertalk.ast.model.effect.VisualEffectSpeed;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;

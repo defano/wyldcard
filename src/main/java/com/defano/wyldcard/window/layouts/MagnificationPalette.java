@@ -15,11 +15,14 @@ import java.awt.event.KeyEvent;
 import java.util.Hashtable;
 
 public class MagnificationPalette extends WyldCardDialog<Object> {
+
+    private final static MagnificationPalette instance = new MagnificationPalette();
+
     private JSlider slider1;
     private JPanel windowPanel;
     private JButton magnifierButton;
 
-    public MagnificationPalette() {
+    private MagnificationPalette() {
 
         ImageIcon magPlusIcon = new ImageIcon(getClass().getResource("/icons/magnifier_plus.png"));
         ImageIcon magMinusIcon = new ImageIcon(getClass().getResource("/icons/magnifier_minus.png"));
@@ -54,6 +57,10 @@ public class MagnificationPalette extends WyldCardDialog<Object> {
 
         slider1.setValue(WyldCard.getInstance().getStackManager().getScaleProvider().blockingFirst().intValue());
         slider1.addChangeListener(e -> WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().setScale(slider1.getValue()));
+    }
+
+    public static MagnificationPalette getInstance() {
+        return instance;
     }
 
     @Override

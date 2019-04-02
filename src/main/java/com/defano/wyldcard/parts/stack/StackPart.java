@@ -6,6 +6,7 @@ import com.defano.wyldcard.NavigationManager;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fx.CurtainManager;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.builder.CardModelBuilder;

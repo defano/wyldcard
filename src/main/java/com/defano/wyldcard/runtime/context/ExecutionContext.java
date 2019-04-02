@@ -1,6 +1,6 @@
 package com.defano.wyldcard.runtime.context;
 
-import com.defano.hypertalk.ast.model.Chunk;
+import com.defano.hypertalk.ast.model.chunk.Chunk;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;

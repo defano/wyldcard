@@ -1,5 +1,8 @@
 package com.defano.hypertalk.ast.model;
 
+import com.defano.hypertalk.ast.model.chunk.Chunk;
+import com.defano.hypertalk.ast.model.chunk.ChunkType;
+import com.defano.hypertalk.ast.model.chunk.CompositeChunk;
 import com.defano.hypertalk.comparator.StyledComparable;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -342,7 +345,6 @@ public class Value implements StyledComparable<Value> {
      *
      * @return True if this value was marked as having originated from a quoted literal value in script.
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isQuotedLiteral() {
         return isQuotedLiteral;
     }
@@ -510,6 +512,7 @@ public class Value implements StyledComparable<Value> {
      * @return This value's Rectangle representation, or an empty Rectangle (i.e., 0,0,0,0) if this value cannot be
      * interpreted as a Rectangle.
      */
+    @SuppressWarnings("WeakerAccess")
     public Rectangle rectangleValue() {
         if (isRect()) {
             int left = getListItemAt(0).integerValue();
@@ -529,6 +532,7 @@ public class Value implements StyledComparable<Value> {
      * @return This value's Point representation, or an empty Point (i.e. 0,0) if this value cannot be interpreted as a
      * Point.
      */
+    @SuppressWarnings("WeakerAccess")
     public Point pointValue() {
         if (isPoint()) {
             int left = getListItemAt(0).integerValue();
@@ -594,6 +598,7 @@ public class Value implements StyledComparable<Value> {
      * @param index The zero-based index of the item to be retrieved.
      * @return A new Value representing the requested item, or an empty Value if no such item exists.
      */
+    @SuppressWarnings("WeakerAccess")
     public Value getListItemAt(int index) {
         List<Value> items = getListItems();
         if (items.size() > index) {
@@ -641,6 +646,7 @@ public class Value implements StyledComparable<Value> {
      * @param type The chunk type (i.e., word, item, line)
      * @return A list of zero or more chunks of the requested type
      */
+    @SuppressWarnings("WeakerAccess")
     public List<Value> getChunks(ExecutionContext context, ChunkType type) {
         Matcher matcher = ChunkUtils.getRegexForChunkType(context, type).matcher(stringValue);
         ArrayList<Value> chunks = new ArrayList<>();

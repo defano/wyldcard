@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.layouts;
 
+import com.defano.wyldcard.util.DeepEnable;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -8,7 +9,9 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 
-public class FindDialog extends WyldCardDialog<ScriptEditor> {
+public class FindWindow extends WyldCardDialog<ScriptEditor> implements DeepEnable {
+
+    private final static FindWindow instance = new FindWindow();
 
     private JTextField findField;
     private JRadioButton wholeWordRadioButton;
@@ -21,9 +24,13 @@ public class FindDialog extends WyldCardDialog<ScriptEditor> {
 
     private ScriptEditor editor;
 
-    public FindDialog() {
+    private FindWindow() {
         cancelButton.addActionListener(e -> this.setVisible(false));
         findButton.addActionListener(e -> find());
+    }
+
+    public static FindWindow getInstance() {
+        return instance;
     }
 
     private void find() {
@@ -42,11 +49,15 @@ public class FindDialog extends WyldCardDialog<ScriptEditor> {
 
     @Override
     public void bindModel(ScriptEditor scriptEditor) {
-        editor = scriptEditor;
+        setDeepEnabled(scriptEditor != null, getWindowPanel());
 
-        wholeWordRadioButton.setSelected(editor.getContext().getWholeWord());
-        caseSensitiveCheckBox.setSelected(editor.getContext().getMatchCase());
-        findField.setText(editor.getContext().getSearchFor());
+        if (scriptEditor != null) {
+            editor = scriptEditor;
+
+            wholeWordRadioButton.setSelected(editor.getContext().getWholeWord());
+            caseSensitiveCheckBox.setSelected(editor.getContext().getMatchCase());
+            findField.setText(editor.getContext().getSearchFor());
+        }
     }
 
     @Override

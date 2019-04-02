@@ -1,7 +1,6 @@
 package com.defano.wyldcard.runtime;
 
-import com.defano.hypertalk.ast.expressions.ListExp;
-import com.defano.hypertalk.ast.model.SystemMessage;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.paint.ToolMode;

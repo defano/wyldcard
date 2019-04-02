@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
-import com.defano.hypertalk.ast.model.VisualEffectImage;
-import com.defano.hypertalk.ast.model.VisualEffectSpeed;
+import com.defano.hypertalk.ast.model.effect.VisualEffectImage;
+import com.defano.hypertalk.ast.model.effect.VisualEffectSpeed;
 import com.defano.jsegue.SegueName;
 
 public class VisualEffectSpecifier {

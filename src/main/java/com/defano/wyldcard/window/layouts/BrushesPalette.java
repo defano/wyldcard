@@ -12,6 +12,8 @@ import java.awt.*;
 
 public class BrushesPalette extends WyldCardDialog<Object> implements Consumer<PaintBrush> {
 
+    private final static BrushesPalette instance = new BrushesPalette();
+
     private JPanel brushesPanel;
 
     private JButton square16;
@@ -41,7 +43,7 @@ public class BrushesPalette extends WyldCardDialog<Object> implements Consumer<P
 
     private JButton[] allButtons;
 
-    public BrushesPalette() {
+    private BrushesPalette() {
         allButtons = new JButton[]{
                 square16, square12, square8, square4,
                 round16, round12, round8, round4,
@@ -77,6 +79,10 @@ public class BrushesPalette extends WyldCardDialog<Object> implements Consumer<P
         bar4.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.BAR_4));
 
         WyldCard.getInstance().getToolsManager().getSelectedBrushProvider().subscribe(this);
+    }
+
+    public static BrushesPalette getInstance() {
+        return instance;
     }
 
     @Override

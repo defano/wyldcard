@@ -65,14 +65,29 @@ public interface PartSpecifier {
         return isSpecifyingButtonOrField() && getOwner() == Owner.CARD;
     }
 
+    /**
+     * Determines if this specifier refers to a window.
+     *
+     * @return True if this specifier specifies a window.
+     */
     default boolean isSpecifyingWindow() {
         return this instanceof WindowSpecifier;
     }
 
+    /**
+     * Determines if this specifier refers to a stack.
+     *
+     * @return True if this specifier specifies a stack.
+     */
     default boolean isSpecifyingStack() {
         return this instanceof StackPartSpecifier;
     }
 
+    /**
+     * Determines if this specifier refers to the message window (message box).
+     *
+     * @return True if this specifier specifies the message.
+     */
     default boolean isSpecifyingMessageBox() {
         return this instanceof PartMessageSpecifier;
     }

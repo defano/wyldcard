@@ -1,6 +1,9 @@
 package com.defano.wyldcard.parts.card;
 
-import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.ToolType;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
@@ -15,9 +18,10 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseListenable;
 import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.message.Message;
+import com.defano.wyldcard.message.MessageBuilder;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.ToolEditablePart;
-import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.button.ButtonPart;
@@ -655,9 +659,9 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     @Override
     @RunOnDispatch
     public void keyPressed(KeyEvent e) {
-        BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, false);
-        if (bsm != null) {
-            getPartModel().receiveMessage(new ExecutionContext(this), bsm, new TextArrowsMessageCompletionObserver(this, e));
+        Message msg = SystemMessage.fromKeyEvent(e, false);
+        if (msg != null) {
+            getPartModel().receiveMessage(new ExecutionContext(this), msg, new TextArrowsMessageCompletionObserver(this, e));
         }
     }
 

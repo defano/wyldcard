@@ -10,7 +10,7 @@ import com.defano.hypertalk.comparator.ExpressionValueComparator;
 import com.defano.hypertalk.ast.model.SortStyle;
 import com.defano.hypertalk.comparator.ValueComparator;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.ast.model.ChunkType;
+import com.defano.hypertalk.ast.model.chunk.ChunkType;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;

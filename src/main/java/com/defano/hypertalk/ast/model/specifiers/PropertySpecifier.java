@@ -5,7 +5,7 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.containers.MenuItemExp;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
-import com.defano.hypertalk.ast.model.Chunk;
+import com.defano.hypertalk.ast.model.chunk.Chunk;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;

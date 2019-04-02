@@ -21,7 +21,7 @@ public class Serializer {
             .registerTypeAdapter(Value.class, new ValueSerializer())
             .registerTypeAdapter(byte[].class, new ByteArraySerializer())
             .registerTypeAdapter(BufferedImage.class, new BufferedImageSerializer())
-            .registerTypeAdapter(StyledDocument.class, new com.defano.wyldcard.runtime.serializer.DocumentSerializer())
+            .registerTypeAdapter(StyledDocument.class, new StyledDocumentSerializer())
             .enableComplexMapKeySerialization()
             .setPrettyPrinting()
             .create();

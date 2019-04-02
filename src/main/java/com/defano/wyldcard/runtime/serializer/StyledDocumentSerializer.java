@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Base64;
 
-class DocumentSerializer implements JsonSerializer<StyledDocument>, JsonDeserializer<StyledDocument> {
+class StyledDocumentSerializer implements JsonSerializer<StyledDocument>, JsonDeserializer<StyledDocument> {
     public StyledDocument deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         byte[] rtf = Base64.getDecoder().decode(json.getAsString());
         return convertRtfToDocument(rtf);

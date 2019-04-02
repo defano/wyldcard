@@ -2,10 +2,10 @@ package com.defano.wyldcard;
 
 import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
-import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
@@ -48,12 +48,18 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     private final ProxyObservable<Boolean> isSelectable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
     private final ProxyObservable<Double> canvasScale = new ProxyObservable<>(BehaviorSubject.createDefault(1.0));
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void newStack(ExecutionContext context) {
         StackPart newStack = StackPart.newStack(context);
         ThreadUtils.invokeAndWaitAsNeeded(() -> displayStack(context, newStack, true));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StackModel loadStack(ExecutionContext context, File stackFile) {
         try {
@@ -63,6 +69,9 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StackModel findStack(ExecutionContext context, StackPartSpecifier specifier, RemoteNavigationOptions options) {
         try {
@@ -88,6 +97,9 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StackPart findAndOpenStack(ExecutionContext context, boolean inNewWindow, String title) {
         FileDialog fd = new FileDialog(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow(), title, FileDialog.LOAD);
@@ -102,6 +114,9 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StackPart openStack(ExecutionContext context, StackModel model, boolean inNewWindow) {
         try {
@@ -115,31 +130,16 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     }
 
     /**
-     * Attempts to open the identified stack file.
-     *
-     * @param context     The current execution context
-     * @param stackFile   The stack file to open
-     * @param inNewWindow When true, the stack will open in a new stack window. When false, the opened stack will
-     *                    replace the stack active in the execution context (i.e., the focused stack or stack requesting
-     *                    to open a new stack).
-     * @return The opened StackPart or null if the stack could not be opened for any reason.
+     * {@inheritDoc}
      */
-    private StackPart openStack(ExecutionContext context, File stackFile, boolean inNewWindow) {
-        try {
-            StackModel model = Serializer.deserialize(stackFile, StackModel.class);
-            model.setSavedStackFile(context, stackFile);
-
-            return openStack(context, model, inNewWindow);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     @Override
     public List<StackPart> getOpenStacks() {
         return this.openedStacks;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StackPart getOpenStack(StackModel model) {
         return getOpenStacks().stream()
@@ -148,6 +148,9 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
                 .orElse(null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void saveStackAs(ExecutionContext context, StackModel stackModel) {
         String defaultName = "Untitled";
@@ -171,6 +174,9 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void saveStack(ExecutionContext context, StackModel stackModel) {
         if (stackModel == null) {
@@ -181,6 +187,9 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         saveStack(context, stackModel, saveFile.orElse(null));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void saveStack(ExecutionContext context, StackModel stackModel, File file) {
         if (file != null) {
@@ -196,6 +205,9 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void closeAllStacks(ExecutionContext context) {
         for (StackPart thisOpenStack : getOpenStacks()) {
@@ -203,6 +215,9 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void closeStack(ExecutionContext context, StackPart stackPart) {
         if (stackPart == null) {
@@ -216,6 +231,9 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         disposeStack(context, stackPart, true);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void focusStack(StackPart stackPart) {
 
@@ -271,11 +289,14 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
                                 !ImageLayerUtils.layersRemovesPaint(getFocusedCard().getActiveCanvas().peek(0).getImageLayers()))
         );
 
-        WyldCard.getInstance().getNavigationManager().getBackstack().push(new Destination(stackPart.getStackModel(), focusedStack.blockingFirst().getDisplayedCard().getId(null)));
+        WyldCard.getInstance().getNavigationManager().getNavigationStack().push(new Destination(stackPart.getStackModel(), focusedStack.blockingFirst().getDisplayedCard().getId(null)));
 
         stackPart.addNavigationObserver(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StackPart getFocusedStack() {
         if (focusedStack.hasValue()) {
@@ -285,11 +306,17 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Observable<StackPart> getFocusedStackProvider() {
         return focusedStack;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CardPart getFocusedCard() {
         if (getFocusedStack() == null) {
@@ -299,41 +326,65 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Observable<Integer> getFocusedStackCardCountProvider() {
         return cardCount.getObservable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Observable<Optional<CardPart>> getFocusedStackCardClipboardProvider() {
         return cardClipboard.getObservable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Observable<Optional<File>> getSavedStackFileProvider() {
         return savedStackFile.getObservable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Observable<Boolean> getIsUndoableProvider() {
         return isUndoable.getObservable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Observable<Boolean> getIsRedoableProvider() {
         return isRedoable.getObservable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Observable<Boolean> getIsSelectableProvider() {
         return isSelectable.getObservable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Observable<Double> getScaleProvider() {
         return canvasScale.getObservable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCardOpened(CardPart newCard) {
         isUndoable.setSource(newCard.getActiveCanvas().isUndoableObservable());
@@ -441,6 +492,27 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         }
 
         return false;
+    }
+
+    /**
+     * Attempts to open the identified stack file.
+     *
+     * @param context     The current execution context
+     * @param stackFile   The stack file to open
+     * @param inNewWindow When true, the stack will open in a new stack window. When false, the opened stack will
+     *                    replace the stack active in the execution context (i.e., the focused stack or stack requesting
+     *                    to open a new stack).
+     * @return The opened StackPart or null if the stack could not be opened for any reason.
+     */
+    private StackPart openStack(ExecutionContext context, File stackFile, boolean inNewWindow) {
+        try {
+            StackModel model = Serializer.deserialize(stackFile, StackModel.class);
+            model.setSavedStackFile(context, stackFile);
+
+            return openStack(context, model, inNewWindow);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

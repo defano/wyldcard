@@ -1,6 +1,6 @@
 package com.defano.wyldcard.menubar;
 
-import com.defano.hypertalk.ast.model.SystemMessage;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.runtime.context.ExecutionContext;

@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.compiler.HandlerCompletionObserver;
 import com.google.common.util.concurrent.FutureCallback;
 
 public class HandlerExecutionFutureCallback implements FutureCallback<Boolean> {

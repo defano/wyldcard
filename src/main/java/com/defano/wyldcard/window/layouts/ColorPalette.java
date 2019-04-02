@@ -11,6 +11,8 @@ import java.awt.*;
 
 public class ColorPalette extends WyldCardWindow<Object> {
 
+    private final static ColorPalette instance = new ColorPalette();
+
     private JPanel panel;
     private JTabbedPane tabs;
     private JPanel foregroundChooserPanel;
@@ -20,7 +22,7 @@ public class ColorPalette extends WyldCardWindow<Object> {
     private final JColorChooser backgroundChooser = new JColorChooser();
     private final JColorChooser lineChooser = new JColorChooser();
 
-    public ColorPalette() {
+    private ColorPalette() {
         foregroundChooser.setPreviewPanel(new JPanel());
         backgroundChooser.setPreviewPanel(new JPanel());
         lineChooser.setPreviewPanel(new JPanel());
@@ -54,6 +56,10 @@ public class ColorPalette extends WyldCardWindow<Object> {
         foregroundChooser.getSelectionModel().addChangeListener(e -> WyldCard.getInstance().getToolsManager().setForegroundColor(foregroundChooser.getColor()));
         backgroundChooser.getSelectionModel().addChangeListener(e -> WyldCard.getInstance().getToolsManager().setBackgroundColor(backgroundChooser.getColor()));
         lineChooser.getSelectionModel().addChangeListener(e -> WyldCard.getInstance().getToolsManager().setLinePaint(lineChooser.getColor()));
+    }
+
+    public static ColorPalette getInstance() {
+        return instance;
     }
 
     @Override

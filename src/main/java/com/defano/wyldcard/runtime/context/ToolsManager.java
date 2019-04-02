@@ -1,6 +1,6 @@
 package com.defano.wyldcard.runtime.context;
 
-import com.defano.hypertalk.ast.model.SystemMessage;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.transform.dither.Ditherer;
 import com.defano.jmonet.canvas.PaintCanvas;

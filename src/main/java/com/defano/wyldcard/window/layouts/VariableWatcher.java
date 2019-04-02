@@ -21,6 +21,8 @@ import java.util.Collection;
 
 public class VariableWatcher extends WyldCardWindow<Object> implements SymbolObserver {
 
+    private final static VariableWatcher instance = new VariableWatcher();
+
     private JPanel windowPanel;
     private JTable variablesTable;
     private JTextArea variableEditor;
@@ -30,7 +32,7 @@ public class VariableWatcher extends WyldCardWindow<Object> implements SymbolObs
     private SymbolTable variables;
     private Collection<String> globalsInScope;
 
-    public VariableWatcher() {
+    private VariableWatcher() {
         setWatchedVariables(null, null);
 
         tableModel.setColumnCount(2);
@@ -52,6 +54,10 @@ public class VariableWatcher extends WyldCardWindow<Object> implements SymbolObs
                 SwingUtilities.invokeLater(() -> variables.set(getSelectedVariableName(), new Value(variableEditor.getText())));
             }
         });
+    }
+
+    public static VariableWatcher getInstance() {
+        return instance;
     }
 
     @Override

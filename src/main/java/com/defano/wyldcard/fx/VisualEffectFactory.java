@@ -1,6 +1,6 @@
 package com.defano.wyldcard.fx;
 
-import com.defano.hypertalk.ast.model.VisualEffectImage;
+import com.defano.hypertalk.ast.model.effect.VisualEffectImage;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.jsegue.AnimatedSegue;
 import com.defano.jsegue.SegueName;

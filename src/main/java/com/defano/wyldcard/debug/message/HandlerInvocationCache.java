@@ -1,19 +1,20 @@
 package com.defano.wyldcard.debug.message;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
+
 import javax.swing.*;
 import java.util.*;
 
-public class HandlerInvocationBridge {
+public class HandlerInvocationCache {
 
-    private final static HandlerInvocationBridge instance = new HandlerInvocationBridge();
-    private final static int CACHE_DEPTH = 250;
+    private final static HandlerInvocationCache instance = new HandlerInvocationCache();
 
     private final List<HandlerInvocationObserver> handlerInvocationObservers = new ArrayList<>();
     private final Map<String, List<HandlerInvocation>> invocationMap = new HashMap<>();
 
-    private HandlerInvocationBridge() {}
+    private HandlerInvocationCache() {}
 
-    public static HandlerInvocationBridge getInstance() {
+    public static HandlerInvocationCache getInstance() {
         return instance;
     }
 
@@ -26,15 +27,27 @@ public class HandlerInvocationBridge {
         });
     }
 
+    @RunOnDispatch
     public void addObserver(HandlerInvocationObserver observer) {
         handlerInvocationObservers.add(observer);
     }
 
+    @RunOnDispatch
+    public void removeObserver(HandlerInvocationObserver observer) {
+        handlerInvocationObservers.remove(observer);
+
+        if (handlerInvocationObservers.isEmpty()) {
+            invocationMap.clear();
+        }
+    }
+
+    @RunOnDispatch
     public List<HandlerInvocation> getInvocationHistory(String forThread) {
         List<HandlerInvocation> invocations = invocationMap.get(forThread);
         return invocations == null ? new ArrayList<>() : invocations;
     }
 
+    @RunOnDispatch
     public List<HandlerInvocation> getInvocationHistory() {
         List<HandlerInvocation> invocations = new ArrayList<>();
         for (Collection<HandlerInvocation> thisCollection : invocationMap.values()) {
@@ -45,20 +58,21 @@ public class HandlerInvocationBridge {
         return invocations;
     }
 
+    @RunOnDispatch
     private void addInvocation(HandlerInvocation invocation) {
-        List<HandlerInvocation> invocations = invocationMap.get(invocation.getThread());
 
-        if (invocations == null) {
-            invocations = new ArrayList<>();
+        // Ignore invocations when nobody is observing
+        if (!handlerInvocationObservers.isEmpty()) {
+            List<HandlerInvocation> invocations = invocationMap.get(invocation.getThread());
+
+            if (invocations == null) {
+                invocations = new ArrayList<>();
+            }
+
+            invocations.add(invocation);
+
+            invocationMap.put(invocation.getThread(), invocations);
         }
-
-        invocations.add(invocation);
-
-        if (invocations.size() > CACHE_DEPTH) {
-            invocations.remove(0);
-        }
-
-        invocationMap.put(invocation.getThread(), invocations);
     }
 
 }

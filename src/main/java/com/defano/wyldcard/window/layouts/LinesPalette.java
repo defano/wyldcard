@@ -11,18 +11,19 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LinesPalette extends WyldCardDialog<Object> implements Consumer<Stroke> {
-    private JPanel linesPanel;
 
+    private final static LinesPalette instance = new LinesPalette();
+
+    private JPanel linesPanel;
     private JButton px1;
     private JButton px2;
     private JButton px3;
     private JButton px5;
     private JButton px6;
     private JButton px4;
-
     private JButton[] allLines;
 
-    public LinesPalette() {
+    private LinesPalette() {
         px1.addActionListener(l -> select(1));
         px2.addActionListener(l -> select(2));
         px3.addActionListener(l -> select(3));
@@ -32,6 +33,10 @@ public class LinesPalette extends WyldCardDialog<Object> implements Consumer<Str
 
         allLines = new JButton[]{px1, px2, px3, px4, px5, px6};
         WyldCard.getInstance().getToolsManager().getLineStrokeProvider().subscribe(this);
+    }
+
+    public static LinesPalette getInstance() {
+        return instance;
     }
 
     @Override

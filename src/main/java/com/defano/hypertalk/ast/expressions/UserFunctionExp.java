@@ -1,5 +1,7 @@
 package com.defano.hypertalk.ast.expressions;
 
+import com.defano.wyldcard.message.Message;
+import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Value;
@@ -22,7 +24,8 @@ public class UserFunctionExp extends Expression {
 
         PartSpecifier ps = context.getStackFrame().getMe();
         PartModel part = context.getPart(ps);
+        Message msg = MessageBuilder.named(function).withArgumentExpression(context, arguments).build();
 
-        return part.invokeFunction(context, function, arguments);
+        return part.invokeFunction(context, msg);
     }
 }

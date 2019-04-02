@@ -1,6 +1,5 @@
 package com.defano.wyldcard.message;
 
-import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
@@ -15,7 +14,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 /**
- * Represents an object that can receive HyperTalk messages.
+ * Represents an object that can receive HyperTalk messages. See {@link Message} for message structure.
  */
 public interface Messagable {
 
@@ -132,8 +131,8 @@ public interface Messagable {
      * @return The value returned by the function upon completion.
      * @throws HtSemanticException Thrown if a syntax or semantic error occurs attempting to execute the function.
      */
-    default Value invokeFunction(ExecutionContext context, String functionName, Expression arguments) throws HtException {
-        NamedBlock function = getScript(context).getNamedBlock(functionName);
+    default Value invokeFunction(ExecutionContext context, Message message) throws HtException {
+        NamedBlock function = getScript(context).getNamedBlock(message.getMessageName());
         Messagable target = this;
 
         while (function == null) {
@@ -142,14 +141,14 @@ public interface Messagable {
 
             // No more scripts to search; error!
             if (target == null) {
-                throw new HtSemanticException("No such function " + functionName + ".");
+                throw new HtSemanticException("No such function " + message.getMessageName() + ".");
             }
 
             // Look for function in this script
-            function = target.getScript(context).getNamedBlock(functionName);
+            function = target.getScript(context).getNamedBlock(message.getMessageName());
         }
 
-        return Compiler.blockingExecuteFunction(context, target.getMe(context), function, arguments);
+        return Compiler.blockingExecuteFunction(context, target.getMe(context), function, message.getArguments());
     }
 
     /**

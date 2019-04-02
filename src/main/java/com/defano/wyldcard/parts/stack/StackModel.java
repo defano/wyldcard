@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.icons.UserIcon;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.builder.BackgroundModelBuilder;

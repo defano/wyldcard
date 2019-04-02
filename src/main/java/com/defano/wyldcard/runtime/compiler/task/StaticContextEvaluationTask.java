@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.compiler;
+package com.defano.wyldcard.runtime.compiler.task;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.preemptions.Preemption;
@@ -9,6 +9,8 @@ import com.defano.hypertalk.ast.statements.commands.MessageCmd;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.compiler.CompilationUnit;
+import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.concurrent.Callable;

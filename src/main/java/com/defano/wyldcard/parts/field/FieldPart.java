@@ -4,18 +4,20 @@ import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.MouseStillDown;
+import com.defano.wyldcard.message.Message;
+import com.defano.wyldcard.message.MessageBuilder;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.DeferredKeyEventComponent;
-import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.parts.builder.FieldModelBuilder;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.util.FieldUtilities;
-import com.defano.wyldcard.parts.util.TextArrowsMessageCompletionObserver;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
+import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
+import com.defano.wyldcard.parts.util.FieldUtilities;
+import com.defano.wyldcard.parts.util.TextArrowsMessageCompletionObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 
@@ -276,11 +278,11 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
 
         // Key press didn't result in arrow key navigation, let field process event
         else if (getHyperCardTextPane().hasFocus() && !isPartToolActive()) {
-            BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, true);
+            Message msg = SystemMessage.fromKeyEvent(e, true);
 
             // EnterInField message should be dispatched even during redispatchInProgress
-            if (bsm != null && (!redispatchInProgress.get() || bsm.message == SystemMessage.ENTER_IN_FIELD)) {
-                getPartModel().receiveAndDeferKeyEvent(new ExecutionContext(this), bsm, e, this);
+            if (msg != null && (!redispatchInProgress.get() || msg.getMessageName().equalsIgnoreCase(SystemMessage.ENTER_IN_FIELD.getMessageName()))) {
+                getPartModel().receiveAndDeferKeyEvent(new ExecutionContext(this), msg, e, this);
             }
         }
     }

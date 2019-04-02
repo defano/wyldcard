@@ -17,8 +17,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PaintToolsPalette extends WyldCardWindow<Object> implements Consumer {
-    private JPanel palettePanel;
 
+    private final static PaintToolsPalette instance = new PaintToolsPalette();
+
+    private JPanel palettePanel;
     private JButton selection;
     private JButton lasso;
     private JButton pencil;
@@ -41,7 +43,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
     private JButton[] allTools;
     private ToolType lastTool;
 
-    public PaintToolsPalette() {
+    private PaintToolsPalette() {
         allTools = new JButton[]{selection, lasso, pencil, paintbrush, eraser, line, spraypaint, rectangle, roundRectangle, fill, oval, text, curve, polygon, shape, finger, button, field};
 
         // Single click actions
@@ -106,6 +108,10 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
                 }
             });
         });
+    }
+
+    public static PaintToolsPalette getInstance() {
+        return instance;
     }
 
     @Override

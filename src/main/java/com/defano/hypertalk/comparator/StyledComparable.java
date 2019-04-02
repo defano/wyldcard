@@ -6,7 +6,7 @@ public interface StyledComparable<T> extends Comparable<T> {
 
     /**
      * Performs a comparison of two values, using HyperTalk sort semantics. That is, this comparator attempts to coerce
-     * each value into a given type and compare them using sematics appropriate for the type (i.e., lexical, numeric,
+     * each value into a given type and compare them using semantics appropriate for the type (i.e., lexical, numeric,
      * date-time, etc.)
      *
      * @param to The value to which the current value should be compared

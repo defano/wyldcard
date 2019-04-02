@@ -181,7 +181,7 @@ public abstract class Expression extends ASTNode {
 
         // If not, try to interpret this expression as each of the allowable types
         for (FactorAssociation thisEvaluation : evaluations) {
-            Object coerced = this.evaluateAs(context, thisEvaluation.expressionType);
+            Expression coerced = this.evaluateAs(context, thisEvaluation.expressionType);
             if (coerced != null) {
                 thisEvaluation.action.accept(coerced);
                 return true;

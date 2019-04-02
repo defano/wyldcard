@@ -1,9 +1,8 @@
-package com.defano.wyldcard.runtime.compiler;
+package com.defano.wyldcard.runtime.compiler.task;
 
 import com.defano.hypertalk.ast.preemptions.PassPreemption;
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.preemptions.TerminateHandlerPreemption;
-import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -11,7 +10,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.message.HandlerInvocation;
-import com.defano.wyldcard.debug.message.HandlerInvocationBridge;
+import com.defano.wyldcard.debug.message.HandlerInvocationCache;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public class DefaultHandlerExecutionTask implements HandlerExecutionTask {
     public Boolean call() throws HtException {
         boolean trapped = true;
 
-        HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, arguments, me, context.getTarget() == null, context.getStackDepth(), true));
+        HandlerInvocationCache.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, arguments, me, context.getTarget() == null, context.getStackDepth(), true));
 
         // Push a new context
         context.pushStackFrame(handler.getLineNumber(), handler.name, me, arguments);

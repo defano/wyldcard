@@ -20,14 +20,20 @@ public class WyldCardNavigationManager implements NavigationManager {
     private final static CircleStack<Destination> backstack = new CircleStack<>(20);
     private final static Stack<Destination> pushPopStack = new Stack<>();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public CircleStack<Destination> getBackstack() {
+    public CircleStack<Destination> getNavigationStack() {
         return backstack;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Destination> getRecentCards() {
-        return getBackstack().asSet();
+        return getNavigationStack().asSet();
     }
 
     /**
@@ -52,7 +58,7 @@ public class WyldCardNavigationManager implements NavigationManager {
             // When requested, push the current card onto the backstack
             if (push) {
                 Destination destination = new Destination(stackPart.getStackModel(), cardPart.getId(context));
-                getBackstack().push(destination);
+                getNavigationStack().push(destination);
             }
 
             // Update the current card in the context
@@ -111,7 +117,7 @@ public class WyldCardNavigationManager implements NavigationManager {
     public CardPart goBack(ExecutionContext context) {
         return ThreadUtils.callAndWaitAsNeeded(() -> {
             try {
-                return goDestination(context, getBackstack().back(), false);
+                return goDestination(context, getNavigationStack().back(), false);
             }
 
             // Indicates card on stack was deleted; go back again
@@ -128,7 +134,7 @@ public class WyldCardNavigationManager implements NavigationManager {
     public CardPart goForth(ExecutionContext context) {
         return ThreadUtils.callAndWaitAsNeeded(() -> {
             try {
-                return goDestination(context, getBackstack().forward(), false);
+                return goDestination(context, getNavigationStack().forward(), false);
             }
 
             // Indicates card on stack was deleted; go forth again

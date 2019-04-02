@@ -21,10 +21,10 @@ public class PartDirectionSpecifier implements PartSpecifier {
 
         switch (getValue()) {
             case BACK:
-                destination = WyldCard.getInstance().getNavigationManager().getBackstack().peekBack();
+                destination = WyldCard.getInstance().getNavigationManager().getNavigationStack().peekBack();
                 break;
             case FORTH:
-                destination = WyldCard.getInstance().getNavigationManager().getBackstack().peekForward();
+                destination = WyldCard.getInstance().getNavigationManager().getNavigationStack().peekForward();
                 break;
             default:
                 throw new IllegalStateException("Bug! Unimplemented direction: " + getValue());

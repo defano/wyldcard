@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class FontSizePicker extends WyldCardDialog<Object> {
+
     private JSpinner fontSize;
     private JButton okButton;
     private JButton cancelButton;

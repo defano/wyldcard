@@ -11,16 +11,23 @@ import javax.swing.*;
 import java.awt.*;
 
 public class IntensityPalette extends WyldCardDialog<Object> {
+
+    private final static IntensityPalette instance = new IntensityPalette();
+
     private JSlider intensitySlider;
     private JPanel intensityPanel;
     private JCheckBox smooth;
 
-    public IntensityPalette() {
+    private IntensityPalette() {
         intensitySlider.setValue((int) (WyldCard.getInstance().getToolsManager().getIntensity() * 100.0));
         intensitySlider.addChangeListener(e -> WyldCard.getInstance().getToolsManager().setIntensity(intensitySlider.getValue() / 100.0));
 
         smooth.setSelected(WyldCard.getInstance().getToolsManager().getPathInterpolation());
         smooth.addChangeListener(e -> WyldCard.getInstance().getToolsManager().setPathInterpolation(smooth.isSelected()));
+    }
+
+    public static IntensityPalette getInstance() {
+        return instance;
     }
 
     @Override
