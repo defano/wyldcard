@@ -5,14 +5,14 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;
 
 public interface SearchResultHighlighter {
 
     default void clearSearchHighlights(ExecutionContext context) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             for (FieldPart parts : context.getCurrentCard().getFields()) {
                 parts.getHyperCardTextPane().clearSearchHilights();
             }
@@ -20,7 +20,7 @@ public interface SearchResultHighlighter {
     }
 
     default void highlightSearchResult(ExecutionContext context, SearchResult result) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             // Clear existing highlights
             clearSearchHighlights(context);
 

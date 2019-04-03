@@ -14,14 +14,14 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class FunctionExecutionTask implements Callable<Value> {
+public class FunctionHandlerExecutionTask implements Callable<Value> {
 
     private final ExecutionContext context;
     private final NamedBlock function;
     private final List<Value> evaluatedArguments;
     private final PartSpecifier me;
 
-    public FunctionExecutionTask(ExecutionContext context, PartSpecifier me, NamedBlock function, List<Value> arguments) {
+    public FunctionHandlerExecutionTask(ExecutionContext context, PartSpecifier me, NamedBlock function, List<Value> arguments) {
         this.context = context;
         this.function = function;
         this.evaluatedArguments = arguments;
@@ -31,6 +31,7 @@ public class FunctionExecutionTask implements Callable<Value> {
     @Override
     public Value call() throws HtException {
 
+        Value returnValue;
         HandlerInvocationCache.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), function.name, evaluatedArguments, me, true, context.getStackDepth(), true));
 
         context.pushStackFrame(function.getLineNumber(), function.name, me, evaluatedArguments);
@@ -56,9 +57,10 @@ public class FunctionExecutionTask implements Callable<Value> {
             WyldCard.getInstance().showErrorDialogAndAbort(e);
         }
 
-        Value returnValue = context.getStackFrame().getReturnValue();
-
-        context.popStackFrame();
+        finally {
+            returnValue = context.getStackFrame().getReturnValue();
+            context.popStackFrame();
+        }
 
         return returnValue;
     }

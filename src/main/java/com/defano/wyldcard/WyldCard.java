@@ -128,8 +128,6 @@ public class WyldCard implements PartFinder {
 
             // Apply default palette layout
             WyldCard.getInstance().getWindowManager().restoreDefaultLayout();
-            WyldCard.getInstance().getWindowManager().getPaintToolsPalette().toggleVisible();
-            WyldCard.getInstance().getWindowManager().getPatternsPalette().toggleVisible();
         });
 
         // Close all open files before we die

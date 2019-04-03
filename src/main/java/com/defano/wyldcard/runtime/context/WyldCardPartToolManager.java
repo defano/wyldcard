@@ -6,7 +6,7 @@ import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import com.google.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
@@ -42,7 +42,7 @@ public class WyldCardPartToolManager implements PartToolManager {
 
     @Override
     public void setSelectedPart(ToolEditablePart part) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             WyldCard.getInstance().getToolsManager().forceToolSelection(part.getEditTool(), false);
 
             deselectAllParts();
@@ -53,7 +53,7 @@ public class WyldCardPartToolManager implements PartToolManager {
 
     @Override
     public void deselectAllParts() {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             if (WyldCard.getInstance().getStackManager().getFocusedCard() != null) {
                 for (ButtonPart thisButton : WyldCard.getInstance().getStackManager().getFocusedCard().getButtons()) {
                     thisButton.setSelectedForEditing(new ExecutionContext(), false);

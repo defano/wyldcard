@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -40,13 +41,13 @@ public class HandlerInvocation implements Comparable<HandlerInvocation>, Message
     }
 
     @Override
-    public String getMessageName() {
-        return message.getMessageName();
+    public String getMessageName(ExecutionContext context) {
+        return message.getMessageName(context);
     }
 
     @Override
-    public List<Value> getArguments() {
-        return message.getArguments();
+    public List<Value> getArguments(ExecutionContext context) {
+        return message.getArguments(context);
     }
 
     public PartSpecifier getRecipient() {

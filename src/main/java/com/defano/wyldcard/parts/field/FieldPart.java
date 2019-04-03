@@ -19,7 +19,7 @@ import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.wyldcard.parts.util.TextArrowsMessageCompletionObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -279,10 +279,11 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         // Key press didn't result in arrow key navigation, let field process event
         else if (getHyperCardTextPane().hasFocus() && !isPartToolActive()) {
             Message msg = SystemMessage.fromKeyEvent(e, true);
+            ExecutionContext context = new ExecutionContext(this);
 
             // EnterInField message should be dispatched even during redispatchInProgress
-            if (msg != null && (!redispatchInProgress.get() || msg.getMessageName().equalsIgnoreCase(SystemMessage.ENTER_IN_FIELD.getMessageName()))) {
-                getPartModel().receiveAndDeferKeyEvent(new ExecutionContext(this), msg, e, this);
+            if (msg != null && (!redispatchInProgress.get() || msg.getMessageName(context).equalsIgnoreCase(SystemMessage.ENTER_IN_FIELD.getMessageName(context)))) {
+                getPartModel().receiveAndDeferKeyEvent(context, msg, e, this);
             }
         }
     }
@@ -378,7 +379,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
 
         else {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> getHyperCardTextPane().dispatchEvent(event));
+            Invoke.onDispatch(() -> getHyperCardTextPane().dispatchEvent(event));
         }
     }
 

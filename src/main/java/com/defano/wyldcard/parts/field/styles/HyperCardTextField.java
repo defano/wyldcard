@@ -16,8 +16,8 @@ import com.defano.wyldcard.parts.field.FieldModelObserver;
 import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.util.Throttle;
+import com.defano.wyldcard.thread.Invoke;
+import com.defano.wyldcard.thread.Throttle;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.window.layouts.FontSizePicker;
@@ -501,7 +501,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         @Override
         public void accept(Value style) {
             if (hasFocus()) {
-                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontStyle(new ExecutionContext(), style));
+                Invoke.onDispatch(() -> setTextFontStyle(new ExecutionContext(), style));
             }
         }
     }
@@ -510,7 +510,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         @Override
         public void accept(Value align) {
             if (hasFocus()) {
-                ThreadUtils.invokeAndWaitAsNeeded(() -> setActiveTextAlign(new ExecutionContext(), align));
+                Invoke.onDispatch(() -> setActiveTextAlign(new ExecutionContext(), align));
             }
         }
     }
@@ -519,7 +519,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         @Override
         public void accept(Value size) {
             if (hasFocus()) {
-                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontSize(new ExecutionContext(), size));
+                Invoke.onDispatch(() -> setTextFontSize(new ExecutionContext(), size));
             }
         }
     }
@@ -528,7 +528,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         @Override
         public void accept(Value family) {
             if (hasFocus()) {
-                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontFamily(new ExecutionContext(), family));
+                Invoke.onDispatch(() -> setTextFontFamily(new ExecutionContext(), family));
             }
         }
     }
@@ -536,7 +536,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     private class ToolModeObserver implements Consumer<ToolMode> {
         @Override
         public void accept(ToolMode toolMode) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            Invoke.onDispatch(() -> {
                 textPane.setFocusable(ToolMode.BROWSE == toolMode);
 
                 setHorizontalScrollBarPolicy(ToolMode.FIELD == toolMode ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);

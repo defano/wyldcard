@@ -16,7 +16,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -344,19 +344,20 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
      *
      * @param context The execution context
      */
-    @RunOnDispatch
     public void closeCard(ExecutionContext context) {
-        CardPart displayedCard = getDisplayedCard();
+        Invoke.onDispatch(() -> {
+            CardPart displayedCard = getDisplayedCard();
 
-        // Deactivate paint tool before doing anything (to commit in-fight changes)
-        WyldCard.getInstance().getToolsManager().getPaintTool().deactivate();
+            // Deactivate paint tool before doing anything (to commit in-fight changes)
+            WyldCard.getInstance().getToolsManager().getPaintTool().deactivate();
 
-        // Stop editing background when card changes
-        WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
+            // Stop editing background when card changes
+            WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
-        // Notify observers that current card is going away
-        fireOnCardClosing(displayedCard);
-        displayedCard.partClosed(context);
+            // Notify observers that current card is going away
+            fireOnCardClosing(displayedCard);
+            displayedCard.partClosed(context);
+        });
     }
 
     /**
@@ -402,7 +403,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     }
 
     private void fireOnStackOpened() {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             for (StackObserver observer : stackObservers) {
                 observer.onStackOpened(StackPart.this);
             }
@@ -410,7 +411,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     }
 
     private void fireOnCardClosing(CardPart closingCard) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             for (StackNavigationObserver observer : stackNavigationObservers) {
                 observer.onCardClosed(closingCard);
             }
@@ -418,7 +419,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     }
 
     private void fireOnCardOpened(CardPart openedCard) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             for (StackNavigationObserver observer : stackNavigationObservers) {
                 observer.onCardOpened(openedCard);
             }
@@ -426,7 +427,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     }
 
     private void fireOnCardDimensionChanged(Dimension newDimension) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             for (StackObserver observer : stackObservers) {
                 observer.onStackDimensionChanged(newDimension);
             }
@@ -434,7 +435,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     }
 
     private void fireOnStackNameChanged(String newName) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             for (StackObserver observer : stackObservers) {
                 observer.onStackNameChanged(newName);
             }
@@ -442,7 +443,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     }
 
     private void fireOnCardOrderChanged() {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             for (StackObserver observer : stackObservers) {
                 observer.onCardOrderChanged();
             }

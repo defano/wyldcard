@@ -15,7 +15,7 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.BufferedImageSerializer;
 import com.defano.wyldcard.runtime.serializer.Serializer;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import com.google.common.collect.Lists;
 
 import javax.annotation.PostConstruct;
@@ -316,7 +316,7 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
 
     private void firePartRemoved(ExecutionContext context, PartModel part) {
         if (observer != null) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onPartRemoved(context, part));
+            Invoke.onDispatch(() -> observer.onPartRemoved(context, part));
         }
     }
 

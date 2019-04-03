@@ -1,6 +1,7 @@
 package com.defano.wyldcard.message;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.List;
 
@@ -13,9 +14,10 @@ public interface Message {
      * The case-insensitive name of the message, which is the same as the name of the handler or function which will
      * service it.
      *
+     * @param context The execution context.
      * @return The name of the message.
      */
-    String getMessageName();
+    String getMessageName(ExecutionContext context);
 
     /**
      * A list of {@link Value} objects representing the arguments accompanying the message. Note that the number of
@@ -24,8 +26,9 @@ public interface Message {
      * <p>
      * Arguments are bound to parameters in left-to-right index order.
      *
+     * @param context The execution context
      * @return The non-null list of arguments accompanying the message; pass an empty list for messages bearing no
      * arguments.
      */
-    List<Value> getArguments();
+    List<Value> getArguments(ExecutionContext context);
 }

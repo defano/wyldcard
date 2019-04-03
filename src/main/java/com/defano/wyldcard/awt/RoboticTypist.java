@@ -4,7 +4,7 @@ import com.defano.hypertalk.ast.model.ArrowDirection;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -164,7 +164,7 @@ public class RoboticTypist {
                 robot.keyRelease(KeyEvent.VK_HOME);
             }
 
-            ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            Invoke.onDispatch(() -> {
                 // Wait for queue to flush; more reliable then robot.waitForIdle()
             });
         }

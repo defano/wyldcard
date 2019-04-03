@@ -1,4 +1,4 @@
-package com.defano.wyldcard.util;
+package com.defano.wyldcard.thread;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 

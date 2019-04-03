@@ -23,7 +23,6 @@ public class StaticContextEvaluationTask implements Callable<String> {
     public StaticContextEvaluationTask(ExecutionContext staticContext, String messageText) {
         this.context = staticContext;
         this.messageText = messageText;
-
         this.context.setStaticContext(true);
     }
 

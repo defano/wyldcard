@@ -7,6 +7,7 @@ import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
@@ -15,6 +16,7 @@ import com.defano.wyldcard.window.layouts.StackWindow;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,10 +32,9 @@ public interface WindowFinder {
      * @param context   The execution context
      * @param specifier The window specifier identifying the desired window.
      * @return The specified window
-     * @throws PartException Thrown if the specified window cannot be found or doesn't exist.
      */
-    default WyldCardFrame findWindow(ExecutionContext context, WindowSpecifier specifier) throws PartException {
-        return specifier.find(context, getFrames(false));
+    default WyldCardFrame findWindow(ExecutionContext context, WindowSpecifier specifier) {
+        return Invoke.onDispatch(() -> specifier.find(context, getFrames(false)));
     }
 
     /**
@@ -94,18 +95,13 @@ public interface WindowFinder {
      */
     @RunOnDispatch
     default List<WyldCardFrame> getFrames(boolean onlyVisible) {
-        ArrayList<WyldCardFrame> windows = new ArrayList<>();
-
-        for (Window thisWindow : JFrame.getWindows()) {
-            if (thisWindow instanceof WyldCardFrame &&
-                    ((WyldCardFrame) thisWindow).getTitle() != null &&
-                    (!onlyVisible || thisWindow.isVisible())) {
-                windows.add((WyldCardFrame) thisWindow);
-            }
-        }
-
-        windows.sort(Comparator.comparing(WyldCardFrame::getTitle));
-        return windows;
+        return Arrays.stream(JFrame.getWindows())
+                .filter(w -> w instanceof WyldCardFrame)
+                .map(w -> (WyldCardFrame) w)
+                .filter(w -> w.getTitle() != null)
+                .filter(w -> !onlyVisible || ((Window) w).isVisible())
+                .sorted(Comparator.comparing(WyldCardFrame::getTitle))
+                .collect(Collectors.toList());
     }
 
     /**

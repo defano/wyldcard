@@ -10,7 +10,7 @@ import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -75,7 +75,7 @@ public class CardExpressionComparator implements Comparator<CardModel> {
     private CardPart acquire(CardModel model) {
 
         if (!cache.containsKey(model)) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            Invoke.onDispatch(() -> {
                 cache.put(model, CardPart.fromModel(context, model));
             });
         }

@@ -6,7 +6,7 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.field.highlighters.AutoSelectionHighlighterPainter;
 import com.defano.wyldcard.parts.field.highlighters.FoundSelectionHighlightPainter;
 import com.defano.wyldcard.parts.util.FieldUtilities;
-import com.defano.wyldcard.util.Throttle;
+import com.defano.wyldcard.thread.Throttle;
 import com.defano.hypertalk.utils.Range;
 
 import javax.swing.*;

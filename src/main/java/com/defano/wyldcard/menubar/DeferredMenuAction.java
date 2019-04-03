@@ -4,7 +4,8 @@ import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
+import com.defano.wyldcard.thread.ThreadChecker;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -81,7 +82,7 @@ public class DeferredMenuAction implements ActionListener {
             if (!trapped[0]) {
                 for (ActionListener thisAction : actionListeners) {
                     // Make sure that actions execute on the dispatch thread
-                    ThreadUtils.invokeAndWaitAsNeeded(() -> thisAction.actionPerformed(e));
+                    Invoke.onDispatch(() -> thisAction.actionPerformed(e));
                 }
             }
 
@@ -101,7 +102,7 @@ public class DeferredMenuAction implements ActionListener {
      * @param e The ActionEvent to perform.
      */
     public void blockingInvokeActionPerformed(ExecutionContext context, ActionEvent e) {
-        ThreadUtils.assertWorkerThread();
+        ThreadChecker.assertWorkerThread();
 
         blocker = new CountDownLatch(1);
         actionPerformed(context, e);

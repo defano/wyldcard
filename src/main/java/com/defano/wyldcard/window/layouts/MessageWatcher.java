@@ -80,13 +80,13 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
         if (threadDropDown.getSelectedIndex() == 0) {
             HandlerInvocationCache.getInstance().getInvocationHistory().stream()
                     .filter(i -> !suppressUnusedCheckBox.isSelected() || i.isMessageHandled())
-                    .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessageName()))
+                    .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessageName(new ExecutionContext())))
                     .filter(i -> !showOnlyMessageTargetCheckBox.isSelected() || i.isTarget())
                     .forEach(i -> model.addRow(new Object[]{i.getThread(), i, i.getRecipient().getHyperTalkIdentifier(new ExecutionContext())}));
         } else {
             HandlerInvocationCache.getInstance().getInvocationHistory(String.valueOf(threadDropDown.getSelectedItem())).stream()
                     .filter(i -> !suppressUnusedCheckBox.isSelected() || i.isMessageHandled())
-                    .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessageName()))
+                    .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessageName(new ExecutionContext())))
                     .filter(i -> !showOnlyMessageTargetCheckBox.isSelected() || i.isTarget())
                     .forEach(i -> model.addRow(new Object[]{i.getThread(), i, i.getRecipient().getHyperTalkIdentifier(new ExecutionContext())}));
         }
@@ -202,10 +202,11 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
+            ExecutionContext context = new ExecutionContext();
             if (value instanceof HandlerInvocation) {
                 HandlerInvocation invocation = (HandlerInvocation) value;
 
-                StringBuilder message = new StringBuilder(invocation.getMessageName());
+                StringBuilder message = new StringBuilder(invocation.getMessageName(context));
 
                 // Indent message depth of call stack
                 for (int index = 0; index < invocation.getStackDepth() - 1; index++) {
@@ -213,8 +214,8 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
                 }
 
                 // Append arguments
-                for (int index = 0; index < invocation.getArguments().size(); index++) {
-                    String argument = invocation.getArguments().get(index).toString();
+                for (int index = 0; index < invocation.getArguments(context).size(); index++) {
+                    String argument = invocation.getArguments(context).get(index).toString();
 
                     message.append(" ");
 
@@ -229,7 +230,7 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
                         message.append("\"");
                     }
 
-                    if (index < invocation.getArguments().size() - 1) {
+                    if (index < invocation.getArguments(context).size() - 1) {
                         message.append(",");
                     }
                 }

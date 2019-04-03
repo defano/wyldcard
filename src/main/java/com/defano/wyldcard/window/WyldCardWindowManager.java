@@ -4,6 +4,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.layouts.*;
 import com.google.inject.Singleton;
 import io.reactivex.subjects.BehaviorSubject;
@@ -69,7 +70,11 @@ public class WyldCardWindowManager implements WindowManager {
         new WindowBuilder<>(paintToolsPalette)
                 .asPalette()
                 .withTitle("Tools")
-                .notInitiallyVisible()
+                .build();
+
+        new WindowBuilder<>(patternsPalette)
+                .asPalette()
+                .withTitle("Patterns")
                 .build();
 
         new WindowBuilder<>(shapesPalette)
@@ -87,12 +92,6 @@ public class WyldCardWindowManager implements WindowManager {
         new WindowBuilder<>(brushesPalette)
                 .asPalette()
                 .withTitle("Brushes")
-                .notInitiallyVisible()
-                .build();
-
-        new WindowBuilder<>(patternsPalette)
-                .asPalette()
-                .withTitle("Patterns")
                 .notInitiallyVisible()
                 .build();
 
@@ -406,9 +405,11 @@ public class WyldCardWindowManager implements WindowManager {
 
     @Override
     public void notifyWindowVisibilityChanged() {
-        framesProvider.onNext(getFrames(false));
-        windowsProvider.onNext(getWindows(true));
-        palettesProvider.onNext(getPalettes(true));
+        Invoke.onDispatch(() -> {
+            framesProvider.onNext(getFrames(false));
+            windowsProvider.onNext(getWindows(true));
+            palettesProvider.onNext(getPalettes(true));
+        });
     }
 
 }

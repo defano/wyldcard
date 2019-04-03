@@ -1,7 +1,7 @@
 package com.defano.wyldcard.parts.model;
 
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
@@ -145,7 +145,7 @@ public class WyldCardPropertiesModel implements PropertiesModel {
             ComputedSetter setter = computerSetters.get(propertyName);
             if (setter instanceof DispatchComputedSetter) {
                 String finalPropertyName = propertyName;
-                ThreadUtils.invokeAndWaitAsNeeded(() -> {
+                Invoke.onDispatch(() -> {
                     ((DispatchComputedSetter) setter).setComputedValue(context, WyldCardPropertiesModel.this, finalPropertyName, value);
                 });
             } else {
@@ -206,7 +206,7 @@ public class WyldCardPropertiesModel implements PropertiesModel {
             if (computerGetters.get(property) instanceof DispatchComputedGetter) {
                 final Value[] value = new Value[1];
                 String finalProperty = property;
-                ThreadUtils.callAndWaitAsNeeded(() -> value[0] = computerGetters.get(finalProperty).getComputedValue(context, this, finalProperty));
+                Invoke.onDispatch(() -> value[0] = computerGetters.get(finalProperty).getComputedValue(context, this, finalProperty));
                 return value[0];
             } else {
                 return computerGetters.get(property).getComputedValue(context, this, property);
@@ -252,7 +252,7 @@ public class WyldCardPropertiesModel implements PropertiesModel {
     @Override
     public void notifyPropertyChangedObserver(ExecutionContext context, PropertyChangeObserver listener) {
         assertConstructed();
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             for (String property : properties.keySet()) {
                 listener.onPropertyChanged(context, this, property, properties.get(property), properties.get(property));
             }
@@ -272,7 +272,7 @@ public class WyldCardPropertiesModel implements PropertiesModel {
     }
 
     private void fireOnPropertyChanged(ExecutionContext context, String property, Value oldValue, Value value) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             for (Object listener : this.changeObservers.toArray()) {
                 ((PropertyChangeObserver) listener).onPropertyChanged(context, this, property, oldValue, value);
             }

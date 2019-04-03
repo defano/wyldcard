@@ -15,14 +15,14 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.List;
 
-public class DefaultHandlerExecutionTask implements HandlerExecutionTask {
+public class MessageHandlerExecutionTask implements HandlerExecutionTask {
 
     private final ExecutionContext context;
     private final NamedBlock handler;
     private final PartSpecifier me;
     private final List<Value> arguments;
 
-    public DefaultHandlerExecutionTask(ExecutionContext context, PartSpecifier me, NamedBlock handler, List<Value> arguments) {
+    public MessageHandlerExecutionTask(ExecutionContext context, PartSpecifier me, NamedBlock handler, List<Value> arguments) {
         this.context = context;
         this.handler = handler;
         this.me = me;
@@ -72,8 +72,9 @@ public class DefaultHandlerExecutionTask implements HandlerExecutionTask {
             WyldCard.getInstance().showErrorDialogAndAbort(new HtSemanticException("Cannot exit from here."));
         }
 
-        // Pop context
-        context.popStackFrame();
+        finally {
+            context.popStackFrame();
+        }
 
         return trapped;
     }

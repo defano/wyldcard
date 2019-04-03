@@ -6,7 +6,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -90,7 +90,7 @@ public class DebugContext {
         isExecutionPaused.onNext(true);
 
         // Focus the debugger window and update the context of the variable watcher
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             WyldCard.getInstance().getWindowManager().getVariableWatcher().setWatchedVariables(debugContext);
             WyldCard.getInstance().getWindowManager().getExpressionEvaluator().setContext(debugContext);
             editor.getEditor().showTraceHighlight(statement.getToken().getLine() - 1);
@@ -100,7 +100,7 @@ public class DebugContext {
         if (isTracing.blockingFirst()) {
             try {
                 Thread.sleep(traceDelayMs);
-                ThreadUtils.invokeAndWaitAsNeeded(() -> editor.getEditor().clearTraceHighlights());
+                Invoke.onDispatch(() -> editor.getEditor().clearTraceHighlights());
             } catch (InterruptedException e) {
                 // Nothing to do
             }

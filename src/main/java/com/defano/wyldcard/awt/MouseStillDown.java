@@ -1,7 +1,7 @@
 package com.defano.wyldcard.awt;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.util.Throttle;
+import com.defano.wyldcard.thread.Throttle;
 
 import java.awt.event.MouseEvent;
 

@@ -8,7 +8,7 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.Breadcrumb;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import org.antlr.v4.runtime.Token;
 
 import javax.swing.*;
@@ -26,15 +26,13 @@ public class HyperTalkErrorDialog {
     }
 
     public void showError(HtException e) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             e.printStackTrace();
 
             if (!errorDialogVisible) {
                 errorDialogVisible = true;
 
                 if (isEditable(e)) {
-                    if (e.getBreadcrumb() != null)
-                        System.err.println(e.getBreadcrumb().toString());
 
                     // Suppress further error messages while user is editing script of this part
                     ScriptEditor scriptEditor = WyldCard.getInstance().getWindowManager().findScriptEditorForPart(e.getBreadcrumb().getPartModel());

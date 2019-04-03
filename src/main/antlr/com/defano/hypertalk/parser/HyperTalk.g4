@@ -176,12 +176,12 @@ commandStatement
     | 'go' 'to'? position                                                                                               # goPosition
     | 'go' 'to'? ordinal                                                                                                # goOrdinal
     | 'go' 'to'? expression navigationOption                                                                            # goCmd
+    | 'hide' 'the'? 'menubar'                                                                                           # hideMenubarCmd
+    | 'hide' 'the'? 'titlebar'                                                                                          # hideTitleBarCmd
     | 'hide' card picture                                                                                               # hideThisCardPictCmd
     | 'hide' background picture                                                                                         # hideThisBkgndPictCmd
     | 'hide' picture of expression                                                                                      # hidePictCmd
     | 'hide' expression                                                                                                 # hideCmd
-    | 'hide' 'the'? 'titlebar'                                                                                          # hideTitleBarCmd
-    | 'hide' 'the'? 'menubar'                                                                                           # hideMenubarCmd
     | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmd
     | 'keydown' expression                                                                                              # keydownCmd
     | 'lock' 'screen'                                                                                                   # lockScreenCmd
@@ -219,11 +219,11 @@ commandStatement
     | 'select' 'after' expression                                                                                       # selectAfterChunkCmd
     | 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
     | 'send' listExpression 'to' expression                                                                             # sendCmdStmnt
+    | 'show' 'the'? 'titlebar'                                                                                          # showTitleBarCmd
+    | 'show' 'the'? 'menubar'                                                                                           # showMenubarCmd
     | 'show' card picture                                                                                               # showThisCardPictCmd
     | 'show' background picture                                                                                         # showThisBkgndPictCmd
     | 'show' picture of expression                                                                                      # showPictCmd
-    | 'show' 'the'? 'titlebar'                                                                                          # showTitleBarCmd
-    | 'show' 'the'? 'menubar'                                                                                           # showMenubarCmd
     | 'show' expression                                                                                                 # showCmdStmnt
     | 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
     | 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd

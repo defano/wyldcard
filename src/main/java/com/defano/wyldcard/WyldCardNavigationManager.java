@@ -7,7 +7,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.CircleStack;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.layouts.StackWindow;
 
 import java.util.EmptyStackException;
@@ -41,7 +41,7 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, boolean push) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             CardPart cardPart;
 
             // Nothing to do if navigating to current card or an invalid card index
@@ -73,7 +73,7 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goNextCard(ExecutionContext context, StackPart stackPart) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             if (stackPart.getStackModel().getCurrentCardIndex() + 1 < stackPart.getStackModel().getCardCount()) {
                 return goCard(context, stackPart, stackPart.getStackModel().getCurrentCardIndex() + 1, true);
             } else {
@@ -87,7 +87,7 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goPrevCard(ExecutionContext context, StackPart stackPart) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             if (stackPart.getStackModel().getCurrentCardIndex() - 1 >= 0) {
                 return goCard(context, stackPart, stackPart.getStackModel().getCurrentCardIndex() - 1, true);
             } else {
@@ -115,7 +115,7 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goBack(ExecutionContext context) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             try {
                 return goDestination(context, getNavigationStack().back(), false);
             }
@@ -132,7 +132,7 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goForth(ExecutionContext context) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             try {
                 return goDestination(context, getNavigationStack().forward(), false);
             }
@@ -165,7 +165,7 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goStack(ExecutionContext context, String stackName, boolean inNewWindow, boolean withoutDialog) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             try {
                 RemoteNavigationOptions navOptions = new RemoteNavigationOptions(inNewWindow, withoutDialog);
                 Destination stackDestination = Destination.ofStack(new ExecutionContext(), stackName, navOptions);
@@ -186,11 +186,11 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goDestination(ExecutionContext context, Destination destination) throws HtSemanticException {
-        return ThreadUtils.callAndWaitAsNeeded(() -> goDestination(context, destination, true));
+        return Invoke.onDispatch(() -> goDestination(context, destination, true));
     }
 
     private CardPart goDestination(ExecutionContext context, Destination destination, boolean push) throws HtSemanticException {
-        return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             StackWindow stackWindow = WyldCard.getInstance().getWindowManager().findWindowForStack(destination.getStack());
             context.bind(stackWindow.getStack());
             stackWindow.setVisible(true);

@@ -35,7 +35,7 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.util.TextArrowsMessageCompletionObserver;
 import com.defano.wyldcard.runtime.PartTable;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import io.reactivex.disposables.Disposable;
 
 import javax.swing.*;
@@ -249,7 +249,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * @param visible True to show card parts; false to hide them
      */
     void setPartsVisible(ExecutionContext context, Owner owningLayer, boolean visible) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             for (PartModel thisPartModel : getPartModel().getPartModels(context)) {
                 if (thisPartModel.getOwner() == owningLayer) {
                     if (!visible) {
@@ -364,7 +364,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
         BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = screenshot.createGraphics();
-        ThreadUtils.invokeAndWaitAsNeeded(() -> CardPart.this.printAll(g));
+        Invoke.onDispatch(() -> CardPart.this.printAll(g));
         g.dispose();
 
         return screenshot;

@@ -62,9 +62,9 @@ public interface Messagable {
 
         // No messages are sent when cmd-option is down; some messages not sent when 'lockMessages' is true
         if (WyldCard.getInstance().getKeyboardManager().isPeeking(context) ||
-                (SystemMessage.isLockable(message.getMessageName())) && WyldCard.getInstance().getWyldCardProperties().isLockMessages()) {
+                (SystemMessage.isLockable(message.getMessageName(context))) && WyldCard.getInstance().getWyldCardProperties().isLockMessages()) {
 
-            onCompletion.onMessagePassed(message.getMessageName(), false, null);
+            onCompletion.onMessagePassed(message.getMessageName(context), false, null);
             return;
         }
 
@@ -72,12 +72,12 @@ public interface Messagable {
         Compiler.asyncExecuteHandler(context, getMe(context), getScript(context), message, (me, script, handler, trappedMessage, exception) -> {
             // Did message generate an error
             if (exception != null) {
-                onCompletion.onMessagePassed(message.getMessageName(), true, exception);
+                onCompletion.onMessagePassed(message.getMessageName(context), true, exception);
             }
 
             // Did this part trap this command?
             else if (trappedMessage) {
-                onCompletion.onMessagePassed(message.getMessageName(), true, null);
+                onCompletion.onMessagePassed(message.getMessageName(context), true, null);
             }
 
             // Message not trapped, send message to next part in the hierarchy
@@ -85,7 +85,7 @@ public interface Messagable {
                 // Get next recipient in message passing order; null if no other parts receive message
                 Messagable nextRecipient = getNextMessageRecipient(context, getMe(context).getType());
                 if (nextRecipient == null) {
-                    onCompletion.onMessagePassed(message.getMessageName(), false, null);
+                    onCompletion.onMessagePassed(message.getMessageName(context), false, null);
                 } else {
                     nextRecipient.receiveMessage(context, message, onCompletion);
                 }
@@ -132,7 +132,7 @@ public interface Messagable {
      * @throws HtSemanticException Thrown if a syntax or semantic error occurs attempting to execute the function.
      */
     default Value invokeFunction(ExecutionContext context, Message message) throws HtException {
-        NamedBlock function = getScript(context).getNamedBlock(message.getMessageName());
+        NamedBlock function = getScript(context).getNamedBlock(message.getMessageName(context));
         Messagable target = this;
 
         while (function == null) {
@@ -141,14 +141,14 @@ public interface Messagable {
 
             // No more scripts to search; error!
             if (target == null) {
-                throw new HtSemanticException("No such function " + message.getMessageName() + ".");
+                throw new HtSemanticException("No such function " + message.getMessageName(context) + ".");
             }
 
             // Look for function in this script
-            function = target.getScript(context).getNamedBlock(message.getMessageName());
+            function = target.getScript(context).getNamedBlock(message.getMessageName(context));
         }
 
-        return Compiler.blockingExecuteFunction(context, target.getMe(context), function, message.getArguments());
+        return Compiler.blockingExecuteFunction(context, target.getMe(context), function, message.getArguments(context));
     }
 
     /**

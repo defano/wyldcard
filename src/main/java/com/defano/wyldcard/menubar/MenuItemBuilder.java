@@ -1,6 +1,6 @@
 package com.defano.wyldcard.menubar;
 
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import io.reactivex.Observable;
 
 import javax.swing.*;
@@ -122,17 +122,17 @@ public class MenuItemBuilder {
         }
 
         if (checkmarkProvider != null) {
-            checkmarkProvider.subscribe(checked -> ThreadUtils.invokeAndWaitAsNeeded(() -> item.setSelected(checked)));
+            checkmarkProvider.subscribe(checked -> Invoke.onDispatch(() -> item.setSelected(checked)));
             item.setSelected(checkmarkProvider.blockingFirst());
         }
 
         if (disabledProvider != null) {
-            disabledProvider.subscribe(disabled -> ThreadUtils.invokeAndWaitAsNeeded(() -> item.setEnabled(!disabled)));
+            disabledProvider.subscribe(disabled -> Invoke.onDispatch(() -> item.setEnabled(!disabled)));
             item.setEnabled(!disabledProvider.blockingFirst());
         }
 
         if (enabledProvider != null) {
-            enabledProvider.subscribe(enabled -> ThreadUtils.invokeAndWaitAsNeeded(() -> item.setEnabled(enabled)));
+            enabledProvider.subscribe(enabled -> Invoke.onDispatch(() -> item.setEnabled(enabled)));
             item.setEnabled(enabledProvider.blockingFirst());
         }
 

@@ -1,7 +1,7 @@
 package com.defano.wyldcard.parts.card;
 
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import io.reactivex.functions.Consumer;
 
 class EditingBackgroundObserver implements Consumer<Boolean> {
@@ -21,6 +21,6 @@ class EditingBackgroundObserver implements Consumer<Boolean> {
             cardPart.getBackgroundCanvas().setScale(1.0);
         }
 
-        ThreadUtils.invokeAndWaitAsNeeded(() -> cardPart.setEditingBackground(new ExecutionContext(), isEditingBackground));
+        Invoke.onDispatch(() -> cardPart.setEditingBackground(new ExecutionContext(), isEditingBackground));
     }
 }

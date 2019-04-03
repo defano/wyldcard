@@ -16,7 +16,7 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ImageLayerUtils;
 import com.defano.wyldcard.util.ProxyObservable;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WindowDock;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import com.google.inject.Singleton;
@@ -54,7 +54,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     @Override
     public void newStack(ExecutionContext context) {
         StackPart newStack = StackPart.newStack(context);
-        ThreadUtils.invokeAndWaitAsNeeded(() -> displayStack(context, newStack, true));
+        Invoke.onDispatch(() -> displayStack(context, newStack, true));
     }
 
     /**
@@ -234,6 +234,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     /**
      * {@inheritDoc}
      */
+    @RunOnDispatch
     @Override
     public void focusStack(StackPart stackPart) {
 
@@ -449,6 +450,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
      * @param stack         The stack to dispose
      * @param disposeWindow When true, dispose the stack's window
      */
+    @RunOnDispatch
     private void disposeStack(ExecutionContext context, StackPart stack, boolean disposeWindow) {
         // Clean up stack resources
         stack.partClosed(context);
@@ -475,6 +477,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
      * @param stack   The stack part to prompt to save
      * @return True if the user canceled the prompt; false if the user chose to save or not save the stack.
      */
+    @RunOnDispatch
     private boolean promptToSave(ExecutionContext context, StackPart stack) {
         // Prompt user to save if stack is dirty
         if (stack.getStackModel().isDirty()) {

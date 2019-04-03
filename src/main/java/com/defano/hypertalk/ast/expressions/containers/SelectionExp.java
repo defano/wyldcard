@@ -4,7 +4,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.field.AddressableSelection;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
@@ -42,7 +42,7 @@ public class SelectionExp extends ContainerExp {
 
         // Select the new range of text in the destination
         int newSelectionLength = newSelection.toString().length();
-        ThreadUtils.invokeAndWaitAsNeeded(() -> field.setSelection(context, range.start, range.start + newSelectionLength));
+        Invoke.onDispatch(() -> field.setSelection(context, range.start, range.start + newSelectionLength));
     }
 
 }

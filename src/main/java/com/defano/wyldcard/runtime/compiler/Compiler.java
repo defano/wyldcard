@@ -14,7 +14,7 @@ import com.defano.wyldcard.debug.message.HandlerInvocationCache;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.runtime.compiler.task.*;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.ThreadChecker;
 import com.google.common.util.concurrent.*;
 
 import javax.swing.*;
@@ -31,7 +31,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Compiler {
 
     private final static int MAX_COMPILE_THREADS = 6;          // Simultaneous background parse tasks
-    private final static int MAX_EXECUTOR_THREADS = 8;         // Simultaneous scripts executing
+    private final static int MAX_EXECUTOR_THREADS = 1;         // Simultaneous scripts executing
 
     private static final ThreadPoolExecutor bestEffortCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, new ThreadFactoryBuilder().setNameFormat("beasync-compiler-%d").build());
     private static final ThreadPoolExecutor asyncCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("async-compiler-%d").build());
@@ -95,7 +95,7 @@ public class Compiler {
      * @return The Value of the evaluated expression.
      */
     public static Value blockingEvaluate(String expression, ExecutionContext context) {
-        ThreadUtils.assertWorkerThread();
+        ThreadChecker.assertWorkerThread();
 
         try {
             Statement statement = blockingCompile(CompilationUnit.SCRIPTLET, expression).getStatements().list.get(0);
@@ -130,7 +130,7 @@ public class Compiler {
      */
     @SuppressWarnings("unchecked")
     public static <T> T blockingDereference(Value value, Class<T> klass) {
-        ThreadUtils.assertWorkerThread();
+        ThreadChecker.assertWorkerThread();
 
         try {
             Statement statement = Compiler.blockingCompile(CompilationUnit.SCRIPTLET, value.toString()).getStatements().list.get(0);
@@ -164,8 +164,8 @@ public class Compiler {
      * @throws HtSemanticException Thrown if an error occurs executing the function.
      */
     public static Value blockingExecuteFunction(ExecutionContext context, PartSpecifier me, NamedBlock function, List<Value> arguments) throws HtException {
-        ThreadUtils.assertWorkerThread();
-        return new FunctionExecutionTask(context, me, function, arguments).call();
+        ThreadChecker.assertWorkerThread();
+        return new FunctionHandlerExecutionTask(context, me, function, arguments).call();
     }
 
     /**
@@ -187,12 +187,12 @@ public class Compiler {
     public static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, Message message, HandlerCompletionObserver completionObserver) {
 
         // Find handler for message in the script
-        NamedBlock handler = script == null ? null : script.getHandler(message.getMessageName());
+        NamedBlock handler = script == null ? null : script.getHandler(message.getMessageName(context));
         CheckedFuture<Boolean, HtException> future;
 
         // Script implements handler for message; execute it
         if (handler != null) {
-            future = getFutureForHandlerExecutionTask(new DefaultHandlerExecutionTask(context, me, handler, message.getArguments()));
+            future = getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, me, handler, message.getArguments(context)));
         }
 
         // Special case: No handler in the script for this message; produce a "no-op" execution
@@ -212,7 +212,7 @@ public class Compiler {
             });
         }
 
-        Futures.addCallback(future, new HandlerExecutionFutureCallback(me, script, message.getMessageName(), completionObserver));
+        Futures.addCallback(future, new HandlerExecutionFutureCallback(me, script, message.getMessageName(context), completionObserver));
     }
 
     /**
@@ -271,7 +271,7 @@ public class Compiler {
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
     public static CheckedFuture<Boolean, HtException> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
-        return getFutureForHandlerExecutionTask(new DefaultHandlerExecutionTask(context, me, NamedBlock.anonymousBlock(blockingCompile(CompilationUnit.SCRIPTLET, statementList).getStatements()), new ArrayList<>()));
+        return getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, me, NamedBlock.anonymousBlock(blockingCompile(CompilationUnit.SCRIPTLET, statementList).getStatements()), new ArrayList<>()));
     }
 
     /**

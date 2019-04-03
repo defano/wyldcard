@@ -6,7 +6,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;
 import java.util.Random;
@@ -39,7 +39,7 @@ public class MenuItemSpecifier {
     }
 
     public JMenuItem getSpecifiedMenuItem(ExecutionContext context) throws HtException {
-        return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             JMenu menu = getSpecifiedMenu(context);
             int itemIndex = getSpecifiedItemIndex(context);
 
@@ -57,11 +57,11 @@ public class MenuItemSpecifier {
     }
 
     public JMenu getSpecifiedMenu(ExecutionContext context) throws HtException {
-        return ThreadUtils.callCheckedAndWaitAsNeeded(() -> this.menu.getSpecifiedMenu(context), HtException.class);
+        return Invoke.onDispatch(() -> this.menu.getSpecifiedMenu(context), HtException.class);
     }
 
     public int getSpecifiedItemIndex(ExecutionContext context) throws HtException {
-        return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             JMenu menu = getSpecifiedMenu(context);
 
             if (expression != null) {
@@ -103,6 +103,6 @@ public class MenuItemSpecifier {
     }
 
     private boolean isSeparator(JMenuItem item) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> item == null || item.getText() == null);
+        return Invoke.onDispatch(() -> item == null || item.getText() == null);
     }
 }

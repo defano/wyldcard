@@ -6,7 +6,8 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.menubar.DeferredMenuAction;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
+import com.defano.wyldcard.thread.ThreadChecker;
 import com.google.inject.Singleton;
 
 import javax.swing.*;
@@ -52,12 +53,12 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
 
     @Override
     public void setVisible(boolean visible) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> MainWyldCardMenuBar.super.setVisible(visible));
+        Invoke.onDispatch(() -> MainWyldCardMenuBar.super.setVisible(visible));
     }
 
     @Override
     public List<JMenu> getVisibleMenus() {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             List<JMenu> visibleMenus = new ArrayList<>();
 
             for (int idx = 0; idx < getMenuCount(); idx++) {
@@ -73,7 +74,7 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
 
     @Override
     public void doMenu(ExecutionContext context, String theMenuItem) throws HtSemanticException {
-        ThreadUtils.assertWorkerThread();
+        ThreadChecker.assertWorkerThread();
 
         JMenuItem foundMenuItem = findMenuItemByName(theMenuItem);
         if (foundMenuItem != null) {
@@ -92,7 +93,7 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
 
     @Override
     public void createMenu(String name) throws HtSemanticException {
-        ThreadUtils.invokeCheckedAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             if (findMenuByName(name) != null) {
                 throw new HtSemanticException("A menu named " + name + " already exists.");
             }
@@ -108,7 +109,7 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
 
     @Override
     public void deleteMenu(JMenu menu) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             super.remove(menu);
             super.invalidate();
             super.repaint();
@@ -120,10 +121,10 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
 
     @Override
     public JMenu findMenuByNumber(int index) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             List<JMenu> visibleMenus = getVisibleMenus();
 
-            return ThreadUtils.callAndWaitAsNeeded(() -> {
+            return Invoke.onDispatch(() -> {
                 if (index < 0 || index >= visibleMenus.size()) {
                     return null;
                 }
@@ -135,7 +136,7 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
 
     @Override
     public JMenu findMenuByName(String name) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             List<JMenu> visibleMenus = getVisibleMenus();
 
             for (JMenu thisMenu : visibleMenus) {
@@ -149,7 +150,7 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
     }
 
     private JMenuItem findMenuItemByName(String name) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
 
             List<JMenu> visibleMenus = getVisibleMenus();
 

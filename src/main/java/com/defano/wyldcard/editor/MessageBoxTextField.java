@@ -10,7 +10,7 @@ import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.MessageEvaluationObserver;
 import com.defano.wyldcard.util.SquigglePainter;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -116,7 +116,7 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
     public void onMessageEvaluated(String result) {
         // Replace the message box text with the result of evaluating the expression (ignore if user entered statement)
         if (result != null) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> setText(result));
+            Invoke.onDispatch(() -> setText(result));
         }
     }
 

@@ -11,7 +11,7 @@ import com.defano.wyldcard.parts.stack.StackObserver;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.FileDrop;
-import com.defano.wyldcard.util.Throttle;
+import com.defano.wyldcard.thread.Throttle;
 import com.defano.wyldcard.window.WyldCardWindow;
 
 import javax.swing.*;

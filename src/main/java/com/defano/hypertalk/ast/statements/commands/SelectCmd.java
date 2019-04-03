@@ -12,7 +12,7 @@ import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.field.AddressableSelection;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -123,7 +123,7 @@ public class SelectCmd extends Command {
         PartModel partModel = context.getPart(specifier);
         CardLayerPart part = context.getCurrentStack().getDisplayedCard().getPart(partModel);
 
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             windowManager.getWindowForStack(context, context.getCurrentStack()).requestFocus();
 
             WyldCard.getInstance().getToolsManager().forceToolSelection(specifier.getType().getEditTool(), false);

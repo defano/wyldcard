@@ -6,13 +6,12 @@ import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 public class MenuItemExp extends ContainerExp {
 
@@ -46,7 +45,7 @@ public class MenuItemExp extends ContainerExp {
      * @return The value of the specified menu item.
      */
     private Value getMenuItemValue(JMenu menu, int itemIndex) throws HtSemanticException {
-        return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             if (itemIndex < 0 || itemIndex >= menu.getItemCount()) {
                 throw new HtSemanticException("No such menu item " + (itemIndex + 1));
             }
@@ -68,7 +67,7 @@ public class MenuItemExp extends ContainerExp {
      * @throws HtSemanticException Thrown if an error occurs adding items.
      */
     private void putMenuItemValue(ExecutionContext context, Value value, Preposition preposition, List<Value> menuMessages) throws HtException {
-        ThreadUtils.invokeCheckedAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             JMenu menu = item.getSpecifiedMenu(context);
             int itemIndex = item.getSpecifiedItemIndex(context);       // Location of specified item
 

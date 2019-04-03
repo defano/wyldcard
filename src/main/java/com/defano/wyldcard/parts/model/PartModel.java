@@ -17,7 +17,7 @@ import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.TwoPhaseParser;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layouts.ButtonPropertyEditor;
 import com.defano.wyldcard.window.layouts.FieldPropertyEditor;
@@ -430,7 +430,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
      * @param caretPosition The location where the caret should be positioned in the text or null to use the last saved
      */
     public ScriptEditor editScript(ExecutionContext context, Integer caretPosition) {
-        return ThreadUtils.callAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             ScriptEditor editor = WyldCard.getInstance().getWindowManager().findScriptEditorForPart(PartModel.this);
 
             if (caretPosition != null) {
@@ -471,7 +471,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
      * @param context The execution context.
      */
     public void editProperties(ExecutionContext context) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             if (getType() == PartType.FIELD) {
                 new WindowBuilder<>(new FieldPropertyEditor())
                         .withModel((FieldModel) this)

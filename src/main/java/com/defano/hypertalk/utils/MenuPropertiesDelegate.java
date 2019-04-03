@@ -6,7 +6,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +29,7 @@ public class MenuPropertiesDelegate {
     private static final String PROP_NAME = "name";
 
     public static Value getProperty(ExecutionContext context, String name, MenuItemSpecifier menuItem) throws HtException {
-        return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             switch (name.toLowerCase()) {
                 case PROP_ENABLED:
                     return new Value(menuItem.getSpecifiedMenuItem(context).isEnabled());
@@ -46,7 +46,7 @@ public class MenuPropertiesDelegate {
     }
 
     public static void setProperty(ExecutionContext context, String name, Value value, MenuItemSpecifier menuItem) throws HtException {
-        ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             switch (name.toLowerCase()) {
                 case PROP_ENABLED:
                     menuItem.getSpecifiedMenuItem(context).setEnabled(value.booleanValue());

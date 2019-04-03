@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.thread.ThreadChecker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,18 +24,38 @@ public class MessageBuilder {
         return new MessageBuilder(name.toString());
     }
 
-    public static Message fromString(ExecutionContext context, String text) {
-        String message = text.trim().split("\\s")[0];
-        ArrayList<Value> arguments = new ArrayList<>();
+    /**
+     * Creates a message by parsing the given string into a message name a list of zero or more argument expressions.
+     * <p>
+     * For example, if the text contains 'doSomething (cd fld 1), x` the value of 'cd fld 1' and 'x' will be evaluated
+     * when {@link Message#getArguments(ExecutionContext)} is called using the provided execution context.
+     * <p>
+     * NOTE that the message returned has the limitation that its arguments may only be retrieved on a script execution
+     * thread because of the need to invoke the runtime environment in order to evaluate argument expressions.
+     *
+     * @param text The text of the message to be sent.
+     * @return A message object, providing a late-binding (evaluation) of message arguments.
+     */
+    public static Message fromString(String text) {
+        return new Message() {
+            @Override
+            public String getMessageName(ExecutionContext context) {
+                return text.trim().split("\\s")[0];
+            }
 
-        for (String component : text.trim().substring(message.length()).split(",")) {
-            arguments.add(Compiler.blockingEvaluate(component.trim(), context));
-        }
+            @Override
+            public List<Value> getArguments(ExecutionContext context) {
+                ThreadChecker.assertWorkerThread();
 
-        return MessageBuilder
-                .named(message)
-                .withArguments(arguments)
-                .build();
+                ArrayList<Value> arguments = new ArrayList<>();
+
+                for (String component : text.trim().substring(text.length()).split(",")) {
+                    arguments.add(Compiler.blockingEvaluate(component.trim(), context));
+                }
+
+                return arguments;
+            }
+        };
     }
 
     public MessageBuilder withArgument(Object argument) {
@@ -55,12 +76,12 @@ public class MessageBuilder {
     public Message build() {
         return new Message() {
             @Override
-            public String getMessageName() {
+            public String getMessageName(ExecutionContext context) {
                 return messageName;
             }
 
             @Override
-            public List<Value> getArguments() {
+            public List<Value> getArguments(ExecutionContext context) {
                 return arguments;
             }
         };

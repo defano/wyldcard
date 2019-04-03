@@ -12,7 +12,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.search.SearchIndexer;
 import com.defano.wyldcard.search.SearchQuery;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.*;
@@ -113,7 +113,7 @@ public class MarkCmd extends Command {
         ArrayList<CardPart> cards = new ArrayList<>();
 
         // Create skeleton card parts for every card in the stack
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             for (CardModel model : context.getCurrentStack().getStackModel().getCardModels()) {
                 cards.add(CardPart.fromModel(context, model));
             }

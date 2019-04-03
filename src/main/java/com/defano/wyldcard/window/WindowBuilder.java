@@ -13,7 +13,7 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
 
     private final WindowType window;
     private Point location = null;
-    private Component relativeLocation = null;
+    private boolean centeredOnScreen = true;
     private boolean initiallyVisible = true;
     private boolean resizable = false;
     private boolean isPalette = false;
@@ -46,6 +46,11 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
         frame.setVisible(false);
 
         return frame;
+    }
+
+    public WindowBuilder notCenteredOnScreen() {
+        this.centeredOnScreen = false;
+        return this;
     }
 
     @RunOnDispatch
@@ -139,8 +144,8 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
 
         if (location != null) {
             this.window.positionWindow(location.x, location.y);
-        } else {
-            this.window.getWindow().setLocationRelativeTo(relativeLocation);
+        } else if (centeredOnScreen) {
+            this.window.getWindow().setLocationRelativeTo(null);
         }
 
         if (window instanceof WyldCardDialog) {
@@ -161,29 +166,11 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
             });
         }
 
-        // Notify the DefaultWindowManager when a new window is opened or closed
-        this.window.getWindow().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
-            }
-
-            @Override
-            public void windowOpened(WindowEvent e) {
-                WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
-            }
-        });
-
         // Push palettes to back when WyldCard is not in foreground
         if (!isPalette) {
             this.window.getWindow().addWindowListener(new PaletteActivationManager());
         }
 
-        // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
-        // otherwise, the frame will "automagically" move to the lower left of the screen.
-        // See: http://stackoverflow.com/questions/26332251/jframe-moves-to-the-bottom-left-corner-of-the-screen
-
-        this.window.setAllowResizing(resizable);
         this.window.getWindow().setFocusableWindowState(isFocusable);
         this.window.getWindow().setAlwaysOnTop(isPalette);
 
@@ -197,6 +184,24 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
         }
         this.window.getWindow().setMinimumSize(new Dimension(minWidth, minHeight));
         this.window.getWindow().setVisible(initiallyVisible);
+
+        // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
+        // otherwise, the frame will "automagically" move to the lower left of the screen.
+        // See: http://stackoverflow.com/questions/26332251/jframe-moves-to-the-bottom-left-corner-of-the-screen
+        this.window.setAllowResizing(resizable);
+
+        // Notify the DefaultWindowManager when a new window is opened or closed
+        this.window.getWindow().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
+            }
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+                WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
+            }
+        });
 
         return window;
     }

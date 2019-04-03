@@ -16,6 +16,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.runtime.CallStack;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
@@ -55,7 +56,7 @@ public class ExecutionContext {
 
     private StackPart stack;                                // WyldCard stack that this script is bound to
     private CardPart card;                                  // "Current" card in the context of this execution
-    private Stack<StackFrame> callStack = new Stack<>();    // Call stack
+    private CallStack callStack = new CallStack();          // Call stack
     private Value result;                                   // Value returned by 'the result'
     private PartSpecifier theTarget;                        // Part that the message was initially sent
     private boolean isStaticContext;                        // Is message box evaluation?

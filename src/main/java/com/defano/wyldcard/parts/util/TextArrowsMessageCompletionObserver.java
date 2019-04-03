@@ -5,7 +5,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 
 import java.awt.event.KeyEvent;
 
@@ -36,7 +36,7 @@ public class TextArrowsMessageCompletionObserver implements MessageCompletionObs
     }
 
     public void doArrowKeyNavigation() {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
                     WyldCard.getInstance().getNavigationManager().goPrevCard(new ExecutionContext(cardPart), cardPart.getOwningStack());

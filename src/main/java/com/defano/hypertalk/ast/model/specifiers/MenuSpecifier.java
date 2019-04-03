@@ -7,7 +7,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;
 import java.util.Random;
@@ -37,7 +37,7 @@ public class MenuSpecifier {
     }
 
     public JMenu getSpecifiedMenu(ExecutionContext context) throws HtException {
-        return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
+        return Invoke.onDispatch(() -> {
             if (menuExpr != null) {
                 JMenu foundMenu;
                 Value menuExprValue = menuExpr.evaluate(context);
