@@ -3,6 +3,7 @@ package com.defano.wyldcard.parts.finder;
 import com.defano.hypertalk.ast.model.specifiers.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.parts.HyperCardPart;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.WindowProxyPartModel;
@@ -26,6 +27,12 @@ public interface PartFinder {
      * @throws PartException Thrown if the requested part does not exist or if the specification is otherwise invalid.
      */
     default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws PartException {
+
+        // Looking for HyperCard itself (i.e., 'send "greeting" to hypercard')
+        if (ps.isSpecifyingHyperCard()) {
+            return HyperCardPart.getInstance();
+        }
+
         // Looking for a window
         if (ps.isSpecifyingWindow()) {
             return new WindowProxyPartModel(WyldCard.getInstance().getWindowManager().findWindow(context, (WindowSpecifier) ps));

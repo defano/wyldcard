@@ -31,4 +31,21 @@ public interface Message {
      * arguments.
      */
     List<Value> getArguments(ExecutionContext context);
+
+    default String toMessageString(ExecutionContext context) {
+        StringBuilder message = new StringBuilder();
+        List<Value> arguments = getArguments(context);
+
+        message.append(getMessageName(context)).append(" ");
+
+        for (Value argument : arguments) {
+            message.append(argument).append(",");
+        }
+
+        if (!arguments.isEmpty()) {
+            message.deleteCharAt(message.length() - 1);
+        }
+
+        return message.toString();
+    }
 }

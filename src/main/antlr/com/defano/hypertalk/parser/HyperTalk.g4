@@ -166,7 +166,7 @@ commandStatement
     | 'enterkey'                                                                                                        # enterKeyCmd
     | 'exit' symbol                                                                                                     # exitCmd
     | 'exit' 'repeat'                                                                                                   # exitRepeatCmd
-    | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmd
+    | 'exit' 'to' hypercard                                                                                             # exitToHyperCardCmd
     | 'export' 'paint' 'to' 'file' expression                                                                           # exportPaintCmd
     | 'find' expression? 'international'? expression of expression of 'marked' cards                                    # findFieldMarkedCardsCmd
     | 'find' expression? 'international'? expression of expression                                                      # findFieldCmd
@@ -383,6 +383,7 @@ part
     | cardPart                                                                                                          # cardPartPart
     | stackPart                                                                                                         # stackPartPart
     | windowPart                                                                                                        # windowPartPart
+    | hypercard                                                                                                         # hypercardPart
     ;
 
 stackPart
@@ -732,7 +733,7 @@ keyword
     | 'with' | 'arrowkey' | 'ask' | 'file' | 'beep' | 'choose' | 'tool' | 'click' | 'at' | 'close'
     | 'commandkeydown' | 'controlkey' | 'convert' | 'from' | 'create' | 'menu' | 'debug' | 'checkpoint' | 'delete'
     | 'dial' | 'disable' | 'divide' | 'by' | 'domenu' | 'drag' | 'edit' | 'script' | 'enable'
-    | 'enterinfield' | 'enterkey' | 'hypercard' | 'export' | 'paint' | 'find' | 'international' | 'marked'
+    | 'enterinfield' | 'enterkey' | 'export' | 'paint' | 'find' | 'international' | 'marked'
     | 'get' | 'go' | 'visual' | 'hide' | 'titlebar' | 'menubar' | 'import' | 'keydown' | 'lock' | 'screen'
     | 'mark' | 'all' | 'where' | 'finding' | 'multiply' | 'next' | 'open' | 'pass' | 'play' | 'pop' | 'push' | 'put'
     | 'read' | 'for' | 'until' | 'reset' | 'save' | 'this' | 'stack' | 'as' | 'select' | 'text'
@@ -928,6 +929,11 @@ of
     : 'of'
     | 'from'
     | 'in'
+    ;
+
+hypercard
+    : 'hypercard'
+    | 'wyldcard'
     ;
 
 ID

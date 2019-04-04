@@ -25,7 +25,7 @@ public class HandlerInvocation implements Comparable<HandlerInvocation>, Message
         this(thread, MessageBuilder.named(messageName).withArguments(messageArguments).build(), recipient, isTarget, stackDepth, msgHandled);
     }
 
-    public HandlerInvocation(String thread, Message message, PartSpecifier recipient, boolean isTarget, int stackDepth, boolean msgHandled) {
+    private HandlerInvocation(String thread, Message message, PartSpecifier recipient, boolean isTarget, int stackDepth, boolean msgHandled) {
         this.thread = thread;
         this.message = message;
         this.recipient = recipient;

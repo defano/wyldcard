@@ -92,6 +92,10 @@ public interface PartSpecifier {
         return this instanceof PartMessageSpecifier;
     }
 
+    default boolean isSpecifyingHyperCard() {
+        return this instanceof HyperCardPartSpecifier;
+    }
+
     /**
      * Gets a syntactically valid HyperTalk expression that identifies the specified part (i.e., "card field id 13").
      *

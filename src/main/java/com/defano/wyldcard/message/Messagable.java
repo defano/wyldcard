@@ -6,6 +6,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.DeferredKeyEventComponent;
+import com.defano.wyldcard.parts.HyperCardPart;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -38,8 +39,8 @@ public interface Messagable {
     /**
      * Asynchronously sends a message with bound arguments (i.e., 'doMenu') to this part's message passing hierarchy.
      *
-     * @param context   The execution context
-     * @param message   The message to be passed
+     * @param context The execution context
+     * @param message The message to be passed
      */
     default void receiveMessage(ExecutionContext context, Message message) {
         receiveMessage(context, message, (command, trapped, err) -> {
@@ -84,11 +85,7 @@ public interface Messagable {
             else {
                 // Get next recipient in message passing order; null if no other parts receive message
                 Messagable nextRecipient = getNextMessageRecipient(context, getMe(context).getType());
-                if (nextRecipient == null) {
-                    onCompletion.onMessagePassed(message.getMessageName(context), false, null);
-                } else {
-                    nextRecipient.receiveMessage(context, message, onCompletion);
-                }
+                nextRecipient.receiveMessage(context, message, onCompletion);
             }
         });
     }
@@ -104,9 +101,9 @@ public interface Messagable {
      * {@link DeferredKeyEventComponent#setPendingRedispatch(boolean)} is invoked with 'true' initially, then invoked
      * with 'false' after the message has been completely received.
      *
-     * @param context   The execution context
-     * @param message   The message to be received
-     * @param e         The input event to consume if the command is trapped by the part (or fails to invoke 'pass') within
+     * @param context The execution context
+     * @param message The message to be received
+     * @param e       The input event to consume if the command is trapped by the part (or fails to invoke 'pass') within
      */
     default void receiveAndDeferKeyEvent(ExecutionContext context, Message message, KeyEvent e, DeferredKeyEventComponent c) {
         InputEvent eventCopy = new KeyEvent(e.getComponent(), e.getID(), e.getWhen(), e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation());
@@ -125,9 +122,8 @@ public interface Messagable {
     /**
      * Invokes a function defined in the part's script, blocking until the function completes.
      *
-     * @param context      The execution context
-     * @param functionName The name of the function to execute.
-     * @param arguments    The arguments to the function.
+     * @param context   The execution context
+     * @param message   The function to execute.
      * @return The value returned by the function upon completion.
      * @throws HtSemanticException Thrown if a syntax or semantic error occurs attempting to execute the function.
      */
@@ -175,8 +171,10 @@ public interface Messagable {
                 } else {
                     return context.getCurrentCard().getPartModel();
                 }
+            case STACK:
+                return HyperCardPart.getInstance();
             default:
-                return null;
+                throw new IllegalStateException("Bug! Unhandled message recipient type: " + type);
         }
     }
 }

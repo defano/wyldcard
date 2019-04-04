@@ -1472,6 +1472,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitHypercardPart(HyperTalkParser.HypercardPartContext ctx) {
+        return new HyperCardPartExp(ctx);
+    }
+
+    @Override
     public Object visitThisStackPart(HyperTalkParser.ThisStackPartContext ctx) {
         return new StackPartExp(ctx);
     }

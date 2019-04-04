@@ -199,7 +199,7 @@ public class Compiler {
         else {
             future = getFutureForHandlerExecutionTask(() -> {
                 // Synthesize handler invocation for message watcher
-                HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message, me, context.getTarget() == null, context.getStackDepth(), false);
+                HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message.getMessageName(context), message.getArguments(context), me, context.getTarget() == null, context.getStackDepth(), false);
                 HandlerInvocationCache.getInstance().notifyMessageHandled(invocation);
 
                 // No handler for script, but we still need to capture that this part was the target
