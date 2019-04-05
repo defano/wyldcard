@@ -45,6 +45,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The "controller" object that represents a card in a WyldCard stack.
@@ -72,6 +73,8 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     private Disposable editingBackgroundSubscription;
     private Disposable foregroundScaleSubscription;
     private Disposable backgroundScaleSubscription;
+
+    private final AtomicBoolean isOpened = new AtomicBoolean(false);
 
     /**
      * Instantiates the CardPart occurring at a specified position in a the stack.
@@ -186,7 +189,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         newPart.partOpened(context);
 
         // Send the 'newButton' or 'newField' message to the part
-        newPart.getPartModel().receiveMessage(context.bind(this), newPartMessage);
+        newPart.getPartModel().receiveMessage(context.bindStack(this), newPartMessage);
 
         // Make the part tool active and select the newly created part
         WyldCard.getInstance().getPartToolManager().setSelectedPart(newPart);
@@ -493,6 +496,10 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     @Override
     @RunOnDispatch
     public void partOpened(ExecutionContext context) {
+        if (isOpened.get()) {
+            throw new IllegalStateException("Bug! Card is already opened.");
+        }
+
         StackModel stack = getOwningStackModel();
         Dimension dimension = stack.getSize(context);
 
@@ -543,12 +550,18 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
         // Send openCard message after UI elements are ready
         SwingUtilities.invokeLater(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD));
+
+        isOpened.set(true);
     }
 
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
     public void partClosed(ExecutionContext context) {
+        if (!isOpened.get()) {
+            throw new IllegalStateException("Bug! Card is not open for closing.");
+        }
+
         getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.CLOSE_CARD);
 
         // Lets parts know they're about to go away
@@ -580,6 +593,8 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         getPartModel().getBackgroundModel().removePropertyChangedObserver(this);
 
         super.dispose();
+
+        isOpened.set(false);
     }
 
     /**

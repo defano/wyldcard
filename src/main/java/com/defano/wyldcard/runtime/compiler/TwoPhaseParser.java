@@ -38,7 +38,7 @@ public class TwoPhaseParser {
 
         // Nothing to do for empty scripts
         if (scriptText == null || scriptText.trim().isEmpty()) {
-            return new Script();
+            return null;
         }
 
         // HyperCard ignores text between handler blocks in scripts

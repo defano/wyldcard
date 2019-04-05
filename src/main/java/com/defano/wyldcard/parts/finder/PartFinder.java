@@ -3,7 +3,7 @@ package com.defano.wyldcard.parts.finder;
 import com.defano.hypertalk.ast.model.specifiers.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.HyperCardPart;
+import com.defano.wyldcard.parts.hypercard.HyperCardPart;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.WindowProxyPartModel;

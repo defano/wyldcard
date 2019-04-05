@@ -1,5 +1,7 @@
 package com.defano.wyldcard.window.layouts;
 
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.debug.message.HandlerInvocationObserver;
 import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.awt.MarkdownComboBox;
@@ -14,6 +16,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInvocationObserver {
 
@@ -206,6 +210,13 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
             if (value instanceof HandlerInvocation) {
                 HandlerInvocation invocation = (HandlerInvocation) value;
 
+                List<Value> arguments = new ArrayList<>();
+                try {
+                    arguments = invocation.getArguments(context);
+                } catch (HtException e) {
+                    // Nothing to do
+                }
+
                 StringBuilder message = new StringBuilder(invocation.getMessageName(context));
 
                 // Indent message depth of call stack
@@ -214,8 +225,8 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
                 }
 
                 // Append arguments
-                for (int index = 0; index < invocation.getArguments(context).size(); index++) {
-                    String argument = invocation.getArguments(context).get(index).toString();
+                for (int index = 0; index < arguments.size(); index++) {
+                    String argument = arguments.get(index).toString();
 
                     message.append(" ");
 
@@ -230,7 +241,7 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
                         message.append("\"");
                     }
 
-                    if (index < invocation.getArguments(context).size() - 1) {
+                    if (index < arguments.size() - 1) {
                         message.append(",");
                     }
                 }

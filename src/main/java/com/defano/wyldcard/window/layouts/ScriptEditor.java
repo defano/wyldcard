@@ -463,7 +463,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
      */
     @RunOnDispatch
     private void appendHandler(String handlerName) {
-        SystemMessage message = SystemMessage.fromHandlerName(handlerName);
+        SystemMessage message = SystemMessage.fromMessageName(handlerName);
         if (message != null) {
             appendNamedBlock("on", message.description, message.messageName, message.arguments);
         }

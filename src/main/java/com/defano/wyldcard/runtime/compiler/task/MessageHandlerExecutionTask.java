@@ -1,16 +1,17 @@
 package com.defano.wyldcard.runtime.compiler.task;
 
-import com.defano.hypertalk.ast.preemptions.PassPreemption;
-import com.defano.hypertalk.ast.preemptions.Preemption;
-import com.defano.hypertalk.ast.preemptions.TerminateHandlerPreemption;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.preemptions.PassPreemption;
+import com.defano.hypertalk.ast.preemptions.Preemption;
+import com.defano.hypertalk.ast.preemptions.TerminateHandlerPreemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.message.HandlerInvocation;
 import com.defano.wyldcard.debug.message.HandlerInvocationCache;
+import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.List;
@@ -20,18 +21,20 @@ public class MessageHandlerExecutionTask implements HandlerExecutionTask {
     private final ExecutionContext context;
     private final NamedBlock handler;
     private final PartSpecifier me;
-    private final List<Value> arguments;
+    private final Message message;
 
-    public MessageHandlerExecutionTask(ExecutionContext context, PartSpecifier me, NamedBlock handler, List<Value> arguments) {
+    public MessageHandlerExecutionTask(ExecutionContext context, PartSpecifier me, NamedBlock handler, Message message) {
         this.context = context;
         this.handler = handler;
         this.me = me;
-        this.arguments = arguments;
+        this.message = message;
     }
 
     @Override
     public Boolean call() throws HtException {
         boolean trapped = true;
+
+        List<Value> arguments = message.getArguments(context);
 
         HandlerInvocationCache.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, arguments, me, context.getTarget() == null, context.getStackDepth(), true));
 

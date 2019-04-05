@@ -192,7 +192,7 @@ public class WyldCardNavigationManager implements NavigationManager {
     private CardPart goDestination(ExecutionContext context, Destination destination, boolean push) throws HtSemanticException {
         return Invoke.onDispatch(() -> {
             StackWindow stackWindow = WyldCard.getInstance().getWindowManager().findWindowForStack(destination.getStack());
-            context.bind(stackWindow.getStack());
+            context.bindStack(stackWindow.getStack());
             stackWindow.setVisible(true);
             stackWindow.requestFocus();
 

@@ -1,8 +1,8 @@
 package com.defano.wyldcard.runtime.context;
 
-import com.defano.hypertalk.ast.model.chunk.Chunk;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.chunk.Chunk;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
@@ -12,6 +12,7 @@ import com.defano.wyldcard.StackManager;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.PartException;
+import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
@@ -22,7 +23,6 @@ import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
 
 import java.util.List;
-import java.util.Stack;
 
 /**
  * Represents the state of HyperCard during the execution of a HyperTalk script.
@@ -33,13 +33,17 @@ import java.util.Stack;
  * 'the target'; the value returned by 'the result'; and any pending visual effect to apply when the screen is next
  * unlocked.
  * <p>
- * Part binding: When a script is executing, it must execute in the context of a specific stack and card (i.e., 'card 3'
+ * Binding: When a script is executing, it must execute in the context of a specific stack and card (i.e., 'card 3'
  * refers to the third card of which stack?; 'cd btn 2' of which card?). This is problematic when multiple stacks are
- * open and active (and each potentially may have their own scripts executing concurrently). To solve this problem, an
- * execution context is said to either be 'bound' or 'unbound'. An unbound execution context refers to whichever stack
- * is currently in focus in the windowing system. A bound execution context refers to a specific stack irrespective of
- * whether that stack has window focus. UI commands (like menubar commands) should typically use an unbound context
- * (referring to which stack is in focus), but messages sent to a part or stack should utilize a bound context.
+ * open and active (and each potentially may have their own scripts executing concurrently), or when navigation is
+ * underway (as occurs during 'closeCard' and 'openCard' messages, or if the user navigates to a different card while a
+ * script is executing).
+ * <p>
+ * To solve this problem, an execution context is said to either be 'bound' or 'unbound'. An unbound execution context
+ * refers to whichever stack is currently in focus in the windowing system. A bound execution context refers to a
+ * specific stack irrespective of whether that stack has window focus. UI commands (like menubar commands) should
+ * typically use an unbound context (referring to which stack is in focus), but messages sent to a part or stack should
+ * utilize a bound context.
  * <p>
  * A note about threading: When HyperCard sends a message to a part (like 'mouseDown') the handler associated with that
  * message executes in its own thread. Any messages sent or functions invoked from that system message handler execute
@@ -56,36 +60,29 @@ public class ExecutionContext {
 
     private StackPart stack;                                // WyldCard stack that this script is bound to
     private CardPart card;                                  // "Current" card in the context of this execution
-    private CallStack callStack = new CallStack();          // Call stack
+    private CallStack callStack = new CallStack();          // HyperTalk Call stack
     private Value result;                                   // Value returned by 'the result'
     private PartSpecifier theTarget;                        // Part that the message was initially sent
     private boolean isStaticContext;                        // Is message box evaluation?
     private VisualEffectSpecifier visualEffect;             // Visual effect to use to unlock screen
 
-
     /**
-     * Creates an unbound execution context. Scripts executing with a unbound context will operate on whichever stack
-     * has focus whenever the 'current' stack is requested. Note that the focused stack may change while the script is
-     * executing and this could have unintended consequences.
-     * @return An unbound execution context
-     */
-    public static ExecutionContext unboundInstance() {
-        return new ExecutionContext().unbind();
-    }
-
-    /**
-     * Creates a execution context bound to the currently-focused stack.
+     * Creates a execution context bound to the currently-focused stack and card.
      * <p>
      * Typically, the message box and menus should execute in a dynamic context; scripts attached to parts, cards,
      * backgrounds or stacks should use {@link #ExecutionContext(Part)}.
      */
     public ExecutionContext() {
-        bind(WyldCard.getInstance().getStackManager().getFocusedStack());
+        StackPart boundStack = WyldCard.getInstance().getStackManager().getFocusedStack();
+
+        if (boundStack != null) {
+            bindCard(boundStack.getDisplayedCard());
+        }
     }
 
     /**
      * Creates a part-bound execution context. Scripts executing in a part-bound context will operate on whichever stack
-     * and card that the given part is a component of.
+     * that the given part is a component of and on whichever card is actively displayed.
      * <p>
      * Scripts attached to parts, cards, backgrounds and stacks should create contexts using this constructor.
      *
@@ -95,7 +92,13 @@ public class ExecutionContext {
      *             context. See {@link ExecutionContext()}.
      */
     public ExecutionContext(Part part) {
-        bind(part);
+        if (part instanceof CardLayerPart) {
+            bindCard(((CardLayerPart) part).getCard());
+        } else if (part instanceof CardPart) {
+            bindCard((CardPart) part);
+        } else {
+            bindStack(part);
+        }
     }
 
     /**
@@ -109,55 +112,18 @@ public class ExecutionContext {
      * @throws IllegalStateException If the given part model is not bound to a stack.
      */
     public ExecutionContext(PartModel partModel) {
-        bind(partModel);
+        bindStack(partModel);
     }
 
     /**
-     * Unbinds this execution context from the currently bound stack. An unbound execution context operates on whichever
-     * stack currently has window focus.
+     * Creates an unbound execution context. Scripts executing with a unbound context will operate on whichever stack
+     * has focus whenever the 'current' stack is requested. Note that the focused stack may change while the script is
+     * executing and this could have unintended consequences.
      *
-     * @return This execution context
+     * @return An unbound execution context
      */
-    public ExecutionContext unbind() {
-        this.stack = null;
-        return this;
-    }
-
-    /**
-     * Binds this execution context to the stack that owns the given part. All future part references encountered in the
-     * execution of the script will be interpreted as being a part of the same stack as the given part.
-     *
-     * @param part The part whose owning stack this context should be bound to.
-     * @return This execution context
-     */
-    public ExecutionContext bind(Part part) {
-        return bind(part.getOwningStack());
-    }
-
-    public ExecutionContext bind(StackPart part) {
-        if (part != null) {
-            this.stack = part;
-            this.card = this.stack.getDisplayedCard();
-        }
-
-        return this;
-    }
-
-    /**
-     * Binds this execution context to the stack that owns the given part. All future part references encountered in the
-     * execution of the script will be interpreted as being a part of the same stack as the given part.
-     *
-     * @param partModel The part whose owning stack this context should be bound to.
-     * @return This execution context
-     */
-    public ExecutionContext bind(PartModel partModel) {
-        StackModel stackModel = partModel.getParentStackModel();
-
-        if (stackModel != null) {
-            return bind(WyldCard.getInstance().getStackManager().getOpenStack(stackModel));
-        } else {
-            throw new IllegalStateException("Attempt to bind execution context to a part not connected to a stack.");
-        }
+    public static ExecutionContext unboundInstance() {
+        return new ExecutionContext().unbind();
     }
 
     /**
@@ -171,6 +137,89 @@ public class ExecutionContext {
      */
     public static SymbolTable getGlobals() {
         return globals;
+    }
+
+    /**
+     * Unbinds this execution context from the currently bound stack and card.
+     * <p>
+     * An unbound execution context operates on whichever stack and card currently has window focus; this value may
+     * change throughout the execution of a script as the script navigates from card-to-card, or stack-to-stack.
+     *
+     * @return This execution context
+     */
+    public ExecutionContext unbind() {
+        this.stack = null;
+        this.card = null;
+        return this;
+    }
+
+    /**
+     * Binds this execution context to the stack that owns the given part.
+     * <p>
+     * All future part references encountered in the execution of the script will be interpreted as being a part of the
+     * same stack as the given part. This method does not affect card-binding. See {@link #bindCard(CardPart)}.
+     *
+     * @param part The part whose owning stack this context should be bound to.
+     * @return This execution context
+     */
+    public ExecutionContext bindStack(Part part) {
+        if (part != null) {
+            return bindStack(part.getOwningStack());
+        } else {
+            return this;
+        }
+    }
+
+    /**
+     * Binds this execution context to the stack that owns the given part model.
+     * <p>
+     * All future part references encountered in the execution of the script will be interpreted as being a part of the
+     * same stack as the given part.
+     *
+     * @param partModel The part whose owning stack this context should be bound to.
+     * @return This execution context
+     */
+    public ExecutionContext bindStack(PartModel partModel) {
+        StackModel stackModel = partModel.getParentStackModel();
+
+        if (stackModel != null) {
+            return bindStack(WyldCard.getInstance().getStackManager().getOpenStack(stackModel));
+        } else {
+            throw new IllegalStateException("Attempt to bind execution context to a part not attached to a stack.");
+        }
+    }
+
+    public ExecutionContext bindStack(StackPart stack) {
+        if (stack != null) {
+
+            // If stack binding changes in a way that makes card binding invalid, unbind the card.
+            if (card != null && !stack.getPartModel().hasCard(card.getPartModel())) {
+                this.card = null;
+            }
+
+            this.stack = stack;
+        }
+
+        return this;
+    }
+
+    /**
+     * Binds this execution context to the given card (and, implicitly, to the card's owning stack). Has no effect if
+     * the given argument is null.
+     * <p>
+     * This method does not affect stack binding and assumes that the given card is a card in the currently bound stack,
+     * but does not validate that this constraint is met.
+     *
+     * @param cardBinding
+     * @return
+     */
+    public ExecutionContext bindCard(CardPart cardBinding) {
+        if (cardBinding != null) {
+            bindStack(cardBinding.getOwningStack());
+            this.card = cardBinding;
+        }
+
+        return this;
     }
 
     /**
@@ -210,7 +259,7 @@ public class ExecutionContext {
     public void popStackFrame() {
         callStack.pop();
 
-        if (callStack.size() ==0 ) {
+        if (callStack.size() == 0) {
             expire();
         }
     }
@@ -221,6 +270,10 @@ public class ExecutionContext {
      * @return The current stack frame
      */
     public StackFrame getStackFrame() {
+        if (callStack.isEmpty()) {
+            return new StackFrame();
+        }
+
         return callStack.peek();
     }
 

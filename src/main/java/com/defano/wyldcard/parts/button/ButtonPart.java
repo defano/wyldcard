@@ -151,7 +151,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         super.mouseReleased(e);
         boolean isStillInFocus = new Rectangle(this.getButtonComponent().getSize()).contains(e.getPoint());
 
-        // Do not set mouseUp if cursor is not released while over the part
+        // Do not send mouseUp if cursor is not released over the part
         if (SwingUtilities.isLeftMouseButton(e) && isStillInFocus && !isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_UP);
         }

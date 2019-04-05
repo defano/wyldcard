@@ -1,6 +1,7 @@
 package com.defano.wyldcard.message;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.List;
@@ -30,9 +31,9 @@ public interface Message {
      * @return The non-null list of arguments accompanying the message; pass an empty list for messages bearing no
      * arguments.
      */
-    List<Value> getArguments(ExecutionContext context);
+    List<Value> getArguments(ExecutionContext context) throws HtException;
 
-    default String toMessageString(ExecutionContext context) {
+    default String toMessageString(ExecutionContext context) throws HtException {
         StringBuilder message = new StringBuilder();
         List<Value> arguments = getArguments(context);
 

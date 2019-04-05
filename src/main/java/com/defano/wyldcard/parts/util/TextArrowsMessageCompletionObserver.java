@@ -2,6 +2,7 @@ package com.defano.wyldcard.parts.util;
 
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
@@ -24,7 +25,7 @@ public class TextArrowsMessageCompletionObserver implements MessageCompletionObs
     }
 
     @Override
-    public void onMessagePassed(String message, boolean wasTrapped, HtException error) {
+    public void onMessagePassed(Message message, boolean wasTrapped, HtException error) {
 
         if (error != null) {
             WyldCard.getInstance().showErrorDialogAndAbort(error);

@@ -430,7 +430,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
                 stack.bindToWindow(oldStackWindow);
 
                 openedStacks.add(stack);
-                context.bind(stack);
+                context.bindStack(stack);
 
                 disposeStack(context, oldStack, false);
             }

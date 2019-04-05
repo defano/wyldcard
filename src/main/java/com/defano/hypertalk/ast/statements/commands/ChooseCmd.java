@@ -1,14 +1,12 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
-import com.google.common.collect.Lists;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.Arrays;

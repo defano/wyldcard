@@ -250,8 +250,12 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
         if (isScriptDirty(context) && System.currentTimeMillis() > deferCompilation) {
             try {
                 String scriptText = getScriptText(context);
-                setScript(Compiler.blockingCompile(CompilationUnit.SCRIPT, scriptText));
-                System.err.println("Compiled " + scriptText.length() + " " + getLongName(context));
+                Script script = (Script) Compiler.blockingCompile(CompilationUnit.SCRIPT, scriptText);
+
+                if (script != null) {
+                    System.err.println("Compiled " + scriptText.length() + " " + getLongName(context));
+                    setScript(script);
+                }
                 this.scriptHash = scriptText.hashCode();
             } catch (HtException e) {
                 deferCompilation = System.currentTimeMillis() + 5000;

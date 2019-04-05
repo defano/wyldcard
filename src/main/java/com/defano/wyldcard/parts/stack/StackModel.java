@@ -185,6 +185,10 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         return cardModels.get(index);
     }
 
+    public boolean hasCard(CardModel cardModel) {
+        return cardModels.contains(cardModel);
+    }
+
     public int getCardCount() {
         return cardModels.size();
     }

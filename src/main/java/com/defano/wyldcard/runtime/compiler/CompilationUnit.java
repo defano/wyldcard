@@ -11,6 +11,8 @@ public enum CompilationUnit {
      */
     SCRIPT,
 
+    LIST_EXPRESSION,
+
     /**
      * Represents a list of executable HyperTalk statements or expressions as might be entered in the message box
      * or evaluated via the 'do' or 'the value of' commands. Accepts whitespace, comments, and zero or more HyperTalk
@@ -29,6 +31,8 @@ public enum CompilationUnit {
                 return parser.script();
             case SCRIPTLET:
                 return parser.scriptlet();
+            case LIST_EXPRESSION:
+                return parser.listExpression();
         }
 
         throw new IllegalStateException("Bug! Unimplemented compilation unit.");

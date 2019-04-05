@@ -1,5 +1,6 @@
 package com.defano.wyldcard.runtime.compiler.task;
 
+import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
@@ -28,7 +29,7 @@ public class StaticContextEvaluationTask implements Callable<String> {
 
     @Override
     public String call() throws HtException {
-        StatementList statements = Compiler.blockingCompile(CompilationUnit.SCRIPTLET, messageText).getStatements();
+        StatementList statements = ((Script) Compiler.blockingCompile(CompilationUnit.SCRIPTLET, messageText)).getStatements();
 
         if (context.getStackDepth() == 0) {
             context.pushStackFrame();

@@ -12,13 +12,16 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.debug.message.HandlerInvocation;
 import com.defano.wyldcard.debug.message.HandlerInvocationCache;
 import com.defano.wyldcard.message.Message;
-import com.defano.wyldcard.runtime.compiler.task.*;
+import com.defano.wyldcard.message.MessageBuilder;
+import com.defano.wyldcard.runtime.compiler.task.FunctionHandlerExecutionTask;
+import com.defano.wyldcard.runtime.compiler.task.HandlerExecutionTask;
+import com.defano.wyldcard.runtime.compiler.task.MessageHandlerExecutionTask;
+import com.defano.wyldcard.runtime.compiler.task.StaticContextEvaluationTask;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.ThreadChecker;
 import com.google.common.util.concurrent.*;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -31,7 +34,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Compiler {
 
     private final static int MAX_COMPILE_THREADS = 6;          // Simultaneous background parse tasks
-    private final static int MAX_EXECUTOR_THREADS = 1;         // Simultaneous scripts executing
+    private final static int MAX_EXECUTOR_THREADS = 4;         // Simultaneous scripts executing
 
     private static final ThreadPoolExecutor bestEffortCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, new ThreadFactoryBuilder().setNameFormat("beasync-compiler-%d").build());
     private static final ThreadPoolExecutor asyncCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("async-compiler-%d").build());
@@ -79,8 +82,8 @@ public class Compiler {
      * @return The compiled Script object (the root of the abstract syntax tree)
      * @throws HtException Thrown if an error (i.e., syntax error) occurs when compiling.
      */
-    public static Script blockingCompile(CompilationUnit compilationUnit, String scriptText) throws HtException {
-        return (Script) TwoPhaseParser.parseScript(compilationUnit, scriptText);
+    public static Object blockingCompile(CompilationUnit compilationUnit, String scriptText) throws HtException {
+        return TwoPhaseParser.parseScript(compilationUnit, scriptText);
     }
 
     /**
@@ -98,7 +101,7 @@ public class Compiler {
         ThreadChecker.assertWorkerThread();
 
         try {
-            Statement statement = blockingCompile(CompilationUnit.SCRIPTLET, expression).getStatements().list.get(0);
+            Statement statement = ((Script)blockingCompile(CompilationUnit.SCRIPTLET, expression)).getStatements().list.get(0);
             if (statement instanceof ExpressionStatement) {
                 return ((ExpressionStatement) statement).expression.evaluate(context);
             }
@@ -133,7 +136,7 @@ public class Compiler {
         ThreadChecker.assertWorkerThread();
 
         try {
-            Statement statement = Compiler.blockingCompile(CompilationUnit.SCRIPTLET, value.toString()).getStatements().list.get(0);
+            Statement statement = ((Script) Compiler.blockingCompile(CompilationUnit.SCRIPTLET, value.toString())).getStatements().list.get(0);
 
             // Simple case; statement matches requested type
             if (statement.getClass().isAssignableFrom(klass)) {
@@ -192,12 +195,13 @@ public class Compiler {
 
         // Script implements handler for message; execute it
         if (handler != null) {
-            future = getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, me, handler, message.getArguments(context)));
+            future = getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, me, handler, message));
         }
 
         // Special case: No handler in the script for this message; produce a "no-op" execution
         else {
             future = getFutureForHandlerExecutionTask(() -> {
+
                 // Synthesize handler invocation for message watcher
                 HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message.getMessageName(context), message.getArguments(context), me, context.getTarget() == null, context.getStackDepth(), false);
                 HandlerInvocationCache.getInstance().notifyMessageHandled(invocation);
@@ -271,7 +275,7 @@ public class Compiler {
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
     public static CheckedFuture<Boolean, HtException> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
-        return getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, me, NamedBlock.anonymousBlock(blockingCompile(CompilationUnit.SCRIPTLET, statementList).getStatements()), new ArrayList<>()));
+        return getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, me, NamedBlock.anonymousBlock(((Script) blockingCompile(CompilationUnit.SCRIPTLET, statementList)).getStatements()), MessageBuilder.emptyMessage()));
     }
 
     /**

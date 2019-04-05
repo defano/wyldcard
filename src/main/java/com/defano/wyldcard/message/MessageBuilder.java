@@ -1,11 +1,10 @@
 package com.defano.wyldcard.message;
 
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.thread.ThreadChecker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +13,7 @@ public class MessageBuilder {
 
     private String messageName;
     private List<Value> arguments;
+    private ListExp argumentsExpr;
 
     private MessageBuilder(String messageName) {
         this.messageName = messageName;
@@ -37,25 +37,11 @@ public class MessageBuilder {
      * @return A message object, providing a late-binding (evaluation) of message arguments.
      */
     public static Message fromString(String text) {
-        return new Message() {
-            @Override
-            public String getMessageName(ExecutionContext context) {
-                return text.trim().split("\\s")[0];
-            }
+        return new LiteralMessage(text);
+    }
 
-            @Override
-            public List<Value> getArguments(ExecutionContext context) {
-                ThreadChecker.assertWorkerThread();
-
-                ArrayList<Value> arguments = new ArrayList<>();
-
-                for (String component : text.trim().substring(text.length()).split(",")) {
-                    arguments.add(Compiler.blockingEvaluate(component.trim(), context));
-                }
-
-                return arguments;
-            }
-        };
+    public static Message emptyMessage() {
+        return new EvaluatedMessage("", new ArrayList<>());
     }
 
     public MessageBuilder withArgument(Object argument) {
@@ -68,22 +54,21 @@ public class MessageBuilder {
         return this;
     }
 
+    public MessageBuilder withArguments(ListExp argumentsExpr) {
+        this.argumentsExpr = argumentsExpr;
+        return this;
+    }
+
     public MessageBuilder withArgumentExpression(ExecutionContext context, Expression expression) throws HtException {
         this.arguments.addAll(expression.evaluateAsList(context));
         return this;
     }
 
     public Message build() {
-        return new Message() {
-            @Override
-            public String getMessageName(ExecutionContext context) {
-                return messageName;
-            }
-
-            @Override
-            public List<Value> getArguments(ExecutionContext context) {
-                return arguments;
-            }
-        };
+        if (argumentsExpr != null) {
+            return new ExpressionMessage(messageName, argumentsExpr);
+        } else {
+            return new EvaluatedMessage(messageName, arguments);
+        }
     }
 }

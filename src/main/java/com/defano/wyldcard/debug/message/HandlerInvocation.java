@@ -2,6 +2,7 @@ package com.defano.wyldcard.debug.message;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -46,7 +47,7 @@ public class HandlerInvocation implements Comparable<HandlerInvocation>, Message
     }
 
     @Override
-    public List<Value> getArguments(ExecutionContext context) {
+    public List<Value> getArguments(ExecutionContext context) throws HtException {
         return message.getArguments(context);
     }
 
