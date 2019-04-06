@@ -578,6 +578,7 @@ oneArgFunc
     | 'max'                                                                                                             # maxFunc
     | 'sum'                                                                                                             # sumFunc
     | 'random'                                                                                                          # randomFunc
+    | 'round'                                                                                                           # roundFunc
     | 'sqrt'                                                                                                            # sqrtFunc
     | 'trunc'                                                                                                           # truncFunc
     | 'sin'                                                                                                             # sinFunc

@@ -6,7 +6,6 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,10 +15,6 @@ public class ListExp extends Expression {
 
     private final Expression car;   // First item in list
     private final ListExp cdr;      // Remaining items in list
-
-    public ListExp() {
-        this(null, new LiteralExp(null));
-    }
 
     /**
      * Constructs an empty list expression.
@@ -50,22 +45,6 @@ public class ListExp extends Expression {
         this.cdr = cdr;
     }
 
-    /**
-     * Constructs a list expression where each element in the list is a literal expression of a given value.
-     * @param ctx The Antlr context where this expression was encountered, or null
-     * @param values The list of literal values to be added to the list
-     * @return A ListExp representing the given values
-     */
-    public static ListExp fromValues(ParserRuleContext ctx, Value... values) {
-        if (values == null || values.length == 0) {
-            return new ListExp(ctx);
-        } else if (values.length == 1) {
-            return new ListExp(ctx, new LiteralExp(ctx, values[0]));
-        } else {
-            return new ListExp(ctx, new LiteralExp(ctx, values[0]), ListExp.fromValues(ctx, Arrays.copyOfRange(values, 1, values.length)));
-        }
-    }
-
     @Override
     protected Value onEvaluate(ExecutionContext context) throws HtException {
         if (cdr != null) {
@@ -77,7 +56,8 @@ public class ListExp extends Expression {
 
     @Override
     public List<Value> evaluateAsList(ExecutionContext context) throws HtException {
-        ArrayList<Value> values = new ArrayList<>(car.evaluateAsList(context));
+        ArrayList<Value> values = new ArrayList<>();
+        values.add(car.evaluate(context));
 
         if (cdr != null) {
             values.addAll(cdr.evaluateAsList(context));

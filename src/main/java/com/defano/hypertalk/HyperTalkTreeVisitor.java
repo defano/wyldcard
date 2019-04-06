@@ -2437,6 +2437,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitRoundFunc(HyperTalkParser.RoundFuncContext ctx) {
+        return BuiltInFunction.ROUND;
+    }
+
+    @Override
     public Object visitSqrtFunc(HyperTalkParser.SqrtFuncContext ctx) {
         return BuiltInFunction.SQRT;
     }

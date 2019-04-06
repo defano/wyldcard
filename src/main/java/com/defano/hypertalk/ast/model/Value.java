@@ -154,7 +154,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Creates a new value of the given string and flags the value as a quoted literal.
-     *
+     * <p>
      * Useful when disambiguating 'card button 1' from 'card button "1"'. The latter refers to a card button _named_
      * "1"; the former refers to card button number 1.
      *
@@ -210,7 +210,7 @@ public class Value implements StyledComparable<Value> {
     /**
      * Creates a delimited Value of Values using a provided delimiter.
      *
-     * @param values The values to be concatenated.
+     * @param values    The values to be concatenated.
      * @param delimiter The string used to delimit values
      * @return The new Value
      */
@@ -235,8 +235,8 @@ public class Value implements StyledComparable<Value> {
      * @param context The execution context
      * @param mutable The existing value from which the new value will be created (this argument is unmodified by this
      *                method).
-     * @param p The mutation preposition (i.e., before, into, after)
-     * @param c The chunk specifier (i.e., 'the first word of', 'character 17')
+     * @param p       The mutation preposition (i.e., before, into, after)
+     * @param c       The chunk specifier (i.e., 'the first word of', 'character 17')
      * @param mutator An object whose string value will be added. In the example, `put 10 after 20`, "10" is the
      *                mutator value.
      * @return A new Value equal to the mutable argument modified by applying the chunk operation to it.
@@ -279,7 +279,7 @@ public class Value implements StyledComparable<Value> {
      * Creates a new Value by taking an existing Value and placing a new string before, after or into (replacing) it.
      *
      * @param mutable The existing value
-     * @param p A preposition representing where the mutator value should be inserted (before, after or into).
+     * @param p       A preposition representing where the mutator value should be inserted (before, after or into).
      * @param mutator The mutator string.
      * @return The new value
      */
@@ -339,7 +339,7 @@ public class Value implements StyledComparable<Value> {
      * Determines if this value was flagged as being a quoted literal. Used when disambiguating part names and numbers.
      * A value is flagged as a quoted literal only when created using the {@link #ofQuotedLiteral(String)} creator
      * method.
-     *
+     * <p>
      * Note that Antlr removes quotes from quoted literals appearing in script text; this flag attempts to preserve
      * whether this value originally had quotes around it.
      *
@@ -482,6 +482,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Returns this value's boolean representation, or false if this value is not a logical value.
+     *
      * @return The boolean representation of this value.
      */
     public boolean booleanValue() {
@@ -547,7 +548,7 @@ public class Value implements StyledComparable<Value> {
     /**
      * Gets a list of comma-separated items contained in this value. This function ignores the itemDelimiter HyperCard
      * property when splitting the value into items. Useful for parsing argument lists.
-     *
+     * <p>
      * See {@link #getItems(ExecutionContext)} for a method whose behavior respects the itemDelimiter.
      *
      * @return A list of zero or
@@ -579,7 +580,7 @@ public class Value implements StyledComparable<Value> {
      * Returns the item in this value identified by index, or an empty Value if no such item exists.
      *
      * @param context The execution context.
-     * @param index The zero-based index of the item to be retrieved.
+     * @param index   The zero-based index of the item to be retrieved.
      * @return A new Value representing the requested item, or an empty Value if no such item exists.
      */
     public Value getItemAt(ExecutionContext context, int index) {
@@ -643,7 +644,7 @@ public class Value implements StyledComparable<Value> {
      * Returns this value as a list of chunks.
      *
      * @param context The execution context.
-     * @param type The chunk type (i.e., word, item, line)
+     * @param type    The chunk type (i.e., word, item, line)
      * @return A list of zero or more chunks of the requested type
      */
     @SuppressWarnings("WeakerAccess")
@@ -702,7 +703,7 @@ public class Value implements StyledComparable<Value> {
      * Returns a chunk of this value.
      *
      * @param context The execution context.
-     * @param c The chunk specifier (i.e., `the first word` or `char 13`)
+     * @param c       The chunk specifier (i.e., `the first word` or `char 13`)
      * @return The extracted chunk
      * @throws HtException Thrown if an error occurs getting the chunk
      */
@@ -741,6 +742,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Returns a new logical value representing if this value contains the empty string.
+     *
      * @return True if the value is empty, false otherwise.
      */
     public boolean isEmpty() {
@@ -813,7 +815,7 @@ public class Value implements StyledComparable<Value> {
      * @param v The value by which to multiply this value.
      * @return The resultant value
      * @throws HtSemanticException Thrown if either value is not a number, or if an overflow occurs while performing the
-     * multiplication
+     *                             multiplication
      */
     public Value multipliedBy(Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
@@ -852,6 +854,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Returns a new value equal to adding this value to another value.
+     *
      * @param v The value that should be added to this value
      * @return The resultant value
      * @throws HtSemanticException Thrown if either value is not a number or if an overflow occurs
@@ -873,6 +876,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Returns a new value equal to subtracting another value from this value.
+     *
      * @param v The value that should be subtracted from this value
      * @return The resultant value
      * @throws HtSemanticException Thrown if either value is not a number or if an overflow occurs
@@ -894,6 +898,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Returns a new value equal to raising this value to the power of another value.
+     *
      * @param v A value representing the power that this value should be raised to.
      * @return The resultant value
      * @throws HtSemanticException Thrown if either value is not a number
@@ -908,6 +913,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Returns a new value equal modulo-dividing this value by another value.
+     *
      * @param v The value that this value should be modulo-divided by.
      * @return The resultant value
      * @throws HtSemanticException Thrown if either value is not a number
@@ -925,6 +931,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Returns a new value equal to the logical negation of this value (i.e., true becomes false, false becomes true).
+     *
      * @return The logical negation of this value
      * @throws HtSemanticException Thrown if this value is not a logical (boolean) value
      */
@@ -937,6 +944,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Returns a new value equal to the numeric negation of this value (i.e., 20 becomes -20).
+     *
      * @return The numerical negation of this value
      * @throws HtSemanticException Thrown if this value is not a number
      */
@@ -952,6 +960,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Returns a new value equal to performing a logical 'and' operation of this value and another value.
+     *
      * @param v The value that should be and'ed with this value
      * @return The resultant value
      * @throws HtSemanticException Thrown if either value is not a logical (boolean) value.
@@ -972,6 +981,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Returns a new value equal to performing a logical 'or' operation of this value and another value.
+     *
      * @param v The value that should be or'ed with this value
      * @return The resultant value
      * @throws HtSemanticException Thrown if either value is not a logical (boolean) value.
@@ -991,6 +1001,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Returns a new value equal to concatenating the string equivalent of this value with that of another value.
+     *
      * @param v The value that should be concatenated to this value
      * @return The resultant value
      */
@@ -1001,6 +1012,7 @@ public class Value implements StyledComparable<Value> {
     /**
      * Returns a new logical value indicating whether this value is a coordinate that lies inside the rectangle bound
      * by the given value.
+     *
      * @param v A rectangle value
      * @return True if this value lies inside the specified rectangle value, false otherwise
      * @throws HtSemanticException Thrown if this value is not a point or if v is not a rectangle.
@@ -1016,6 +1028,7 @@ public class Value implements StyledComparable<Value> {
     /**
      * Returns a new value equal to the numerical truncation of this value. That is, any fractional/floating point
      * portion of the value is removed without rounding or modifying the while portion.
+     *
      * @return The resultant value
      * @throws HtSemanticException Thrown if this value is not a number
      */
@@ -1027,6 +1040,20 @@ public class Value implements StyledComparable<Value> {
         }
 
         throw new HtSemanticException("Cannot trunc the value '" + toString() + "' because it is not a number.");
+    }
+
+    /**
+     * Rounds the value to the nearest whole number.
+     *
+     * @return The resulting value
+     * @throws HtSemanticException Thrown if this value is not a number.
+     */
+    public Value round() throws HtSemanticException {
+        if (isNumber()) {
+            return new Value(Math.round(doubleValue()));
+        }
+
+        throw new HtSemanticException("Expected a number, but got " + this);
     }
 
     /**
@@ -1060,6 +1087,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Determines whether the given value can be found as a substring of the current value.
+     *
      * @param v The substring to search for
      * @return True if the given value can be found within this value
      */
@@ -1069,6 +1097,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Returns the string representation of this value.
+     *
      * @return The string representation of this value.
      */
     public String toString() {
@@ -1078,11 +1107,11 @@ public class Value implements StyledComparable<Value> {
     /**
      * Determines if one Value is equal to another, per HyperTalk's definition of equality. In general, two values are
      * equal if their case insensitive {@link #toString()} values are equal, with a few caveats:
-     *
+     * <p>
      * If either value is empty (""), then the two values are equal only if both values are empty. In general, an empty
      * value is numerically equivalent to zero, but not when comparing. That is, `3 + ""` equals 3, but "" is not equal
      * to 0.
-     *
+     * <p>
      * When comparing values that can be interpreted as booleans, a boolean evaluation will occur instead of a string
      * evaluation. For example, `false = "  false  "` (true) and `"true" = " true "` (also true), but `"abc" = " abc "`
      * is false.
@@ -1124,13 +1153,17 @@ public class Value implements StyledComparable<Value> {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return stringValue.hashCode();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int compareTo(Value o) {
         if (this.isInteger() && o.isInteger()) {
@@ -1142,7 +1175,9 @@ public class Value implements StyledComparable<Value> {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int compareTo(Value to, SortStyle style) {
         switch (style) {

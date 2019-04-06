@@ -599,16 +599,19 @@
     "codePrefix": "show",
     "templates": [
       "show ${partFactor}",
+      "show ${partFactor} at ${locationExpression}",
       "show ${windowExpression}",
       "show titleBar",
       "show menuBar"
     ],
     "parameters": [
       {"parameter": "partFactor", "description": "An expression referring to the part to be shown."},
+      {"parameter": "locationExpression", "description": "An expression referring to a point (location) where the part to be shown should be displayed."},
       {"parameter": "windowExpression", "description": "An expression referring to a window."}
     ],
     "examples": [
-      {"code": "show any card button"}
+      {"code": "show any card button"},
+      {"code": "show card btn \"Surprise\" at 100,20"}
     ]
   },
 

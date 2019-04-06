@@ -19,7 +19,7 @@ public class RandomFunc extends ArgListFunction {
     public Value onEvaluate(ExecutionContext context) throws HtException {
 
         // Get the single argument passed to the function
-        Value evaluatedArgument = super.evaluateSingleArgumentList(context);
+        Value evaluatedArgument = getArguments().evaluate(context);
 
         // Argument must be a natural (whole, non-negative, non-zero) number
         if (evaluatedArgument.isNatural()) {
