@@ -29,10 +29,12 @@ public class TypeCmd extends Command {
         String stringToType = expression.evaluate(context).toString();
         List<ModifierKey> modifierKeyList = new ArrayList<>();
 
-        for (Value thisKey : withModifierKeysExpr.evaluate(context).getListItems()) {
-            modifierKeyList.add(ModifierKey.fromHypertalkIdentifier(thisKey.toString()));
+        if (withModifierKeysExpr != null) {
+            for (Value thisKey : withModifierKeysExpr.evaluate(context).getListItems()) {
+                modifierKeyList.add(ModifierKey.fromHypertalkIdentifier(thisKey.toString()));
+            }
         }
-
+        
         RoboticTypist.getInstance().type(stringToType, modifierKeyList.toArray(new ModifierKey[0]));
     }
 }
