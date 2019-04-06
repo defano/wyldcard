@@ -18,6 +18,6 @@ public class KeyDownCmd extends Statement {
 
     @Override
     protected void onExecute(ExecutionContext context) throws HtException {
-        RoboticTypist.getInstance().type(keyExpr.evaluate(context).toString(), false, false);
+        RoboticTypist.getInstance().type(keyExpr.evaluate(context).toString());
     }
 }

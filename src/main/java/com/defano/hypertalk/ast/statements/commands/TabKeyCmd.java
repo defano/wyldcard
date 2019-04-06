@@ -14,6 +14,6 @@ public class TabKeyCmd extends Statement {
 
     @Override
     protected void onExecute(ExecutionContext context) throws HtException {
-        RoboticTypist.getInstance().type("\t", false, false);
+        RoboticTypist.getInstance().type("\t");
     }
 }

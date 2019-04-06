@@ -1,24 +1,25 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.statements.Statement;
+import com.defano.hypertalk.ast.preemptions.Preemption;
+import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.awt.ModifierKey;
 import com.defano.wyldcard.awt.RoboticTypist;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class CommandKeyDownCmd extends Statement {
+public class OptionKeyCmd extends Command {
 
     private final Expression keyExpr;
 
-    public CommandKeyDownCmd(ParserRuleContext context, Expression keyExpr) {
-        super(context);
+    public OptionKeyCmd(ParserRuleContext context, Expression keyExpr) {
+        super(context, "optionkey");
         this.keyExpr = keyExpr;
     }
 
     @Override
-    protected void onExecute(ExecutionContext context) throws HtException {
-        RoboticTypist.getInstance().type(keyExpr.evaluate(context).toString(), ModifierKey.COMMAND);
+    protected void onExecute(ExecutionContext context) throws HtException, Preemption {
+        RoboticTypist.getInstance().type(keyExpr.evaluate(context).toString(), ModifierKey.OPTION);
     }
 }

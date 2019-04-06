@@ -3,7 +3,6 @@ package com.defano.wyldcard.awt;
 import com.defano.hypertalk.ast.model.ArrowDirection;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.thread.Invoke;
 
 import java.awt.*;
@@ -22,13 +21,10 @@ public class RoboticTypist {
 
     private final static RoboticTypist instance = new RoboticTypist();
     private final HashMap<Character, KeyStroke> keystrokeMap = new HashMap<>();
-    private final int commandKey;
 
     private Robot robot;
 
     private RoboticTypist() {
-        commandKey = WyldCard.getInstance().getWindowManager().isMacOsTheme() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
-
         for (int i = (int) '0'; i <= (int) '9'; i++) {
             keystrokeMap.put((char) i, new KeyStroke(i, false));
         }
@@ -88,13 +84,13 @@ public class RoboticTypist {
     }
 
     public void type(ArrowDirection arrowKey) throws HtException {
-        new KeyStroke(arrowKey.getKeyEvent(), false).type(false, false);
+        new KeyStroke(arrowKey.getKeyEvent(), false).type();
     }
 
-    public void type(String string, boolean withCommandKey, boolean withControlKey) throws HtException {
+    public void type(String string, ModifierKey... modifierKeys) throws HtException {
         for (Character thisChar : string.toCharArray()) {
             if (keystrokeMap.containsKey(thisChar)) {
-                keystrokeMap.get(thisChar).type(withCommandKey, withControlKey);
+                keystrokeMap.get(thisChar).type(modifierKeys);
             } else {
                 throw new HtSemanticException("Sorry, don't know type this character: " + thisChar);
             }
@@ -122,7 +118,7 @@ public class RoboticTypist {
             isShifted = shift;
         }
 
-        public void type(boolean withCommandKey, boolean withControlKey) throws HtException {
+        public void type(ModifierKey... modifierKeys) throws HtException {
 
             if (robot == null) {
                 try {
@@ -136,12 +132,8 @@ public class RoboticTypist {
                 robot.keyPress(KeyEvent.VK_SHIFT);
             }
 
-            if (withCommandKey) {
-                robot.keyPress(commandKey);
-            }
-
-            if (withControlKey) {
-                robot.keyPress(KeyEvent.VK_CONTROL);
+            for (ModifierKey modifierKey : modifierKeys) {
+                robot.keyPress(modifierKey.getKeyCode());
             }
 
             robot.keyPress(code);
@@ -151,12 +143,8 @@ public class RoboticTypist {
                 robot.keyRelease(KeyEvent.VK_SHIFT);
             }
 
-            if (withCommandKey) {
-                robot.keyRelease(commandKey);
-            }
-
-            if (withControlKey) {
-                robot.keyRelease(KeyEvent.VK_CONTROL);
+            for (ModifierKey modifierKey : modifierKeys) {
+                robot.keyRelease(modifierKey.getKeyCode());
             }
 
             if (code == KeyEvent.VK_ENTER) {

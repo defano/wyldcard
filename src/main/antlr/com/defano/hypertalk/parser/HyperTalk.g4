@@ -146,6 +146,7 @@ commandStatement
     | 'close' 'file' expression                                                                                         # closeFileCmd
     | 'commandkeydown' expression                                                                                       # commandKeyDownCmd
     | 'controlkey' expression                                                                                           # controlKeyCmd
+    | 'optionkey' expression                                                                                            # optionKeyCmd
     | 'convert' container 'to' convertible                                                                              # convertContainerToCmd
     | 'convert' container 'from' convertible 'to' convertible                                                           # convertContainerFromToCmd
     | 'convert' expression 'to' convertible                                                                             # convertToCmd
@@ -242,7 +243,7 @@ commandStatement
     | 'start' 'using' expression                                                                                        # startUsingCmd
     | 'tabkey'                                                                                                          # tabKeyCmd
     | 'type' expression                                                                                                 # typeCmd
-    | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmd
+    | 'type' expression 'with' listExpression                                                                           # typeWithCmdKeyCmd
     | 'unlock' 'screen'                                                                                                 # unlockScreenCmd
     | 'unlock' 'screen' 'with' 'visual'? 'effect'? expression                                                           # unlockScreenVisualCmd
     | 'unmark' 'all' cards                                                                                              # unmarkAllCardsCmd
@@ -703,6 +704,8 @@ modifierKey
     : 'commandkey'
     | 'cmdkey'
     | 'optionkey'
+    | 'controlkey'
+    | 'ctrlkey'
     | 'shiftkey'
     ;
 
@@ -731,7 +734,7 @@ propertyValue
     ;
 
 keyword
-    : 'add' | 'to' | 'answer'
+    : 'add' | 'to' | 'answer' | 'optionkey' | 'ctrlkey'
     | 'with' | 'arrowkey' | 'ask' | 'file' | 'beep' | 'choose' | 'tool' | 'click' | 'at' | 'close'
     | 'commandkeydown' | 'controlkey' | 'convert' | 'from' | 'create' | 'menu' | 'debug' | 'checkpoint' | 'delete'
     | 'dial' | 'disable' | 'divide' | 'by' | 'domenu' | 'drag' | 'edit' | 'script' | 'enable'

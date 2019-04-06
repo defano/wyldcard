@@ -711,12 +711,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitTypeCmd(HyperTalkParser.TypeCmdContext ctx) {
-        return new TypeCmd(ctx, (Expression) visit(ctx.expression()), false);
+        return new TypeCmd(ctx, (Expression) visit(ctx.expression()), null);
     }
 
     @Override
     public Object visitTypeWithCmdKeyCmd(HyperTalkParser.TypeWithCmdKeyCmdContext ctx) {
-        return new TypeCmd(ctx, (Expression) visit(ctx.expression()), true);
+        return new TypeCmd(ctx, (Expression) visit(ctx.expression()), (Expression) visit(ctx.listExpression()));
     }
 
     @Override
@@ -762,6 +762,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitControlKeyCmd(HyperTalkParser.ControlKeyCmdContext ctx) {
         return new ControlKeyCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitOptionKeyCmd(HyperTalkParser.OptionKeyCmdContext ctx) {
+        return new OptionKeyCmd(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
