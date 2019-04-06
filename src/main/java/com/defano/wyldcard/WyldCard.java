@@ -26,6 +26,7 @@ import com.defano.wyldcard.sound.SoundManager;
 import com.defano.wyldcard.sound.SpeechPlaybackManager;
 import com.defano.wyldcard.sound.WyldCardSoundManager;
 import com.defano.wyldcard.sound.WyldCardSpeechPlaybackManager;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.WyldCardWindowManager;
 import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
@@ -110,7 +111,7 @@ public class WyldCard implements PartFinder {
 
     private void startup() {
 
-        SwingUtilities.invokeLater(() -> {
+        Invoke.onDispatch(() -> {
             keyboardManager.start();                            // Global key event handler
             mouseManager.start();                               // Global mouse event and mouseLoc handler
             partEditManager.start();                            // Button field movement and resize management
@@ -124,10 +125,15 @@ public class WyldCard implements PartFinder {
             stackManager.newStack(new ExecutionContext());
 
             // Need to have an open stack before showing the menu bar
-            WyldCard.getInstance().getWyldCardMenuBar().reset();
+            getWyldCardMenuBar().reset();
 
-            // Apply default palette layout
-            WyldCard.getInstance().getWindowManager().restoreDefaultLayout();
+            getWindowManager().restoreDefaultLayout();          // Apply default palette layout
+            getWindowManager().toggleDockPalettes();            // Dock palettes to stack window
+        });
+
+        Invoke.onDispatch(() -> {
+            windowManager.getPaintToolsPalette().setVisible(true);
+            windowManager.getPatternsPalette().setVisible(true);
         });
 
         // Close all open files before we die

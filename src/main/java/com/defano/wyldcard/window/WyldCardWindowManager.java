@@ -70,11 +70,13 @@ public class WyldCardWindowManager implements WindowManager {
         new WindowBuilder<>(paintToolsPalette)
                 .asPalette()
                 .withTitle("Tools")
+                .notInitiallyVisible()
                 .build();
 
         new WindowBuilder<>(patternsPalette)
                 .asPalette()
                 .withTitle("Patterns")
+                .notInitiallyVisible()
                 .build();
 
         new WindowBuilder<>(shapesPalette)

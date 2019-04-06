@@ -212,7 +212,7 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
     default WyldCardFrame<WindowType, ModelType> setLocationRightOf(Component component) {
         Invoke.onDispatch(() -> {
             int targetX = component.getX() + component.getWidth() + DEFAULT_SEPARATION;
-            getWindow().setLocation(targetX, getWindow().getY());
+            positionWindow(targetX, getWindow().getY());
         });
         return this;
     }
@@ -220,7 +220,7 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
     default WyldCardFrame<WindowType, ModelType> setLocationLeftOf(Component component) {
         Invoke.onDispatch(() -> {
             int targetX = component.getX() - getWindow().getWidth() - DEFAULT_SEPARATION;
-            getWindow().setLocation(targetX, getWindow().getY());
+            positionWindow(targetX, getWindow().getY());
         });
         return this;
     }
@@ -228,28 +228,28 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
     default WyldCardFrame<WindowType, ModelType> setLocationBelow(Component component) {
         Invoke.onDispatch(() -> {
             int targetY = component.getY() + component.getHeight() + DEFAULT_SEPARATION;
-            getWindow().setLocation(getWindow().getX(), targetY);
+            positionWindow(getWindow().getX(), targetY);
         });
         return this;
     }
 
     default WyldCardFrame<WindowType, ModelType> alignTopTo(Component component) {
         Invoke.onDispatch(() -> {
-            getWindow().setLocation(getWindow().getX(), component.getY());
+            positionWindow(getWindow().getX(), component.getY());
         });
         return this;
     }
 
     default WyldCardFrame<WindowType, ModelType> alignLeftTo(Component component) {
         Invoke.onDispatch(() -> {
-            getWindow().setLocation(component.getX(), getWindow().getY());
+            positionWindow(component.getX(), getWindow().getY());
         });
         return this;
     }
 
     default WyldCardFrame<WindowType, ModelType> alignTopStaggeredTo(Component component) {
         Invoke.onDispatch(() -> {
-            getWindow().setLocation(getWindow().getX(), component.getY() + DEFAULT_SEPARATION);
+            positionWindow(getWindow().getX(), component.getY() + DEFAULT_SEPARATION);
         });
         return this;
     }
