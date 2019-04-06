@@ -84,7 +84,9 @@ public class WyldCard implements PartFinder {
     }
 
     /**
-     * The application's main method. Invoked initially by the JVM on launch.
+     * The application's main method. Invoked initially by the JVM on launch. Responsible for assembling the
+     * application's object graph and setting system-level properties that must be provisioned before any AWT calls are
+     * made.
      *
      * @param argv Arguments passed to WyldCard (not used)
      */
@@ -109,6 +111,10 @@ public class WyldCard implements PartFinder {
         instance.startup();
     }
 
+    /**
+     * Starts the WyldCard application and all its managers after the application object graph has been initialized by
+     * Guice.
+     */
     private void startup() {
 
         Invoke.onDispatch(() -> {

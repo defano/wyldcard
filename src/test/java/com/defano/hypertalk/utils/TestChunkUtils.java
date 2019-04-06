@@ -18,7 +18,7 @@ public class TestChunkUtils extends GuiceTest {
     @BeforeEach
     public void setup() {
         initialize();
-        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
+        Mockito.when(mockWyldCardPart.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
     }
 
     @Test
@@ -35,13 +35,13 @@ public class TestChunkUtils extends GuiceTest {
         assertEquals("L1,L3", ChunkUtils.putChunk(mockExecutionContext, ChunkType.ITEM, Preposition.REPLACING, "L1,L2,L3", 2, 0, ""));
         assertEquals("L1,L2", ChunkUtils.putChunk(mockExecutionContext, ChunkType.ITEM, Preposition.REPLACING, "L1,L2,L3", 3, 0, ""));
 
-        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value("="));
+        Mockito.when(mockWyldCardPart.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value("="));
 
         assertEquals("L2=L3", ChunkUtils.putChunk(mockExecutionContext, ChunkType.ITEM, Preposition.REPLACING, "L1=L2=L3", 1, 0, ""));
         assertEquals("L1=L3", ChunkUtils.putChunk(mockExecutionContext, ChunkType.ITEM, Preposition.REPLACING, "L1=L2=L3", 2, 0, ""));
         assertEquals("L1=L2", ChunkUtils.putChunk(mockExecutionContext, ChunkType.ITEM, Preposition.REPLACING, "L1=L2=L3", 3, 0, ""));
 
-        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
+        Mockito.when(mockWyldCardPart.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
 
         assertEquals("L3", ChunkUtils.putChunk(mockExecutionContext, ChunkType.ITEMRANGE, Preposition.REPLACING, "L1,L2,L3", 1, 2, ""));
         assertEquals("L1", ChunkUtils.putChunk(mockExecutionContext, ChunkType.ITEMRANGE, Preposition.REPLACING, "L1,L2,L3", 2, 3, ""));
