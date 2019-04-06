@@ -222,6 +222,9 @@ commandStatement
     | 'send' listExpression 'to' expression                                                                             # sendCmdStmnt
     | 'show' 'the'? 'titlebar'                                                                                          # showTitleBarCmd
     | 'show' 'the'? 'menubar'                                                                                           # showMenubarCmd
+    | 'show' 'all' cards                                                                                                # showAllCardsCmd
+    | 'show' 'marked' cards                                                                                             # showMarkedCardsCmd
+    | 'show' expression cards                                                                                           # showCardsCmd
     | 'show' card picture                                                                                               # showThisCardPictCmd
     | 'show' background picture                                                                                         # showThisBkgndPictCmd
     | 'show' picture of expression                                                                                      # showPictCmd

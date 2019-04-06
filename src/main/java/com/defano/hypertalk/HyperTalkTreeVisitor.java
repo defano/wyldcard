@@ -140,6 +140,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitShowAllCardsCmd(HyperTalkParser.ShowAllCardsCmdContext ctx) {
+        return new ShowCardsCmd(ctx, true, false, null);
+    }
+
+    @Override
+    public Object visitShowMarkedCardsCmd(HyperTalkParser.ShowMarkedCardsCmdContext ctx) {
+        return new ShowCardsCmd(ctx, false, true, null);
+    }
+
+    @Override
+    public Object visitShowCardsCmd(HyperTalkParser.ShowCardsCmdContext ctx) {
+        return new ShowCardsCmd(ctx, false, false, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitWaitCountCmd(HyperTalkParser.WaitCountCmdContext ctx) {
         return new WaitCmd(ctx, (Expression) visit(ctx.expression()), (TimeUnit) visit(ctx.timeUnit()));
     }

@@ -616,9 +616,26 @@
   },
 
   {
+    "title": "Show Cards",
+    "summary": "Displays a series of cards in rapid succession.",
+    "codePrefix": "show",
+    "templates": [
+      "show all cards",
+      "show marked cards",
+      "show ${integerExpression} cards"
+    ],
+    "parameters": [
+      {"parameter": "integerExpression", "description": "An expression referring to the number of cards to be shown."}
+    ],
+    "examples": [
+      {"code": "show all cards"},
+      {"code": "show 283 cards"}
+    ]
+  },
+
+  {
     "title": "Sort",
     "summary": "Sorts cards in the stack or text within a container.",
-    "description": "When sorting text, ",
     "codePrefix": "sort",
     "templates": [
       "sort the ${chunks} of ${container}",
