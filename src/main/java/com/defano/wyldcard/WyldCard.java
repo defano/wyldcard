@@ -2,32 +2,32 @@ package com.defano.wyldcard;
 
 import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.awt.WyldCardKeyboardManager;
-import com.defano.wyldcard.awt.WyldCardMouseManager;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
+import com.defano.wyldcard.awt.WyldCardKeyboardManager;
+import com.defano.wyldcard.awt.WyldCardMouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.cursor.WyldCardCursorManager;
 import com.defano.wyldcard.menubar.main.MainWyldCardMenuBar;
 import com.defano.wyldcard.menubar.main.WyldCardMenuBar;
-import com.defano.wyldcard.parts.editor.WyldCardPartEditManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
+import com.defano.wyldcard.parts.editor.WyldCardPartEditManager;
 import com.defano.wyldcard.parts.finder.PartFinder;
-import com.defano.wyldcard.patterns.WyldCardPatternManager;
+import com.defano.wyldcard.parts.wyldcard.WyldCardPart;
 import com.defano.wyldcard.patterns.PatternManager;
-import com.defano.wyldcard.runtime.WyldCardPeriodicMessageManager;
-import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
-import com.defano.wyldcard.runtime.WyldCardProperties;
+import com.defano.wyldcard.patterns.WyldCardPatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
+import com.defano.wyldcard.runtime.WyldCardPeriodicMessageManager;
+import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
 import com.defano.wyldcard.runtime.context.*;
-import com.defano.wyldcard.search.WyldCardSearchManager;
 import com.defano.wyldcard.search.SearchManager;
-import com.defano.wyldcard.sound.WyldCardSoundManager;
-import com.defano.wyldcard.sound.WyldCardSpeechPlaybackManager;
+import com.defano.wyldcard.search.WyldCardSearchManager;
 import com.defano.wyldcard.sound.SoundManager;
 import com.defano.wyldcard.sound.SpeechPlaybackManager;
-import com.defano.wyldcard.window.WyldCardWindowManager;
+import com.defano.wyldcard.sound.WyldCardSoundManager;
+import com.defano.wyldcard.sound.WyldCardSpeechPlaybackManager;
 import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.window.WyldCardWindowManager;
 import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
 import com.google.inject.*;
 
@@ -68,7 +68,7 @@ public class WyldCard implements PartFinder {
     @Inject private PartToolManager partToolManager;                    // Button/field tool selection state
     @Inject private SpeechPlaybackManager speechPlaybackManager;        // Text to speech management
     @Inject private WyldCardMenuBar wyldCardMenuBar;                    // Main menubar
-    @Inject private WyldCardProperties wyldCardProperties;              // WyldCard script-addressable properties
+    @Inject private WyldCardPart wyldCardPart;                          // WyldCard script-addressable properties
 
     /**
      * Returns the singleton instance of the WyldCard application.
@@ -323,13 +323,13 @@ public class WyldCard implements PartFinder {
     }
 
     /**
-     * Returns the {@link WyldCardProperties} object (singleton). The {@link WyldCardProperties} object maintains the
+     * Returns the {@link WyldCardPart} object (singleton). The {@link WyldCardPart} object maintains the
      * state of every script-addressable systemwide property (like 'the itemDelimiter').
      *
      * @return The properties object.
      */
-    public WyldCardProperties getWyldCardProperties() {
-        return wyldCardProperties;
+    public WyldCardPart getWyldCardPart() {
+        return wyldCardPart;
     }
 
     /**
@@ -390,7 +390,7 @@ public class WyldCard implements PartFinder {
             bind(PartToolManager.class).to(WyldCardPartToolManager.class);
             bind(SpeechPlaybackManager.class).to(WyldCardSpeechPlaybackManager.class);
             bind(WyldCardMenuBar.class).to(MainWyldCardMenuBar.class);
-            bind(WyldCardProperties.class).to(DefaultWyldCardProperties.class);
+            bind(WyldCardProperties.class).to(WyldCardPart.class);
             bind(NavigationManager.class).to(WyldCardNavigationManager.class);
         }
     }

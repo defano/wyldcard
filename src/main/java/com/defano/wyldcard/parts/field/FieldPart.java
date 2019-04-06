@@ -269,7 +269,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         super.keyPressed(e);
 
         // Special case: When textArrows is false, arrow keys navigate between cards even when field has focus
-        if (!WyldCard.getInstance().getWyldCardProperties().isTextArrows() &&
+        if (!WyldCard.getInstance().getWyldCardPart().isTextArrows() &&
                 e.getID() == KeyEvent.KEY_PRESSED &&
                 ArrowDirection.fromKeyEvent(e) != null)
         {

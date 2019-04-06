@@ -10,7 +10,7 @@ import com.defano.wyldcard.menubar.main.WyldCardMenuBar;
 import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
-import com.defano.wyldcard.runtime.WyldCardProperties;
+import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
 import com.defano.wyldcard.runtime.context.*;
 import com.defano.wyldcard.search.SearchManager;
 import com.defano.wyldcard.sound.SoundManager;

@@ -9,6 +9,12 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import java.util.Collection;
 
 public interface PropertiesModel {
+
+    /**
+     * Clears all properties, observers and listeners associated with this model.
+     */
+    void clear();
+
     /**
      * Defines a new property.
      *
@@ -178,5 +184,9 @@ public interface PropertiesModel {
      */
     void notifyPropertyChangedObserver(ExecutionContext context, PropertyChangeObserver listener);
 
-    boolean removePropertyChangedObserver(PropertyChangeObserver listener);
+    /**
+     * Removes an observer of property value changes; this listener will not be notified of future changes.
+     * @param listener The property change observer
+     */
+    void removePropertyChangedObserver(PropertyChangeObserver listener);
 }

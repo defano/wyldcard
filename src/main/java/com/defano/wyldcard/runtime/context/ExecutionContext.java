@@ -434,7 +434,7 @@ public class ExecutionContext {
      */
     public Value getProperty(String property, PartSpecifier ps) throws NoSuchPropertyException, PartException {
         if (ps == null) {
-            return WyldCard.getInstance().getWyldCardProperties().getProperty(this, property);
+            return WyldCard.getInstance().getWyldCardPart().getProperty(this, property);
         } else {
             return getPart(ps).getProperty(this, property);
         }
@@ -461,7 +461,7 @@ public class ExecutionContext {
         }
 
         if (ps == null) {
-            WyldCard.getInstance().getWyldCardProperties().setProperty(this, property, mutable);
+            WyldCard.getInstance().getWyldCardPart().setProperty(this, property, mutable);
         } else {
             getPart(ps).setProperty(this, property, mutable);
         }
@@ -610,7 +610,7 @@ public class ExecutionContext {
      * zero), and any behaviors are expected to occur when all handlers are finished should fire.
      */
     private void expire() {
-        WyldCard.getInstance().getWyldCardProperties().resetProperties(this);
+        WyldCard.getInstance().getWyldCardPart().resetProperties(this);
     }
 
     @Override

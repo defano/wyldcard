@@ -1,26 +1,42 @@
-package com.defano.wyldcard.runtime;
+package com.defano.wyldcard.parts.wyldcard;
 
+import com.defano.hypertalk.ast.model.Script;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.preemptions.Preemption;
+import com.defano.hypertalk.ast.statements.Command;
+import com.defano.hypertalk.ast.statements.Statement;
+import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.cursor.HyperCardCursor;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
+import com.defano.wyldcard.message.Message;
+import com.defano.wyldcard.parts.DeferredKeyEventComponent;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
+import com.defano.wyldcard.runtime.compiler.CompilationUnit;
+import com.defano.wyldcard.runtime.compiler.Compiler;
+import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.window.layouts.ScriptEditor;
 import com.google.inject.Singleton;
 
+import java.awt.event.KeyEvent;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 
 /**
- * A model of global, HyperCard properties. Note that this model is not part of a stack and is therefore never saved.
- * Changes to these properties reset to their default on application startup (and some, like 'itemDelimiter' reset to
- * their default value whenever their are no scripts executing).
+ * This object represents the part known as 'HyperCard' (also addressable as 'WyldCard'); it provides a set of system-
+ * wide HyperTalk addressable properties and acts as a message sink for messages that are not trapped by other parts in
+ * the messaging passing hierarchy.
  */
 @Singleton
-public class DefaultWyldCardProperties extends WyldCardPropertiesModel implements WyldCardProperties {
+public class WyldCardPart extends PartModel implements WyldCardProperties {
 
-    public DefaultWyldCardProperties() {
-        super();
+    public WyldCardPart() {
+        super(null, null, null);
+        super.clear();
 
         newProperty(PROP_ITEMDELIMITER, new Value(","), false);
         newProperty(PROP_LOCKSCREEN, new Value(false), false);
@@ -97,6 +113,51 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
     }
 
     @Override
+    public void relinkParentPartModel(PartModel parentPartModel) {
+        // Nothing to do
+    }
+
+    @Override
+    public Script getScript(ExecutionContext context) {
+        throw new IllegalStateException("Bug! WyldCard does not have a script.");
+    }
+
+    @Override
+    public PartSpecifier getMe(ExecutionContext context) {
+        throw new IllegalStateException("Bug! WyldCard cannot refer to itself.");
+    }
+
+    @Override
+    public void receiveMessage(ExecutionContext context, Message message) {
+        receiveMessage(context, message, null);
+    }
+
+    @Override
+    public void receiveMessage(ExecutionContext context, Message message, MessageCompletionObserver onCompletion) {
+        try {
+            processMessage(context, message);
+        } catch (HtException e) {
+            // Nothing to do
+        }
+
+        if (onCompletion != null) {
+            onCompletion.onMessagePassed(message, false, null);
+        }
+    }
+
+    @Override
+    public void receiveAndDeferKeyEvent(ExecutionContext context, Message message, KeyEvent e, DeferredKeyEventComponent c) {
+        // Nothing to do
+    }
+
+    @Override
+    public Value invokeFunction(ExecutionContext context, Message message) throws HtException {
+        // TODO: This would be a good place to hook XFCN-like functionality
+
+        throw new HtException("No such function " + message.getMessageName(context) + ".");
+    }
+
+    @Override
     public void resetProperties(ExecutionContext context) {
         setKnownProperty(context, PROP_ITEMDELIMITER, new Value(","));
         setKnownProperty(context, PROP_LOCKSCREEN, new Value(false));
@@ -113,5 +174,36 @@ public class DefaultWyldCardProperties extends WyldCardPropertiesModel implement
     @Override
     public boolean isLockMessages() {
         return getKnownProperty(new ExecutionContext(), PROP_LOCKMESSAGES).booleanValue();
+    }
+
+    @Override
+    public ScriptEditor editScript(ExecutionContext context) {
+        throw new HtUncheckedSemanticException(new HtSemanticException("Cannot edit the script of WyldCard."));
+    }
+
+    @Override
+    public ScriptEditor editScript(ExecutionContext context, Integer caretPosition) {
+        throw new HtUncheckedSemanticException(new HtSemanticException("Cannot edit the script of WyldCard."));
+    }
+
+    @Override
+    public void editProperties(ExecutionContext context) {
+        throw new HtUncheckedSemanticException(new HtSemanticException("Cannot edit the properties of WyldCard."));
+    }
+
+    private void processMessage(ExecutionContext context, Message message) throws HtException {
+        // TODO: This would be a good place to hook XCMD-like functionality
+
+        String messageString = message.toMessageString(context);
+        try {
+            Script script = (Script) Compiler.blockingCompile(CompilationUnit.SCRIPTLET, messageString);
+            Statement s = script.getStatements().list.get(0);
+
+            if (s instanceof Command) {
+                s.execute(context);
+            }
+        } catch (HtException | Preemption e) {
+            // Nothing to do
+        }
     }
 }

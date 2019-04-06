@@ -11,6 +11,10 @@ public enum CompilationUnit {
      */
     SCRIPT,
 
+    /**
+     * Represents a list of zero or more, comma-delimited HyperTalk expressions as used to express argument lists,
+     * points, rectangles, etc.
+     */
     LIST_EXPRESSION,
 
     /**

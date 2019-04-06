@@ -1,7 +1,6 @@
 package com.defano.wyldcard.window.layouts;
 
 import com.defano.hypertalk.ast.model.Script;
-import com.defano.wyldcard.message.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
@@ -11,10 +10,11 @@ import com.defano.wyldcard.editor.HyperTalkTextEditor;
 import com.defano.wyldcard.editor.SyntaxParserDelegate;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.menubar.script.ScriptEditorMenuBar;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
+import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
+import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.HandlerComboBox;
 import com.defano.wyldcard.util.StringUtils;
@@ -67,9 +67,9 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
         editor.addBreakpointToggleObserver(breakpoints -> saveBreakpoints());
 
         editor.getScriptField().setFont(FontUtils.getFontByNameStyleSize(
-                WyldCard.getInstance().getWyldCardProperties().getKnownProperty(new ExecutionContext(), DefaultWyldCardProperties.PROP_SCRIPTTEXTFONT).toString(),
+                WyldCard.getInstance().getWyldCardPart().getKnownProperty(new ExecutionContext(), WyldCardProperties.PROP_SCRIPTTEXTFONT).toString(),
                 Font.PLAIN,
-                WyldCard.getInstance().getWyldCardProperties().getKnownProperty(new ExecutionContext(), DefaultWyldCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
+                WyldCard.getInstance().getWyldCardPart().getKnownProperty(new ExecutionContext(), WyldCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
         ));
 
         textArea.add(editor);

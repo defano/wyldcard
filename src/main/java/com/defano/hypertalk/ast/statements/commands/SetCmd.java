@@ -26,7 +26,7 @@ public class SetCmd extends Command {
     public void onExecute(ExecutionContext context) throws HtException {
         // Setting the property of HyperCard
         if (propertySpec.isGlobalPropertySpecifier(context)) {
-            WyldCard.getInstance().getWyldCardProperties().setProperty(context, propertySpec.getProperty(), expression.evaluate(context));
+            WyldCard.getInstance().getWyldCardPart().setProperty(context, propertySpec.getProperty(), expression.evaluate(context));
         }
 
         // Setting the property of menu / menu item

@@ -12,7 +12,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.stack.StackModel;
-import com.defano.wyldcard.runtime.WyldCardProperties;
+import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
 import com.google.common.collect.Lists;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;

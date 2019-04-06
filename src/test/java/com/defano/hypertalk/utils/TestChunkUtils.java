@@ -6,7 +6,7 @@ import com.defano.hypertalk.ast.model.Ordinal;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.runtime.WyldCardProperties;
+import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

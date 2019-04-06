@@ -5,7 +5,7 @@ import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.parts.msgbox.MsgBoxModel;
+import com.defano.wyldcard.parts.msg.MsgBoxModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WyldCardWindow;

@@ -7,7 +7,8 @@ public enum PartType {
     CARD("card"),
     BACKGROUND("background"),
     STACK("stack"),
-    WINDOW("window");
+    WINDOW("window"),
+    HYPERCARD("hypercard");
 
     public final String hypertalkName;
 

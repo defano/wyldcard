@@ -23,7 +23,7 @@ import com.defano.hypertalk.ast.statements.repeat.*;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
+import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -105,8 +105,13 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitShowCmdStmnt(HyperTalkParser.ShowCmdStmntContext ctx) {
+    public Object visitShowCmd(HyperTalkParser.ShowCmdContext ctx) {
         return new SetPropertyCmd(ctx, (Expression) visit(ctx.expression()), PartModel.PROP_VISIBLE, new Value(true));
+    }
+
+    @Override
+    public Object visitShowAtCmd(HyperTalkParser.ShowAtCmdContext ctx) {
+        return new ShowAtCmd(ctx, (Expression) visit(ctx.expression()), (Expression) visit(ctx.listExpression()));
     }
 
     @Override
@@ -956,7 +961,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitLockScreenCmd(HyperTalkParser.LockScreenCmdContext ctx) {
-        return new SetPropertyCmd(ctx, DefaultWyldCardProperties.PROP_LOCKSCREEN, new Value(true));
+        return new SetPropertyCmd(ctx, WyldCardProperties.PROP_LOCKSCREEN, new Value(true));
     }
 
     @Override

@@ -28,8 +28,8 @@ public class WyldCardPropertiesModel implements PropertiesModel {
     private transient Map<String, String> propertyAliases;
     private transient Set<PropertyChangeObserver> changeObservers;
     private transient Set<PropertyWillChangeObserver> willChangeObservers;
-    private transient Map<String,ComputedGetter> computerGetters;
-    private transient Map<String,ComputedSetter> computerSetters;
+    private transient Map<String,ComputedGetter> computedGetters;
+    private transient Map<String,ComputedSetter> computedSetters;
     private transient Map<String,DelegatedProperty> delegatedProperties;
 
     // Required to initialize transient data member when object is de-serialized
@@ -42,9 +42,21 @@ public class WyldCardPropertiesModel implements PropertiesModel {
         propertyAliases = new ConcurrentHashMap<>();
         changeObservers = Sets.newConcurrentHashSet();
         willChangeObservers = Sets.newConcurrentHashSet();
-        computerGetters = new ConcurrentHashMap<>();
-        computerSetters = new ConcurrentHashMap<>();
+        computedGetters = new ConcurrentHashMap<>();
+        computedSetters = new ConcurrentHashMap<>();
         delegatedProperties = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public void clear() {
+        properties.clear();
+        immutableProperties.clear();
+        propertyAliases.clear();
+        changeObservers.clear();
+        willChangeObservers.clear();
+        computedSetters.clear();
+        computedGetters.clear();
+        delegatedProperties.clear();
     }
 
     @Override
@@ -88,20 +100,20 @@ public class WyldCardPropertiesModel implements PropertiesModel {
     @Override
     public void newComputedSetterProperty(String propertyName, ComputedSetter setter) {
         assertConstructed();
-        computerSetters.put(propertyName.toLowerCase(), setter);
+        computedSetters.put(propertyName.toLowerCase(), setter);
     }
 
     @Override
     public void newComputedGetterProperty(String propertyName, ComputedGetter getter) {
         assertConstructed();
-        computerGetters.put(propertyName.toLowerCase(), getter);
+        computedGetters.put(propertyName.toLowerCase(), getter);
     }
 
     @Override
     public void newComputedReadOnlyProperty(String propertyName, ComputedGetter getter) {
         assertConstructed();
-        computerGetters.put(propertyName.toLowerCase(), getter);
-        computerSetters.put(propertyName.toLowerCase(), (context, model, property, value) -> {
+        computedGetters.put(propertyName.toLowerCase(), getter);
+        computedSetters.put(propertyName.toLowerCase(), (context, model, property, value) -> {
             throw new PropertyPermissionException("Cannot set the property " + property + " because it is immutable.");
         });
     }
@@ -141,13 +153,11 @@ public class WyldCardPropertiesModel implements PropertiesModel {
             fireOnPropertyWillChange(context, propertyName, oldValue, value);
         }
 
-        if (computerSetters.keySet().contains(propertyName)) {
-            ComputedSetter setter = computerSetters.get(propertyName);
+        if (computedSetters.keySet().contains(propertyName)) {
+            ComputedSetter setter = computedSetters.get(propertyName);
             if (setter instanceof DispatchComputedSetter) {
                 String finalPropertyName = propertyName;
-                Invoke.onDispatch(() -> {
-                    ((DispatchComputedSetter) setter).setComputedValue(context, WyldCardPropertiesModel.this, finalPropertyName, value);
-                });
+                Invoke.onDispatch(() -> ((DispatchComputedSetter) setter).setComputedValue(context, WyldCardPropertiesModel.this, finalPropertyName, value));
             } else {
                 setter.setComputedValue(context, this, propertyName, value);
             }
@@ -202,14 +212,14 @@ public class WyldCardPropertiesModel implements PropertiesModel {
             property = propertyAliases.get(property);
         }
 
-        if (computerGetters.keySet().contains(property)) {
-            if (computerGetters.get(property) instanceof DispatchComputedGetter) {
+        if (computedGetters.keySet().contains(property)) {
+            if (computedGetters.get(property) instanceof DispatchComputedGetter) {
                 final Value[] value = new Value[1];
                 String finalProperty = property;
-                Invoke.onDispatch(() -> value[0] = computerGetters.get(finalProperty).getComputedValue(context, this, finalProperty));
+                Invoke.onDispatch(() -> value[0] = computedGetters.get(finalProperty).getComputedValue(context, this, finalProperty));
                 return value[0];
             } else {
-                return computerGetters.get(property).getComputedValue(context, this, property);
+                return computedGetters.get(property).getComputedValue(context, this, property);
             }
         } else {
             return properties.get(property.toLowerCase());
@@ -234,7 +244,7 @@ public class WyldCardPropertiesModel implements PropertiesModel {
     public boolean hasProperty(String property) {
         assertConstructed();
         property = property.toLowerCase();
-        return properties.containsKey(property) || propertyAliases.containsKey(property) || (computerGetters.containsKey(property) && computerSetters.containsKey(property));
+        return properties.containsKey(property) || propertyAliases.containsKey(property) || (computedGetters.containsKey(property) && computedSetters.containsKey(property));
     }
 
     @Override
@@ -260,9 +270,9 @@ public class WyldCardPropertiesModel implements PropertiesModel {
     }
 
     @Override
-    public boolean removePropertyChangedObserver(PropertyChangeObserver listener) {
+    public void removePropertyChangedObserver(PropertyChangeObserver listener) {
         assertConstructed();
-        return changeObservers.remove(listener);
+        changeObservers.remove(listener);
     }
 
     private void fireOnPropertyWillChange(ExecutionContext context, String property, Value oldValue, Value value) {
@@ -280,7 +290,7 @@ public class WyldCardPropertiesModel implements PropertiesModel {
     }
 
     private void assertConstructed() {
-        if (propertyAliases == null || changeObservers == null || willChangeObservers == null || computerGetters == null || computerSetters == null || delegatedProperties == null) {
+        if (propertyAliases == null || changeObservers == null || willChangeObservers == null || computedGetters == null || computedSetters == null || delegatedProperties == null) {
             throw new IllegalStateException("DefaultPropertiesModel is not properly constructed. Did you forget to call super.initialize()");
         }
     }

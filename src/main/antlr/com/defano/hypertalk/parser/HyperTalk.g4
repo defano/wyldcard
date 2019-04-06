@@ -224,7 +224,8 @@ commandStatement
     | 'show' card picture                                                                                               # showThisCardPictCmd
     | 'show' background picture                                                                                         # showThisBkgndPictCmd
     | 'show' picture of expression                                                                                      # showPictCmd
-    | 'show' expression                                                                                                 # showCmdStmnt
+    | 'show' expression                                                                                                 # showCmd
+    | 'show' expression 'at' listExpression                                                                             # showAtCmd
     | 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
     | 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
     | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd

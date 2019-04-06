@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime;
+package com.defano.wyldcard.parts.wyldcard;
 
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;

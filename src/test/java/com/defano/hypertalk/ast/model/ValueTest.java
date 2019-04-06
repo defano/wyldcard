@@ -5,7 +5,7 @@ import com.defano.hypertalk.ast.model.chunk.ChunkType;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.TestChunkBuilder;
-import com.defano.wyldcard.runtime.WyldCardProperties;
+import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

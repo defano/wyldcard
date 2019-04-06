@@ -1,4 +1,4 @@
-package com.defano.wyldcard.parts.msgbox;
+package com.defano.wyldcard.parts.msg;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;

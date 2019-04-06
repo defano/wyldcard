@@ -1,13 +1,13 @@
 package com.defano.hypertalk.utils;
 
-import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.Ordinal;
+import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.chunk.ChunkType;
 import com.defano.hypertalk.ast.model.chunk.CompositeChunk;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
-import com.defano.wyldcard.runtime.WyldCardProperties;
+import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.google.common.collect.Lists;
 
@@ -194,7 +194,7 @@ public class ChunkUtils {
     private static String getItemDelimiterRegex(ExecutionContext context) {
         List<Character> specialChars = Lists.charactersOf("[\\^$.|?*+()");
 
-        String itemDelimiter = WyldCard.getInstance().getWyldCardProperties().getKnownProperty(context, WyldCardProperties.PROP_ITEMDELIMITER).toString();
+        String itemDelimiter = WyldCard.getInstance().getWyldCardPart().getKnownProperty(context, WyldCardProperties.PROP_ITEMDELIMITER).toString();
         StringBuilder itemDelimiterRegex = new StringBuilder();
 
         for (char thisChar : itemDelimiter.toCharArray()) {
@@ -230,7 +230,7 @@ public class ChunkUtils {
                 return "\n";
             case ITEMRANGE:
             case ITEM:
-                return WyldCard.getInstance().getWyldCardProperties().getKnownProperty(context, DefaultWyldCardProperties.PROP_ITEMDELIMITER).toString();
+                return WyldCard.getInstance().getWyldCardPart().getKnownProperty(context, WyldCardProperties.PROP_ITEMDELIMITER).toString();
             default:
                 throw new RuntimeException("Bug! Not implemented: " + chunkType);
         }

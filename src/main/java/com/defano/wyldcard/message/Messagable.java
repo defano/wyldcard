@@ -6,7 +6,6 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.DeferredKeyEventComponent;
-import com.defano.wyldcard.parts.hypercard.HyperCardPart;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -65,7 +64,7 @@ public interface Messagable {
         if (WyldCard.getInstance().getKeyboardManager().isPeeking(context) ||
                 (message instanceof SystemMessage &&
                 ((SystemMessage) message).isLockable() &&
-                WyldCard.getInstance().getWyldCardProperties().isLockMessages()))
+                WyldCard.getInstance().getWyldCardPart().isLockMessages()))
         {
             onCompletion.onMessagePassed(message, false, null);
             return;
@@ -174,7 +173,7 @@ public interface Messagable {
                     return context.getCurrentCard().getPartModel();
                 }
             case STACK:
-                return HyperCardPart.getInstance();
+                return WyldCard.getInstance().getWyldCardPart();
             default:
                 throw new IllegalStateException("Bug! Unhandled message recipient type: " + type);
         }
