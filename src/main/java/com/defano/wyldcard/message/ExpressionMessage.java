@@ -18,7 +18,7 @@ public class ExpressionMessage implements Message {
     }
 
     @Override
-    public String getMessageName(ExecutionContext context) {
+    public String getMessageName() {
         return messageName;
     }
 

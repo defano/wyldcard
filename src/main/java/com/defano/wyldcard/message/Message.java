@@ -15,10 +15,9 @@ public interface Message {
      * The case-insensitive name of the message, which is the same as the name of the handler or function which will
      * service it.
      *
-     * @param context The execution context.
      * @return The name of the message.
      */
-    String getMessageName(ExecutionContext context);
+    String getMessageName();
 
     /**
      * A list of {@link Value} objects representing the arguments accompanying the message. Note that the number of
@@ -37,7 +36,7 @@ public interface Message {
         StringBuilder message = new StringBuilder();
         List<Value> arguments = getArguments(context);
 
-        message.append(getMessageName(context)).append(" ");
+        message.append(getMessageName()).append(" ");
 
         for (Value argument : arguments) {
             message.append(argument).append(",");

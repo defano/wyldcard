@@ -56,14 +56,14 @@ public class ListExp extends Expression {
 
     @Override
     public List<Value> evaluateAsList(ExecutionContext context) throws HtException {
-        ArrayList<Value> values = new ArrayList<>();
-        values.add(car.evaluate(context));
-
         if (cdr != null) {
+            ArrayList<Value> values = new ArrayList<>();
+            values.add(car.evaluate(context));
             values.addAll(cdr.evaluateAsList(context));
+            return values;
+        } else {
+            return car.evaluateAsList(context);
         }
-
-        return values;
     }
 
 }

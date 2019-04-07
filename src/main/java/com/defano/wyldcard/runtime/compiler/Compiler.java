@@ -190,7 +190,7 @@ public class Compiler {
     public static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, Message message, HandlerCompletionObserver completionObserver) {
 
         // Find handler for message in the script
-        NamedBlock handler = script == null ? null : script.getHandler(message.getMessageName(context));
+        NamedBlock handler = script == null ? null : script.getHandler(message.getMessageName());
         CheckedFuture<Boolean, HtException> future;
 
         // Script implements handler for message; execute it
@@ -203,7 +203,7 @@ public class Compiler {
             future = getFutureForHandlerExecutionTask(() -> {
 
                 // Synthesize handler invocation for message watcher
-                HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message.getMessageName(context), message.getArguments(context), me, context.getTarget() == null, context.getStackDepth(), false);
+                HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message.getMessageName(), message.getArguments(context), me, context.getTarget() == null, context.getStackDepth(), false);
                 HandlerInvocationCache.getInstance().notifyMessageHandled(invocation);
 
                 // No handler for script, but we still need to capture that this part was the target
@@ -216,7 +216,7 @@ public class Compiler {
             });
         }
 
-        Futures.addCallback(future, new HandlerExecutionFutureCallback(me, script, message.getMessageName(context), completionObserver));
+        Futures.addCallback(future, new HandlerExecutionFutureCallback(me, script, message.getMessageName(), completionObserver));
     }
 
     /**

@@ -131,91 +131,91 @@ public enum SystemMessage implements Message {
         ExecutionContext context = new ExecutionContext();
 
         if (e.isControlDown() && e.getKeyCode() != KeyEvent.VK_CONTROL) {
-            return MessageBuilder.named(CONTROL_KEY.getMessageName(context)).withArgument(e.getKeyCode()).build();
+            return MessageBuilder.named(CONTROL_KEY.getMessageName()).withArgument(e.getKeyCode()).build();
         }
 
         if (e.isMetaDown() && e.getKeyCode() != KeyEvent.VK_META) {
-            return MessageBuilder.named(COMMAND_KEY.getMessageName(context)).withArgument(e.getKeyCode()).build();
+            return MessageBuilder.named(COMMAND_KEY.getMessageName()).withArgument(e.getKeyCode()).build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_TAB) {
-            return MessageBuilder.named(TAB_KEY.getMessageName(context)).build();
+            return MessageBuilder.named(TAB_KEY.getMessageName()).build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_ENTER && e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
             return inField ?
-                    MessageBuilder.named(ENTER_IN_FIELD.getMessageName(context)).build() :
-                    MessageBuilder.named(ENTER_KEY.getMessageName(context)).build();
+                    MessageBuilder.named(ENTER_IN_FIELD.getMessageName()).build() :
+                    MessageBuilder.named(ENTER_KEY.getMessageName()).build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_ENTER && e.getKeyLocation() != KeyEvent.KEY_LOCATION_NUMPAD) {
             return inField ?
-                    MessageBuilder.named(RETURN_IN_FIELD.getMessageName(context)).build() :
-                    MessageBuilder.named(RETURN_KEY.getMessageName(context)).build();
+                    MessageBuilder.named(RETURN_IN_FIELD.getMessageName()).build() :
+                    MessageBuilder.named(RETURN_KEY.getMessageName()).build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            return MessageBuilder.named(ARROW_KEY.getMessageName(context)).withArgument("left").build();
+            return MessageBuilder.named(ARROW_KEY.getMessageName()).withArgument("left").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            return MessageBuilder.named(ARROW_KEY.getMessageName(context)).withArgument("right").build();
+            return MessageBuilder.named(ARROW_KEY.getMessageName()).withArgument("right").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_UP) {
-            return MessageBuilder.named(ARROW_KEY.getMessageName(context)).withArgument("up").build();
+            return MessageBuilder.named(ARROW_KEY.getMessageName()).withArgument("up").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            return MessageBuilder.named(ARROW_KEY.getMessageName(context)).withArgument("down").build();
+            return MessageBuilder.named(ARROW_KEY.getMessageName()).withArgument("down").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F1) {
-            return MessageBuilder.named(FUNCTION_KEY.getMessageName(context)).withArgument("1").build();
+            return MessageBuilder.named(FUNCTION_KEY.getMessageName()).withArgument("1").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F2) {
-            return MessageBuilder.named(FUNCTION_KEY.getMessageName(context)).withArgument("2").build();
+            return MessageBuilder.named(FUNCTION_KEY.getMessageName()).withArgument("2").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F3) {
-            return MessageBuilder.named(FUNCTION_KEY.getMessageName(context)).withArgument("3").build();
+            return MessageBuilder.named(FUNCTION_KEY.getMessageName()).withArgument("3").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F4) {
-            return MessageBuilder.named(FUNCTION_KEY.getMessageName(context)).withArgument("4").build();
+            return MessageBuilder.named(FUNCTION_KEY.getMessageName()).withArgument("4").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F5) {
-            return MessageBuilder.named(FUNCTION_KEY.getMessageName(context)).withArgument("5").build();
+            return MessageBuilder.named(FUNCTION_KEY.getMessageName()).withArgument("5").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F6) {
-            return MessageBuilder.named(FUNCTION_KEY.getMessageName(context)).withArgument("6").build();
+            return MessageBuilder.named(FUNCTION_KEY.getMessageName()).withArgument("6").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F7) {
-            return MessageBuilder.named(FUNCTION_KEY.getMessageName(context)).withArgument("7").build();
+            return MessageBuilder.named(FUNCTION_KEY.getMessageName()).withArgument("7").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F8) {
-            return MessageBuilder.named(FUNCTION_KEY.getMessageName(context)).withArgument("8").build();
+            return MessageBuilder.named(FUNCTION_KEY.getMessageName()).withArgument("8").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F9) {
-            return MessageBuilder.named(FUNCTION_KEY.getMessageName(context)).withArgument("9").build();
+            return MessageBuilder.named(FUNCTION_KEY.getMessageName()).withArgument("9").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F10) {
-            return MessageBuilder.named(FUNCTION_KEY.getMessageName(context)).withArgument("10").build();
+            return MessageBuilder.named(FUNCTION_KEY.getMessageName()).withArgument("10").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F11) {
-            return MessageBuilder.named(FUNCTION_KEY.getMessageName(context)).withArgument("11").build();
+            return MessageBuilder.named(FUNCTION_KEY.getMessageName()).withArgument("11").build();
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F12) {
-            return MessageBuilder.named(FUNCTION_KEY.getMessageName(context)).withArgument("12").build();
+            return MessageBuilder.named(FUNCTION_KEY.getMessageName()).withArgument("12").build();
         }
 
         return null;
@@ -239,7 +239,7 @@ public enum SystemMessage implements Message {
     }
 
     @Override
-    public String getMessageName(ExecutionContext context) {
+    public String getMessageName() {
         return messageName;
     }
 

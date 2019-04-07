@@ -220,7 +220,7 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
                     // Nothing to do
                 }
 
-                StringBuilder message = new StringBuilder(invocation.getMessageName(context));
+                StringBuilder message = new StringBuilder(invocation.getMessageName());
 
                 // Indent message depth of call stack
                 for (int index = 0; index < invocation.getStackDepth() - 1; index++) {

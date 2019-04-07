@@ -282,7 +282,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
             ExecutionContext context = new ExecutionContext(this);
 
             // EnterInField message should be dispatched even during redispatchInProgress
-            if (msg != null && (!redispatchInProgress.get() || msg.getMessageName(context).equalsIgnoreCase(SystemMessage.ENTER_IN_FIELD.getMessageName(context)))) {
+            if (msg != null && (!redispatchInProgress.get() || msg.getMessageName().equalsIgnoreCase(SystemMessage.ENTER_IN_FIELD.getMessageName()))) {
                 getPartModel().receiveAndDeferKeyEvent(context, msg, e, this);
             }
         }

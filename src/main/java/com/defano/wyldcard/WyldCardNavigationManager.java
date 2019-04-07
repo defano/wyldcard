@@ -6,8 +6,8 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.CircleStack;
 import com.defano.wyldcard.thread.Invoke;
+import com.defano.wyldcard.util.CircleStack;
 import com.defano.wyldcard.window.layouts.StackWindow;
 
 import java.util.EmptyStackException;
@@ -40,44 +40,12 @@ public class WyldCardNavigationManager implements NavigationManager {
      * {@inheritDoc}
      */
     @Override
-    public CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, boolean push) {
-        return Invoke.onDispatch(() -> {
-            CardPart cardPart;
-
-            // Nothing to do if navigating to current card or an invalid card index
-            if (cardIndex == stackPart.getStackModel().getCurrentCardIndex() ||
-                    cardIndex < 0 ||
-                    cardIndex >= stackPart.getStackModel().getCardCount()) {
-
-                cardPart = stackPart.getDisplayedCard();
-            } else {
-                stackPart.closeCard(context);
-                cardPart = stackPart.openCard(context, cardIndex);
-            }
-
-            // When requested, push the current card onto the backstack
-            if (push) {
-                Destination destination = new Destination(stackPart.getStackModel(), cardPart.getId(context));
-                getNavigationStack().push(destination);
-            }
-
-            // Update the current card in the context
-            context.setCurrentCard(cardPart);
-
-            return cardPart;
-        });
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public CardPart goNextCard(ExecutionContext context, StackPart stackPart) {
         return Invoke.onDispatch(() -> {
             if (stackPart.getStackModel().getCurrentCardIndex() + 1 < stackPart.getStackModel().getCardCount()) {
                 return goCard(context, stackPart, stackPart.getStackModel().getCurrentCardIndex() + 1, true);
             } else {
-                return null;
+                return goCard(context, stackPart, 0, true);
             }
         });
     }
@@ -91,7 +59,7 @@ public class WyldCardNavigationManager implements NavigationManager {
             if (stackPart.getStackModel().getCurrentCardIndex() - 1 >= 0) {
                 return goCard(context, stackPart, stackPart.getStackModel().getCurrentCardIndex() - 1, true);
             } else {
-                return null;
+                return goCard(context, stackPart, stackPart.getStackModel().getCardCount() - 1, true);
             }
         });
     }
@@ -115,16 +83,14 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goBack(ExecutionContext context) {
-        return Invoke.onDispatch(() -> {
-            try {
-                return goDestination(context, getNavigationStack().back(), false);
-            }
+        try {
+            return goDestination(context, getNavigationStack().back(), false);
+        }
 
-            // Indicates card on stack was deleted; go back again
-            catch (HtSemanticException e) {
-                return goBack(context);
-            }
-        });
+        // Indicates card on stack was deleted; go back again
+        catch (HtSemanticException e) {
+            return goBack(context);
+        }
     }
 
     /**
@@ -132,16 +98,14 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goForth(ExecutionContext context) {
-        return Invoke.onDispatch(() -> {
-            try {
-                return goDestination(context, getNavigationStack().forward(), false);
-            }
+        try {
+            return goDestination(context, getNavigationStack().forward(), false);
+        }
 
-            // Indicates card on stack was deleted; go forth again
-            catch (HtSemanticException e) {
-                return goForth(context);
-            }
-        });
+        // Indicates card on stack was deleted; go forth again
+        catch (HtSemanticException e) {
+            return goForth(context);
+        }
     }
 
     /**
@@ -186,7 +150,41 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goDestination(ExecutionContext context, Destination destination) throws HtSemanticException {
-        return Invoke.onDispatch(() -> goDestination(context, destination, true));
+        return goDestination(context, destination, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, boolean push) {
+        CardPart card = Invoke.onDispatch(() -> {
+            CardPart cardPart;
+
+            // Nothing to do if navigating to current card or an invalid card index
+            if (cardIndex == stackPart.getStackModel().getCurrentCardIndex() ||
+                    cardIndex < 0 ||
+                    cardIndex >= stackPart.getStackModel().getCardCount()) {
+
+                cardPart = stackPart.getDisplayedCard();
+            } else {
+                stackPart.closeCard(context);
+                cardPart = stackPart.openCard(context, cardIndex);
+            }
+
+            // When requested, push the current card onto the backstack
+            if (push) {
+                Destination destination = new Destination(stackPart.getStackModel(), cardPart.getId(context));
+                getNavigationStack().push(destination);
+            }
+
+            // Update the current card in the context
+            context.setCurrentCard(cardPart);
+
+            return cardPart;
+        });
+
+        return card;
     }
 
     private CardPart goDestination(ExecutionContext context, Destination destination, boolean push) throws HtSemanticException {

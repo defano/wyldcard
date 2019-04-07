@@ -19,7 +19,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-public class StackWindow extends WyldCardWindow<StackPart> implements StackObserver, StackNavigationObserver, CurtainObserver {
+public class StackWindow extends WyldCardWindow<StackPart> implements StackObserver, StackNavigationObserver, CurtainObserver, WindowFocusListener {
 
     private final static int CARD_LAYER = 0;
     private final static int CURTAIN_LAYER = 1;
@@ -115,17 +115,7 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
 
         cardPanel.addComponentListener(cardResizeObserver);
         getWindow().addComponentListener(frameResizeObserver);
-        getWindow().addWindowFocusListener(new WindowFocusListener() {
-            @Override
-            public void windowGainedFocus(WindowEvent e) {
-                WyldCard.getInstance().getStackManager().focusStack(stack);
-            }
-
-            @Override
-            public void windowLostFocus(WindowEvent e) {
-                // Nothing to do
-            }
-        });
+        getWindow().addWindowFocusListener(this);
     }
 
     /**
@@ -148,9 +138,16 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
         cardPanel.revalidate();
 
         invalidateWindowTitle();
+    }
 
-        // Needs to occur *after* all other validations have occurred
-        SwingUtilities.invokeLater(cardPanel::revalidate);
+    @Override
+    public void windowGainedFocus(WindowEvent e) {
+        WyldCard.getInstance().getStackManager().focusStack(stack);
+    }
+
+    @Override
+    public void windowLostFocus(WindowEvent e) {
+        // Nothing to do
     }
 
     /**

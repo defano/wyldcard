@@ -129,7 +129,7 @@ public interface Messagable {
      * @throws HtSemanticException Thrown if a syntax or semantic error occurs attempting to execute the function.
      */
     default Value invokeFunction(ExecutionContext context, Message message) throws HtException {
-        NamedBlock function = getScript(context).getNamedBlock(message.getMessageName(context));
+        NamedBlock function = getScript(context).getNamedBlock(message.getMessageName());
         Messagable target = this;
 
         while (function == null) {
@@ -138,11 +138,11 @@ public interface Messagable {
 
             // No more scripts to search; error!
             if (target == null) {
-                throw new HtSemanticException("No such function " + message.getMessageName(context) + ".");
+                throw new HtSemanticException("No such function " + message.getMessageName() + ".");
             }
 
             // Look for function in this script
-            function = target.getScript(context).getNamedBlock(message.getMessageName(context));
+            function = target.getScript(context).getNamedBlock(message.getMessageName());
         }
 
         return Compiler.blockingExecuteFunction(context, target.getMe(context), function, message.getArguments(context));

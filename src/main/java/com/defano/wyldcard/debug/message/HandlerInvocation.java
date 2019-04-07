@@ -35,9 +35,10 @@ public class HandlerInvocation implements Comparable<HandlerInvocation>, Message
         this.stackDepth = stackDepth;
         this.messageHandled = msgHandled;
         this.isTarget = isTarget;
+        this.sequence = globalSequence.incrementAndGet();
 
-        sequence = globalSequence.incrementAndGet();
-        isPeriodicMessage = message instanceof SystemMessage && ((SystemMessage) message).isPeriodicMessage();
+        SystemMessage systemMessage = SystemMessage.fromMessageName(message.getMessageName());
+        this.isPeriodicMessage = systemMessage != null && systemMessage.isPeriodicMessage();
     }
 
     public String getThread() {
@@ -45,8 +46,8 @@ public class HandlerInvocation implements Comparable<HandlerInvocation>, Message
     }
 
     @Override
-    public String getMessageName(ExecutionContext context) {
-        return message.getMessageName(context);
+    public String getMessageName() {
+        return message.getMessageName();
     }
 
     @Override

@@ -23,7 +23,7 @@ public class LiteralMessage implements Message {
     }
 
     @Override
-    public String getMessageName(ExecutionContext context) {
+    public String getMessageName() {
         return messageNameText;
     }
 

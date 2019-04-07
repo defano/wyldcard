@@ -1,9 +1,11 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.NavigationManager;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -35,7 +37,12 @@ public class ShowCardsCmd extends Command {
         } else if (showAll) {
             showCards(context, currentStack, cardCount, false);
         } else {
-            showCards(context, currentStack, showCount.evaluate(context).integerValue(), false);
+            Value cardsToShow = showCount.evaluate(context);
+            if (cardsToShow.isInteger()) {
+                showCards(context, currentStack, showCount.evaluate(context).integerValue(), false);
+            } else {
+                throw new HtSemanticException("Expected the number of cards to show.");
+            }
         }
     }
 

@@ -154,7 +154,7 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
     public Value invokeFunction(ExecutionContext context, Message message) throws HtException {
         // TODO: This would be a good place to hook XFCN-like functionality
 
-        throw new HtException("No such function " + message.getMessageName(context) + ".");
+        throw new HtException("No such function " + message.getMessageName() + ".");
     }
 
     @Override

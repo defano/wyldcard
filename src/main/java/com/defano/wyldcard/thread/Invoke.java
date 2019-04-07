@@ -8,7 +8,8 @@ public class Invoke {
 
     /**
      * Invokes the given callable on the Swing UI dispatch thread, returning the result of executing the callable on
-     * the current thread. Blocks the current thread until the callable has completed executing.
+     * the current thread. Blocks the current thread until the callable has completed executing. Equivalent to simply
+     * invoking the callable when executed on the dispatch thread.
      * <p>
      * Any exception thrown by the callable will be wrapped inside a {@link RuntimeException} and rethrown.
      *
@@ -74,7 +75,8 @@ public class Invoke {
     }
 
     /**
-     * Invokes the given runnable on the Swing UI dispatch thread, blocking until the runnable has completed.
+     * Invokes the given runnable on the Swing UI dispatch thread, blocking until the runnable has completed and any
+     * enqueued events in the dispatch queue have finished.
      * <p>
      * If the current thread is the dispatch thread, the runnable is simply executed. If the current thread is not the
      * dispatch thread, then the current thread is blocked until the dispatch thread has completed executing the
@@ -87,11 +89,16 @@ public class Invoke {
             r.run();
         } else {
             try {
+                // Invoke runnable on dispatch thread
                 SwingUtilities.invokeAndWait(r);
+
+                // Then wait for dispatch thread to complete any events that runnable enqueued
+                SwingUtilities.invokeAndWait(() -> {});
             } catch (InterruptedException | InvocationTargetException e) {
                 e.printStackTrace();
                 Thread.currentThread().interrupt();
             }
         }
     }
+
 }
