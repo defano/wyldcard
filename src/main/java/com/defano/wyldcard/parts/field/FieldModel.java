@@ -75,6 +75,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public static final String PROP_SCROLL = "scroll";
     public static final String PROP_DONTSEARCH = "dontsearch";
 
+    // TODO: Not fully implemented
+    public static final String PROP_TEXTHEIGHT = "textheight";
+    public static final String PROP_FIXEDLINEHEIGHT = "fixedlineheight";
+
     private final Map<Integer, StyledDocument> unsharedText = new HashMap<>();
     private final Set<Integer> sharedAutoSelection = new HashSet<>();
     private final Map<Integer, Set<Integer>> unsharedAutoSelection = new HashMap<>();
@@ -110,6 +114,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         this.newProperty(PROP_SCROLLING, new Value(false), false);
         this.newProperty(PROP_SCROLL, new Value(0), false);
         this.newProperty(PROP_DONTSEARCH, new Value(false), false);
+        this.newProperty(PROP_FIXEDLINEHEIGHT, new Value(false), false);
 
         this.initialize();
     }
@@ -132,6 +137,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         newComputedGetterProperty(PROP_TEXTSIZE, (context, model, propertyName) -> new Value(getTextFontSize(context, 0, getText(context).length() + 1)));
         newComputedSetterProperty(PROP_TEXTSIZE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontSize(context, 0, getText(context).length() + 1, value));
+        newPropertyAlias(PROP_TEXTSIZE, PROP_TEXTHEIGHT);       // TODO: Incorrect behavior
 
         newComputedGetterProperty(PROP_TEXTSTYLE, (context, model, propertyName) -> new Value(getTextFontStyle(context, 0, getText(context).length() + 1)));
         newComputedSetterProperty(PROP_TEXTSTYLE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontStyle(context, 0, getText(context).length() + 1, value));

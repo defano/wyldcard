@@ -2,11 +2,10 @@ package com.defano.wyldcard.window.layouts;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.debug.message.HandlerInvocationObserver;
-import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.awt.MarkdownComboBox;
 import com.defano.wyldcard.debug.message.HandlerInvocation;
 import com.defano.wyldcard.debug.message.HandlerInvocationCache;
+import com.defano.wyldcard.debug.message.HandlerInvocationObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WyldCardWindow;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -63,11 +62,6 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
         return instance;
     }
 
-    private boolean isPeriodicMessage(String message) {
-        return SystemMessage.IDLE.messageName.equalsIgnoreCase(message) ||
-                SystemMessage.MOUSE_WITHIN.messageName.equalsIgnoreCase(message);
-    }
-
     private void smartScroll() {
         JScrollBar scrollBar = scrollPane.getVerticalScrollBar();
         int extent = scrollBar.getModel().getExtent();
@@ -84,15 +78,24 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
         if (threadDropDown.getSelectedIndex() == 0) {
             HandlerInvocationCache.getInstance().getInvocationHistory().stream()
                     .filter(i -> !suppressUnusedCheckBox.isSelected() || i.isMessageHandled())
-                    .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessageName(new ExecutionContext())))
+                    .filter(i -> !suppressIdleCheckBox.isSelected() || !i.isPeriodicMessage())
                     .filter(i -> !showOnlyMessageTargetCheckBox.isSelected() || i.isTarget())
                     .forEach(i -> model.addRow(new Object[]{i.getThread(), i, i.getRecipient().getHyperTalkIdentifier(new ExecutionContext())}));
         } else {
             HandlerInvocationCache.getInstance().getInvocationHistory(String.valueOf(threadDropDown.getSelectedItem())).stream()
                     .filter(i -> !suppressUnusedCheckBox.isSelected() || i.isMessageHandled())
-                    .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessageName(new ExecutionContext())))
+                    .filter(i -> !suppressIdleCheckBox.isSelected() || !i.isPeriodicMessage())
                     .filter(i -> !showOnlyMessageTargetCheckBox.isSelected() || i.isTarget())
                     .forEach(i -> model.addRow(new Object[]{i.getThread(), i, i.getRecipient().getHyperTalkIdentifier(new ExecutionContext())}));
+        }
+    }
+
+    private void appendInvocation(HandlerInvocation i) {
+        if ((!suppressUnusedCheckBox.isSelected() || i.isMessageHandled()) &&
+                (!suppressIdleCheckBox.isSelected() || !i.isPeriodicMessage()) &&
+                (!showOnlyMessageTargetCheckBox.isSelected() || i.isTarget()))
+        {
+            model.addRow(new Object[]{i.getThread(), i, i.getRecipient().getHyperTalkIdentifier(new ExecutionContext())});
         }
     }
 
@@ -124,7 +127,7 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
             }
 
             if (threadDropDown.getSelectedIndex() == 0 || String.valueOf(threadDropDown.getSelectedItem()).equalsIgnoreCase(invocation.getThread())) {
-                invalidateData();
+                appendInvocation(invocation);
                 smartScroll();
             }
         }

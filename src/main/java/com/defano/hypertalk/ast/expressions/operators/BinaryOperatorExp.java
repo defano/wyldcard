@@ -43,11 +43,13 @@ public abstract class BinaryOperatorExp extends Expression {
             case GREATER_THAN_OR_EQUALS:
                 return new GreaterThanOrEqualsOp(ctx, lhs, rhs);
             case PLUS:
-                return new PlusOp(ctx, lhs, rhs);
+                return new AddOp(ctx, lhs, rhs);
             case MINUS:
                 return new MinusOp(ctx, lhs, rhs);
             case MULTIPLY:
                 return new MultiplyOp(ctx, lhs, rhs);
+            case DIV:
+                return new DivOp(ctx, lhs, rhs);
             case DIVIDE:
                 return new DivideOp(ctx, lhs, rhs);
             case MOD:

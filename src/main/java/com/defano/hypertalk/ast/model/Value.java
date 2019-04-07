@@ -461,7 +461,7 @@ public class Value implements StyledComparable<Value> {
         if (floatValue != null || parseFloat() != null)
             return floatValue;
         else
-            return 0.0;
+            return 0;
     }
 
     /**
@@ -750,6 +750,14 @@ public class Value implements StyledComparable<Value> {
     }
 
     /**
+     * Returns a logical value representing if this value represents the number 0.
+     * @return True if this value is numerically equal to zero, false otherwise.
+     */
+    public boolean isZero() {
+        return isEmpty() || (isInteger() && integerValue() == 0) || (isNumber() && doubleValue() == 0.0);
+    }
+
+    /**
      * Returns a new logical value representing if this value is less than a given value. Non-numeric values are
      * compared alphabetically.
      *
@@ -834,7 +842,8 @@ public class Value implements StyledComparable<Value> {
     }
 
     /**
-     * Returns a new value equal to dividing this value by another value.
+     * Returns a new value equal to dividing this value by another value. See {@link #divBy(Value)} for integer
+     * division.
      *
      * @param v The value by which this value should be divided
      * @return The resultant value
@@ -845,8 +854,36 @@ public class Value implements StyledComparable<Value> {
             throw new HtSemanticException("The value '" + stringValue + "' cannot be divided by " + v + '.');
         }
 
+        if (v.isZero()) {
+            throw new HtSemanticException("Cannot divide by zero.");
+        }
+
         try {
             return new Value(doubleValue() / v.doubleValue());
+        } catch (ArithmeticException e) {
+            throw new HtSemanticException("Cannot divide " + toString() + " by zero.");
+        }
+    }
+
+    /**
+     * Returns a new value equal to dividing this value by another value, ignoring any fractional remainder (i.e.,
+     * performs integer division).
+     *
+     * @param v The value that this value should be div'd by
+     * @return The resultant value
+     * @throws HtSemanticException Thrown if either value is not a number, or if the divisor is 0.
+     */
+    public Value divBy(Value v) throws HtSemanticException {
+        if (!isNumber() || !v.isNumber()) {
+            throw new HtSemanticException("Expected a number here.");
+        }
+
+        if (v.isZero()) {
+            throw new HtSemanticException("Cannot divide by zero.");
+        }
+
+        try {
+            return new Value((int) (doubleValue() / v.doubleValue()));
         } catch (ArithmeticException e) {
             throw new HtSemanticException("Cannot divide " + toString() + " by zero.");
         }

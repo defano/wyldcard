@@ -222,6 +222,14 @@ public enum SystemMessage implements Message {
     }
 
     /**
+     * Determines if this system message is sent repeatedly by HyperCard.
+     * @return True if the message is sent repeatedly, false otherwise.
+     */
+    public boolean isPeriodicMessage() {
+        return this == IDLE || this == MOUSE_WITHIN;
+    }
+
+    /**
      * Determines if the message is impacted by the 'lockMessages' system property.
      *
      * @return True if the lockMessages property prevents the message from being sent.

@@ -7,9 +7,9 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class PlusOp extends BinaryOperatorExp {
+public class AddOp extends BinaryOperatorExp {
 
-    public PlusOp(ParserRuleContext ctx, Expression lhs, Expression rhs) {
+    public AddOp(ParserRuleContext ctx, Expression lhs, Expression rhs) {
         super(ctx, lhs, rhs);
     }
 

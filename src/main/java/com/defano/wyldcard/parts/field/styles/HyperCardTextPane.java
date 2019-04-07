@@ -21,12 +21,14 @@ import java.util.Set;
 /**
  * An extension to {@link JTextPane} that adds a variety of HyperCard-specific features to a standard text pane,
  * including:
- * <p>
- * - Ability to enable or disable vertical scrolling (within a JScrollPane),
- * - Ability to disable auto-wrapping text across lines,
- * - Draw dotted lines underneath each line of text,
- * - Ability to position the cursor beyond the bounds of the field contents
- * - Support for per-line "auto-selection" features.
+ * <ul>
+ * <li>Ability to enable or disable vertical scrolling (within a JScrollPane)</li>
+ * <li>Ability to disable auto-wrapping text across lines</li>
+ * <li>Draw dotted lines underneath each line of text</li>
+ * <li>Ability to position the cursor beyond the bounds of the field contents</li>
+ * <li>Support for per-line "auto-selection" features</li>
+ * <li>Ability to get and set fixed line height</li>
+ * </ul>
  */
 public class HyperCardTextPane extends JTextPane {
 
@@ -292,7 +294,8 @@ public class HyperCardTextPane extends JTextPane {
             lastLineHeight = thisLineHeight;
             dottedLineY += lastLineHeight;
 
-            baselinesCache.put(line, dottedLineY);
+            // 1/6 adjustment is a cheap and cheesy way to estimate font descent
+            baselinesCache.put(line, dottedLineY - (int) (thisLineHeight * 1/6));
         }
 
         return baselinesCache;

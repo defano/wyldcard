@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class HandlerInvocation implements Comparable<HandlerInvocation>, Message
     private final boolean messageHandled;
     private final long sequence;
     private final boolean isTarget;
+    private final boolean isPeriodicMessage;
 
     private static AtomicLong globalSequence = new AtomicLong(0);
 
@@ -35,6 +37,7 @@ public class HandlerInvocation implements Comparable<HandlerInvocation>, Message
         this.isTarget = isTarget;
 
         sequence = globalSequence.incrementAndGet();
+        isPeriodicMessage = message instanceof SystemMessage && ((SystemMessage) message).isPeriodicMessage();
     }
 
     public String getThread() {
@@ -65,6 +68,10 @@ public class HandlerInvocation implements Comparable<HandlerInvocation>, Message
 
     public boolean isTarget() {
         return isTarget;
+    }
+
+    public boolean isPeriodicMessage() {
+        return isPeriodicMessage;
     }
 
     @Override
