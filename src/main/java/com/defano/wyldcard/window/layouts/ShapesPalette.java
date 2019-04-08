@@ -100,37 +100,37 @@ public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<In
      */
     private void $$$setupUI$$$() {
         shapesPanel = new JPanel();
-        shapesPanel.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), 0, 0));
+        shapesPanel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), 0, 0));
         triangle = new JButton();
         triangle.setAlignmentY(0.0f);
         triangle.setIcon(new ImageIcon(getClass().getResource("/shapes/triangle.png")));
         triangle.setMargin(new Insets(0, 0, 0, 0));
         triangle.setText("");
-        shapesPanel.add(triangle, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        shapesPanel.add(triangle, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         rectangle = new JButton();
         rectangle.setAlignmentY(0.0f);
         rectangle.setIcon(new ImageIcon(getClass().getResource("/shapes/square.png")));
         rectangle.setMargin(new Insets(0, 0, 0, 0));
         rectangle.setText("");
-        shapesPanel.add(rectangle, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        shapesPanel.add(rectangle, new com.intellij.uiDesigner.core.GridConstraints(0, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         pentagon = new JButton();
         pentagon.setAlignmentY(0.0f);
         pentagon.setIcon(new ImageIcon(getClass().getResource("/shapes/pentagon.png")));
         pentagon.setMargin(new Insets(0, 0, 0, 0));
         pentagon.setText("");
-        shapesPanel.add(pentagon, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        shapesPanel.add(pentagon, new com.intellij.uiDesigner.core.GridConstraints(0, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         hexagon = new JButton();
         hexagon.setAlignmentY(0.0f);
         hexagon.setIcon(new ImageIcon(getClass().getResource("/shapes/hexagon.png")));
         hexagon.setMargin(new Insets(0, 0, 0, 0));
         hexagon.setText("");
-        shapesPanel.add(hexagon, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        shapesPanel.add(hexagon, new com.intellij.uiDesigner.core.GridConstraints(0, 3, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         octogon = new JButton();
         octogon.setAlignmentY(0.0f);
         octogon.setIcon(new ImageIcon(getClass().getResource("/shapes/octogon.png")));
         octogon.setMargin(new Insets(0, 0, 0, 0));
         octogon.setText("");
-        shapesPanel.add(octogon, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        shapesPanel.add(octogon, new com.intellij.uiDesigner.core.GridConstraints(0, 4, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -139,4 +139,5 @@ public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<In
     public JComponent $$$getRootComponent$$$() {
         return shapesPanel;
     }
+
 }

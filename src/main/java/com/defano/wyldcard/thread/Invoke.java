@@ -94,11 +94,20 @@ public class Invoke {
 
                 // Then wait for dispatch thread to complete any events that runnable enqueued
                 SwingUtilities.invokeAndWait(() -> {});
+
             } catch (InterruptedException | InvocationTargetException e) {
                 e.printStackTrace();
                 Thread.currentThread().interrupt();
             }
         }
+    }
+
+    /**
+     * Invokes the given runnable on the dispatch thread, after all other pending UI events have been processed.
+     * @param r The runnable to execute on the dispatch thread.
+     */
+    public static void onDispatchLater(Runnable r) {
+        SwingUtilities.invokeLater(r);
     }
 
 }

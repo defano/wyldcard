@@ -41,13 +41,13 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goNextCard(ExecutionContext context, StackPart stackPart) {
-        return Invoke.onDispatch(() -> {
-            if (stackPart.getStackModel().getCurrentCardIndex() + 1 < stackPart.getStackModel().getCardCount()) {
-                return goCard(context, stackPart, stackPart.getStackModel().getCurrentCardIndex() + 1, true);
-            } else {
-                return goCard(context, stackPart, 0, true);
-            }
-        });
+        int currentCard = stackPart.getStackModel().getCurrentCardIndex();
+
+        if (currentCard + 1 < stackPart.getStackModel().getCardCount()) {
+            return goCard(context, stackPart, currentCard + 1, true);
+        } else {
+            return goCard(context, stackPart, 0, true);
+        }
     }
 
     /**
@@ -55,13 +55,13 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goPrevCard(ExecutionContext context, StackPart stackPart) {
-        return Invoke.onDispatch(() -> {
-            if (stackPart.getStackModel().getCurrentCardIndex() - 1 >= 0) {
-                return goCard(context, stackPart, stackPart.getStackModel().getCurrentCardIndex() - 1, true);
-            } else {
-                return goCard(context, stackPart, stackPart.getStackModel().getCardCount() - 1, true);
-            }
-        });
+        int currentCard = stackPart.getStackModel().getCurrentCardIndex();
+
+        if (currentCard - 1 >= 0) {
+            return goCard(context, stackPart, currentCard - 1, true);
+        } else {
+            return goCard(context, stackPart, stackPart.getStackModel().getCardCount() - 1, true);
+        }
     }
 
     @Override
@@ -158,7 +158,7 @@ public class WyldCardNavigationManager implements NavigationManager {
      */
     @Override
     public CardPart goCard(ExecutionContext context, StackPart stackPart, int cardIndex, boolean push) {
-        CardPart card = Invoke.onDispatch(() -> {
+        return Invoke.onDispatch(() -> {
             CardPart cardPart;
 
             // Nothing to do if navigating to current card or an invalid card index
@@ -180,14 +180,11 @@ public class WyldCardNavigationManager implements NavigationManager {
 
             // Update the current card in the context
             context.setCurrentCard(cardPart);
-
             return cardPart;
         });
-
-        return card;
     }
 
-    private CardPart goDestination(ExecutionContext context, Destination destination, boolean push) throws HtSemanticException {
+    public CardPart goDestination(ExecutionContext context, Destination destination, boolean push) throws HtSemanticException {
         return Invoke.onDispatch(() -> {
             StackWindow stackWindow = WyldCard.getInstance().getWindowManager().findWindowForStack(destination.getStack());
             context.bindStack(stackWindow.getStack());

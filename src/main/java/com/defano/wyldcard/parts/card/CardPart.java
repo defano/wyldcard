@@ -74,6 +74,8 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     private Disposable foregroundScaleSubscription;
     private Disposable backgroundScaleSubscription;
 
+    // Sanity flag: card must be opened exactly once and closed exactly once; bad things happen if this constraint
+    // is violated.
     private final AtomicBoolean isOpened = new AtomicBoolean(false);
 
     /**
@@ -356,21 +358,23 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      */
     public BufferedImage getScreenshot() {
 
-        // Swing cannot print components that are not actively displayed in a window (this is a side effect of the
-        // native component peering architecture). Therefore, if this card is not already being displayed in a
-        // window, we will need to create a window and place ourselves inside of it before attempting to print. However,
-        // note that a card (or any component) cannot be the content pane of multiple frames simultaneously, so we
-        // utilize the screenshot buffer frame only when not already attached to a card window.
-        if (getRootPane() == null) {
-            WyldCard.getInstance().getWindowManager().getScreenshotBufferWindow().setContentPane(this);
-        }
+        return Invoke.onDispatch(() -> {
+            // Swing cannot print components that are not actively displayed in a window (this is a side effect of the
+            // native component peering architecture). Therefore, if this card is not already being displayed in a
+            // window, we will need to create a window and place ourselves inside of it before attempting to print. However,
+            // note that a card (or any component) cannot be the content pane of multiple frames simultaneously, so we
+            // utilize the screenshot buffer frame only when not already attached to a card window.
+            if (getRootPane() == null) {
+                WyldCard.getInstance().getWindowManager().getScreenshotBufferWindow().setContentPane(this);
+            }
 
-        BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = screenshot.createGraphics();
-        Invoke.onDispatch(() -> CardPart.this.printAll(g));
-        g.dispose();
+            BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = screenshot.createGraphics();
+            this.printAll(g);
+            g.dispose();
 
-        return screenshot;
+            return screenshot;
+        });
     }
 
     /** {@inheritDoc} */
@@ -549,7 +553,9 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         getPartModel().getBackgroundModel().notifyPropertyChangedObserver(context, this);
 
         // Send openCard message after UI elements are ready
-        SwingUtilities.invokeLater(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD));
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD);
+
+        Invoke.onDispatchLater(this::revalidate);
 
         isOpened.set(true);
     }
