@@ -168,8 +168,8 @@ public class WyldCardNavigationManager implements NavigationManager {
 
                 cardPart = stackPart.getDisplayedCard();
             } else {
-                stackPart.closeCard(context);
-                cardPart = stackPart.openCard(context, cardIndex);
+                stackPart.closeCard(context, stackPart.getPartModel().getCardModel(cardIndex));
+                cardPart = stackPart.openCard(context, cardIndex, stackPart.getPartModel().getCurrentCard());
             }
 
             // When requested, push the current card onto the backstack

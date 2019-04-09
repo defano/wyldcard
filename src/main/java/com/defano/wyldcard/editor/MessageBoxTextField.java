@@ -9,7 +9,7 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.MessageEvaluationObserver;
-import com.defano.wyldcard.util.SquigglePainter;
+import com.defano.wyldcard.awt.SquigglePainter;
 import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;

@@ -107,11 +107,19 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
             WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
             int deletedCardIndex = stackModel.getCurrentCardIndex();
+            CardModel deletedCardModel = stackModel.getCardModel(deletedCardIndex);
+
+            deletedCardModel.receiveMessage(new ExecutionContext(deletedCardModel), SystemMessage.DELETE_CARD);
+
+            if (deletedCardModel.getBackgroundModel().getCardModels(context).size() == 1) {
+                deletedCardModel.receiveMessage(new ExecutionContext(deletedCardModel), SystemMessage.DELETE_BACKGROUND);
+            }
+
             stackModel.deleteCurrentCard();
             cardCountProvider.onNext(stackModel.getCardCount());
             fireOnCardOrderChanged();
 
-            openCard(context, deletedCardIndex == 0 ? 0 : deletedCardIndex - 1);
+            openCard(context, deletedCardIndex == 0 ? 0 : deletedCardIndex - 1, deletedCardModel);
         } else {
             WyldCard.getInstance().showErrorDialog(new HtSemanticException("This card cannot be deleted because it or its background is marked as \"Can't Delete\"."));
         }
@@ -308,8 +316,8 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
                 fireOnCardDimensionChanged(getStackModel().getDimension(context));
 
                 // Re-load the card model into the size
-                closeCard(context);
-                openCard(context, stackModel.getCurrentCardIndex());
+                closeCard(context, getDisplayedCard().getPartModel());
+                openCard(context, stackModel.getCurrentCardIndex(), getDisplayedCard().getPartModel());
                 break;
 
             case StackModel.PROP_RESIZABLE:
@@ -344,7 +352,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
      *
      * @param context The execution context
      */
-    public void closeCard(ExecutionContext context) {
+    public void closeCard(ExecutionContext context, CardModel newCard) {
         Invoke.onDispatch(() -> {
             CardPart displayedCard = getDisplayedCard();
 
@@ -355,8 +363,13 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
             WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
             // Notify observers that current card is going away
-            fireOnCardClosing(displayedCard);
+            fireOnCardClosing(displayedCard, newCard);
             displayedCard.partClosed(context);
+
+            // Send 'closeBackground' message as needed
+            if (newCard == null || (newCard.getBackgroundModel() != displayedCard.getPartModel().getBackgroundModel())) {
+                displayedCard.getPartModel().receiveMessage(new ExecutionContext(displayedCard), SystemMessage.CLOSE_BACKGROUND);
+            }
         });
     }
 
@@ -369,7 +382,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
      * @return The activated card
      */
     @RunOnDispatch
-    public CardPart openCard(ExecutionContext context, int cardIndex) {
+    public CardPart openCard(ExecutionContext context, int cardIndex, CardModel oldCard) {
 
         try {
             // Change card
@@ -377,7 +390,12 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
             currentCard = loadCard(context, cardIndex);
 
             // Notify observers of new card
-            fireOnCardOpened(currentCard);
+            fireOnCardOpened(oldCard, currentCard);
+
+            // Send 'openBackground' message as needed
+            if (oldCard == null || (currentCard.getPartModel().getBackgroundModel() != oldCard.getBackgroundModel())) {
+                currentCard.getPartModel().receiveMessage(new ExecutionContext(currentCard), SystemMessage.OPEN_BACKGROUND);
+            }
 
             // Reactivate paint tool on new card's canvas
             WyldCard.getInstance().getToolsManager().reactivateTool(currentCard.getActiveCanvas());
@@ -410,18 +428,18 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
         });
     }
 
-    private void fireOnCardClosing(CardPart closingCard) {
+    private void fireOnCardClosing(CardPart closingCard, CardModel newCard) {
         Invoke.onDispatch(() -> {
             for (StackNavigationObserver observer : stackNavigationObservers) {
-                observer.onCardClosed(closingCard);
+                observer.onCardClosed(closingCard, newCard);
             }
         });
     }
 
-    private void fireOnCardOpened(CardPart openedCard) {
+    private void fireOnCardOpened(CardModel lastCard, CardPart openedCard) {
         Invoke.onDispatch(() -> {
             for (StackNavigationObserver observer : stackNavigationObservers) {
-                observer.onCardOpened(openedCard);
+                observer.onCardOpened(lastCard, openedCard);
             }
         });
     }
@@ -465,12 +483,12 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
         currentCard = loadCard(context, getStackModel().getCurrentCardIndex());
         getStackModel().receiveMessage(context.bindStack(this), SystemMessage.OPEN_STACK);
 
-        fireOnCardOpened(getDisplayedCard());
+        fireOnCardOpened(null, getDisplayedCard());
         fireOnStackOpened();
     }
 
     @Override
     public void partClosed(ExecutionContext context) {
-        closeCard(context);
+        closeCard(context, null);
     }
 }

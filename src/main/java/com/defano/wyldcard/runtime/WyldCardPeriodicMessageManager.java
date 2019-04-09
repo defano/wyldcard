@@ -4,6 +4,7 @@ import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.paint.ToolMode;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -76,7 +77,7 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
     }
 
     @Override
-    public void onCardClosed(CardPart oldCard) {
+    public void onCardClosed(CardPart oldCard, CardModel newCard) {
         withinParts.clear();
     }
 

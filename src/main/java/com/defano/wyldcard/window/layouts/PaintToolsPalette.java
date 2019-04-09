@@ -235,7 +235,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
      */
     private void $$$setupUI$$$() {
         palettePanel = new JPanel();
-        palettePanel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(7, 3, new Insets(0, 0, 0, 0), 0, 0));
+        palettePanel.setLayout(new GridLayoutManager(7, 3, new Insets(0, 0, 0, 0), 0, 0));
         selection = new JButton();
         selection.setEnabled(true);
         selection.setIcon(new ImageIcon(getClass().getResource("/icons/selection.png")));
@@ -244,13 +244,13 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         selection.setOpaque(true);
         selection.setText("");
         selection.setVisible(true);
-        palettePanel.add(selection, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(selection, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lasso = new JButton();
         lasso.setIcon(new ImageIcon(getClass().getResource("/icons/lasso.png")));
         lasso.setIconTextGap(0);
         lasso.setMargin(new Insets(0, 0, 0, 0));
         lasso.setText("");
-        palettePanel.add(lasso, new com.intellij.uiDesigner.core.GridConstraints(2, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(lasso, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         pencil = new JButton();
         pencil.setContentAreaFilled(true);
         pencil.setIcon(new ImageIcon(getClass().getResource("/icons/pencil.png")));
@@ -258,7 +258,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         pencil.setMargin(new Insets(0, 0, 0, 0));
         pencil.setOpaque(true);
         pencil.setText("");
-        palettePanel.add(pencil, new com.intellij.uiDesigner.core.GridConstraints(2, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(pencil, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         paintbrush = new JButton();
         paintbrush.setContentAreaFilled(true);
         paintbrush.setIcon(new ImageIcon(getClass().getResource("/icons/paintbrush.png")));
@@ -266,7 +266,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         paintbrush.setMargin(new Insets(0, 0, 0, 0));
         paintbrush.setOpaque(true);
         paintbrush.setText("");
-        palettePanel.add(paintbrush, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(paintbrush, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         eraser = new JButton();
         eraser.setContentAreaFilled(true);
         eraser.setIcon(new ImageIcon(getClass().getResource("/icons/eraser.png")));
@@ -274,7 +274,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         eraser.setMargin(new Insets(0, 0, 0, 0));
         eraser.setOpaque(true);
         eraser.setText("");
-        palettePanel.add(eraser, new com.intellij.uiDesigner.core.GridConstraints(3, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(eraser, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         line = new JButton();
         line.setContentAreaFilled(true);
         line.setIcon(new ImageIcon(getClass().getResource("/icons/line.png")));
@@ -282,7 +282,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         line.setMargin(new Insets(0, 0, 0, 0));
         line.setOpaque(true);
         line.setText("");
-        palettePanel.add(line, new com.intellij.uiDesigner.core.GridConstraints(3, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(line, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         spraypaint = new JButton();
         spraypaint.setContentAreaFilled(true);
         spraypaint.setIcon(new ImageIcon(getClass().getResource("/icons/spraypaint.png")));
@@ -290,7 +290,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         spraypaint.setMargin(new Insets(0, 0, 0, 0));
         spraypaint.setOpaque(true);
         spraypaint.setText("");
-        palettePanel.add(spraypaint, new com.intellij.uiDesigner.core.GridConstraints(4, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(spraypaint, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         rectangle = new JButton();
         rectangle.setContentAreaFilled(true);
         rectangle.setIcon(new ImageIcon(getClass().getResource("/icons/rectangle.png")));
@@ -298,7 +298,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         rectangle.setMargin(new Insets(0, 0, 0, 0));
         rectangle.setOpaque(true);
         rectangle.setText("");
-        palettePanel.add(rectangle, new com.intellij.uiDesigner.core.GridConstraints(4, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(rectangle, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         roundRectangle = new JButton();
         roundRectangle.setContentAreaFilled(true);
         roundRectangle.setIcon(new ImageIcon(getClass().getResource("/icons/roundrect.png")));
@@ -306,7 +306,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         roundRectangle.setMargin(new Insets(0, 0, 0, 0));
         roundRectangle.setOpaque(true);
         roundRectangle.setText("");
-        palettePanel.add(roundRectangle, new com.intellij.uiDesigner.core.GridConstraints(4, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(roundRectangle, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         fill = new JButton();
         fill.setContentAreaFilled(true);
         fill.setIcon(new ImageIcon(getClass().getResource("/icons/fill.png")));
@@ -314,7 +314,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         fill.setMargin(new Insets(0, 0, 0, 0));
         fill.setOpaque(true);
         fill.setText("");
-        palettePanel.add(fill, new com.intellij.uiDesigner.core.GridConstraints(5, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(fill, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         oval = new JButton();
         oval.setContentAreaFilled(true);
         oval.setIcon(new ImageIcon(getClass().getResource("/icons/oval.png")));
@@ -322,7 +322,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         oval.setMargin(new Insets(0, 0, 0, 0));
         oval.setOpaque(true);
         oval.setText("");
-        palettePanel.add(oval, new com.intellij.uiDesigner.core.GridConstraints(5, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(oval, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         curve = new JButton();
         curve.setContentAreaFilled(true);
         curve.setIcon(new ImageIcon(getClass().getResource("/icons/curve.png")));
@@ -330,7 +330,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         curve.setMargin(new Insets(0, 0, 0, 0));
         curve.setOpaque(true);
         curve.setText("");
-        palettePanel.add(curve, new com.intellij.uiDesigner.core.GridConstraints(5, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(curve, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         text = new JButton();
         text.setContentAreaFilled(true);
         text.setIcon(new ImageIcon(getClass().getResource("/icons/text.png")));
@@ -338,7 +338,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         text.setMargin(new Insets(0, 0, 0, 0));
         text.setOpaque(true);
         text.setText("");
-        palettePanel.add(text, new com.intellij.uiDesigner.core.GridConstraints(6, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(text, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         shape = new JButton();
         shape.setContentAreaFilled(true);
         shape.setIcon(new ImageIcon(getClass().getResource("/icons/shape.png")));
@@ -346,7 +346,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         shape.setMargin(new Insets(0, 0, 0, 0));
         shape.setOpaque(true);
         shape.setText("");
-        palettePanel.add(shape, new com.intellij.uiDesigner.core.GridConstraints(6, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(shape, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         polygon = new JButton();
         polygon.setContentAreaFilled(true);
         polygon.setIcon(new ImageIcon(getClass().getResource("/icons/polygon.png")));
@@ -354,28 +354,28 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         polygon.setMargin(new Insets(0, 0, 0, 0));
         polygon.setOpaque(true);
         polygon.setText("");
-        palettePanel.add(polygon, new com.intellij.uiDesigner.core.GridConstraints(6, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(polygon, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         finger = new JButton();
         finger.setIcon(new ImageIcon(getClass().getResource("/icons/finger.png")));
         finger.setIconTextGap(0);
         finger.setMargin(new Insets(0, 0, 0, 0));
         finger.setText("");
-        palettePanel.add(finger, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(finger, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         button = new JButton();
         button.setIcon(new ImageIcon(getClass().getResource("/icons/button.png")));
         button.setIconTextGap(0);
         button.setMargin(new Insets(0, 0, 0, 0));
         button.setText("");
-        palettePanel.add(button, new com.intellij.uiDesigner.core.GridConstraints(0, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(button, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         field = new JButton();
         field.setIcon(new ImageIcon(getClass().getResource("/icons/field.png")));
         field.setIconTextGap(0);
         field.setMargin(new Insets(0, 0, 0, 0));
         field.setText("");
-        palettePanel.add(field, new com.intellij.uiDesigner.core.GridConstraints(0, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(field, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JSeparator separator1 = new JSeparator();
         separator1.setOrientation(1);
-        palettePanel.add(separator1, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 3, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(separator1, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

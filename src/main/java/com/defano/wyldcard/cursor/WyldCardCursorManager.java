@@ -3,6 +3,7 @@ package com.defano.wyldcard.cursor;
 import com.defano.jmonet.tools.base.Tool;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.ToolMode;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.hypertalk.ast.model.Value;
@@ -76,7 +77,7 @@ public class WyldCardCursorManager implements CursorManager {
     }
 
     @Override
-    public void onCardOpened(CardPart newCard) {
+    public void onCardOpened(CardModel oldCard, CardPart newCard) {
         updateCursor();
     }
 }

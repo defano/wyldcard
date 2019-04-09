@@ -555,7 +555,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         // Send openCard message after UI elements are ready
         getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD);
 
-        Invoke.onDispatchLater(this::revalidate);
+        Invoke.asynchronouslyOnDispatch(this::revalidate);
 
         isOpened.set(true);
     }

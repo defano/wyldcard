@@ -34,14 +34,20 @@ public enum SystemMessage implements Message {
             new PartType[]{PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     CLOSE_CARD("closeCard", "Sent just before the user navigates away from this card.",
             new PartType[]{PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    OPEN_BACKGROUND("openBackground", "Sent just after the user navigates to a card with a different background.",
+            new PartType[]{PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    CLOSE_BACKGROUND("closeBackground", "Sent just before the user navigates to a card with a different background .",
+            new PartType[]{PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    DELETE_BACKGROUND("deleteBackground", "Sent when the last card of a background is deleted from the stack.",
+            new PartType[]{PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     NEW_CARD("newCard", "Sent when a new card is added to the stack.",
+            new PartType[]{PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    DELETE_CARD("deleteCard", "Sent when a new card is added to the stack.",
             new PartType[]{PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     NEW_FIELD("newField", "Sent when a new field is added to the card or background.",
             new PartType[]{PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     NEW_BUTTON("newButton", "Sent when a new button is added to the card or background.",
             new PartType[]{PartType.BUTTON, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
-    DELETE_CARD("deleteCard", "Sent when a card is removed from the stack.",
-            new PartType[]{PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     KEY_DOWN("keyDown", "Sent when the user types a key into this part.",
             new String[]{"theKey"},
             new PartType[]{PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
@@ -128,8 +134,6 @@ public enum SystemMessage implements Message {
     }
 
     public static Message fromKeyEvent(KeyEvent e, boolean inField) {
-        ExecutionContext context = new ExecutionContext();
-
         if (e.isControlDown() && e.getKeyCode() != KeyEvent.VK_CONTROL) {
             return MessageBuilder.named(CONTROL_KEY.getMessageName()).withArgument(e.getKeyCode()).build();
         }

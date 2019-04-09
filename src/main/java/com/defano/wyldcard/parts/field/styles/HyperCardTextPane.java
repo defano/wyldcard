@@ -1,13 +1,14 @@
 package com.defano.wyldcard.parts.field.styles;
 
+import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.field.highlighters.AutoSelectionHighlighterPainter;
 import com.defano.wyldcard.parts.field.highlighters.FoundSelectionHighlightPainter;
+import com.defano.wyldcard.parts.field.highlighters.SimulatedSelectionHighlightPainter;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.wyldcard.thread.Throttle;
-import com.defano.hypertalk.utils.Range;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -28,6 +29,7 @@ import java.util.Set;
  * <li>Ability to position the cursor beyond the bounds of the field contents</li>
  * <li>Support for per-line "auto-selection" features</li>
  * <li>Ability to get and set fixed line height</li>
+ * <li>Ability to "lock text" to prevent editing or caret-based selection</li>
  * </ul>
  */
 public class HyperCardTextPane extends JTextPane {
@@ -36,13 +38,15 @@ public class HyperCardTextPane extends JTextPane {
     private final static Stroke dottedLine = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{1}, 0);
     private final Set<Integer> autoSelection = new HashSet<>();
     private final Highlighter highlighter = new DefaultHighlighter();
-    private final AutoSelectionHighlighterPainter hilitePainter = new AutoSelectionHighlighterPainter();
-    private final FoundSelectionHighlightPainter foundPainter = new FoundSelectionHighlightPainter();
     private final JViewport viewport;
     private boolean wrapText = true;
     private boolean scrollable = true;
     private boolean showLines = false;
     private HashMap<Integer, Integer> baselinesCache;
+
+    private final AutoSelectionHighlighterPainter hilitePainter = new AutoSelectionHighlighterPainter();
+    private final FoundSelectionHighlightPainter foundPainter = new FoundSelectionHighlightPainter();
+    private final SimulatedSelectionHighlightPainter selectionPainter = new SimulatedSelectionHighlightPainter();
 
     HyperCardTextPane(StyledDocument doc, JViewport viewport) {
         super(doc);
@@ -87,6 +91,26 @@ public class HyperCardTextPane extends JTextPane {
             return super.getPreferredSize();
         } else {
             return new Dimension(Math.max(getDocumentWidth(), getParent().getBounds().width), super.getPreferredSize().height);
+        }
+    }
+
+    @RunOnDispatch
+    public void paintSelection(Range selection) {
+        highlighter.removeAllHighlights();
+        try {
+            highlighter.addHighlight(selection.start, selection.end, selectionPainter);
+        } catch (BadLocationException e) {
+            // Ignore
+        }
+    }
+
+    @RunOnDispatch
+    public void setLockText(boolean lockText) {
+        setEditable(!lockText);
+        if (lockText) {
+            getCaret().deinstall(this);
+        } else {
+            getCaret().install(this);
         }
     }
 
@@ -462,4 +486,5 @@ public class HyperCardTextPane extends JTextPane {
     private boolean isAutoSelection() {
         return autoSelection.size() > 0;
     }
+
 }

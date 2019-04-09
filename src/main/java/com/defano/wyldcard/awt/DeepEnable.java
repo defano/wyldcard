@@ -1,4 +1,4 @@
-package com.defano.wyldcard.util;
+package com.defano.wyldcard.awt;
 
 import java.awt.*;
 import java.util.Arrays;

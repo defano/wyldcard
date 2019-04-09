@@ -10,6 +10,7 @@ import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
@@ -78,9 +79,21 @@ public class MenuPropertiesDelegate {
         JMenuItem oldItem = menu.getItem(index);
         JMenuItem newItem = checkable ? new JCheckBoxMenuItem() : new JMenuItem();
 
+        if (oldItem.getClass() == newItem.getClass()) {
+            return;
+        }
+
         newItem.setText(oldItem.getText());
         newItem.setAccelerator(oldItem.getAccelerator());
         newItem.setIcon(oldItem.getIcon());
+        newItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Invoke.asynchronouslyOnDispatch(() -> {
+                    newItem.setSelected(!newItem.isSelected());
+                });
+            }
+        });
 
         for (ActionListener thisActionListener : oldItem.getActionListeners()) {
             newItem.addActionListener(thisActionListener);

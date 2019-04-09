@@ -55,8 +55,14 @@ public interface AddressableSelection {
      * @return An expression representing the current line selection
      */
     default Value getSelectedLineExpression(ExecutionContext context) {
+        String selectedText = getSelectedText(context).toString();
+
         int lineStart = getLineAtCharPosition(context, getSelectableTextModel().getSelection(context).start);
-        int lineEnd = getLineAtCharPosition(context, getSelectableTextModel().getSelection(context).end - 1);
+
+        // When selection ends with '\n', don't consider that newline in line calculation
+        int lineEnd = selectedText.endsWith("\n") ?
+                getLineAtCharPosition(context, getSelectableTextModel().getSelection(context).end - 2) :
+                getLineAtCharPosition(context, getSelectableTextModel().getSelection(context).end - 1);
 
         // No selection; selected line is empty
         if (getSelectedText(context).toString().length() == 0) {
@@ -154,8 +160,9 @@ public interface AddressableSelection {
      */
     default int getLineAtCharPosition(ExecutionContext context, int position) {
         String text = getSelectableText(context);
+
         int c = 0, line = 1;
-        while (c <= position && c < text.length()) {
+        while (c <= position && c < text.length() - 1) {
             if (text.charAt(c++) == '\n') {
                 line++;
             }

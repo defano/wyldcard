@@ -107,16 +107,13 @@ public interface Messagable {
      * @param e       The input event to consume if the command is trapped by the part (or fails to invoke 'pass') within
      */
     default void receiveAndDeferKeyEvent(ExecutionContext context, Message message, KeyEvent e, DeferredKeyEventComponent c) {
-        InputEvent eventCopy = new KeyEvent(e.getComponent(), e.getID(), e.getWhen(), e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation());
         e.consume();
 
-        c.setPendingRedispatch(true);
+        InputEvent eventCopy = new KeyEvent(e.getComponent(), e.getID(), 0, e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation());
         receiveMessage(context, message, (command1, wasTrapped, error) -> {
             if (!wasTrapped) {
                 c.dispatchEvent(eventCopy);
             }
-
-            c.setPendingRedispatch(false);
         });
     }
 

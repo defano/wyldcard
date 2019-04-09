@@ -141,7 +141,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
                 break;
 
             case FieldModel.PROP_LOCKTEXT:
-                textPane.setEditable(!newValue.booleanValue());
+                textPane.setLockText(newValue.booleanValue());
                 break;
 
             case FieldModel.PROP_SHOWLINES:
@@ -290,8 +290,12 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     @RunOnDispatch
     public void onSelectionChange(Range selection) {
         textPane.requestFocus();
-        textPane.setSelectionStart(selection.start);
-        textPane.setSelectionEnd(selection.end);
+        try {
+            textPane.setSelectionStart(selection.start);
+            textPane.setSelectionEnd(selection.end);
+        } catch (Throwable t) {
+            textPane.paintSelection(selection);
+        }
         updateSelection();
     }
 

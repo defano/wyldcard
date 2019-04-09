@@ -4,6 +4,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fx.CurtainObserver;
 import com.defano.wyldcard.paint.ArtVandelay;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.ScreenCurtain;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
@@ -123,7 +124,7 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
      */
     @Override
     @RunOnDispatch
-    public void onCardOpened(CardPart newCard) {
+    public void onCardOpened(CardModel oldCard, CardPart newCard) {
 
         // Remove the current card from the window
         cardPanel.remove(card);

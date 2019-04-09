@@ -59,13 +59,15 @@ public class CardPositionSpecifier implements FindInCollectionSpecifier, PartSpe
                 case NEXT:
                     if (indexOfThis < eligibleParts.size() - 1) {
                         return eligibleParts.get(indexOfThis + 1);
+                    } else {
+                        return eligibleParts.get(0);
                     }
-                    break;
                 case PREV:
                     if (indexOfThis > 0) {
                         return eligibleParts.get(indexOfThis - 1);
+                    } else {
+                        return eligibleParts.get(eligibleParts.size() - 1);
                     }
-                    break;
                 case THIS:
                     return eligibleParts.get(indexOfThis);
             }

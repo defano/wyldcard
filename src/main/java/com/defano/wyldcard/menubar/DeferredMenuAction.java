@@ -1,8 +1,8 @@
 package com.defano.wyldcard.menubar;
 
-import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.thread.ThreadChecker;
@@ -12,8 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * This class represents an ActionListener that sends the "DoMenu" message to the current card before performing the
@@ -21,7 +19,6 @@ import java.util.concurrent.Executors;
  */
 public class DeferredMenuAction implements ActionListener {
 
-    private final static ExecutorService delegatedActionExecutor = Executors.newSingleThreadExecutor();
     private final List<ActionListener> actionListeners;
     private final JMenuItem theMenu;
     private final JMenuItem theMenuItem;
@@ -51,24 +48,28 @@ public class DeferredMenuAction implements ActionListener {
      */
     private void actionPerformed(ExecutionContext context, ActionEvent e) {
 
-        if (theMenuItem instanceof JCheckBoxMenuItem) {
-            theMenuItem.setSelected(!theMenuItem.isSelected());
-        }
+        final String[] menuName = new String[1];
+        final String[] menuItemName = new String[1];
+
+        Invoke.onDispatch(() -> {
+            menuName[0] = theMenu.getText();
+            menuItemName[0] = theMenuItem.getText();
+        });
 
         // Attempts to invoke 'doMenu' handler which may require UI thread, thus, we have to wait on a background
         // thread while determining if 'doMenu' trapped menu handler.
-        delegatedActionExecutor.submit(() -> {
+        Invoke.asynchronouslyOnWorkerThread(() -> {
 
             CountDownLatch cdl = new CountDownLatch(1);
             final boolean[] trapped = new boolean[1];
 
-            Message message = MessageBuilder
+            Message doMenuMessage = MessageBuilder
                     .named(SystemMessage.DO_MENU.messageName)
-                    .withArgument(theMenu.getText())
-                    .withArgument(theMenuItem.getText())
+                    .withArgument(menuName[0])
+                    .withArgument(menuItemName[0])
                     .build();
 
-            context.getCurrentStack().getDisplayedCard().getPartModel().receiveMessage(context, message, (command, wasTrapped, err) -> {
+            context.getCurrentStack().getDisplayedCard().getPartModel().receiveMessage(context, doMenuMessage, (command, wasTrapped, err) -> {
                 trapped[0] = wasTrapped;
                 cdl.countDown();
             });

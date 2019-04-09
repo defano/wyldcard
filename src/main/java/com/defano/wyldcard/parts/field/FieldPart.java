@@ -254,7 +254,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
     public void keyTyped(KeyEvent e) {
         super.keyTyped(e);
 
-        if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get() && !isPartToolActive()) {
+        if (getHyperCardTextPane().hasFocus() && e.getWhen() > 0 && !isPartToolActive()) {
             getPartModel().receiveAndDeferKeyEvent(
                     new ExecutionContext(this),
                     MessageBuilder.named(SystemMessage.KEY_DOWN.messageName).withArgument(e.getKeyChar()).build(),
@@ -379,7 +379,13 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
 
         else {
-            Invoke.onDispatch(() -> getHyperCardTextPane().dispatchEvent(event));
+            Invoke.onDispatch(() -> {
+                try {
+                    getHyperCardTextPane().dispatchEvent(event);
+                } catch (Exception e) {
+                    // Ignore; may be thrown when sending selection-impacting fields that have locktext enabled
+                }
+            });
         }
     }
 

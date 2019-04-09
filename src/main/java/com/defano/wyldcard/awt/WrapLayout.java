@@ -1,4 +1,4 @@
-package com.defano.wyldcard.util;
+package com.defano.wyldcard.awt;
 
 import javax.swing.*;
 import java.awt.*;

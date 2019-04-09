@@ -162,7 +162,6 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
 
     public void deleteCurrentCard() {
         cardModels.remove(currentCardIndex);
-        receiveMessage(new ExecutionContext(), SystemMessage.DELETE_CARD);
     }
 
     public String getStackName(ExecutionContext context) {

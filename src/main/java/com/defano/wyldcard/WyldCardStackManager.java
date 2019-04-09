@@ -7,6 +7,7 @@ import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.parts.PartException;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
@@ -387,7 +388,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
      * {@inheritDoc}
      */
     @Override
-    public void onCardOpened(CardPart newCard) {
+    public void onCardOpened(CardModel oldCard, CardPart newCard) {
         isUndoable.setSource(newCard.getActiveCanvas().isUndoableObservable());
         isRedoable.setSource(newCard.getActiveCanvas().isRedoableObservable());
         canvasScale.setSource(newCard.getActiveCanvas().getScaleObservable());
