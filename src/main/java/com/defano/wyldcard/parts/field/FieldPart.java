@@ -3,12 +3,13 @@ package com.defano.wyldcard.parts.field;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.awt.DeferredKeyEvent;
 import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.parts.DeferredKeyEventComponent;
+import com.defano.wyldcard.parts.DeferredKeyEventListener;
 import com.defano.wyldcard.parts.builder.FieldModelBuilder;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
@@ -30,7 +31,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.lang.ref.WeakReference;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The controller object associated with a field on the card.
@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * See {@link FieldModel} for the model object associated with this controller.
  * See {@link StyleableField} for the view object associated with this view.
  */
-public class FieldPart extends StyleableField implements CardLayerPart<FieldModel>, Searchable, PropertyChangeObserver, DeferredKeyEventComponent, FocusListener {
+public class FieldPart extends StyleableField implements CardLayerPart<FieldModel>, Searchable, PropertyChangeObserver, DeferredKeyEventListener, FocusListener {
 
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 100;
@@ -46,9 +46,6 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
     private final Owner owner;
     private FieldModel partModel;
     private final WeakReference<CardPart> parent;
-
-    // Flag indicating that we're waiting for script to finish executing before we handle a key event.
-    private AtomicBoolean redispatchInProgress = new AtomicBoolean(false);
 
     private FieldPart(FieldStyle style, CardPart parent, Owner owner) {
         super(style);
@@ -282,7 +279,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
             ExecutionContext context = new ExecutionContext(this);
 
             // EnterInField message should be dispatched even during redispatchInProgress
-            if (msg != null && (!redispatchInProgress.get() || msg.getMessageName().equalsIgnoreCase(SystemMessage.ENTER_IN_FIELD.getMessageName()))) {
+            if (msg != null && (e.getWhen() > 0 || msg.getMessageName().equalsIgnoreCase(SystemMessage.ENTER_IN_FIELD.getMessageName()))) {
                 getPartModel().receiveAndDeferKeyEvent(context, msg, e, this);
             }
         }
@@ -363,19 +360,11 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
      * {@inheritDoc}
      */
     @Override
-    public void setPendingRedispatch(boolean redispatchInProcess) {
-        this.redispatchInProgress.set(redispatchInProcess);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void dispatchEvent(AWTEvent event) {
+    public void dispatchEvent(DeferredKeyEvent event) {
 
         // Special case: Enter in field should cause field to lose focus without adding a newline
-        if (event instanceof KeyEvent && FieldUtilities.isEnterKeyEvent(event)) {
-            getCard().requestFocusInWindow();
+        if (FieldUtilities.isEnterKeyEvent(event)) {
+            Invoke.onDispatch(() -> getCard().requestFocusInWindow());
         }
 
         else {

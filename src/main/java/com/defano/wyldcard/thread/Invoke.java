@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
 
 public class Invoke {
 
-    private final static ExecutorService delegatedActionExecutor = Executors.newCachedThreadPool();
+    private final static ExecutorService delegatedActionExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * Synchronously invokes the given callable on the Swing UI dispatch thread, returning the result of executing the

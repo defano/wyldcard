@@ -230,12 +230,12 @@ commandStatement
     | 'show' picture of expression                                                                                      # showPictCmd
     | 'show' expression                                                                                                 # showCmd
     | 'show' expression 'at' listExpression                                                                             # showAtCmd
-    | 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
-    | 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
-    | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
     | 'sort' 'this'? 'stack' sortDirection sortStyle 'by' expression                                                    # sortStackCmd
     | 'sort' 'the'? cards (of 'this' 'stack')? sortDirection sortStyle 'by' expression                                  # sortStackCmd
     | 'sort' 'the'? 'marked' cards (of 'this' 'stack')? sortDirection sortStyle 'by' expression                         # sortMarkedCardsCmd
+    | 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
+    | 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
+    | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
     | 'sort' expression sortDirection sortStyle 'by' expression                                                         # sortBkgndCardsCmd
     | 'sort' 'the'? cards of expression sortDirection sortStyle 'by' expression                                         # sortBkgndCardsCmd
     | 'sort' 'the'? 'marked' cards of expression sortDirection sortStyle 'by' expression                                # sortMarkedBkgndCardsCmd

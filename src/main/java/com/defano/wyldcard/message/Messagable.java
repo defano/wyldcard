@@ -5,12 +5,12 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.DeferredKeyEventComponent;
+import com.defano.wyldcard.awt.DeferredKeyEvent;
+import com.defano.wyldcard.parts.DeferredKeyEventListener;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 /**
@@ -63,9 +63,8 @@ public interface Messagable {
         // No messages are sent when cmd-option is down; some messages not sent when 'lockMessages' is true
         if (WyldCard.getInstance().getKeyboardManager().isPeeking(context) ||
                 (message instanceof SystemMessage &&
-                ((SystemMessage) message).isLockable() &&
-                WyldCard.getInstance().getWyldCardPart().isLockMessages()))
-        {
+                        ((SystemMessage) message).isLockable() &&
+                        WyldCard.getInstance().getWyldCardPart().isLockMessages())) {
             onCompletion.onMessagePassed(message, false, null);
             return;
         }
@@ -92,27 +91,36 @@ public interface Messagable {
     }
 
     /**
-     * Sends a message to this part, and if the part (or any part in the message passing hierarchy) traps the command,
-     * then the given key event is consumed ({@link InputEvent#consume()}.
+     * Consumes a {@link KeyEvent} pending the completion of a HyperTalk handler that may or may not choose to trap it.
      * <p>
-     * In order to prevent Swing from acting on the event naturally, this method consumes the given KeyEvent and
-     * re-dispatches a copy of it if this part (or any part in its message passing hierarchy) doesn't trap the message.
+     * Immediately consumes the {@link KeyEvent}, then sends a given message to this part. If the part traps the
+     * message, the event is consumed, thereby preventing AWT/Swing from acting upon it. If the part does not trap the
+     * HyperTalk message, a copy of the event is passed to the {@link DeferredKeyEventListener} which, in turn, can
+     * pass it along to the AWT/Swing component that needs it.
      * <p>
-     * In order to prevent the re-dispatched event from producing a recursive call back to this method, the
-     * {@link DeferredKeyEventComponent#setPendingRedispatch(boolean)} is invoked with 'true' initially, then invoked
-     * with 'false' after the message has been completely received.
+     * This mechanism is used to prevent WyldCard fields from acting upon a keypress event until after the field's
+     * script has been given a chance to trap it.
      *
      * @param context The execution context
      * @param message The message to be received
-     * @param e       The input event to consume if the command is trapped by the part (or fails to invoke 'pass') within
+     * @param e       The input event to consume when the message is trapped by the part (or fails to invoke 'pass')
+     *                within the handler.
+     * @param c       The DeferredKeyEventListener to receive the KeyEvent if the script does not trap the message,
      */
-    default void receiveAndDeferKeyEvent(ExecutionContext context, Message message, KeyEvent e, DeferredKeyEventComponent c) {
+    default void receiveAndDeferKeyEvent(ExecutionContext context, Message message, KeyEvent e, DeferredKeyEventListener c) {
         e.consume();
 
-        InputEvent eventCopy = new KeyEvent(e.getComponent(), e.getID(), 0, e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation());
+        final DeferredKeyEvent deferredCopy = new DeferredKeyEvent(
+                e.getComponent(),
+                e.getID(),
+                e.getModifiers(),
+                e.getKeyCode(),
+                e.getKeyChar(),
+                e.getKeyLocation());
+
         receiveMessage(context, message, (command1, wasTrapped, error) -> {
             if (!wasTrapped) {
-                c.dispatchEvent(eventCopy);
+                c.dispatchEvent(deferredCopy);
             }
         });
     }
@@ -120,8 +128,8 @@ public interface Messagable {
     /**
      * Invokes a function defined in the part's script, blocking until the function completes.
      *
-     * @param context   The execution context
-     * @param message   The function to execute.
+     * @param context The execution context
+     * @param message The function to execute.
      * @return The value returned by the function upon completion.
      * @throws HtSemanticException Thrown if a syntax or semantic error occurs attempting to execute the function.
      */
@@ -134,7 +142,7 @@ public interface Messagable {
             target = getNextMessageRecipient(context, target.getMe(context).getType());
 
             // No more scripts to search; error!
-            if (target == null) {
+            if (target == null || target == WyldCard.getInstance().getWyldCardPart()) {
                 throw new HtSemanticException("No such function " + message.getMessageName() + ".");
             }
 

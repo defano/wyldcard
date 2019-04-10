@@ -92,6 +92,7 @@ public abstract class  CardLayeredPane extends JLayeredPane {
         setLayer(foregroundCanvas, CardLayer.CARD_GRAPHICS.paneLayer);
         add(foregroundCanvas);
         revalidate();
+        repaint();
     }
 
     public void setBackgroundImageVisible(boolean visible) {
@@ -102,6 +103,7 @@ public abstract class  CardLayeredPane extends JLayeredPane {
         }
 
         revalidate();
+        repaint();
     }
 
     public void setCardImageVisible(boolean visible) {
@@ -112,6 +114,7 @@ public abstract class  CardLayeredPane extends JLayeredPane {
         }
 
         revalidate();
+        repaint();
     }
 
     public JMonetCanvas getBackgroundCanvas() {

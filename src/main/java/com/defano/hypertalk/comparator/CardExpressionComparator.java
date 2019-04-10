@@ -1,8 +1,9 @@
 package com.defano.hypertalk.comparator;
 
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.*;
-import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
+import com.defano.hypertalk.ast.model.SortDirection;
+import com.defano.hypertalk.ast.model.SortStyle;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
@@ -39,12 +40,10 @@ public class CardExpressionComparator implements Comparator<CardModel> {
 
             // Evaluate expression in the context of card o1
             context.setCurrentCard(acquire(o1));
-            context.getStackFrame().setMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o1.getId(context)));
             Value o1Value = evaluate(o1);
 
             // Evaluate expression in the context of card o2
             context.setCurrentCard(acquire(o2));
-            context.getStackFrame().setMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o2.getId(context)));
             Value o2Value = evaluate(o2);
 
             // Stop overriding card context in this thread

@@ -12,7 +12,7 @@ import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.cursor.HyperCardCursor;
 import com.defano.wyldcard.message.Message;
-import com.defano.wyldcard.parts.DeferredKeyEventComponent;
+import com.defano.wyldcard.parts.DeferredKeyEventListener;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
@@ -146,7 +146,7 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
     }
 
     @Override
-    public void receiveAndDeferKeyEvent(ExecutionContext context, Message message, KeyEvent e, DeferredKeyEventComponent c) {
+    public void receiveAndDeferKeyEvent(ExecutionContext context, Message message, KeyEvent e, DeferredKeyEventListener c) {
         // Nothing to do
     }
 

@@ -110,6 +110,8 @@ public class HyperCardTextPane extends JTextPane {
         if (lockText) {
             getCaret().deinstall(this);
         } else {
+            // Assure that caret listener isn't double-registered (which causes weird behaviors)
+            getCaret().deinstall(this);
             getCaret().install(this);
         }
     }
