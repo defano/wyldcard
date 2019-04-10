@@ -14,11 +14,15 @@ public enum FontStyle {
 
     private final int mask;
 
-    FontStyle(int partMask) {
-        this.mask = partMask;
+    FontStyle(int mask) {
+        this.mask = mask;
     }
 
     public static FontStyle[] fromBitmask(byte mask) {
+        if (mask == -1) {
+            return null;
+        }
+
         return Arrays.stream(values()).filter(ts -> (ts.mask & mask) > 0).toArray(FontStyle[]::new);
     }
 }

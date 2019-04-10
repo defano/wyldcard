@@ -231,10 +231,19 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         }
     }
 
-    public void applyStyle(ExecutionContext context, int forCardId, int pos, Value fontName, Value fontSize, Value fontStyle) {
+    public void applyFont(ExecutionContext context, int forCardId, int start, String fontFamily) {
         StyledDocument doc = getStyledDocument(context, forCardId);
-        TextStyleSpecifier tss = TextStyleSpecifier.fromAlignNameStyleSize(new Value("left"), fontName, fontStyle, fontSize);
-        doc.setCharacterAttributes(pos, doc.getLength() - pos, tss.toAttributeSet(), true);
+        doc.setCharacterAttributes(start, doc.getLength() - start, TextStyleSpecifier.fromFontFamily(fontFamily).toAttributeSet(), true);
+    }
+
+    public void applyFontSize(ExecutionContext context, int forCardId, int start, int fontSize) {
+        StyledDocument doc = getStyledDocument(context, forCardId);
+        doc.setCharacterAttributes(start, doc.getLength() - start, TextStyleSpecifier.fromFontSize(fontSize).toAttributeSet(), true);
+    }
+
+    public void applyFontStyle(ExecutionContext context, int forCardId, int start, Value style) {
+        StyledDocument doc = getStyledDocument(context, forCardId);
+        doc.setCharacterAttributes(start, doc.getLength() - start, TextStyleSpecifier.fromFontStyle(style).toAttributeSet(), true);
     }
 
     /**

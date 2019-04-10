@@ -9,7 +9,6 @@ import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.PartOwner;
 import com.defano.wyldcard.parts.field.FieldModel;
-import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.stackreader.HyperCardStack;
@@ -195,6 +194,15 @@ public class HyperCardStackImporter {
 
         fieldModel.setTextStyle(new ExecutionContext(), getTextStyleSpecifier(partRecord, block.getStack()));
 
+        if (parent instanceof CardModel) {
+            applyTextStyles(
+                    fieldModel,
+                    ((CardModel) parent).getId(new ExecutionContext()),
+                    block.getStack(),
+                    block.getPartContents(partRecord.getPartId()).getStyleSpans()
+            );
+        }
+
         parent.addPartModel(fieldModel);
     }
 
@@ -211,17 +219,26 @@ public class HyperCardStackImporter {
 
     private static void applyTextStyles(FieldModel fieldModel, int cardId, HyperCardStack stack, StyleSpanRecord[] styleSpans) {
 
+        ExecutionContext context = new ExecutionContext();
+
         FontTableBlock fontTableBlock = stack.getBlock(FontTableBlock.class);
         StyleTableBlock styleTableBlock = stack.getBlock(StyleTableBlock.class);
 
         for (StyleSpanRecord record : styleSpans) {
             StyleRecord style = styleTableBlock.getStyle(record.getStyleId());
-
-            String fontName = fontTableBlock.getFont(style.getFontId()).getFontName();
-            int fontSize = style.getFontSize();
             int position = record.getTextPosition();
 
-            fieldModel.applyStyle(new ExecutionContext(), cardId, position, new Value(fontName), new Value(fontSize), new Value());
+            if (style.getFontId() != -1) {
+                fieldModel.applyFont(context, cardId, position, fontTableBlock.getFont(style.getFontId()).getFontName());
+            }
+
+            if (style.getFontSize() != -1) {
+                fieldModel.applyFontSize(context, cardId, position, (int) style.getFontSize());
+            }
+
+            if (style.getStyles() != null) {
+
+            }
         }
     }
 
