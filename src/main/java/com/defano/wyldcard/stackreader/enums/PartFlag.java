@@ -19,6 +19,8 @@ public enum PartFlag {
     }
 
     public static PartFlag[] fromBitmask(byte mask) {
-        return Arrays.stream(values()).filter(pf -> (pf.mask & mask) > 0).toArray(PartFlag[]::new);
+        return Arrays.stream(values())
+                .filter(pf -> (pf.mask & mask) > 0)
+                .toArray(PartFlag[]::new);
     }
 }

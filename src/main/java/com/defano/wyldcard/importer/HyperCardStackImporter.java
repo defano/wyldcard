@@ -92,18 +92,41 @@ public class HyperCardStackImporter {
         buildBackground(cardBlock.getBkgndBlock(), stackModel);
 
         // Create all buttons and fields
-        Arrays.stream(cardBlock.getParts()).forEach(p -> buildPart(p, cardModel, cardBlock));
+        for (int partIndex = 0; partIndex < cardBlock.getParts().length; partIndex++) {
+            PartRecord thisPart = cardBlock.getParts()[partIndex];
+            buildPart(thisPart, partIndex, cardModel, cardBlock);
+        }
 
         // Set unshared text on background fields
         for (PartContentRecord pcr : cardBlock.getContents()) {
+            FieldModel fm = null;
+
+            // Record applies to a background field
             if (pcr.getPartId() >= 0) {
-                FieldModel fm = cardModel.getBackgroundModel().getField(pcr.getPartId());
+                fm = cardModel.getBackgroundModel().getField(pcr.getPartId());
 
                 if (fm != null) {
                     int cardId = cardModel.getId(new ExecutionContext());
                     fm.setCurrentCardId(cardId);
                     fm.setKnownProperty(new ExecutionContext(), FieldModel.PROP_TEXT, new Value(pcr.getText()));
                 }
+            }
+
+            // Record applies to a card field
+            else {
+                fm = cardModel.getFieldModels().stream()
+                        .filter(f -> f.getId(new ExecutionContext()) == -pcr.getPartId())
+                        .findFirst()
+                        .orElse(null);
+            }
+
+            if (fm != null) {
+                applyTextStyles(
+                        fm,
+                        cardModel.getId(new ExecutionContext()),
+                        cardBlock.getStack(),
+                        cardBlock.getPartContents(pcr.getPartId()).getStyleSpans()
+                );
             }
         }
 
@@ -129,21 +152,28 @@ public class HyperCardStackImporter {
                 .build();
 
         // Create all buttons and fields
-        Arrays.stream(backgroundBlock.getParts()).forEach(p -> buildPart(p, backgroundModel, backgroundBlock));
+        for (int partIndex = 0; partIndex < backgroundBlock.getParts().length; partIndex++) {
+            PartRecord thisPart = backgroundBlock.getParts()[partIndex];
+            buildPart(thisPart, partIndex, backgroundModel, backgroundBlock);
+        }
+
+        Arrays.stream(backgroundBlock.getParts()).forEach(p -> {
+        });
         stackModel.addBackground(backgroundModel);
     }
 
-    private static void buildPart(PartRecord part, PartOwner parent, AbstractCardBlock block) {
+    private static void buildPart(PartRecord part, int partNumber, PartOwner parent, AbstractCardBlock block) {
         if (part.getPartType() == PartType.BUTTON) {
-            buildButton(part, parent, block);
+            buildButton(part, partNumber, parent, block);
         } else {
-            buildField(part, parent, block);
+            buildField(part, partNumber, parent, block);
         }
     }
 
-    private static void buildButton(PartRecord partRecord, PartOwner parent, AbstractCardBlock block) {
+    private static void buildButton(PartRecord partRecord, int partNumber, PartOwner parent, AbstractCardBlock block) {
 
         ButtonModel buttonModel = new ButtonModelBuilder(parent.getType().asOwner(), parent.getParentPartModel())
+                .withPartNumber(partNumber)
                 .withTop(partRecord.getTop())
                 .withLeft(partRecord.getLeft())
                 .withWidth(partRecord.getRight() - partRecord.getLeft())
@@ -168,9 +198,10 @@ public class HyperCardStackImporter {
         parent.addPartModel(buttonModel);
     }
 
-    private static void buildField(PartRecord partRecord, PartOwner parent, AbstractCardBlock block) {
+    private static void buildField(PartRecord partRecord, int partNumber, PartOwner parent, AbstractCardBlock block) {
 
         FieldModel fieldModel = new FieldModelBuilder(parent.getType().asOwner(), parent.getParentPartModel())
+                .withPartNumber(partNumber)
                 .withTop(partRecord.getTop())
                 .withLeft(partRecord.getLeft())
                 .withWidth(partRecord.getRight() - partRecord.getLeft())
@@ -236,9 +267,12 @@ public class HyperCardStackImporter {
                 fieldModel.applyFontSize(context, cardId, position, (int) style.getFontSize());
             }
 
-            if (style.getStyles() != null) {
-
+            String styleString = Arrays.toString(style.getStyles());
+            if (styleString.length() > 2) {
+                styleString = styleString.substring(1, styleString.length() - 2);
             }
+
+            fieldModel.applyFontStyle(context, cardId, position, new Value(styleString));
         }
     }
 

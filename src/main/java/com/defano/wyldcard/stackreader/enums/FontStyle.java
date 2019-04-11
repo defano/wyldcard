@@ -20,7 +20,7 @@ public enum FontStyle {
 
     public static FontStyle[] fromBitmask(byte mask) {
         if (mask == -1) {
-            return null;
+            return new FontStyle[0];
         }
 
         return Arrays.stream(values()).filter(ts -> (ts.mask & mask) > 0).toArray(FontStyle[]::new);
