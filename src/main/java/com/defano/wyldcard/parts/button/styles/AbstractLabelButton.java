@@ -44,7 +44,7 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
         if (label.getIcon() != null && label.getIcon() instanceof AlphaImageIcon) {
             ((AlphaImageIcon) label.getIcon()).setAlpha(isHilited ? 0.5f : 1.0f);
         }
-        paintHilite(isHilited, (Graphics2D) g);
+        paintHilite(isHilited && isEnabled(), (Graphics2D) g);
         label.paintComponents(g);
     }
 
@@ -64,7 +64,7 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
                 break;
 
             case ButtonModel.PROP_HILITE:
-                isHilited = newValue.booleanValue() && isEnabled();
+                isHilited = newValue.booleanValue();
                 label.setForeground(getLabelColor());
                 break;
 
@@ -100,17 +100,6 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
 
         revalidate();
         repaint();
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-
-        if (!enabled) {
-            isHilited = false;
-        }
-
-        label.setForeground(getLabelColor());
     }
 
     @Override

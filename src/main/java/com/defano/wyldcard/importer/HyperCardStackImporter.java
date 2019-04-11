@@ -99,12 +99,13 @@ public class HyperCardStackImporter {
 
         // Set unshared text on background fields
         for (PartContentRecord pcr : cardBlock.getContents()) {
-            FieldModel fm = null;
+            FieldModel fm;
 
             // Record applies to a background field
             if (pcr.getPartId() >= 0) {
                 fm = cardModel.getBackgroundModel().getField(pcr.getPartId());
 
+                // Set un-shared text value
                 if (fm != null) {
                     int cardId = cardModel.getId(new ExecutionContext());
                     fm.setCurrentCardId(cardId);
@@ -121,12 +122,15 @@ public class HyperCardStackImporter {
             }
 
             if (fm != null) {
-                applyTextStyles(
-                        fm,
-                        cardModel.getId(new ExecutionContext()),
-                        cardBlock.getStack(),
-                        cardBlock.getPartContents(pcr.getPartId()).getStyleSpans()
-                );
+
+                if (!pcr.isPlaintext()) {
+                    applyTextStyles(
+                            fm,
+                            cardModel.getId(new ExecutionContext()),
+                            cardBlock.getStack(),
+                            cardBlock.getPartContents(pcr.getPartId()).getStyleSpans()
+                    );
+                }
             }
         }
 

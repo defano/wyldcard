@@ -34,7 +34,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Compiler {
 
     private final static int MAX_COMPILE_THREADS = 6;          // Simultaneous background parse tasks
-    private final static int MAX_EXECUTOR_THREADS = 4;         // Simultaneous scripts executing
+    private final static int MAX_EXECUTOR_THREADS = 1;         // Simultaneous scripts executing
 
     private static final ThreadPoolExecutor bestEffortCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, new ThreadFactoryBuilder().setNameFormat("beasync-compiler-%d").build());
     private static final ThreadPoolExecutor asyncCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("async-compiler-%d").build());

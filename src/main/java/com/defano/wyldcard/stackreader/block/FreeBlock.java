@@ -12,7 +12,6 @@ public class FreeBlock extends Block {
 
     private byte markerLength;
     private String markerText;
-    private byte[] freeData;
 
     public FreeBlock(HyperCardStack stack, BlockType blockType, int blockSize, int blockId, byte[] blockData) {
         super(stack, blockType, blockSize, blockId, blockData);
@@ -26,10 +25,6 @@ public class FreeBlock extends Block {
         return markerText;
     }
 
-    public byte[] getFreeData() {
-        return freeData;
-    }
-
     @Override
     public void unpack(ImportResult report) throws ImportException {
         StackInputStream sis = new StackInputStream(getBlockData());
@@ -38,8 +33,6 @@ public class FreeBlock extends Block {
 
             markerLength = sis.readByte();
             markerText = sis.readString(markerLength);
-
-            freeData = sis.readBytes(getBlockSize() - 18 - markerLength);
 
         } catch (IOException e) {
             report.throwError(this, "Malformed FREE block.");
