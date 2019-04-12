@@ -28,9 +28,9 @@ public class WyldCardPropertiesModel implements PropertiesModel {
     private transient Map<String, String> propertyAliases;
     private transient Set<PropertyChangeObserver> changeObservers;
     private transient Set<PropertyWillChangeObserver> willChangeObservers;
-    private transient Map<String,ComputedGetter> computedGetters;
-    private transient Map<String,ComputedSetter> computedSetters;
-    private transient Map<String,DelegatedProperty> delegatedProperties;
+    private transient Map<String, ComputedGetter> computedGetters;
+    private transient Map<String, ComputedSetter> computedSetters;
+    private transient Map<String, DelegatedProperty> delegatedProperties;
 
     // Required to initialize transient data member when object is de-serialized
     public WyldCardPropertiesModel() {
@@ -119,13 +119,11 @@ public class WyldCardPropertiesModel implements PropertiesModel {
     }
 
     @Override
-    public void setProperty(ExecutionContext context, String propertyName, Value value) throws HtSemanticException
-    {
+    public void setProperty(ExecutionContext context, String propertyName, Value value) throws HtSemanticException {
         setProperty(context, propertyName, value, false);
     }
 
-    private void setProperty(ExecutionContext context, String propertyName, Value value, boolean quietly) throws HtSemanticException
-    {
+    private void setProperty(ExecutionContext context, String propertyName, Value value, boolean quietly) throws HtSemanticException {
         assertConstructed();
         propertyName = propertyName.toLowerCase();
 
@@ -260,11 +258,20 @@ public class WyldCardPropertiesModel implements PropertiesModel {
     }
 
     @Override
-    public void notifyPropertyChangedObserver(ExecutionContext context, PropertyChangeObserver listener) {
+    public void notifyPropertyChangedObserver(ExecutionContext context, PropertyChangeObserver listener, boolean includeComputedProperties) {
         assertConstructed();
         Invoke.onDispatch(() -> {
+
             for (String property : properties.keySet()) {
                 listener.onPropertyChanged(context, this, property, properties.get(property), properties.get(property));
+            }
+
+
+            if (includeComputedProperties) {
+                for (String property : computedGetters.keySet()) {
+                    Value computedValue = computedGetters.get(property).getComputedValue(context, this, property);
+                    listener.onPropertyChanged(context, this, property, computedValue, computedValue);
+                }
             }
         });
     }

@@ -7,6 +7,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
+import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.field.FieldPart;
@@ -83,6 +84,10 @@ public class CardExpressionComparator implements Comparator<CardModel> {
 
         // Shared background fields in cached cards maintain original text; update the shared text context
         for (FieldPart thisPart : card.getFields()) {
+            thisPart.getPartModel().setCurrentCardId(model.getId(context));
+        }
+
+        for (ButtonPart thisPart : card.getButtons()) {
             thisPart.getPartModel().setCurrentCardId(model.getId(context));
         }
 

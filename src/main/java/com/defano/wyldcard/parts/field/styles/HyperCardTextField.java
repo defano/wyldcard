@@ -208,7 +208,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
 
         // Update view with model data
         displayStyledDocument(model.getStyledDocument(context));
-        toolEditablePart.getPartModel().notifyPropertyChangedObserver(context, this);
+        toolEditablePart.getPartModel().notifyPropertyChangedObserver(context, this, true);
 
         // Initialize font to system font selection if document is empty
         if (textPane.getText().length() == 0) {

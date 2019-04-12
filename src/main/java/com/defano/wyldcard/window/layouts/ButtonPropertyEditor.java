@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.layouts;
 
+import com.defano.hypertalk.ast.model.Owner;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.button.ButtonModel;
@@ -44,6 +45,7 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
     private JLabel idLabelValue;
     private JButton textStyle;
     private JButton iconButton;
+    private JCheckBox sharedHilite;
 
     @SuppressWarnings("unchecked")
     public ButtonPropertyEditor() {
@@ -122,12 +124,17 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         style.setSelectedItem(ButtonStyle.fromName(model.getKnownProperty(context, ButtonModel.PROP_STYLE).toString()));
         family.setSelectedItem(model.getKnownProperty(context, ButtonModel.PROP_FAMILY).toString());
         autoHilite.setSelected(model.getKnownProperty(context, ButtonModel.PROP_AUTOHILIGHT).booleanValue());
+        sharedHilite.setSelected(model.getKnownProperty(context, ButtonModel.PROP_SHAREDHILITE).booleanValue());
+
+        // Shared hilite option only available on background buttons
+        sharedHilite.setEnabled(model.getOwner() != Owner.CARD);
 
         bindActions(a -> updateProperties(),
                 isEnabled,
                 isShowTitle,
                 isVisible,
                 style,
+                sharedHilite,
                 buttonName,
                 buttonHeight,
                 buttonLeft,
@@ -149,6 +156,7 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         model.setKnownProperty(context, ButtonModel.PROP_STYLE, new Value(String.valueOf(style.getSelectedItem())));
         model.setKnownProperty(context, ButtonModel.PROP_FAMILY, new Value(String.valueOf(family.getSelectedItem())));
         model.setKnownProperty(context, ButtonModel.PROP_AUTOHILIGHT, new Value(autoHilite.isSelected()));
+        model.setKnownProperty(context, ButtonModel.PROP_SHAREDHILITE, new Value(sharedHilite.isSelected()));
     }
 
     @RunOnDispatch
@@ -209,7 +217,7 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         idLabelValue.setText("Label");
         coordinatePanel.add(idLabelValue, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(4, 4, new Insets(5, 5, 5, 5), -1, -1));
+        panel1.setLayout(new GridLayoutManager(5, 4, new Insets(5, 5, 5, 5), -1, -1));
         buttonEditor.add(panel1, new GridConstraints(1, 0, 2, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Look and Feel"));
         style = new JComboBox();
@@ -264,6 +272,9 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         isEnabled.setText("Enabled");
         isEnabled.setToolTipText("Enable or disable (grey-out) the button.");
         panel1.add(isEnabled, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        sharedHilite = new JCheckBox();
+        sharedHilite.setText("Shared Hilite");
+        panel1.add(sharedHilite, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editScriptButton = new JButton();
         editScriptButton.setText("Edit Script...");
         editScriptButton.setToolTipText("");

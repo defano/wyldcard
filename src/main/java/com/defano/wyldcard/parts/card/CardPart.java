@@ -530,11 +530,11 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
         // Fire property change observers on the parts (so that they can draw themselves in their correct initial state)
         for (ButtonPart thisButton : buttons.getAll()) {
-            thisButton.getPartModel().notifyPropertyChangedObserver(context, thisButton);
+            thisButton.getPartModel().notifyPropertyChangedObserver(context, thisButton, true);
         }
 
         for (FieldPart thisField : fields.getAll()) {
-            thisField.getPartModel().notifyPropertyChangedObserver(context, thisField);
+            thisField.getPartModel().notifyPropertyChangedObserver(context, thisField, true);
         }
 
         editingBackgroundSubscription = WyldCard.getInstance().getToolsManager().isEditingBackgroundProvider().subscribe(editingBackgroundObserver);
@@ -547,10 +547,10 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         getPartModel().setObserver(cardModelObserver);
 
         getPartModel().addPropertyChangedObserver(this);
-        getPartModel().notifyPropertyChangedObserver(context, this);
+        getPartModel().notifyPropertyChangedObserver(context, this, false);
 
         getPartModel().getBackgroundModel().addPropertyChangedObserver(this);
-        getPartModel().getBackgroundModel().notifyPropertyChangedObserver(context, this);
+        getPartModel().getBackgroundModel().notifyPropertyChangedObserver(context, this, false);
 
         // Send openCard message after UI elements are ready
         getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD);

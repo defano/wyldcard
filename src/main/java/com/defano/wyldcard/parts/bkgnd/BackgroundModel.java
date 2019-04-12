@@ -118,6 +118,10 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder, Par
         return getFieldModels().stream().filter(fm -> fm.getId(null) == id).findFirst().orElse(null);
     }
 
+    public ButtonModel getButton(int id) {
+        return getButtonModels().stream().filter(bm -> bm.getId(null) == id).findFirst().orElse(null);
+    }
+
     public List<CardModel> getCardModels(ExecutionContext context) {
         return ((StackModel) getParentPartModel()).getCardsInBackground(getId(context));
     }

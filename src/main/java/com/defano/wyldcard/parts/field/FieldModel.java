@@ -171,7 +171,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @return A StyledDocument representation of the contents of this field.
      */
     public StyledDocument getStyledDocument(ExecutionContext context) {
-        if (useSharedText(context)) {
+        if (isSharedText(context)) {
             return sharedText == null ? new DefaultStyledDocument() : sharedText;
         } else {
             return getStyledDocument(context, getCurrentCardId(context));
@@ -179,7 +179,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     }
 
     private StyledDocument getStyledDocument(ExecutionContext context, int forCardId) {
-        if (useSharedText(context)) {
+        if (isSharedText(context)) {
             return sharedText == null ? new DefaultStyledDocument() : sharedText;
         } else {
             return unsharedText.getOrDefault(forCardId, new DefaultStyledDocument());
@@ -194,8 +194,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @param doc     The styled document data to persist into the model.
      */
     public void setStyledDocument(ExecutionContext context, StyledDocument doc) {
-        if (useSharedText(context)) {
-            FieldModel.this.sharedText = doc;
+        if (isSharedText(context)) {
+            sharedText = doc;
         } else {
             unsharedText.put(getCurrentCardId(context), doc);
         }
@@ -207,7 +207,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @param context The execution context.
      * @return True if the model should use sharedText data; false otherwise.
      */
-    private boolean useSharedText(ExecutionContext context) {
+    private boolean isSharedText(ExecutionContext context) {
         return getOwner() == Owner.CARD || getKnownProperty(context, PROP_SHAREDTEXT).booleanValue();
     }
 
@@ -540,7 +540,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     public Set<Integer> getAutoSelectedLines(ExecutionContext context) {
         if (isAutoSelection(context)) {
-            if (useSharedText(context)) {
+            if (isSharedText(context)) {
                 return sharedAutoSelection;
             } else {
                 return unsharedAutoSelection.computeIfAbsent(getCurrentCardId(context), k -> new HashSet<>());

@@ -137,7 +137,7 @@ public class WyldCard implements PartFinder {
             getWindowManager().toggleDockPalettes();            // Dock palettes to stack window
         });
 
-        Invoke.onDispatch(() -> {
+        Invoke.asynchronouslyOnDispatch(() -> {
             windowManager.getPaintToolsPalette().setVisible(true);
             windowManager.getPatternsPalette().setVisible(true);
         });

@@ -96,8 +96,7 @@ public class Invoke {
                 SwingUtilities.invokeAndWait(r);
 
                 // Then wait for dispatch thread to complete any events that runnable enqueued
-                SwingUtilities.invokeAndWait(() -> {
-                });
+                SwingUtilities.invokeAndWait(() -> {});
 
             } catch (InterruptedException | InvocationTargetException e) {
                 e.printStackTrace();

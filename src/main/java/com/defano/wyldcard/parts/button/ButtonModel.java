@@ -9,7 +9,9 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A data model representing a button. See {@link ButtonPart} for the associated controller object.
@@ -21,6 +23,7 @@ public class ButtonModel extends CardLayerPartModel {
     public static final String PROP_HILITE = "hilite";
     public static final String PROP_HIGHLITE = "highlite";
     public static final String PROP_HILIGHT = "hilight";
+    public static final String PROP_SHAREDHILITE = "sharedhilite";
     public static final String PROP_HIGHLIGHT = "highlight";
     public static final String PROP_AUTOHILITE = "autohilite";
     public static final String PROP_AUTOHIGHLITE = "autohighlite";
@@ -33,10 +36,13 @@ public class ButtonModel extends CardLayerPartModel {
     // "Hidden" internal property not addressable in HyperTalk; represents combo-box selection
     public static final String PROP_SELECTEDITEM = "--selectedindex--";
 
+    private final Map<Integer, Boolean> unsharedHilite = new HashMap<>();
+    private boolean sharedHilite = false;
+
     public ButtonModel(Owner owner, PartModel parentPartModel) {
         super(PartType.BUTTON, owner, parentPartModel);
 
-        setCurrentCardId(parentPartModel.getId(new ExecutionContext()));
+        this.setCurrentCardId(parentPartModel.getId(new ExecutionContext()));
 
         newProperty(PROP_SCRIPT, new Value(), false);
         newProperty(PROP_ID, new Value(), true);
@@ -48,13 +54,13 @@ public class ButtonModel extends CardLayerPartModel {
         newProperty(PROP_SHOWNAME, new Value(true), false);
         newProperty(PROP_STYLE, new Value(ButtonStyle.ROUND_RECT.toString()), false);
         newProperty(PROP_FAMILY, new Value(), false);
-        newProperty(PROP_HILITE, new Value(false), false);
         newProperty(PROP_AUTOHILITE, new Value(true), false);
         newProperty(PROP_CONTENTS, new Value(), false);
         newProperty(PROP_ICON, new Value(), false);
         newProperty(PROP_ICONALIGN, new Value("default"), false);
         newProperty(PROP_SELECTEDITEM, new Value(), false);
-        
+        newProperty(PROP_SHAREDHILITE, new Value(true), false);
+
         initialize();
     }
 
@@ -83,6 +89,9 @@ public class ButtonModel extends CardLayerPartModel {
         newPropertyAlias(PROP_HILITE, PROP_HIGHLITE, PROP_HILIGHT, PROP_HIGHLIGHT);
         newPropertyAlias(PROP_AUTOHILITE, PROP_AUTOHIGHLITE, PROP_AUTOHILIGHT, PROP_AUTOHIGHLIGHT);
 
+        newComputedGetterProperty(PROP_HILITE, (context, model, propertyName) -> getHilite(context));
+        newComputedSetterProperty(PROP_HILITE, (context, model, propertyName, value) -> setHilite(context, value));
+
         // When an icon has been applied to a button, HyperCard automatically forces the button font to 10pt Geneva
         addPropertyWillChangeObserver((context, property, oldValue, newValue) -> {
             if (property.equalsIgnoreCase(PROP_ICON) && !newValue.isEmpty()) {
@@ -90,6 +99,34 @@ public class ButtonModel extends CardLayerPartModel {
                 setKnownProperty(context, PROP_TEXTFONT, new Value("Geneva"));
             }
         });
+    }
+
+    public void setHilite(ExecutionContext context, Value hilite) {
+        setHilite(context, getCurrentCardId(context), hilite);
+    }
+
+    public void setHilite(ExecutionContext context, int forCardId, Value hilite) {
+        if (isSharedHilite(context)) {
+            sharedHilite = hilite.booleanValue();
+        } else {
+            unsharedHilite.put(forCardId, hilite.booleanValue());
+        }
+    }
+
+    public Value getHilite(ExecutionContext context) {
+        return getHilite(context, getCurrentCardId(context));
+    }
+
+    public Value getHilite(ExecutionContext context, int forCardId) {
+        if (isSharedHilite(context)) {
+            return new Value(sharedHilite);
+        } else {
+            return new Value(unsharedHilite.getOrDefault(forCardId, false));
+        }
+    }
+
+    public boolean isSharedHilite(ExecutionContext context) {
+        return getOwner() == Owner.CARD || getKnownProperty(context, ButtonModel.PROP_SHAREDHILITE).booleanValue();
     }
 
     /**

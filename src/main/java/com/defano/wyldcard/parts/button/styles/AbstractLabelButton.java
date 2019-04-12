@@ -41,10 +41,14 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+
         if (label.getIcon() != null && label.getIcon() instanceof AlphaImageIcon) {
             ((AlphaImageIcon) label.getIcon()).setAlpha(isHilited ? 0.5f : 1.0f);
         }
+
         paintHilite(isHilited && isEnabled(), (Graphics2D) g);
+
+        label.setForeground(getLabelColor());
         label.paintComponents(g);
     }
 
@@ -65,7 +69,6 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
 
             case ButtonModel.PROP_HILITE:
                 isHilited = newValue.booleanValue();
-                label.setForeground(getLabelColor());
                 break;
 
             case ButtonModel.PROP_ENABLED:

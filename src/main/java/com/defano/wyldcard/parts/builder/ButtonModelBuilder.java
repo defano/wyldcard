@@ -54,6 +54,11 @@ public class ButtonModelBuilder extends PartModelBuilder<ButtonModel, ButtonMode
         return this;
     }
 
+    public ButtonModelBuilder withSharedHilite(Object v) {
+        this.model.setKnownProperty(context, ButtonModel.PROP_SHAREDHILITE, new Value(v));
+        return this;
+    }
+
     public ButtonModelBuilder withAutoHilite(Object v) {
         this.model.setKnownProperty(context, ButtonModel.PROP_AUTOHILIGHT, new Value(v));
         return this;

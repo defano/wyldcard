@@ -70,13 +70,13 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
      * @param parent The card that this button will belong to.
      * @param partModel The data model representing this button.
      * @return The new button.
-     * @throws Exception Thrown if an error occurs instantiating the button.
      */
     public static ButtonPart fromModel(ExecutionContext context, CardPart parent, ButtonModel partModel) {
         ButtonStyle style = ButtonStyle.fromName(partModel.getKnownProperty(context, ButtonModel.PROP_STYLE).toString());
         ButtonPart button = new ButtonPart(style, parent, partModel.getOwner());
 
         button.partModel = partModel;
+        button.partModel.setCurrentCardId(parent.getId(context));
         return button;
     }
 

@@ -104,12 +104,21 @@ public class HyperCardStackImporter {
             // Record applies to a background field
             if (pcr.getPartId() >= 0) {
                 fm = cardModel.getBackgroundModel().getField(pcr.getPartId());
+                ButtonModel bm = cardModel.getBackgroundModel().getButton(pcr.getPartId());
+
+                int cardId = cardModel.getId(new ExecutionContext());
 
                 // Set un-shared text value
                 if (fm != null) {
-                    int cardId = cardModel.getId(new ExecutionContext());
                     fm.setCurrentCardId(cardId);
                     fm.setKnownProperty(new ExecutionContext(), FieldModel.PROP_TEXT, new Value(pcr.getText()));
+                }
+
+                if (bm != null) {
+                    if (pcr.getText().equals("1")) {
+                        bm.setCurrentCardId(cardId);
+                        bm.setKnownProperty(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(true));
+                    }
                 }
             }
 
@@ -196,6 +205,7 @@ public class HyperCardStackImporter {
                 .withIsEnabled(Arrays.stream(partRecord.getFlags()).noneMatch(f -> f == PartFlag.DISABLED))
                 .withAutoHilite(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.AUTO_HILITE))
                 .withHilite(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.HILITE))
+                .withSharedHilite(Arrays.stream(partRecord.getExtendedFlags()).noneMatch(f -> f == ExtendedPartFlag.NO_SHARING_HILITE))
                 .withIsVisible(Arrays.stream(partRecord.getFlags()).noneMatch(f -> f == PartFlag.HIDDEN))
                 .build();
 
