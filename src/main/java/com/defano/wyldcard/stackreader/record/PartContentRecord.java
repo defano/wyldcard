@@ -57,8 +57,33 @@ public class PartContentRecord {
         return partContent;
     }
 
-    public short getPartId() {
+    /**
+     * Gets the part id as present in this record. A negative value refers to a card part whose actual id is this value
+     * times -1; a positive value refers to a background part with this value.
+     *
+     * @return The raw part id as parsed from the stack.
+     */
+    public short getRawPartId() {
         return partId;
+    }
+
+    /**
+     * Gets the ID of the part that this record refers to. Use {@link #isBackgroundPart()} to disambiguate whether this
+     * ID refers to a card or background-layer part.
+     *
+     * @return The ID of the part that this record applies to.
+     */
+    public int getPartId() {
+        return Math.abs(partId);
+    }
+
+    /**
+     * Determines if this record applies to a background part.
+     *
+     * @return True if this part record applies to a background part; false if it applies to a card part.
+     */
+    public boolean isBackgroundPart() {
+        return partId >= 0;
     }
 
     public boolean isPlaintext() {
@@ -71,6 +96,20 @@ public class PartContentRecord {
 
     public String getText() {
         return text;
+    }
+
+    /**
+     * Determines if a background button whose 'sharedHilite' flag is false should be hilited.
+     *
+     * Background buttons with the "sharedHilite" flag set to false use the text content of their PartContentRecord to
+     * flag whether they should be hilited on the card to which the part record belongs. This return value of this
+     * method has no meaning if this PartContentRecord does not apply to a background button, or if the button's
+     * 'sharedHilite' flag is not false..
+     *
+     * @return True if this background button should be hilited.
+     */
+    public boolean isBkgndButtonHilited() {
+        return text != null && text.equals("1");
     }
 
     @Override

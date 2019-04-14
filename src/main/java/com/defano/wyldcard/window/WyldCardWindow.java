@@ -40,12 +40,20 @@ public abstract class WyldCardWindow<ModelType> extends JFrame implements WyldCa
         this.addWindowFocusListener(new WindowAdapter() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
+                if (e.getOppositeWindow() == null) {
+                    WyldCard.getInstance().getWindowManager().onApplicationFocusChanged(true);
+                }
+
                 windowFocusedProvider.onNext(true);
                 WyldCardWindow.this.applyMenuBar();
             }
 
             @Override
             public void windowLostFocus(WindowEvent e) {
+                if (e.getOppositeWindow() == null) {
+                    WyldCard.getInstance().getWindowManager().onApplicationFocusChanged(false);
+                }
+
                 windowFocusedProvider.onNext(false);
             }
         });

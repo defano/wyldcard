@@ -406,6 +406,11 @@ public class WyldCardWindowManager implements WindowManager {
     }
 
     @Override
+    public void onApplicationFocusChanged(boolean appInFocus) {
+        WyldCard.getInstance().getKeyboardManager().resetKeyStates();
+    }
+
+    @Override
     public void notifyWindowVisibilityChanged() {
         Invoke.onDispatch(() -> {
             framesProvider.onNext(getFrames(false));

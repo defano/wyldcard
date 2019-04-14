@@ -34,7 +34,7 @@ public class BackgroundBlock extends AbstractCardBlock {
     @Override
     public PartContentRecord getPartContents(int partId) {
         return Arrays.stream(getContents())
-                .filter(pcr -> pcr.getPartId() == partId)
+                .filter(pcr -> pcr.getRawPartId() == partId)
                 .findFirst()
                 .orElse(new PartContentRecord());
     }

@@ -36,6 +36,8 @@ public class Value implements StyledComparable<Value> {
     private Double floatValue;
     private Boolean booleanValue;
 
+    private boolean parsedLong, parsedFloat, parsedBoolean;
+
     /**
      * Creates a new Value representing the empty string, equivalent to `new Value("")`
      */
@@ -305,7 +307,7 @@ public class Value implements StyledComparable<Value> {
      * @return True if the value represents a whole number
      */
     public boolean isInteger() {
-        return longValue != null || parseLong() != null;
+        return parseLong() != null;
     }
 
     /**
@@ -385,12 +387,17 @@ public class Value implements StyledComparable<Value> {
      * @return The long integer representation of this value, or null if it cannot be cast as a long.
      */
     private Long parseLong() {
+        if (parsedLong) {
+            return longValue;
+        }
+
         try {
             longValue = Long.parseLong(stringValue.trim());
         } catch (NumberFormatException e) {
             longValue = null;
         }
 
+        parsedLong = true;
         return longValue;
     }
 
@@ -400,12 +407,17 @@ public class Value implements StyledComparable<Value> {
      * @return The double representation of this value, or null if it cannot be cast as a double.
      */
     private Double parseFloat() {
+        if (parsedFloat) {
+            return floatValue;
+        }
+
         try {
             floatValue = Double.parseDouble(stringValue.trim());
         } catch (NumberFormatException e) {
             floatValue = null;
         }
 
+        parsedFloat = true;
         return floatValue;
     }
 
@@ -415,6 +427,10 @@ public class Value implements StyledComparable<Value> {
      * @return The boolean representation of this value, or null, if it cannot be cast as a Boolean.
      */
     private Boolean parseBoolean() {
+        if (parsedBoolean) {
+            return booleanValue;
+        }
+
         if (stringValue.trim().equalsIgnoreCase("true")) {
             booleanValue = true;
         } else if (stringValue.trim().equalsIgnoreCase("false")) {
@@ -423,6 +439,7 @@ public class Value implements StyledComparable<Value> {
             booleanValue = null;
         }
 
+        parsedBoolean = true;
         return booleanValue;
     }
 

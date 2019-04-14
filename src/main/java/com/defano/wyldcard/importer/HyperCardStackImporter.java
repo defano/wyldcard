@@ -2,7 +2,6 @@ package com.defano.wyldcard.importer;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.builder.*;
 import com.defano.wyldcard.parts.button.ButtonModel;
@@ -13,15 +12,9 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.block.*;
-import com.defano.wyldcard.stackreader.enums.ExtendedPartFlag;
-import com.defano.wyldcard.stackreader.enums.LayerFlag;
-import com.defano.wyldcard.stackreader.enums.PartFlag;
-import com.defano.wyldcard.stackreader.enums.PartType;
+import com.defano.wyldcard.stackreader.enums.*;
 import com.defano.wyldcard.stackreader.misc.ImportException;
-import com.defano.wyldcard.stackreader.record.PartContentRecord;
-import com.defano.wyldcard.stackreader.record.PartRecord;
-import com.defano.wyldcard.stackreader.record.StyleRecord;
-import com.defano.wyldcard.stackreader.record.StyleSpanRecord;
+import com.defano.wyldcard.stackreader.record.*;
 
 import java.awt.*;
 import java.io.File;
@@ -80,7 +73,7 @@ public class HyperCardStackImporter {
                 .withId(cardBlock.getBlockId())
                 .withBackgroundId(cardBlock.getBkgndId())
                 .withName(cardBlock.getName())
-                .withIsMarked(false) // TODO
+                .withIsMarked(isCardMarked(cardBlock.getBlockId(), cardBlock.getStack()))
                 .withCantDelete(Arrays.stream(cardBlock.getFlags()).anyMatch(f -> f == LayerFlag.CANT_DELETE))
                 .withDontSearch(Arrays.stream(cardBlock.getFlags()).anyMatch(f -> f == LayerFlag.DONT_SEARCH))
                 .withShowPict(Arrays.stream(cardBlock.getFlags()).noneMatch(f -> f == LayerFlag.HIDE_PICTURE))
@@ -91,59 +84,86 @@ public class HyperCardStackImporter {
         // Create background (if does not exist)
         buildBackground(cardBlock.getBkgndBlock(), stackModel);
 
-        // Create all buttons and fields
-        for (int partIndex = 0; partIndex < cardBlock.getParts().length; partIndex++) {
-            PartRecord thisPart = cardBlock.getParts()[partIndex];
-            buildPart(thisPart, partIndex, cardModel, cardBlock);
+        // Create all buttons and fields and on this card
+        buildParts(cardBlock.getParts(), cardModel, cardBlock);
+
+        // Set card-contextual properties (unshared field text, button hilite, etc.)
+        for (PartContentRecord pcr : cardBlock.getContents()) {
+            applyUnsharedText(pcr, cardModel);
+            applyUnsharedHilite(pcr, cardModel);
+            applyTextStyles(pcr, cardModel, cardBlock);
         }
 
-        // Set unshared text on background fields
-        for (PartContentRecord pcr : cardBlock.getContents()) {
-            FieldModel fm;
-
-            // Record applies to a background field
-            if (pcr.getPartId() >= 0) {
-                fm = cardModel.getBackgroundModel().getField(pcr.getPartId());
-                ButtonModel bm = cardModel.getBackgroundModel().getButton(pcr.getPartId());
-
-                int cardId = cardModel.getId(new ExecutionContext());
-
-                // Set un-shared text value
-                if (fm != null) {
-                    fm.setCurrentCardId(cardId);
-                    fm.setKnownProperty(new ExecutionContext(), FieldModel.PROP_TEXT, new Value(pcr.getText()));
-                }
-
-                if (bm != null) {
-                    if (pcr.getText().equals("1")) {
-                        bm.setCurrentCardId(cardId);
-                        bm.setKnownProperty(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(true));
-                    }
-                }
-            }
-
-            // Record applies to a card field
-            else {
-                fm = cardModel.getFieldModels().stream()
-                        .filter(f -> f.getId(new ExecutionContext()) == -pcr.getPartId())
-                        .findFirst()
-                        .orElse(null);
-            }
-
-            if (fm != null) {
-
-                if (!pcr.isPlaintext()) {
-                    applyTextStyles(
-                            fm,
-                            cardModel.getId(new ExecutionContext()),
-                            cardBlock.getStack(),
-                            cardBlock.getPartContents(pcr.getPartId()).getStyleSpans()
-                    );
-                }
-            }
+        // Set background-contextual properties (shared text styles)
+        for (PartContentRecord pcr : cardBlock.getBkgndBlock().getContents()) {
+            applyTextStyles(pcr, cardModel, cardBlock);
         }
 
         stackModel.addCard(cardModel);
+    }
+
+    private static void applyTextStyles(PartContentRecord pcr, CardModel cardModel, AbstractCardBlock cardBlock) {
+        ExecutionContext context = new ExecutionContext();
+        FieldModel field;
+
+        if (pcr.isBackgroundPart()) {
+            field = cardModel.getBackgroundModel().getFieldModels().stream()
+                    .filter(f -> f.getId(context) == pcr.getRawPartId())
+                    .findFirst()
+                    .orElse(null);
+        } else {
+            field = cardModel.getFieldModels().stream()
+                    .filter(f -> f.getId(context) == -pcr.getRawPartId())
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        if (field != null) {
+            int cardId = cardModel.getId(context);
+
+            if (pcr.isPlaintext()) {
+                field.applyFont(context, cardId, 0, field.getKnownProperty(context, FieldModel.PROP_TEXTFONT).toString());
+                field.applyFontSize(context, cardId, 0, field.getKnownProperty(context, FieldModel.PROP_TEXTSIZE).integerValue());
+                field.applyFontStyle(context, cardId, 0, field.getKnownProperty(context, FieldModel.PROP_TEXTSTYLE));
+            } else {
+                applyStyleSpans(field, cardModel.getId(context), cardBlock.getStack(), pcr.getStyleSpans());
+            }
+        }
+    }
+
+    private static void applyUnsharedText(PartContentRecord pcr, CardModel cardModel) {
+        if (pcr.isBackgroundPart()) {
+            FieldModel fm = cardModel.getBackgroundModel().getField(pcr.getRawPartId());
+
+            // Set un-shared text value
+            if (fm != null) {
+                fm.setCurrentCardId(cardModel.getId(new ExecutionContext()));
+                fm.setKnownProperty(new ExecutionContext(), FieldModel.PROP_TEXT, new Value(pcr.getText()));
+            }
+        }
+    }
+
+    /**
+     * Sets the hilite property of background buttons. Has no effect when invoked with a PartContentRecord that does
+     * not refer to a button or if the button does not exist on the card.
+     * <p>
+     * Background buttons may choose not to "share" their hilite state across cards. This allows, for example, a
+     * background layer checkbox to have different checked/unchecked values on each card in the background. This method
+     * applies the card-specific hilite value to such a button.
+     *
+     * @param pcr       The button's PartContentRecord.
+     * @param cardModel The model of the card whose hilite is being adjusted.
+     */
+    private static void applyUnsharedHilite(PartContentRecord pcr, CardModel cardModel) {
+        // Only applies to background buttons
+        if (pcr.isBackgroundPart()) {
+            ButtonModel bm = cardModel.getBackgroundModel().getButton(pcr.getRawPartId());
+
+            if (bm != null) {
+                bm.setCurrentCardId(cardModel.getId(new ExecutionContext()));
+                bm.setKnownProperty(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(pcr.isBkgndButtonHilited()));
+            }
+        }
     }
 
     private static void buildBackground(BackgroundBlock backgroundBlock, StackModel stackModel) {
@@ -165,21 +185,19 @@ public class HyperCardStackImporter {
                 .build();
 
         // Create all buttons and fields
-        for (int partIndex = 0; partIndex < backgroundBlock.getParts().length; partIndex++) {
-            PartRecord thisPart = backgroundBlock.getParts()[partIndex];
-            buildPart(thisPart, partIndex, backgroundModel, backgroundBlock);
-        }
+        buildParts(backgroundBlock.getParts(), backgroundModel, backgroundBlock);
 
-        Arrays.stream(backgroundBlock.getParts()).forEach(p -> {
-        });
         stackModel.addBackground(backgroundModel);
     }
 
-    private static void buildPart(PartRecord part, int partNumber, PartOwner parent, AbstractCardBlock block) {
-        if (part.getPartType() == PartType.BUTTON) {
-            buildButton(part, partNumber, parent, block);
-        } else {
-            buildField(part, partNumber, parent, block);
+    private static void buildParts(PartRecord[] parts, PartOwner parent, AbstractCardBlock block) {
+        for (int partNumber = 0; partNumber < parts.length; partNumber++) {
+            PartRecord part = parts[partNumber];
+            if (part.getPartType() == PartType.BUTTON) {
+                buildButton(part, partNumber, parent, block);
+            } else {
+                buildField(part, partNumber, parent, block);
+            }
         }
     }
 
@@ -195,10 +213,10 @@ public class HyperCardStackImporter {
                 .withId(partRecord.getPartId())
                 .withStyle(partRecord.getStyle().name())
                 .withFamily(partRecord.getFamily())
-                .withTextFont(block.getStack().getBlock(FontTableBlock.class).getFont(partRecord.getTextFontId()).getFontName())
                 .withTextSize(partRecord.getTextSize())
-                .withTextAlign(partRecord.getTextAlign().toString())
-//                .withTextStyle(partRecord.getFontStyles())  // TODO
+                .withTextFont(block.getStack().getBlock(FontTableBlock.class).getFont(partRecord.getTextFontId()).getFontName())
+                .withTextStyle(FontStyle.asHypertalkList(partRecord.getFontStyles()))
+                .withTextAlign(partRecord.getTextAlign().name())
                 .withIconId(partRecord.getIconId())
                 .withScript(partRecord.getScript())
                 .withShowName(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.SHOW_NAME))
@@ -223,46 +241,28 @@ public class HyperCardStackImporter {
                 .withName(partRecord.getName())
                 .withId(partRecord.getPartId())
                 .withStyle(partRecord.getStyle().name())
-                .withIsHidden(Arrays.stream(partRecord.getFlags()).noneMatch(f -> f == PartFlag.HIDDEN))
+                .withIsVisible(Arrays.stream(partRecord.getFlags()).noneMatch(f -> f == PartFlag.HIDDEN))
                 .withDontWrap(Arrays.stream(partRecord.getFlags()).anyMatch(f -> f == PartFlag.DONT_WRAP))
                 .withDontSearch(Arrays.stream(partRecord.getFlags()).anyMatch(f -> f == PartFlag.DONT_SEARCH))
                 .withSharedText(Arrays.stream(partRecord.getFlags()).anyMatch(f -> f == PartFlag.SHARED_TEXT))
+                .withTextSize(partRecord.getTextSize())
+                .withTextFont(block.getStack().getBlock(FontTableBlock.class).getFont(partRecord.getTextFontId()).getFontName())
+                .withTextStyle(FontStyle.asHypertalkList(partRecord.getFontStyles()))
+                .withTextAlign(partRecord.getTextAlign().name())
+                .withText(block.getPartContents(partRecord.getPartId()).getText())
                 .withAutoTab(Arrays.stream(partRecord.getFlags()).anyMatch(f -> f == PartFlag.AUTO_TAB))
                 .withLockText(Arrays.stream(partRecord.getFlags()).anyMatch(f -> f == PartFlag.LOCK_TEXT))
                 .withAutoSelect(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.AUTO_SELECT))
                 .withShowLines(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.SHOW_LINES))
                 .withWideMargins(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.WIDE_MARGINS))
                 .withMultipleLines(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.MULTIPLE_LINES))
-                .withText(block.getPartContents(partRecord.getPartId()).getText())
                 .withScript(partRecord.getScript())
                 .build();
-
-        fieldModel.setTextStyle(new ExecutionContext(), getTextStyleSpecifier(partRecord, block.getStack()));
-
-        if (parent instanceof CardModel) {
-            applyTextStyles(
-                    fieldModel,
-                    ((CardModel) parent).getId(new ExecutionContext()),
-                    block.getStack(),
-                    block.getPartContents(partRecord.getPartId()).getStyleSpans()
-            );
-        }
 
         parent.addPartModel(fieldModel);
     }
 
-    private static TextStyleSpecifier getTextStyleSpecifier(PartRecord partRecord, HyperCardStack stack) {
-        FontTableBlock fontTableBlock = stack.getBlock(FontTableBlock.class);
-
-        return TextStyleSpecifier.fromAlignNameStyleSize(
-                new Value(partRecord.getTextAlign().name()),
-                new Value(fontTableBlock.getFont(partRecord.getTextFontId()).getFontName()),
-                new Value(Arrays.toString(partRecord.getFontStyles())),
-                new Value(partRecord.getTextSize())
-        );
-    }
-
-    private static void applyTextStyles(FieldModel fieldModel, int cardId, HyperCardStack stack, StyleSpanRecord[] styleSpans) {
+    private static void applyStyleSpans(FieldModel fieldModel, int cardId, HyperCardStack stack, StyleSpanRecord[] styleSpans) {
 
         ExecutionContext context = new ExecutionContext();
 
@@ -275,19 +275,32 @@ public class HyperCardStackImporter {
 
             if (style.getFontId() != -1) {
                 fieldModel.applyFont(context, cardId, position, fontTableBlock.getFont(style.getFontId()).getFontName());
+            } else {
+                fieldModel.applyFont(context, cardId, position, fieldModel.getKnownProperty(context, FieldModel.PROP_TEXTFONT).toString());
             }
 
             if (style.getFontSize() != -1) {
                 fieldModel.applyFontSize(context, cardId, position, (int) style.getFontSize());
+            } else {
+                fieldModel.applyFontSize(context, cardId, position, fieldModel.getKnownProperty(context, FieldModel.PROP_TEXTSIZE).integerValue());
             }
 
-            String styleString = Arrays.toString(style.getStyles());
-            if (styleString.length() > 2) {
-                styleString = styleString.substring(1, styleString.length() - 2);
-            }
+            String styleString = FontStyle.asHypertalkList(style.getStyles());
 
             fieldModel.applyFontStyle(context, cardId, position, new Value(styleString));
         }
+    }
+
+    private static boolean isCardMarked(int cardId, HyperCardStack stack) {
+        for (PageBlock thisPage : stack.getBlocks(PageBlock.class)) {
+            for (PageEntryRecord thisEntry : thisPage.getPageEntries()) {
+                if (thisEntry.getCardId() == cardId) {
+                    return Arrays.stream(thisEntry.getFlags()).anyMatch(f -> f == PageFlag.MARKED_CARD);
+                }
+            }
+        }
+
+        throw new IllegalStateException("Can't find card in page entry");
     }
 
 }

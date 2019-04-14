@@ -227,12 +227,11 @@ public class WyldCardPropertiesModel implements PropertiesModel {
     @Override
     public Value getKnownProperty(ExecutionContext context, String property) {
         assertConstructed();
-        property = property.toLowerCase();
 
         try {
             return getProperty(context, property);
         } catch (NoSuchPropertyException e) {
-            newProperty(property, new Value(), false);
+            newProperty(property.toLowerCase(), new Value(), false);
             e.printStackTrace();
             return new Value();
         }

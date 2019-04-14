@@ -18,6 +18,15 @@ public enum FontStyle {
         this.mask = mask;
     }
 
+    public static String asHypertalkList(FontStyle... styles) {
+        String styleString = Arrays.toString(styles).toLowerCase();
+        if (styleString.length() > 2) {
+            return styleString.substring(1, styleString.length() - 2);
+        } else {
+            return "plain";
+        }
+    }
+
     public static FontStyle[] fromBitmask(byte mask) {
         if (mask == -1) {
             return new FontStyle[0];

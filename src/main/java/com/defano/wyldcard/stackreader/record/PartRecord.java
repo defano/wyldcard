@@ -1,11 +1,11 @@
 package com.defano.wyldcard.stackreader.record;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
-import com.defano.wyldcard.stackreader.misc.ImportException;
-import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import com.defano.wyldcard.stackreader.block.Block;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.enums.*;
+import com.defano.wyldcard.stackreader.misc.ImportException;
+import com.defano.wyldcard.stackreader.misc.ImportResult;
+import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -37,6 +37,46 @@ public class PartRecord {
     private short textHeight;
     private String name;
     private String script; // the button or field script
+
+    public static PartRecord deserialize(Block parent, short entrySize, byte[] data, ImportResult report) throws ImportException {
+        PartRecord part = new PartRecord();
+        StackInputStream sis = new StackInputStream(data);
+
+        part.stack = parent.getStack();
+        part.size = entrySize;
+
+        try {
+            part.partId = sis.readShort();
+            part.partType = PartType.fromTypeId(sis.readByte());
+            part.flags = PartFlag.fromBitmask(sis.readByte());
+            part.top = sis.readShort();
+            part.left = sis.readShort();
+            part.bottom = sis.readShort();
+            part.right = sis.readShort();
+
+            byte extendedFlagsMask = sis.readByte();
+            part.extendedFlags = ExtendedPartFlag.fromBitmask(extendedFlagsMask);
+            part.family = extendedFlagsMask & 0x0f;
+
+            part.style = PartStyle.ofPartStyleId(sis.readByte());
+            part.titleWidthOrLastSelectedLine = sis.readShort();
+            part.iconIdOrFirstSelectedLine = sis.readShort();
+            part.textAlign = TextAlignment.fromAlignmentId(sis.readShort());
+            part.textFontId = sis.readShort();
+            part.textSize = sis.readShort();
+            part.fontStyles = FontStyle.fromBitmask(sis.readByte());
+            sis.readByte();
+            part.textHeight = sis.readShort();
+            part.name = sis.readString();
+            sis.readByte();
+            part.script = sis.readString();
+
+        } catch (IOException e) {
+            report.throwError(parent, "Malformed part record; stack is corrupt.");
+        }
+
+        return part;
+    }
 
     public Rectangle getPartRectangle() {
         return new Rectangle(left, top, right - left, bottom - top);
@@ -148,46 +188,6 @@ public class PartRecord {
 
     public String getScript() {
         return script;
-    }
-
-    public static PartRecord deserialize(Block parent, short entrySize, byte[] data, ImportResult report) throws ImportException {
-        PartRecord part = new PartRecord();
-        StackInputStream sis = new StackInputStream(data);
-
-        part.stack = parent.getStack();
-        part.size = entrySize;
-
-        try {
-            part.partId = sis.readShort();
-            part.partType = PartType.fromTypeId(sis.readByte());
-            part.flags = PartFlag.fromBitmask(sis.readByte());
-            part.top = sis.readShort();
-            part.left = sis.readShort();
-            part.bottom = sis.readShort();
-            part.right = sis.readShort();
-
-            byte extendedFlagsMask = sis.readByte();
-            part.extendedFlags = ExtendedPartFlag.fromBitmask(extendedFlagsMask);
-            part.family = extendedFlagsMask & 0x0f;
-
-            part.style = PartStyle.ofPartStyleId(sis.readByte());
-            part.titleWidthOrLastSelectedLine = sis.readShort();
-            part.iconIdOrFirstSelectedLine = sis.readShort();
-            part.textAlign = TextAlignment.fromAlignmentId(sis.readShort());
-            part.textFontId = sis.readShort();
-            part.textSize = sis.readShort();
-            part.fontStyles = FontStyle.fromBitmask(sis.readByte());
-            sis.readByte();
-            part.textHeight = sis.readShort();
-            part.name = sis.readString();
-            sis.readByte();
-            part.script = sis.readString();
-
-        } catch (IOException e) {
-            report.throwError(parent, "Malformed part record; stack is corrupt.");
-        }
-
-        return part;
     }
 
     public String toString() {

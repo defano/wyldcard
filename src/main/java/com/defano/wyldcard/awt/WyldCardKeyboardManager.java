@@ -20,15 +20,20 @@ import java.util.Set;
 @Singleton
 public class WyldCardKeyboardManager implements KeyboardManager {
 
+    private final Set<KeyListener> observers = new HashSet<>();
+
     private boolean isShiftDown;
     private boolean isAltOptionDown;          // Either 'alt' or 'option' (Mac)
     private boolean isCtrlCommandDown;        // Either 'ctrl' or 'command' (Mac
     private Long breakTime;
 
-    private final static Set<KeyListener> observers = new HashSet<>();
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void start() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
+
             isShiftDown = e.isShiftDown();
             isAltOptionDown = e.isAltDown();
             isCtrlCommandDown = e.isMetaDown() || e.isControlDown();
@@ -48,36 +53,92 @@ public class WyldCardKeyboardManager implements KeyboardManager {
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void addGlobalKeyListener(KeyListener observer) {
         observers.add(observer);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean removeGlobalKeyListener(KeyListener observer) {
         return observers.remove(observer);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Long getBreakTime() {
         return breakTime;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isShiftDown() {
         return isShiftDown;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isAltOptionDown() {
         return isAltOptionDown;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isCtrlCommandDown() {
         return isCtrlCommandDown;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isPeeking(ExecutionContext context) {
         return isAltOptionDown() && isCtrlCommandDown() &&
                 !WyldCard.getInstance().getStackManager().getFocusedStack()
-                    .getStackModel()
-                    .getKnownProperty(context, StackModel.PROP_CANTPEEK)
-                    .booleanValue();
+                        .getStackModel()
+                        .getKnownProperty(context, StackModel.PROP_CANTPEEK)
+                        .booleanValue();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void resetKeyStates() {
+        isShiftDown = false;
+        isAltOptionDown = false;
+        isCtrlCommandDown = false;
+    }
+
+    private void fireGlobalKeyListeners(KeyEvent e) {
+        Set<KeyListener> listeners = new HashSet<>(observers);
+
+        for (KeyListener thisListener : listeners) {
+            switch (e.getID()) {
+                case KeyEvent.KEY_PRESSED:
+                    thisListener.keyPressed(e);
+                    break;
+                case KeyEvent.KEY_RELEASED:
+                    thisListener.keyReleased(e);
+                    break;
+                case KeyEvent.KEY_TYPED:
+                    thisListener.keyTyped(e);
+                    break;
+            }
+        }
     }
 
     private void delegateKeyEventToFocusedCard(KeyEvent e) {
@@ -93,24 +154,6 @@ public class WyldCardKeyboardManager implements KeyboardManager {
             case KeyEvent.KEY_RELEASED:
                 WyldCard.getInstance().getStackManager().getFocusedStack().getDisplayedCard().keyReleased(e);
                 break;
-        }
-    }
-
-    private static void fireGlobalKeyListeners(KeyEvent e) {
-        Set<KeyListener> listeners = new HashSet<>(observers);
-
-        for (KeyListener thisListener : listeners) {
-            switch (e.getID()) {
-                case KeyEvent.KEY_PRESSED:
-                    thisListener.keyPressed(e);
-                    break;
-                case KeyEvent.KEY_RELEASED:
-                    thisListener.keyReleased(e);
-                    break;
-                case KeyEvent.KEY_TYPED:
-                    thisListener.keyTyped(e);
-                    break;
-            }
         }
     }
 

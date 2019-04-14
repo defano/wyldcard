@@ -30,7 +30,7 @@ public class FontTableBlock extends Block {
     public FontRecord getFont(int fontId) {
         return Arrays.stream(getFonts())
                 .filter(f -> f.getFontId() == fontId).findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No such font id: " + fontId));
+                .orElse(fonts[0]);      // TODO: Some stacks reference unknown fonts...?
     }
 
     @Override
@@ -45,6 +45,7 @@ public class FontTableBlock extends Block {
             for (int fontIdx = 0; fontIdx < fontCount; fontIdx++) {
                 short fontId = sis.readShort();
                 String fontName = sis.readString();
+                System.err.println("GOT " + fontName + " id: " + fontId);
 
                 fonts[fontIdx] = new FontRecord(fontId, fontName);
 

@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.builder;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
@@ -63,6 +64,26 @@ public abstract class PartModelBuilder<ModelType extends PartModel, BuilderType 
         withLeft(rectangle.x);
         withWidth(rectangle.width);
         withHeight(rectangle.height);
+        return getBuilder();
+    }
+
+    public BuilderType withTextFont(Object v) {
+        build().setKnownProperty(context, CardLayerPartModel.PROP_TEXTFONT, new Value(v));
+        return getBuilder();
+    }
+
+    public BuilderType withTextSize(Object v) {
+        build().setKnownProperty(context, CardLayerPartModel.PROP_TEXTSIZE, new Value(v));
+        return getBuilder();
+    }
+
+    public BuilderType withTextStyle(Object v) {
+        build().setKnownProperty(context, CardLayerPartModel.PROP_TEXTSTYLE, new Value(v));
+        return getBuilder();
+    }
+
+    public BuilderType withTextAlign(Object v) {
+        build().setKnownProperty(context, CardLayerPartModel.PROP_TEXTALIGN, new Value(v));
         return getBuilder();
     }
 }

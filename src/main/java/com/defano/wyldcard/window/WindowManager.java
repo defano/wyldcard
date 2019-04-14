@@ -90,5 +90,11 @@ public interface WindowManager extends WindowFinder, Themeable {
 
     BehaviorSubject<Boolean> getPalettesDockedProvider();
 
+    /**
+     * Invoke to notify the window manager that WyldCard has gained or lost focus in the host operating system.
+     * @param appInFocus True to indicate that WyldCard has gained focus; false to indicate that it has lost focus.
+     */
+    void onApplicationFocusChanged(boolean appInFocus);
+
     void notifyWindowVisibilityChanged();
 }

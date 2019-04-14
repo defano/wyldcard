@@ -68,11 +68,6 @@ public class FieldModelBuilder extends PartModelBuilder<FieldModel, FieldModelBu
         return this;
     }
 
-    public FieldModelBuilder withIsHidden(Object v) {
-        this.fieldModel.setKnownProperty(context, FieldModel.PROP_VISIBLE, new Value(v));
-        return this;
-    }
-
     public FieldModelBuilder withPartNumber(Object v) {
         this.fieldModel.setKnownProperty(context, FieldModel.PROP_ZORDER, new Value(v));
         return this;

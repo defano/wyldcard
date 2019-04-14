@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * A facade and thread model for executing HyperTalk scripts. All script compilation and execution should flow through
- * this class to assure proper threadinCreate card picturesg.
+ * this class to assure proper threading.
  */
 @SuppressWarnings("UnstableApiUsage")
 public class Compiler {

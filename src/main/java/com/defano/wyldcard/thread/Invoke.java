@@ -23,10 +23,18 @@ public class Invoke {
      * @return The value returned by the callable
      */
     public static <V> V onDispatch(Callable<V> callable) {
-        try {
-            return onDispatch(callable, Exception.class);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (SwingUtilities.isEventDispatchThread()) {
+            try {
+                return callable.call();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                return onDispatch(callable, Exception.class);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -41,22 +49,31 @@ public class Invoke {
      */
     @SuppressWarnings({"unused", "unchecked"})
     public static <V, E extends Exception> V onDispatch(Callable<V> callable, Class<E> exceptionClass) throws E {
-        final Object[] value = new Object[1];
-        final Exception[] thrown = new Exception[1];
 
-        onDispatch(() -> {
+        if (SwingUtilities.isEventDispatchThread()) {
             try {
-                value[0] = callable.call();
+                return callable.call();
             } catch (Exception e) {
-                thrown[0] = e;
+                throw (E) e;
             }
-        });
+        } else {
+            final Object[] value = new Object[1];
+            final Exception[] thrown = new Exception[1];
 
-        if (thrown[0] != null) {
-            throw (E) thrown[0];
+            onDispatch(() -> {
+                try {
+                    value[0] = callable.call();
+                } catch (Exception e) {
+                    thrown[0] = e;
+                }
+            });
+
+            if (thrown[0] != null) {
+                throw (E) thrown[0];
+            }
+
+            return (V) value[0];
         }
-
-        return (V) value[0];
     }
 
     /**
@@ -72,10 +89,14 @@ public class Invoke {
      * @throws E The exception thrown by the runnable
      */
     public static <E extends Exception> void onDispatch(CheckedRunnable<E> r, Class<E> exceptionClass) throws E {
-        onDispatch((Callable<Void>) () -> {
+        if (SwingUtilities.isEventDispatchThread()) {
             r.run();
-            return null;
-        }, exceptionClass);
+        } else {
+            onDispatch((Callable<Void>) () -> {
+                r.run();
+                return null;
+            }, exceptionClass);
+        }
     }
 
     /**
@@ -95,7 +116,7 @@ public class Invoke {
                 // Invoke runnable on dispatch thread
                 SwingUtilities.invokeAndWait(r);
 
-                // Then wait for dispatch thread to complete any events that runnable enqueued
+                // ... then wait for dispatch thread to complete any events that runnable enqueued
                 SwingUtilities.invokeAndWait(() -> {});
 
             } catch (InterruptedException | InvocationTargetException e) {

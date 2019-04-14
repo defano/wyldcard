@@ -353,17 +353,20 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * Gets a screenshot of this card; a pixel accurate rendering of the card as would be visible to the user when the
      * card is visible in the stack window including graphics and part layers (the rendering of which will differ
      * based on Swing's current look-and-feel setting).
+     * <p>
+     * Swing cannot print "heavyweight" components that are not actively displayed in a window (this is a side
+     * effect of the native component peering architecture). Therefore, if this card is not already being
+     * displayed in a window, we will need to create a window and place ourselves inside of it before attempting to
+     * print. However, note that a card (or any component) cannot be the content pane of multiple frames simultaneously,
+     * so we utilize the screenshot buffer frame only when not already attached to a card window.
      *
      * @return A screenshot image of this card.
      */
     public BufferedImage getScreenshot() {
 
         return Invoke.onDispatch(() -> {
-            // Swing cannot print components that are not actively displayed in a window (this is a side effect of the
-            // native component peering architecture). Therefore, if this card is not already being displayed in a
-            // window, we will need to create a window and place ourselves inside of it before attempting to print. However,
-            // note that a card (or any component) cannot be the content pane of multiple frames simultaneously, so we
-            // utilize the screenshot buffer frame only when not already attached to a card window.
+
+            // Card is not displayed inside of a window; display it in the hidden screenshot buffer frame
             if (getRootPane() == null) {
                 WyldCard.getInstance().getWindowManager().getScreenshotBufferWindow().setContentPane(this);
             }

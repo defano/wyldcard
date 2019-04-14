@@ -11,10 +11,7 @@ import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
-import com.defano.wyldcard.parts.model.DispatchComputedSetter;
-import com.defano.wyldcard.parts.model.LogicalLinkObserver;
-import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
+import com.defano.wyldcard.parts.model.*;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
@@ -82,7 +79,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     private final Map<Integer, StyledDocument> unsharedText = new HashMap<>();
     private final Set<Integer> sharedAutoSelection = new HashSet<>();
     private final Map<Integer, Set<Integer>> unsharedAutoSelection = new HashMap<>();
-    private StyledDocument sharedText = new DefaultStyledDocument();
+    private StyledDocument sharedText;
 
     private transient FieldModelObserver observer;
     private transient Range selection;
@@ -94,7 +91,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         this.newProperty(PROP_SCRIPT, new Value(), false);
         this.newProperty(PROP_ID, new Value(), true);
-        this.newProperty(PROP_NAME, new Value("Text Field"), false);
+        this.newProperty(PROP_NAME, new Value(), false);
         this.newProperty(PROP_LEFT, new Value(), false);
         this.newProperty(PROP_TOP, new Value(), false);
         this.newProperty(PROP_WIDTH, new Value(), false);
@@ -104,7 +101,6 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         this.newProperty(PROP_LOCKTEXT, new Value(false), false);
         this.newProperty(PROP_SHOWLINES, new Value(true), false);
         this.newProperty(PROP_STYLE, new Value(FieldStyle.TRANSPARENT.getName()), false);
-        this.newProperty(PROP_TEXTALIGN, new Value("left"), false);
         this.newProperty(PROP_CONTENTS, new Value(""), false);
         this.newProperty(PROP_SHAREDTEXT, new Value(false), false);
         this.newProperty(PROP_WIDEMARGINS, new Value(false), false);
@@ -115,6 +111,11 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         this.newProperty(PROP_SCROLL, new Value(0), false);
         this.newProperty(PROP_DONTSEARCH, new Value(false), false);
         this.newProperty(PROP_FIXEDLINEHEIGHT, new Value(false), false);
+
+        this.newProperty(PROP_TEXTFONT, new Value("Geneva"), false);
+        this.newProperty(PROP_TEXTSIZE, new Value(12), false);
+        this.newProperty(PROP_TEXTSTYLE, new Value("plain"), false);
+        this.newProperty(PROP_TEXTALIGN, new Value("center"), false);
 
         this.initialize();
     }
@@ -132,15 +133,17 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         newComputedGetterProperty(PROP_TEXT, (context, model, propertyName) -> new Value(getText(context)));
         newComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (context, model, propertyName, value) -> replaceText(context, value.toString()));
 
-        newComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(getTextFontFamily(context, 0, getText(context).length() + 1)));
-        newComputedSetterProperty(PROP_TEXTFONT, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontFamily(context, 0, getText(context).length() + 1, value));
+        newComputedReadOnlyProperty(PROP_TEXTHEIGHT, (context, model, propertyName) -> new Value(model.getKnownProperty(context, PROP_TEXTSIZE).integerValue() * 1.33));
 
-        newComputedGetterProperty(PROP_TEXTSIZE, (context, model, propertyName) -> new Value(getTextFontSize(context, 0, getText(context).length() + 1)));
-        newComputedSetterProperty(PROP_TEXTSIZE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontSize(context, 0, getText(context).length() + 1, value));
-        newPropertyAlias(PROP_TEXTSIZE, PROP_TEXTHEIGHT);       // TODO: Incorrect behavior
 
-        newComputedGetterProperty(PROP_TEXTSTYLE, (context, model, propertyName) -> new Value(getTextFontStyle(context, 0, getText(context).length() + 1)));
-        newComputedSetterProperty(PROP_TEXTSTYLE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontStyle(context, 0, getText(context).length() + 1, value));
+//        newComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(getTextFontFamily(context, 0, getText(context).length() + 1)));
+//        newComputedSetterProperty(PROP_TEXTFONT, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontFamily(context, 0, getText(context).length() + 1, value));
+//
+//        newComputedGetterProperty(PROP_TEXTSIZE, (context, model, propertyName) -> new Value(getTextFontSize(context, 0, getText(context).length() + 1)));
+//        newComputedSetterProperty(PROP_TEXTSIZE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontSize(context, 0, getText(context).length() + 1, value));
+//
+//        newComputedGetterProperty(PROP_TEXTSTYLE, (context, model, propertyName) -> new Value(getTextFontStyle(context, 0, getText(context).length() + 1)));
+//        newComputedSetterProperty(PROP_TEXTSTYLE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontStyle(context, 0, getText(context).length() + 1, value));
 
         newComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> getSelectedText(context));
         newComputedReadOnlyProperty(PROP_SELECTEDCHUNK, (context, model, propertyName) -> getSelectedChunkExpression(context));
@@ -171,19 +174,51 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @return A StyledDocument representation of the contents of this field.
      */
     public StyledDocument getStyledDocument(ExecutionContext context) {
-        if (isSharedText(context)) {
-            return sharedText == null ? new DefaultStyledDocument() : sharedText;
-        } else {
-            return getStyledDocument(context, getCurrentCardId(context));
-        }
+        return getStyledDocument(context, getCurrentCardId(context));
     }
 
     private StyledDocument getStyledDocument(ExecutionContext context, int forCardId) {
         if (isSharedText(context)) {
-            return sharedText == null ? new DefaultStyledDocument() : sharedText;
+            return getSharedText(context);
         } else {
-            return unsharedText.getOrDefault(forCardId, new DefaultStyledDocument());
+            return getUnsharedText(context, forCardId);
         }
+    }
+
+    private StyledDocument getUnsharedText(ExecutionContext context, int cardId) {
+        if (!unsharedText.containsKey(cardId)) {
+            unsharedText.put(cardId, getNewDocument(context));
+        }
+
+        return unsharedText.get(cardId);
+    }
+
+    private StyledDocument getSharedText(ExecutionContext context) {
+        if (sharedText == null) {
+            sharedText = getNewDocument(context);
+        }
+
+        return sharedText;
+    }
+
+    private StyledDocument getNewDocument(ExecutionContext context) {
+//        SimpleAttributeSet as = new SimpleAttributeSet();
+//        as.addAttribute(StyleConstants.FontFamily, getKnownProperty(context, FieldModel.PROP_TEXTFONT).toString());
+//        as.addAttribute(StyleConstants.FontSize, getKnownProperty(context, FieldModel.PROP_TEXTSIZE).integerValue());
+//        as.addAttribute(StyleConstants.FontFamily, getKnownProperty(context, FieldModel.PROP_TEXTFONT).toString());
+
+        Style as = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+        StyleConstants.setFontFamily(as, getKnownProperty(context, FieldModel.PROP_TEXTFONT).toString());
+        StyleConstants.setFontSize(as, getKnownProperty(context, FieldModel.PROP_TEXTSIZE).integerValue());
+
+//        doc.setCharacterAttributes(0, doc.getLength() + 1, as, false);
+        StyleContext sc = new StyleContext();
+        sc.addStyle(StyleContext.DEFAULT_STYLE, as);
+
+        DefaultStyledDocument doc = new DefaultStyledDocument(sc);
+        doc.setCharacterAttributes(0, 1, as, true);
+        doc.setParagraphAttributes(0, 1, as, true);
+        return doc;
     }
 
     /**
@@ -233,17 +268,17 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     public void applyFont(ExecutionContext context, int forCardId, int start, String fontFamily) {
         StyledDocument doc = getStyledDocument(context, forCardId);
-        doc.setCharacterAttributes(start, doc.getLength() - start, TextStyleSpecifier.fromFontFamily(fontFamily).toAttributeSet(), true);
+        doc.setCharacterAttributes(start, doc.getLength() - start, TextStyleSpecifier.fromFontFamily(fontFamily).toAttributeSet(), false);
     }
 
     public void applyFontSize(ExecutionContext context, int forCardId, int start, int fontSize) {
         StyledDocument doc = getStyledDocument(context, forCardId);
-        doc.setCharacterAttributes(start, doc.getLength() - start, TextStyleSpecifier.fromFontSize(fontSize).toAttributeSet(), true);
+        doc.setCharacterAttributes(start, doc.getLength() - start, TextStyleSpecifier.fromFontSize(fontSize).toAttributeSet(), false);
     }
 
     public void applyFontStyle(ExecutionContext context, int forCardId, int start, Value style) {
         StyledDocument doc = getStyledDocument(context, forCardId);
-        doc.setCharacterAttributes(start, doc.getLength() - start, TextStyleSpecifier.fromFontStyle(style).toAttributeSet(), true);
+        doc.setCharacterAttributes(start, doc.getLength() - start, TextStyleSpecifier.fromFontStyle(style).toAttributeSet(), false);
     }
 
     /**
