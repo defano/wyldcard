@@ -7,7 +7,7 @@ public enum PartStyle {
     TRANSPARENT(0),
     OPAQUE(1),
     RECTANGLE(2),
-    ROUND_RECTANGLE(3),
+    ROUND_RECT(3),
     SHADOW(4),
     CHECKBOX(5),
     RADIO(6),
@@ -25,5 +25,9 @@ public enum PartStyle {
 
     public static PartStyle ofPartStyleId(byte partStyleId) {
         return Arrays.stream(values()).filter(s -> s.partStyleId == partStyleId).findFirst().orElse(null);
+    }
+
+    public String hypertalkName() {
+        return this.name().toLowerCase().replace("_", " ");
     }
 }

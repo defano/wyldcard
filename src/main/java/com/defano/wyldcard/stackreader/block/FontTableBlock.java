@@ -45,7 +45,6 @@ public class FontTableBlock extends Block {
             for (int fontIdx = 0; fontIdx < fontCount; fontIdx++) {
                 short fontId = sis.readShort();
                 String fontName = sis.readString();
-                System.err.println("GOT " + fontName + " id: " + fontId);
 
                 fonts[fontIdx] = new FontRecord(fontId, fontName);
 

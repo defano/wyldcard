@@ -13,11 +13,6 @@ public class FieldModelBuilder extends PartModelBuilder<FieldModel, FieldModelBu
         this.fieldModel = new FieldModel(owner, parentPartModel);
     }
 
-    public FieldModelBuilder withStyle(Object v) {
-        this.fieldModel.setKnownProperty(context, FieldModel.PROP_STYLE, new Value(v));
-        return this;
-    }
-
     public FieldModelBuilder withText(Object v) {
         this.fieldModel.setKnownProperty(context, FieldModel.PROP_TEXT, new Value(v));
         return this;

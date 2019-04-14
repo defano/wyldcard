@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 @SuppressWarnings("unused")
-public class CardBlock extends AbstractCardBlock {
+public class CardBlock extends CardLayerBlock {
 
     private int bitmapId;
     private LayerFlag[] flags;

@@ -21,6 +21,7 @@ import java.awt.*;
 public abstract class CardLayerPartModel extends PartModel implements NamedPart {
 
     public static final String PROP_ZORDER = "zorder";
+    public static final String PROP_STYLE = "style";
     public static final String PROP_SELECTEDTEXT = "selectedtext";
     public static final String PROP_SELECTEDLINE = "selectedline";
     public static final String PROP_SELECTEDCHUNK = "selectedchunk";

@@ -18,7 +18,6 @@ import java.util.Map;
  */
 public class ButtonModel extends CardLayerPartModel {
 
-    public static final String PROP_STYLE = "style";
     public static final String PROP_FAMILY = "family";
     public static final String PROP_HILITE = "hilite";
     public static final String PROP_HIGHLITE = "highlite";
@@ -94,7 +93,7 @@ public class ButtonModel extends CardLayerPartModel {
 
         // When an icon has been applied to a button, HyperCard automatically forces the button font to 10pt Geneva
         addPropertyWillChangeObserver((context, property, oldValue, newValue) -> {
-            if (property.equalsIgnoreCase(PROP_ICON) && !newValue.isEmpty()) {
+            if (property.equalsIgnoreCase(PROP_ICON) && !newValue.isZero()) {
                 setKnownProperty(context, PROP_TEXTSIZE, new Value(10));
                 setKnownProperty(context, PROP_TEXTFONT, new Value("Geneva"));
             }

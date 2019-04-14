@@ -160,41 +160,12 @@ public class TextStyleSpecifier {
             sas.addAttribute(StyleConstants.FontSize, fontSize);
         }
 
-        if (isBold) {
-            sas.addAttribute(StyleConstants.Bold, true);
-        } else {
-            sas.removeAttribute(StyleConstants.Bold);
-        }
-
-        if (isItalic) {
-            sas.addAttribute(StyleConstants.Italic, true);
-        } else {
-            sas.removeAttribute(StyleConstants.Italic);
-        }
-
-        if (isUnderline) {
-            sas.addAttribute(StyleConstants.Underline, true);
-        } else {
-            sas.removeAttribute(StyleConstants.Underline);
-        }
-
-        if (isStrikeThrough) {
-            sas.addAttribute(StyleConstants.StrikeThrough, true);
-        } else {
-            sas.removeAttribute(StyleConstants.StrikeThrough);
-        }
-
-        if (isSuperscript) {
-            sas.addAttribute(StyleConstants.Superscript, true);
-        } else {
-            sas.removeAttribute(StyleConstants.Superscript);
-        }
-
-        if (isSubscript) {
-            sas.addAttribute(StyleConstants.Subscript, true);
-        } else {
-            sas.removeAttribute(StyleConstants.Subscript);
-        }
+        sas.addAttribute(StyleConstants.Bold, isBold);
+        sas.addAttribute(StyleConstants.Italic, isItalic);
+        sas.addAttribute(StyleConstants.Underline, isUnderline);
+        sas.addAttribute(StyleConstants.StrikeThrough, isStrikeThrough);
+        sas.addAttribute(StyleConstants.Superscript, isSuperscript);
+        sas.addAttribute(StyleConstants.Subscript, isSubscript);
 
         if (align != null) {
             switch (align.toLowerCase()) {
@@ -255,7 +226,7 @@ public class TextStyleSpecifier {
         }
     }
 
-    public Value appendStyle(Value style) {
+    public void appendStyle(Value style) {
         String v = style.toString().toLowerCase();
         isBold = v.contains("bold") || isBold;
         isItalic = v.contains("italic") || isItalic;
@@ -263,8 +234,6 @@ public class TextStyleSpecifier {
         isSubscript = v.contains("subscript") || isSubscript;
         isSuperscript = v.contains("superscript") || isSuperscript;
         isStrikeThrough = v.contains("strikethrough") || isStrikeThrough;
-
-        return getHyperTalkStyle();
     }
 
     public void setFontStyle(Value value) {

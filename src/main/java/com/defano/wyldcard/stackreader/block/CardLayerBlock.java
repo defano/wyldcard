@@ -14,7 +14,7 @@ import java.io.IOException;
  * Represents the fields common to CARD and BKGD blocks.
  */
 @SuppressWarnings("unused")
-public abstract class AbstractCardBlock extends Block {
+public abstract class CardLayerBlock extends Block {
 
     private short nextPartId;
     private int partListSize;
@@ -26,7 +26,7 @@ public abstract class AbstractCardBlock extends Block {
     private String script; // the card script
 
     @SuppressWarnings("WeakerAccess")
-    public AbstractCardBlock(HyperCardStack stack, BlockType blockType, int blockSize, int blockId, byte[] blockData) {
+    public CardLayerBlock(HyperCardStack stack, BlockType blockType, int blockSize, int blockId, byte[] blockData) {
         super(stack, blockType, blockSize, blockId, blockData);
     }
 

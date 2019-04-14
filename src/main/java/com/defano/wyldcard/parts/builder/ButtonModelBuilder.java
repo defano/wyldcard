@@ -19,11 +19,6 @@ public class ButtonModelBuilder extends PartModelBuilder<ButtonModel, ButtonMode
         return this;
     }
 
-    public ButtonModelBuilder withStyle(Object v) {
-        this.model.setKnownProperty(context, ButtonModel.PROP_STYLE, new Value(v));
-        return this;
-    }
-
     public ButtonModelBuilder withShowName(Object v) {
         this.model.setKnownProperty(context, ButtonModel.PROP_SHOWNAME, new Value(v));
         return this;

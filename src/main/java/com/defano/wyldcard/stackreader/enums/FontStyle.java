@@ -21,7 +21,8 @@ public enum FontStyle {
     public static String asHypertalkList(FontStyle... styles) {
         String styleString = Arrays.toString(styles).toLowerCase();
         if (styleString.length() > 2) {
-            return styleString.substring(1, styleString.length() - 2);
+            // Remove '[' and ']' from Arrays.toString value
+            return styleString.substring(1, styleString.length() - 1);
         } else {
             return "plain";
         }
