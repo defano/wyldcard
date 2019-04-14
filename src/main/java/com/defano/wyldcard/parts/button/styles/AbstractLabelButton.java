@@ -94,6 +94,7 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
             case ButtonModel.PROP_ICON:
                 ButtonIcon icon = IconDatabase.getInstance().findIconForValue(newValue);
                 label.setIcon(icon == null ? null : icon.getIcon());
+                label.setIconTextGap(1);
                 break;
 
             case ButtonModel.PROP_ICONALIGN:

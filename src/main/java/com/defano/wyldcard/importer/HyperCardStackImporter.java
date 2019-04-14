@@ -235,9 +235,6 @@ public class HyperCardStackImporter {
                 .withIsVisible(Arrays.stream(partRecord.getFlags()).noneMatch(f -> f == PartFlag.HIDDEN))
                 .build();
 
-        System.err.println("Building button " + partRecord.getName() + " with font " + block.getStack().getBlock(FontTableBlock.class).getFont(partRecord.getTextFontId()).getFontName());
-
-
         parent.addPartModel(buttonModel);
     }
 
@@ -269,6 +266,8 @@ public class HyperCardStackImporter {
                 .withMultipleLines(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.MULTIPLE_LINES))
                 .withScript(partRecord.getScript())
                 .build();
+
+        System.err.println("Setting wide margins of field " + partRecord.getName() + " to " + Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.WIDE_MARGINS));
 
         parent.addPartModel(fieldModel);
     }

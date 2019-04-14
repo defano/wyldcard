@@ -30,7 +30,6 @@ public abstract class PartModelBuilder<ModelType extends PartModel, BuilderType 
     }
 
     public BuilderType withPartStyle(Object v) {
-        System.err.println("Setting style to " + v);
         build().setKnownProperty(context, CardLayerPartModel.PROP_STYLE, new Value(v));
         return getBuilder();
     }

@@ -115,7 +115,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         this.newProperty(PROP_TEXTFONT, new Value("Geneva"), false);
         this.newProperty(PROP_TEXTSIZE, new Value(12), false);
         this.newProperty(PROP_TEXTSTYLE, new Value("plain"), false);
-        this.newProperty(PROP_TEXTALIGN, new Value("center"), false);
+        this.newProperty(PROP_TEXTALIGN, new Value("left"), false);
 
         this.initialize();
     }
