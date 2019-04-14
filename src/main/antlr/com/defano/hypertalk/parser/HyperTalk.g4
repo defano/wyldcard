@@ -144,6 +144,7 @@ commandStatement
     | 'click' 'at' listExpression                                                                                       # clickCmd
     | 'click' 'at' listExpression 'with' listExpression                                                                 # clickWithKeyCmd
     | 'close' 'file' expression                                                                                         # closeFileCmd
+    | 'close' card 'window'                                                                                             # closeCardWindowCmd
     | 'commandkeydown' expression                                                                                       # commandKeyDownCmd
     | 'controlkey' expression                                                                                           # controlKeyCmd
     | 'optionkey' expression                                                                                            # optionKeyCmd
