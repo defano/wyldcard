@@ -102,7 +102,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
         super.initialize();
 
         // Convert rectangle (consisting of top left and bottom right coordinates) into top, left, height and width
-        newComputedSetterProperty(PROP_RECT, (context, model, propertyName, value) -> {
+        newComputedSetterProperty(PROP_RECT, (context, model, value) -> {
             if (value.isRect()) {
                 model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
                 model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
@@ -113,7 +113,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
             }
         });
 
-        newComputedGetterProperty(PROP_RECT, (context, model, propertyName) -> {
+        newComputedGetterProperty(PROP_RECT, (context, model) -> {
             Value left = model.getKnownProperty(context, PROP_LEFT);
             Value top = model.getKnownProperty(context, PROP_TOP);
             Value height = model.getKnownProperty(context, PROP_HEIGHT);
@@ -122,23 +122,23 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
             return new Value(left.integerValue(), top.integerValue(), left.integerValue() + width.integerValue(), top.integerValue() + height.integerValue());
         });
 
-        newComputedGetterProperty(PROP_RIGHT, (context, model, propertyName) ->
+        newComputedGetterProperty(PROP_RIGHT, (context, model) ->
                 new Value(model.getKnownProperty(context, PROP_LEFT).integerValue() + model.getKnownProperty(context, PROP_WIDTH).integerValue())
         );
 
-        newComputedSetterProperty(PROP_RIGHT, (context, model, propertyName, value) ->
+        newComputedSetterProperty(PROP_RIGHT, (context, model, value) ->
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.integerValue() - model.getKnownProperty(context, PROP_WIDTH).integerValue()))
         );
 
-        newComputedGetterProperty(PROP_BOTTOM, (context, model, propertyName) ->
+        newComputedGetterProperty(PROP_BOTTOM, (context, model) ->
                 new Value(model.getKnownProperty(context, PROP_TOP).integerValue() + model.getKnownProperty(context, PROP_HEIGHT).integerValue())
         );
 
-        newComputedSetterProperty(PROP_BOTTOM, (context, model, propertyName, value) ->
+        newComputedSetterProperty(PROP_BOTTOM, (context, model, value) ->
                 model.setKnownProperty(context, PROP_TOP, new Value(value.integerValue() - model.getKnownProperty(context, PROP_HEIGHT).integerValue()))
         );
 
-        newComputedSetterProperty(PROP_TOPLEFT, (context, model, propertyName, value) -> {
+        newComputedSetterProperty(PROP_TOPLEFT, (context, model, value) -> {
             if (value.isPoint()) {
                 model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
                 model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
@@ -147,11 +147,11 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
             }
         });
 
-        newComputedGetterProperty(PROP_TOPLEFT, (context, model, propertyName) ->
+        newComputedGetterProperty(PROP_TOPLEFT, (context, model) ->
                 new Value(model.getKnownProperty(context, PROP_LEFT).integerValue(), model.getKnownProperty(context, PROP_TOP).integerValue())
         );
 
-        newComputedSetterProperty(PROP_BOTTOMRIGHT, (context, model, propertyName, value) -> {
+        newComputedSetterProperty(PROP_BOTTOMRIGHT, (context, model, value) -> {
             if (value.isPoint()) {
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue()));
                 model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue()));
@@ -161,7 +161,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
         });
         newPropertyAlias(PROP_BOTTOMRIGHT, PROP_BOTRIGHT);
 
-        newComputedGetterProperty(PROP_BOTTOMRIGHT, (context, model, propertyName) ->
+        newComputedGetterProperty(PROP_BOTTOMRIGHT, (context, model) ->
                 new Value(
                         model.getKnownProperty(context, PROP_LEFT).integerValue() + model.getKnownProperty(context, PROP_WIDTH).integerValue(),
                         model.getKnownProperty(context, PROP_TOP).integerValue() + model.getKnownProperty(context, PROP_HEIGHT).integerValue()
@@ -169,13 +169,13 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
         );
 
         newPropertyAlias(PROP_LOCATION, PROP_LOC);
-        newComputedGetterProperty(PROP_LOCATION, (context, model, propertyName) ->
+        newComputedGetterProperty(PROP_LOCATION, (context, model) ->
                 new Value(
                         model.getKnownProperty(context, PROP_LEFT).integerValue() + model.getKnownProperty(context, PROP_WIDTH).integerValue() / 2,
                         model.getKnownProperty(context, PROP_TOP).integerValue() + model.getKnownProperty(context, PROP_HEIGHT).integerValue() / 2
                 )
         );
-        newComputedSetterProperty(PROP_LOCATION, (context, model, propertyName, value) -> {
+        newComputedSetterProperty(PROP_LOCATION, (context, model, value) -> {
             if (value.isPoint()) {
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue() / 2));
                 model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue() / 2));
@@ -197,8 +197,8 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
         });
         newPropertyAlias(PROP_BREAKPOINTS, PROP_CHECKPOINTS);
 
-        newComputedGetterProperty(PROP_SCRIPT, (context, model, propertyName) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
-        newComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> model.setKnownProperty(context, PROP_SCRIPTTEXT, new Value(TwoPhaseParser.commentNonHandlerLines(value.toString()))));
+        newComputedGetterProperty(PROP_SCRIPT, (context, model) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
+        newComputedSetterProperty(PROP_SCRIPT, (context, model, value) -> model.setKnownProperty(context, PROP_SCRIPTTEXT, new Value(TwoPhaseParser.commentNonHandlerLines(value.toString()))));
     }
 
     /**

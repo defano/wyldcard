@@ -128,16 +128,16 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public void initialize() {
         super.initialize();
 
-        newComputedReadOnlyProperty(PROP_NUMBER, (context, model, propertyName) -> new Value(((LayeredPartFinder) ((FieldModel) model).getParentPartModel()).getPartNumber(context, (FieldModel) model, PartType.FIELD)));
+        newComputedReadOnlyProperty(PROP_NUMBER, (context, model) -> new Value(((LayeredPartFinder) ((FieldModel) model).getParentPartModel()).getPartNumber(context, (FieldModel) model, PartType.FIELD)));
 
-        newComputedGetterProperty(PROP_TEXT, (context, model, propertyName) -> new Value(getText(context)));
-        newComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (context, model, propertyName, value) -> replaceText(context, value.toString()));
+        newComputedGetterProperty(PROP_TEXT, (context, model) -> new Value(getText(context)));
+        newComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (context, model, value) -> replaceText(context, value.toString()));
 
-        newComputedReadOnlyProperty(PROP_TEXTHEIGHT, (context, model, propertyName) -> new Value(model.getKnownProperty(context, PROP_TEXTSIZE).integerValue() * 1.33));
+        newComputedReadOnlyProperty(PROP_TEXTHEIGHT, (context, model) -> new Value(model.getKnownProperty(context, PROP_TEXTSIZE).integerValue() * 1.33));
 
-        newComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> getSelectedText(context));
-        newComputedReadOnlyProperty(PROP_SELECTEDCHUNK, (context, model, propertyName) -> getSelectedChunkExpression(context));
-        newComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> getSelectedLineExpression(context));
+        newComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model) -> getSelectedText(context));
+        newComputedReadOnlyProperty(PROP_SELECTEDCHUNK, (context, model) -> getSelectedChunkExpression(context));
+        newComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model) -> getSelectedLineExpression(context));
 
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_DONTWRAP));
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_LOCKTEXT));

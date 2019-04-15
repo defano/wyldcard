@@ -60,9 +60,9 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
         this.currentCardId = new ThreadLocal<>();
         this.currentCardId.set(new ExecutionContext().getCurrentCard().getId(new ExecutionContext()));
 
-        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
-        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));
-        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
+        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model) -> new Value(getLongName(context)));
+        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model) -> new Value(getAbbreviatedName(context)));
+        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model) -> new Value(getShortName(context)));
     }
 
     /** {@inheritDoc} */

@@ -61,8 +61,8 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder, Par
         super.initialize();
 
         // When no name of card is provided, returns 'background id xxx'
-        newComputedGetterProperty(PROP_NAME, (context, model, propertyName) -> {
-            Value raw = model.getRawProperty(propertyName);
+        newComputedGetterProperty(PROP_NAME, (context, model) -> {
+            Value raw = model.getRawProperty(PROP_NAME);
             if (raw == null || raw.isEmpty()) {
                 return new Value("bkgnd id " + model.getKnownProperty(context, PROP_ID));
             } else {
@@ -70,10 +70,10 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder, Par
             }
         });
 
-        newComputedReadOnlyProperty(PROP_NUMBER, (context, model, propertyName) -> new Value(((OrderedPartFinder) ((BackgroundModel) model).getParentPartModel()).getPartNumber(context, (BackgroundModel) model, PartType.CARD)));
-        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
-        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
-        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
+        newComputedReadOnlyProperty(PROP_NUMBER, (context, model) -> new Value(((OrderedPartFinder) ((BackgroundModel) model).getParentPartModel()).getPartNumber(context, (BackgroundModel) model, PartType.CARD)));
+        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model) -> new Value(getLongName(context)));
+        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model) -> new Value(getAbbrevName(context)));
+        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model) -> new Value(getShortName(context)));
     }
 
     @Override

@@ -71,9 +71,9 @@ public class ButtonModel extends CardLayerPartModel {
     public void initialize() {
         super.initialize();
 
-        newComputedReadOnlyProperty(PROP_NUMBER, (context, model, propertyName) -> new Value(((LayeredPartFinder) ((ButtonModel) model).getParentPartModel()).getPartNumber(context, (ButtonModel) model, PartType.BUTTON)));
-        newComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> new Value(getSelectedLineExpression(context)));
-        newComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> {
+        newComputedReadOnlyProperty(PROP_NUMBER, (context, model) -> new Value(((LayeredPartFinder) ((ButtonModel) model).getParentPartModel()).getPartNumber(context, (ButtonModel) model, PartType.BUTTON)));
+        newComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model) -> new Value(getSelectedLineExpression(context)));
+        newComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model) -> {
             List<Value> lines = getKnownProperty(context, PROP_CONTENTS).getLines(context);
             int selectedLineIdx = getKnownProperty(context, PROP_SELECTEDITEM).integerValue() - 1;
 
@@ -88,8 +88,8 @@ public class ButtonModel extends CardLayerPartModel {
         newPropertyAlias(PROP_HILITE, PROP_HIGHLITE, PROP_HILIGHT, PROP_HIGHLIGHT);
         newPropertyAlias(PROP_AUTOHILITE, PROP_AUTOHIGHLITE, PROP_AUTOHILIGHT, PROP_AUTOHIGHLIGHT);
 
-        newComputedGetterProperty(PROP_HILITE, (context, model, propertyName) -> getHilite(context));
-        newComputedSetterProperty(PROP_HILITE, (context, model, propertyName, value) -> setHilite(context, value));
+        newComputedGetterProperty(PROP_HILITE, (context, model) -> getHilite(context));
+        newComputedSetterProperty(PROP_HILITE, (context, model, value) -> setHilite(context, value));
 
         // When an icon has been applied to a button, HyperCard automatically forces the button font to 10pt Geneva
         addPropertyWillChangeObserver((context, property, oldValue, newValue) -> {

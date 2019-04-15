@@ -6,7 +6,6 @@ import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.icons.UserIcon;
-import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.builder.BackgroundModelBuilder;
@@ -90,14 +89,14 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
             userIcons = new HashMap<>();
         }
 
-        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
-        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));
-        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
+        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model) -> new Value(getLongName(context)));
+        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model) -> new Value(getAbbreviatedName(context)));
+        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model) -> new Value(getShortName(context)));
 
-        newComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().x));
-        newComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(value.integerValue(), WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getY()));
-        newComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().y));
-        newComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getX(), value.integerValue()));
+        newComputedGetterProperty(PartModel.PROP_LEFT, (context, model) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().x));
+        newComputedSetterProperty(PartModel.PROP_LEFT, (context, model, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(value.integerValue(), WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getY()));
+        newComputedGetterProperty(PartModel.PROP_TOP, (context, model) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().y));
+        newComputedSetterProperty(PartModel.PROP_TOP, (context, model, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getX(), value.integerValue()));
 
         if (!hasProperty(PartModel.PROP_ID)) {
             newProperty(PartModel.PROP_ID, new Value(UUID.randomUUID().toString().hashCode()), true);

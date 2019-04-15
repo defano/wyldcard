@@ -73,23 +73,23 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
     public void initialize() {
         super.initialize();
 
-        newComputedReadOnlyProperty(PROP_NUMBER, (context, model, propertyName) -> new Value(((OrderedPartFinder) ((CardModel) model).getParentPartModel()).getPartNumber(context, (CardModel) model, PartType.CARD)));
+        newComputedReadOnlyProperty(PROP_NUMBER, (context, model) -> new Value(((OrderedPartFinder) ((CardModel) model).getParentPartModel()).getPartNumber(context, (CardModel) model, PartType.CARD)));
 
-        newComputedReadOnlyProperty(PROP_OWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getName(context)));
-        newComputedReadOnlyProperty(PROP_LONGOWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getLongName(context)));
-        newComputedReadOnlyProperty(PROP_SHORTOWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getShortName(context)));
+        newComputedReadOnlyProperty(PROP_OWNER, (context, model) -> new Value(getBackgroundModel().getName(context)));
+        newComputedReadOnlyProperty(PROP_LONGOWNER, (context, model) -> new Value(getBackgroundModel().getLongName(context)));
+        newComputedReadOnlyProperty(PROP_SHORTOWNER, (context, model) -> new Value(getBackgroundModel().getShortName(context)));
 
-        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
-        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));
-        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
+        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model) -> new Value(getLongName(context)));
+        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model) -> new Value(getAbbreviatedName(context)));
+        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model) -> new Value(getShortName(context)));
 
-        newComputedReadOnlyProperty(PROP_LONGID, (context, model, propertyName) -> new Value(getLongId(context)));
-        newComputedReadOnlyProperty(PROP_ABBREVID, (context, model, propertyName) -> new Value(getAbbrevId(context)));
-        newComputedReadOnlyProperty(PROP_SHORTID, (context, model, propertyName) -> new Value(getShortId(context)));
+        newComputedReadOnlyProperty(PROP_LONGID, (context, model) -> new Value(getLongId(context)));
+        newComputedReadOnlyProperty(PROP_ABBREVID, (context, model) -> new Value(getAbbrevId(context)));
+        newComputedReadOnlyProperty(PROP_SHORTID, (context, model) -> new Value(getShortId(context)));
 
         // When no name of card is provided, returns 'card id xxx'
-        newComputedGetterProperty(PROP_NAME, (context, model, propertyName) -> {
-            Value raw = model.getRawProperty(propertyName);
+        newComputedGetterProperty(PROP_NAME, (context, model) -> {
+            Value raw = model.getRawProperty(PROP_NAME);
             if (raw == null || raw.isEmpty()) {
                 return new Value("card id " + model.getKnownProperty(context, PROP_ID));
             } else {
@@ -97,16 +97,16 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
             }
         });
 
-        newComputedReadOnlyProperty(PROP_TOP, (context, model, propertyName) -> new Value(0));
-        newComputedReadOnlyProperty(PROP_BOTTOM, (context, model, propertyName) -> getKnownProperty(context, PROP_HEIGHT));
-        newComputedReadOnlyProperty(PROP_RIGHT, (context, model, propertyName) -> getKnownProperty(context, PROP_WIDTH));
-        newComputedReadOnlyProperty(PROP_LEFT, (context, model, propertyName) -> new Value(0));
-        newComputedReadOnlyProperty(PROP_TOPLEFT, (context, model, propertyName) -> new Value("0,0"));
-        newComputedReadOnlyProperty(PROP_BOTTOMRIGHT, (context, model, propertyName) -> new Value(new Point(
+        newComputedReadOnlyProperty(PROP_TOP, (context, model) -> new Value(0));
+        newComputedReadOnlyProperty(PROP_BOTTOM, (context, model) -> getKnownProperty(context, PROP_HEIGHT));
+        newComputedReadOnlyProperty(PROP_RIGHT, (context, model) -> getKnownProperty(context, PROP_WIDTH));
+        newComputedReadOnlyProperty(PROP_LEFT, (context, model) -> new Value(0));
+        newComputedReadOnlyProperty(PROP_TOPLEFT, (context, model) -> new Value("0,0"));
+        newComputedReadOnlyProperty(PROP_BOTTOMRIGHT, (context, model) -> new Value(new Point(
                 getKnownProperty(context, PROP_WIDTH).integerValue(),
                 getKnownProperty(context, PROP_HEIGHT).integerValue()
         )));
-        newComputedReadOnlyProperty(PROP_RECT, (context, model, propertyName) -> new Value(new Rectangle(
+        newComputedReadOnlyProperty(PROP_RECT, (context, model) -> new Value(new Rectangle(
                 0,
                 0,
                 getKnownProperty(context, PROP_WIDTH).integerValue(),

@@ -113,8 +113,8 @@ public class WyldCardPropertiesModel implements PropertiesModel {
     public void newComputedReadOnlyProperty(String propertyName, ComputedGetter getter) {
         assertConstructed();
         computedGetters.put(propertyName.toLowerCase(), getter);
-        computedSetters.put(propertyName.toLowerCase(), (context, model, property, value) -> {
-            throw new PropertyPermissionException("Cannot set the property " + property + " because it is immutable.");
+        computedSetters.put(propertyName.toLowerCase(), (context, model, value) -> {
+            throw new PropertyPermissionException("This property is read only.");
         });
     }
 
@@ -155,9 +155,9 @@ public class WyldCardPropertiesModel implements PropertiesModel {
             ComputedSetter setter = computedSetters.get(propertyName);
             if (setter instanceof DispatchComputedSetter) {
                 String finalPropertyName = propertyName;
-                Invoke.onDispatch(() -> ((DispatchComputedSetter) setter).setComputedValue(context, WyldCardPropertiesModel.this, finalPropertyName, value));
+                Invoke.onDispatch(() -> ((DispatchComputedSetter) setter).setComputedValue(context, WyldCardPropertiesModel.this, value));
             } else {
-                setter.setComputedValue(context, this, propertyName, value);
+                setter.setComputedValue(context, this, value);
             }
         } else {
             properties.put(propertyName, value);
@@ -214,10 +214,10 @@ public class WyldCardPropertiesModel implements PropertiesModel {
             if (computedGetters.get(property) instanceof DispatchComputedGetter) {
                 final Value[] value = new Value[1];
                 String finalProperty = property;
-                Invoke.onDispatch(() -> value[0] = computedGetters.get(finalProperty).getComputedValue(context, this, finalProperty));
+                Invoke.onDispatch(() -> value[0] = computedGetters.get(finalProperty).getComputedValue(context, this));
                 return value[0];
             } else {
-                return computedGetters.get(property).getComputedValue(context, this, property);
+                return computedGetters.get(property).getComputedValue(context, this);
             }
         } else {
             return properties.get(property.toLowerCase());
@@ -268,7 +268,7 @@ public class WyldCardPropertiesModel implements PropertiesModel {
 
             if (includeComputedProperties) {
                 for (String property : computedGetters.keySet()) {
-                    Value computedValue = computedGetters.get(property).getComputedValue(context, this, property);
+                    Value computedValue = computedGetters.get(property).getComputedValue(context, this);
                     listener.onPropertyChanged(context, this, property, computedValue, computedValue);
                 }
             }

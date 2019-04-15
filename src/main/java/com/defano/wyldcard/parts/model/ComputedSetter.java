@@ -16,10 +16,9 @@ public interface ComputedSetter {
      *
      * @param context      The execution context.
      * @param model        The {@link WyldCardPropertiesModel} whose property is being set.
-     * @param propertyName The name of the property which is to be set.
      * @param value        The requested value to be set; this method is responsible for transforming this value as
      *                     required.
      * @throws HtSemanticException Thrown to indicate the property cannot accept the given/computed value.
      */
-    void setComputedValue(ExecutionContext context, WyldCardPropertiesModel model, String propertyName, Value value) throws HtSemanticException;
+    void setComputedValue(ExecutionContext context, PropertiesModel model, Value value) throws HtSemanticException;
 }
