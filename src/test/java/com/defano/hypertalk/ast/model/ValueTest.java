@@ -24,7 +24,7 @@ public class ValueTest extends GuiceTest<Value> {
 
     @Test
     public void testIsInteger() {
-        assertTrue(new Value().isInteger());
+        assertFalse(new Value().isInteger());
         assertTrue(new Value("0").isInteger());
         assertTrue(new Value("123").isInteger());
         assertTrue(new Value("-123").isInteger());
