@@ -97,8 +97,25 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
             }
         });
 
-        // Card inherits size and location properties from the stack
-        delegateProperties(Lists.newArrayList(PROP_RECT, PROP_RECTANGLE, PROP_TOP, PROP_LEFT, PROP_BOTTOM, PROP_RIGHT, PROP_TOPLEFT, PROP_BOTTOMRIGHT, PROP_HEIGHT, PROP_WIDTH, StackModel.PROP_RESIZABLE),
+        newComputedReadOnlyProperty(PROP_TOP, (context, model, propertyName) -> new Value(0));
+        newComputedReadOnlyProperty(PROP_BOTTOM, (context, model, propertyName) -> getKnownProperty(context, PROP_HEIGHT));
+        newComputedReadOnlyProperty(PROP_RIGHT, (context, model, propertyName) -> getKnownProperty(context, PROP_WIDTH));
+        newComputedReadOnlyProperty(PROP_LEFT, (context, model, propertyName) -> new Value(0));
+        newComputedReadOnlyProperty(PROP_TOPLEFT, (context, model, propertyName) -> new Value("0,0"));
+        newComputedReadOnlyProperty(PROP_BOTTOMRIGHT, (context, model, propertyName) -> new Value(new Point(
+                getKnownProperty(context, PROP_WIDTH).integerValue(),
+                getKnownProperty(context, PROP_HEIGHT).integerValue()
+        )));
+        newComputedReadOnlyProperty(PROP_RECT, (context, model, propertyName) -> new Value(new Rectangle(
+                0,
+                0,
+                getKnownProperty(context, PROP_WIDTH).integerValue(),
+                getKnownProperty(context, PROP_HEIGHT).integerValue()
+        )));
+        newPropertyAlias(PROP_RECT, PROP_RECTANGLE);
+
+        // Card inherits height and width from the stack
+        delegateProperties(Lists.newArrayList(PROP_HEIGHT, PROP_WIDTH, StackModel.PROP_RESIZABLE),
                 (context, property) -> context.getCurrentStack().getStackModel());
     }
 
