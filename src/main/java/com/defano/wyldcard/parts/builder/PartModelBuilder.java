@@ -91,4 +91,10 @@ public abstract class PartModelBuilder<ModelType extends PartModel, BuilderType 
         build().setKnownProperty(context, CardLayerPartModel.PROP_TEXTALIGN, new Value(v));
         return getBuilder();
     }
+
+    public BuilderType withPartNumber(Object v) {
+        build().setKnownProperty(context, CardLayerPartModel.PROP_ZORDER, new Value(v));
+        return getBuilder();
+    }
+
 }

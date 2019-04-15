@@ -227,6 +227,8 @@ public class HyperCardStackImporter {
                 .withTextAlign(partRecord.getTextAlign().name())
                 .withIconId(partRecord.getIconId())
                 .withScript(partRecord.getScript())
+                .withContents(block.getPartContents(partRecord.getPartId()).getText())
+                .withSelectedItem(partRecord.getFirstSelectedLine())
                 .withShowName(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.SHOW_NAME))
                 .withIsEnabled(Arrays.stream(partRecord.getFlags()).noneMatch(f -> f == PartFlag.DISABLED))
                 .withAutoHilite(Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.AUTO_HILITE))

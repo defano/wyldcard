@@ -97,9 +97,6 @@ public class PartRecord {
     }
 
     public int getFirstSelectedLine() {
-        if (partType == PartType.BUTTON) {
-            throw new IllegalStateException("This value does not apply to button parts.");
-        }
         return iconIdOrFirstSelectedLine;
     }
 

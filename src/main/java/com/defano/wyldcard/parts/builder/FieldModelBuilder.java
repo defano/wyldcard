@@ -13,6 +13,17 @@ public class FieldModelBuilder extends PartModelBuilder<FieldModel, FieldModelBu
         this.fieldModel = new FieldModel(owner, parentPartModel);
     }
 
+    @Override
+    public FieldModelBuilder withPartStyle(Object v) {
+        super.withPartStyle(v);
+
+        if (String.valueOf(v).equalsIgnoreCase("scrolling")) {
+            this.fieldModel.setKnownProperty(context, FieldModel.PROP_SCROLLING, new Value(true));
+        }
+
+        return this;
+    }
+
     public FieldModelBuilder withText(Object v) {
         this.fieldModel.setKnownProperty(context, FieldModel.PROP_TEXT, new Value(v));
         return this;

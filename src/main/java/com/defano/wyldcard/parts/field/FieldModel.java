@@ -135,16 +135,6 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         newComputedReadOnlyProperty(PROP_TEXTHEIGHT, (context, model, propertyName) -> new Value(model.getKnownProperty(context, PROP_TEXTSIZE).integerValue() * 1.33));
 
-
-//        newComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(getTextFontFamily(context, 0, getText(context).length() + 1)));
-//        newComputedSetterProperty(PROP_TEXTFONT, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontFamily(context, 0, getText(context).length() + 1, value));
-//
-//        newComputedGetterProperty(PROP_TEXTSIZE, (context, model, propertyName) -> new Value(getTextFontSize(context, 0, getText(context).length() + 1)));
-//        newComputedSetterProperty(PROP_TEXTSIZE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontSize(context, 0, getText(context).length() + 1, value));
-//
-//        newComputedGetterProperty(PROP_TEXTSTYLE, (context, model, propertyName) -> new Value(getTextFontStyle(context, 0, getText(context).length() + 1)));
-//        newComputedSetterProperty(PROP_TEXTSTYLE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontStyle(context, 0, getText(context).length() + 1, value));
-
         newComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> getSelectedText(context));
         newComputedReadOnlyProperty(PROP_SELECTEDCHUNK, (context, model, propertyName) -> getSelectedChunkExpression(context));
         newComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> getSelectedLineExpression(context));

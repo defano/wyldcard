@@ -3,7 +3,6 @@ package com.defano.wyldcard.parts.builder;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.parts.button.ButtonModel;
-import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.model.PartModel;
 
 public class ButtonModelBuilder extends PartModelBuilder<ButtonModel, ButtonModelBuilder> {
@@ -49,8 +48,8 @@ public class ButtonModelBuilder extends PartModelBuilder<ButtonModel, ButtonMode
         return this;
     }
 
-    public ButtonModelBuilder withPartNumber(Object v) {
-        this.model.setKnownProperty(context, FieldModel.PROP_ZORDER, new Value(v));
+    public ButtonModelBuilder withSelectedItem(Object v) {
+        this.model.setKnownProperty(context, ButtonModel.PROP_SELECTEDITEM, new Value(v));
         return this;
     }
 
