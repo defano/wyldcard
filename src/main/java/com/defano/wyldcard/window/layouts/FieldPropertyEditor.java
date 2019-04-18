@@ -102,27 +102,27 @@ public class FieldPropertyEditor extends WyldCardDialog<FieldModel> implements A
         partLabelValue.setText(partNumber + " of " + partCount);
         idLabelValue.setText(String.valueOf(model.getId(context)));
 
-        fieldName.setText(model.getKnownProperty(context, FieldModel.PROP_NAME).toString());
-        idLabelValue.setText(model.getKnownProperty(context, FieldModel.PROP_ID).toString());
-        fieldTop.setValue(model.getKnownProperty(context, FieldModel.PROP_TOP).integerValue());
-        fieldLeft.setValue(model.getKnownProperty(context, FieldModel.PROP_LEFT).integerValue());
-        fieldHeight.setValue(model.getKnownProperty(context, FieldModel.PROP_HEIGHT).integerValue());
-        fieldWidth.setValue(model.getKnownProperty(context, FieldModel.PROP_WIDTH).integerValue());
-        isLockText.setSelected(model.getKnownProperty(context, FieldModel.PROP_LOCKTEXT).booleanValue());
-        isVisible.setSelected(model.getKnownProperty(context, FieldModel.PROP_VISIBLE).booleanValue());
-        isWrapText.setSelected(model.getKnownProperty(context, FieldModel.PROP_DONTWRAP).booleanValue());
-        showLines.setSelected(model.getKnownProperty(context, FieldModel.PROP_SHOWLINES).booleanValue());
-        style.setSelectedItem(StringUtils.capitalize(model.getKnownProperty(context, FieldModel.PROP_STYLE).toString()));
-        enabled.setSelected(model.getKnownProperty(context, FieldModel.PROP_ENABLED).booleanValue());
-        isWideMargins.setSelected(model.getKnownProperty(context, FieldModel.PROP_WIDEMARGINS).booleanValue());
-        autoTab.setSelected(model.getKnownProperty(context, FieldModel.PROP_AUTOTAB).booleanValue());
-        autoSelect.setSelected(model.getKnownProperty(context, FieldModel.PROP_AUTOSELECT).booleanValue());
-        multipleLines.setSelected(model.getKnownProperty(context, FieldModel.PROP_MULTIPLELINES).booleanValue());
-        scrolling.setSelected(model.getKnownProperty(context, FieldModel.PROP_SCROLLING).booleanValue());
-        dontSearch.setSelected(model.getKnownProperty(context, FieldModel.PROP_DONTSEARCH).booleanValue());
+        fieldName.setText(model.get(context, FieldModel.PROP_NAME).toString());
+        idLabelValue.setText(model.get(context, FieldModel.PROP_ID).toString());
+        fieldTop.setValue(model.get(context, FieldModel.PROP_TOP).integerValue());
+        fieldLeft.setValue(model.get(context, FieldModel.PROP_LEFT).integerValue());
+        fieldHeight.setValue(model.get(context, FieldModel.PROP_HEIGHT).integerValue());
+        fieldWidth.setValue(model.get(context, FieldModel.PROP_WIDTH).integerValue());
+        isLockText.setSelected(model.get(context, FieldModel.PROP_LOCKTEXT).booleanValue());
+        isVisible.setSelected(model.get(context, FieldModel.PROP_VISIBLE).booleanValue());
+        isWrapText.setSelected(model.get(context, FieldModel.PROP_DONTWRAP).booleanValue());
+        showLines.setSelected(model.get(context, FieldModel.PROP_SHOWLINES).booleanValue());
+        style.setSelectedItem(StringUtils.capitalize(model.get(context, FieldModel.PROP_STYLE).toString()));
+        enabled.setSelected(model.get(context, FieldModel.PROP_ENABLED).booleanValue());
+        isWideMargins.setSelected(model.get(context, FieldModel.PROP_WIDEMARGINS).booleanValue());
+        autoTab.setSelected(model.get(context, FieldModel.PROP_AUTOTAB).booleanValue());
+        autoSelect.setSelected(model.get(context, FieldModel.PROP_AUTOSELECT).booleanValue());
+        multipleLines.setSelected(model.get(context, FieldModel.PROP_MULTIPLELINES).booleanValue());
+        scrolling.setSelected(model.get(context, FieldModel.PROP_SCROLLING).booleanValue());
+        dontSearch.setSelected(model.get(context, FieldModel.PROP_DONTSEARCH).booleanValue());
         sharedText.setEnabled(model.getOwner() == Owner.BACKGROUND);
-        sharedText.setSelected(model.getKnownProperty(context, FieldModel.PROP_SHAREDTEXT).booleanValue());
-        multipleLines.setEnabled(model.getKnownProperty(context, FieldModel.PROP_AUTOSELECT).booleanValue());
+        sharedText.setSelected(model.get(context, FieldModel.PROP_SHAREDTEXT).booleanValue());
+        multipleLines.setEnabled(model.get(context, FieldModel.PROP_AUTOSELECT).booleanValue());
 
         textStyleButton.addActionListener(e -> {
             dispose();
@@ -154,24 +154,24 @@ public class FieldPropertyEditor extends WyldCardDialog<FieldModel> implements A
     private void updateProperties() {
         ExecutionContext context = new ExecutionContext();
 
-        model.setKnownProperty(context, FieldModel.PROP_NAME, new Value(fieldName.getText()));
-        model.setKnownProperty(context, FieldModel.PROP_TOP, new Value(fieldTop.getValue()));
-        model.setKnownProperty(context, FieldModel.PROP_LEFT, new Value(fieldLeft.getValue()));
-        model.setKnownProperty(context, FieldModel.PROP_HEIGHT, new Value(fieldHeight.getValue()));
-        model.setKnownProperty(context, FieldModel.PROP_WIDTH, new Value(fieldWidth.getValue()));
-        model.setKnownProperty(context, FieldModel.PROP_LOCKTEXT, new Value(isLockText.isSelected()));
-        model.setKnownProperty(context, FieldModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
-        model.setKnownProperty(context, FieldModel.PROP_DONTWRAP, new Value(isWrapText.isSelected()));
-        model.setKnownProperty(context, FieldModel.PROP_SHOWLINES, new Value(showLines.isSelected()));
-        model.setKnownProperty(context, FieldModel.PROP_STYLE, new Value(String.valueOf(style.getSelectedItem())));
-        model.setKnownProperty(context, FieldModel.PROP_SHAREDTEXT, new Value(sharedText.isSelected()));
-        model.setKnownProperty(context, FieldModel.PROP_ENABLED, new Value(enabled.isSelected()));
-        model.setKnownProperty(context, FieldModel.PROP_WIDEMARGINS, new Value(isWideMargins.isSelected()));
-        model.setKnownProperty(context, FieldModel.PROP_AUTOTAB, new Value(autoTab.isSelected()));
-        model.setKnownProperty(context, FieldModel.PROP_AUTOSELECT, new Value(autoSelect.isSelected()));
-        model.setKnownProperty(context, FieldModel.PROP_MULTIPLELINES, new Value(multipleLines.isSelected()));
-        model.setKnownProperty(context, FieldModel.PROP_SCROLLING, new Value(scrolling.isSelected()));
-        model.setKnownProperty(context, FieldModel.PROP_DONTSEARCH, new Value(dontSearch.isSelected()));
+        model.set(context, FieldModel.PROP_NAME, new Value(fieldName.getText()));
+        model.set(context, FieldModel.PROP_TOP, new Value(fieldTop.getValue()));
+        model.set(context, FieldModel.PROP_LEFT, new Value(fieldLeft.getValue()));
+        model.set(context, FieldModel.PROP_HEIGHT, new Value(fieldHeight.getValue()));
+        model.set(context, FieldModel.PROP_WIDTH, new Value(fieldWidth.getValue()));
+        model.set(context, FieldModel.PROP_LOCKTEXT, new Value(isLockText.isSelected()));
+        model.set(context, FieldModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
+        model.set(context, FieldModel.PROP_DONTWRAP, new Value(isWrapText.isSelected()));
+        model.set(context, FieldModel.PROP_SHOWLINES, new Value(showLines.isSelected()));
+        model.set(context, FieldModel.PROP_STYLE, new Value(String.valueOf(style.getSelectedItem())));
+        model.set(context, FieldModel.PROP_SHAREDTEXT, new Value(sharedText.isSelected()));
+        model.set(context, FieldModel.PROP_ENABLED, new Value(enabled.isSelected()));
+        model.set(context, FieldModel.PROP_WIDEMARGINS, new Value(isWideMargins.isSelected()));
+        model.set(context, FieldModel.PROP_AUTOTAB, new Value(autoTab.isSelected()));
+        model.set(context, FieldModel.PROP_AUTOSELECT, new Value(autoSelect.isSelected()));
+        model.set(context, FieldModel.PROP_MULTIPLELINES, new Value(multipleLines.isSelected()));
+        model.set(context, FieldModel.PROP_SCROLLING, new Value(scrolling.isSelected()));
+        model.set(context, FieldModel.PROP_DONTSEARCH, new Value(dontSearch.isSelected()));
     }
 
     private void onEnabledChanged() {

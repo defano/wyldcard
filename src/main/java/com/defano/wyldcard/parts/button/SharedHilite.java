@@ -20,7 +20,7 @@ public interface SharedHilite {
             hilite = true;
         }
 
-        button.getPartModel().setKnownProperty(context, ButtonModel.PROP_HILITE, new Value(hilite));
+        button.getPartModel().set(context, ButtonModel.PROP_HILITE, new Value(hilite));
 
         if (isSharingHilite(context, button)) {
 
@@ -30,18 +30,18 @@ public interface SharedHilite {
                 }
 
                 if (isSharingHilite(context, thisButton) && getSharedHiliteFamily(context, thisButton) == getSharedHiliteFamily(context, button)) {
-                    thisButton.getPartModel().setKnownProperty(context, ButtonModel.PROP_HILITE, new Value(false));
+                    thisButton.getPartModel().set(context, ButtonModel.PROP_HILITE, new Value(false));
                 }
             }
         }
     }
 
     default boolean isSharingHilite(ExecutionContext context, ButtonPart buttonPart) {
-        int family = buttonPart.getPartModel().getKnownProperty(context, ButtonModel.PROP_FAMILY).integerValue();
+        int family = buttonPart.getPartModel().get(context, ButtonModel.PROP_FAMILY).integerValue();
         return family >= MIN_FAMILY && family <= MAX_FAMILY;
     }
 
     default int getSharedHiliteFamily(ExecutionContext context, ButtonPart buttonPart) {
-        return buttonPart.getPartModel().getKnownProperty(context, ButtonModel.PROP_FAMILY).integerValue();
+        return buttonPart.getPartModel().get(context, ButtonModel.PROP_FAMILY).integerValue();
     }
 }

@@ -101,7 +101,7 @@ public class WyldCardPartToolManager implements PartToolManager {
         @Override
         public void accept(Value value) {
             Optional<ToolEditablePart> selectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
-            selectedPart.ifPresent(part -> part.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTSTYLE, value));
+            selectedPart.ifPresent(part -> part.getPartModel().set(new ExecutionContext(), CardLayerPartModel.PROP_TEXTSTYLE, value));
         }
     }
 
@@ -109,7 +109,7 @@ public class WyldCardPartToolManager implements PartToolManager {
         @Override
         public void accept(Value value) {
             Optional<ToolEditablePart> selectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
-            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTSIZE, value));
+            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().set(new ExecutionContext(), CardLayerPartModel.PROP_TEXTSIZE, value));
         }
     }
 
@@ -117,7 +117,7 @@ public class WyldCardPartToolManager implements PartToolManager {
         @Override
         public void accept(Value value) {
             Optional<ToolEditablePart> selectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
-            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTFONT, value));
+            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().set(new ExecutionContext(), CardLayerPartModel.PROP_TEXTFONT, value));
         }
     }
 
@@ -125,7 +125,7 @@ public class WyldCardPartToolManager implements PartToolManager {
         @Override
         public void accept(Value value) {
             Optional<ToolEditablePart> selectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
-            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTALIGN, value));
+            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().set(new ExecutionContext(), CardLayerPartModel.PROP_TEXTALIGN, value));
         }
     }
 

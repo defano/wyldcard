@@ -16,9 +16,9 @@ import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.wyldcard.parts.util.TextArrowsMessageCompletionObserver;
+import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 
@@ -70,9 +70,9 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
 
         newField.initProperties(context, rectangle, parent.getPartModel());
-        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTFONT, new Value(WyldCard.getInstance().getFontManager().getFocusedTextStyle().getFontFamily()));
-        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSIZE, new Value(WyldCard.getInstance().getFontManager().getFocusedTextStyle().getFontSize()));
-        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSTYLE, WyldCard.getInstance().getFontManager().getFocusedTextStyle().getHyperTalkStyle());
+        newField.partModel.set(context, FieldModel.PROP_TEXTFONT, new Value(WyldCard.getInstance().getFontManager().getFocusedTextStyle().getFontFamily()));
+        newField.partModel.set(context, FieldModel.PROP_TEXTSIZE, new Value(WyldCard.getInstance().getFontManager().getFocusedTextStyle().getFontSize()));
+        newField.partModel.set(context, FieldModel.PROP_TEXTSTYLE, WyldCard.getInstance().getFontManager().getFocusedTextStyle().getHyperTalkStyle());
 
         return newField;
     }
@@ -87,7 +87,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
      * @return The newly created field.
      */
     public static FieldPart fromModel(ExecutionContext context, CardPart parent, FieldModel model) {
-        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(context, FieldModel.PROP_STYLE).toString()), parent, model.getOwner());
+        FieldPart field = new FieldPart(FieldStyle.fromName(model.get(context, FieldModel.PROP_STYLE).toString()), parent, model.getOwner());
 
         model.setCurrentCardId(parent.getId(context));
         field.partModel = model;
@@ -287,7 +287,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
 
     /** {@inheritDoc} */
     @Override
-    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_STYLE:
                 setStyle(context, FieldStyle.fromName(newValue.toString()));

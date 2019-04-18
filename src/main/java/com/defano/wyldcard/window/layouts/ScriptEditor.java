@@ -13,8 +13,8 @@ import com.defano.wyldcard.menubar.script.ScriptEditorMenuBar;
 import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
+import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.HandlerComboBox;
 import com.defano.wyldcard.util.StringUtils;
@@ -67,9 +67,9 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
         editor.addBreakpointToggleObserver(breakpoints -> saveBreakpoints());
 
         editor.getScriptField().setFont(FontUtils.getFontByNameStyleSize(
-                WyldCard.getInstance().getWyldCardPart().getKnownProperty(new ExecutionContext(), WyldCardProperties.PROP_SCRIPTTEXTFONT).toString(),
+                WyldCard.getInstance().getWyldCardPart().get(new ExecutionContext(), WyldCardProperties.PROP_SCRIPTTEXTFONT).toString(),
                 Font.PLAIN,
-                WyldCard.getInstance().getWyldCardPart().getKnownProperty(new ExecutionContext(), WyldCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
+                WyldCard.getInstance().getWyldCardPart().get(new ExecutionContext(), WyldCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
         ));
 
         textArea.add(editor);
@@ -152,12 +152,12 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
 
     @RunOnDispatch
     private void saveScript() {
-        model.setKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT, new Value(editor.getScriptField().getText()));
+        model.set(new ExecutionContext(), PartModel.PROP_SCRIPT, new Value(editor.getScriptField().getText()));
     }
 
     @RunOnDispatch
     private void saveBreakpoints() {
-        model.setKnownProperty(new ExecutionContext(), PartModel.PROP_BREAKPOINTS, Value.ofItems(StringUtils.getValueList(editor.getBreakpoints())));
+        model.set(new ExecutionContext(), PartModel.PROP_BREAKPOINTS, Value.ofItems(StringUtils.getValueList(editor.getBreakpoints())));
     }
 
     @RunOnDispatch
@@ -220,7 +220,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
                     JOptionPane.YES_NO_OPTION);
 
             if (dialogResult == JOptionPane.YES_OPTION) {
-                editor.getScriptField().setText(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).toString());
+                editor.getScriptField().setText(model.get(new ExecutionContext(), PartModel.PROP_SCRIPT).toString());
             }
         }
     }
@@ -412,7 +412,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
 
     @RunOnDispatch
     private boolean isDirty() {
-        return !editor.getScriptField().getText().equals(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).toString());
+        return !editor.getScriptField().getText().equals(model.get(new ExecutionContext(), PartModel.PROP_SCRIPT).toString());
     }
 
     @RunOnDispatch
@@ -553,7 +553,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
     }
 
     @Override
-    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         // Special case: Script text was programatically changed
         if (PartModel.PROP_SCRIPT.equals(property.toLowerCase())) {
             saveCaretPosition();
@@ -568,7 +568,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
      */
     @RunOnDispatch
     private void applyScriptToEditor() {
-        String script = this.model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).toString();
+        String script = this.model.get(new ExecutionContext(), PartModel.PROP_SCRIPT).toString();
         editor.getScriptField().setText(script);
         editor.getScriptField().forceReparsing(0);
 

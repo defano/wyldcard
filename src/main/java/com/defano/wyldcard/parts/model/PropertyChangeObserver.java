@@ -1,10 +1,12 @@
 package com.defano.wyldcard.parts.model;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.properties.SimplePropertiesModel;
+import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
- * An observer of changes to attributes in a {@link WyldCardPropertiesModel}.
+ * An observer of changes to attributes in a {@link SimplePropertiesModel}.
  */
 public interface PropertyChangeObserver {
     /**
@@ -13,11 +15,11 @@ public interface PropertyChangeObserver {
      * Note that this method will fire even when oldValue is equal to newValue.
      *
      * Use {@link PropertyWillChangeObserver} for a synchronous notification of a property change.
-     *
      * @param context The execution context.
+     * @param model
      * @param property The name of the property (attribute) that changed.
      * @param oldValue The attribute's previous value
      * @param newValue The attribute's new value
      */
-    void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue);
+    void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue);
 }

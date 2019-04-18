@@ -32,12 +32,12 @@ public class SetPropertyCmd extends Command {
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
         if (this.part == null) {
-            WyldCard.getInstance().getWyldCardPart().setProperty(context, property, value);
+            WyldCard.getInstance().getWyldCardPart().trySet(context, property, value);
         } else {
             PartModel model = context.getPart(part.factor(context, PartExp.class, new HtSemanticException("Expected to find a part here.")).evaluateAsSpecifier(context));
 
             if (model.hasProperty(property)) {
-                model.setKnownProperty(context, property, value);
+                model.set(context, property, value);
             } else {
                 throw new HtSemanticException("Can't set that property on this part.");
             }

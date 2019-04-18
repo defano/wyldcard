@@ -194,7 +194,7 @@ public class ChunkUtils {
     private static String getItemDelimiterRegex(ExecutionContext context) {
         List<Character> specialChars = Lists.charactersOf("[\\^$.|?*+()");
 
-        String itemDelimiter = WyldCard.getInstance().getWyldCardPart().getKnownProperty(context, WyldCardProperties.PROP_ITEMDELIMITER).toString();
+        String itemDelimiter = WyldCard.getInstance().getWyldCardPart().get(context, WyldCardProperties.PROP_ITEMDELIMITER).toString();
         StringBuilder itemDelimiterRegex = new StringBuilder();
 
         for (char thisChar : itemDelimiter.toCharArray()) {
@@ -230,7 +230,7 @@ public class ChunkUtils {
                 return "\n";
             case ITEMRANGE:
             case ITEM:
-                return WyldCard.getInstance().getWyldCardPart().getKnownProperty(context, WyldCardProperties.PROP_ITEMDELIMITER).toString();
+                return WyldCard.getInstance().getWyldCardPart().get(context, WyldCardProperties.PROP_ITEMDELIMITER).toString();
             default:
                 throw new RuntimeException("Bug! Not implemented: " + chunkType);
         }

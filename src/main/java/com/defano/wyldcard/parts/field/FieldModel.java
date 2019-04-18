@@ -11,7 +11,8 @@ import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
-import com.defano.wyldcard.parts.model.*;
+import com.defano.wyldcard.parts.model.LogicalLinkObserver;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
@@ -89,55 +90,54 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         this.setCurrentCardId(parentPartModel.getId(new ExecutionContext()));
 
-        this.newProperty(PROP_SCRIPT, new Value(), false);
-        this.newProperty(PROP_ID, new Value(), true);
-        this.newProperty(PROP_NAME, new Value(), false);
-        this.newProperty(PROP_LEFT, new Value(), false);
-        this.newProperty(PROP_TOP, new Value(), false);
-        this.newProperty(PROP_WIDTH, new Value(), false);
-        this.newProperty(PROP_HEIGHT, new Value(), false);
-        this.newProperty(PROP_DONTWRAP, new Value(false), false);
-        this.newProperty(PROP_VISIBLE, new Value(true), false);
-        this.newProperty(PROP_LOCKTEXT, new Value(false), false);
-        this.newProperty(PROP_SHOWLINES, new Value(true), false);
-        this.newProperty(PROP_STYLE, new Value(FieldStyle.TRANSPARENT.getName()), false);
-        this.newProperty(PROP_CONTENTS, new Value(""), false);
-        this.newProperty(PROP_SHAREDTEXT, new Value(false), false);
-        this.newProperty(PROP_WIDEMARGINS, new Value(false), false);
-        this.newProperty(PROP_AUTOTAB, new Value(false), false);
-        this.newProperty(PROP_AUTOSELECT, new Value(false), false);
-        this.newProperty(PROP_MULTIPLELINES, new Value(false), false);
-        this.newProperty(PROP_SCROLLING, new Value(false), false);
-        this.newProperty(PROP_SCROLL, new Value(0), false);
-        this.newProperty(PROP_DONTSEARCH, new Value(false), false);
-        this.newProperty(PROP_FIXEDLINEHEIGHT, new Value(false), false);
+        define(PROP_SCRIPT).asValue();
+        define(PROP_ID).asConstant(new Value());
+        define(PROP_NAME).asValue();
+        define(PROP_LEFT).asValue();
+        define(PROP_TOP).asValue();
+        define(PROP_WIDTH).asValue();
+        define(PROP_HEIGHT).asValue();
+        define(PROP_DONTWRAP).asValue(false);
+        define(PROP_VISIBLE).asValue(true);
+        define(PROP_LOCKTEXT).asValue(false);
+        define(PROP_SHOWLINES).asValue(true);;
+        define(PROP_STYLE).asValue(FieldStyle.TRANSPARENT.getName());
+        define(PROP_CONTENTS).asValue();
+        define(PROP_SHAREDTEXT).asValue(false);
+        define(PROP_WIDEMARGINS).asValue(false);
+        define(PROP_AUTOTAB).asValue(false);
+        define(PROP_AUTOSELECT).asValue(false);
+        define(PROP_MULTIPLELINES).asValue(false);
+        define(PROP_SCROLLING).asValue(false);
+        define(PROP_SCROLL).asValue(0);
+        define(PROP_DONTSEARCH).asValue(false);
+        define(PROP_FIXEDLINEHEIGHT).asValue(false);
 
-        this.newProperty(PROP_TEXTFONT, new Value("Geneva"), false);
-        this.newProperty(PROP_TEXTSIZE, new Value(12), false);
-        this.newProperty(PROP_TEXTSTYLE, new Value("plain"), false);
-        this.newProperty(PROP_TEXTALIGN, new Value("left"), false);
+        define(PROP_TEXTFONT).asValue("Geneva");
+        define(PROP_TEXTSIZE).asValue(12);
+        define(PROP_TEXTSTYLE).asValue("plain");;
+        define(PROP_TEXTALIGN).asValue("left");
 
-        this.initialize();
+        this.postConstructFieldModel();
     }
 
     /**
      * {@inheritDoc}
      */
     @PostConstruct
-    @Override
-    public void initialize() {
-        super.initialize();
+    public void postConstructFieldModel() {
+        super.postConstructCardLayerPartModel();
 
-        newComputedReadOnlyProperty(PROP_NUMBER, (context, model) -> new Value(((LayeredPartFinder) ((FieldModel) model).getParentPartModel()).getPartNumber(context, (FieldModel) model, PartType.FIELD)));
+        define(PROP_NUMBER).asComputedReadOnlyValue((context, model) -> new Value(((LayeredPartFinder) ((FieldModel) model).getParentPartModel()).getPartNumber(context, (FieldModel) model, PartType.FIELD)));
 
-        newComputedGetterProperty(PROP_TEXT, (context, model) -> new Value(getText(context)));
-        newComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (context, model, value) -> replaceText(context, value.toString()));
+        define(PROP_TEXT).asComputedValue()
+                .withGetter((context, model) -> new Value(getText(context)))
+                .withSetter((context, model, value) -> replaceText(context, value.toString()));
 
-        newComputedReadOnlyProperty(PROP_TEXTHEIGHT, (context, model) -> new Value(model.getKnownProperty(context, PROP_TEXTSIZE).integerValue() * 1.33));
-
-        newComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model) -> getSelectedText(context));
-        newComputedReadOnlyProperty(PROP_SELECTEDCHUNK, (context, model) -> getSelectedChunkExpression(context));
-        newComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model) -> getSelectedLineExpression(context));
+        define(PROP_TEXTHEIGHT).asComputedReadOnlyValue((context, model) -> new Value(model.get(context, PROP_TEXTSIZE).integerValue() * 1.33));
+        define(PROP_SELECTEDTEXT).asComputedReadOnlyValue((context, model) -> getSelectedText(context));
+        define(PROP_SELECTEDCHUNK).asComputedReadOnlyValue((context, model) -> getSelectedChunkExpression(context));
+        define(PROP_SELECTEDLINE).asComputedReadOnlyValue((context, model) -> getSelectedLineExpression(context));
 
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_DONTWRAP));
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_LOCKTEXT));
@@ -193,13 +193,13 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     private StyledDocument getNewDocument(ExecutionContext context) {
 //        SimpleAttributeSet as = new SimpleAttributeSet();
-//        as.addAttribute(StyleConstants.FontFamily, getKnownProperty(context, FieldModel.PROP_TEXTFONT).toString());
-//        as.addAttribute(StyleConstants.FontSize, getKnownProperty(context, FieldModel.PROP_TEXTSIZE).integerValue());
-//        as.addAttribute(StyleConstants.FontFamily, getKnownProperty(context, FieldModel.PROP_TEXTFONT).toString());
+//        as.addAttribute(StyleConstants.FontFamily, get(context, FieldModel.PROP_TEXTFONT).toString());
+//        as.addAttribute(StyleConstants.FontSize, get(context, FieldModel.PROP_TEXTSIZE).integerValue());
+//        as.addAttribute(StyleConstants.FontFamily, get(context, FieldModel.PROP_TEXTFONT).toString());
 
         Style as = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-        StyleConstants.setFontFamily(as, getKnownProperty(context, FieldModel.PROP_TEXTFONT).toString());
-        StyleConstants.setFontSize(as, getKnownProperty(context, FieldModel.PROP_TEXTSIZE).integerValue());
+        StyleConstants.setFontFamily(as, get(context, FieldModel.PROP_TEXTFONT).toString());
+        StyleConstants.setFontSize(as, get(context, FieldModel.PROP_TEXTSIZE).integerValue());
 
 //        doc.setCharacterAttributes(0, doc.getLength() + 1, as, false);
         StyleContext sc = new StyleContext();
@@ -233,7 +233,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @return True if the model should use sharedText data; false otherwise.
      */
     private boolean isSharedText(ExecutionContext context) {
-        return getOwner() == Owner.CARD || getKnownProperty(context, PROP_SHAREDTEXT).booleanValue();
+        return getOwner() == Owner.CARD || get(context, PROP_SHAREDTEXT).booleanValue();
     }
 
     /**
@@ -598,7 +598,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @return True if auto-selection is enabled; false otherwise
      */
     public boolean isAutoSelection(ExecutionContext context) {
-        return getKnownProperty(context, FieldModel.PROP_AUTOSELECT).booleanValue();
+        return get(context, FieldModel.PROP_AUTOSELECT).booleanValue();
     }
 
     /**

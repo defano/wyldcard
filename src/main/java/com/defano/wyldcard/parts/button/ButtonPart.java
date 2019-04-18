@@ -8,8 +8,8 @@ import com.defano.wyldcard.parts.builder.ButtonModelBuilder;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
+import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.*;
 
@@ -72,7 +72,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
      * @return The new button.
      */
     public static ButtonPart fromModel(ExecutionContext context, CardPart parent, ButtonModel partModel) {
-        ButtonStyle style = ButtonStyle.fromName(partModel.getKnownProperty(context, ButtonModel.PROP_STYLE).toString());
+        ButtonStyle style = ButtonStyle.fromName(partModel.get(context, ButtonModel.PROP_STYLE).toString());
         ButtonPart button = new ButtonPart(style, parent, partModel.getOwner());
 
         button.partModel = partModel;
@@ -190,7 +190,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
 
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_STYLE:
                 setStyle(context, ButtonStyle.fromName(newValue.toString()));

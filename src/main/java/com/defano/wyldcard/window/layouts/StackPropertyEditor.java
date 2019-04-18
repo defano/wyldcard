@@ -45,7 +45,7 @@ public class StackPropertyEditor extends WyldCardDialog<StackModel> {
             model.setDimension(new ExecutionContext(), StackSizeEditor.editStackSize(this.model.getDimension(new ExecutionContext()), getWindowPanel()));
         });
 
-        resizableCheckBox.addActionListener(e -> model.setKnownProperty(new ExecutionContext(), StackModel.PROP_RESIZABLE, new Value(resizableCheckBox.isSelected())));
+        resizableCheckBox.addActionListener(e -> model.set(new ExecutionContext(), StackModel.PROP_RESIZABLE, new Value(resizableCheckBox.isSelected())));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class StackPropertyEditor extends WyldCardDialog<StackModel> {
         backgroundCountLabel.setText(StringUtils.pluralize(model.getBackgroundCount(), "Stack contains %d background.", "Stack contains %d backgrounds."));
         locationLabel.setText(stackFile.map(File::getAbsolutePath).orElse("(Not saved)"));
         sizeLabel.setText(StringUtils.humanReadableFileSize(Serializer.serialize(model).length()));
-        resizableCheckBox.setSelected(model.getKnownProperty(new ExecutionContext(), StackModel.PROP_RESIZABLE).booleanValue());
+        resizableCheckBox.setSelected(model.get(new ExecutionContext(), StackModel.PROP_RESIZABLE).booleanValue());
     }
 
     private void updateProperties() {

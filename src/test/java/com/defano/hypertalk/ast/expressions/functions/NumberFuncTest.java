@@ -66,7 +66,7 @@ public class NumberFuncTest extends GuiceTest<NumberFunc> {
         for (int testValue : nonNegativeIntValues()) {
             Value expectedValue = new Value(testValue);
 
-            Mockito.when(mockWyldCardPart.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
+            Mockito.when(mockWyldCardPart.get(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
             Mockito.when(mockCountableExp.evaluate(mockExecutionContext)).thenReturn(new Value(valueOfItems(testValue)));
 
             assertEquals(expectedValue, uut.onEvaluate(mockExecutionContext));

@@ -515,6 +515,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
 
             return openStack(context, model, inNewWindow);
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

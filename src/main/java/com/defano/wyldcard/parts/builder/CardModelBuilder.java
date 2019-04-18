@@ -20,22 +20,22 @@ public class CardModelBuilder extends PartModelBuilder<CardModel, CardModelBuild
     }
 
     public CardModelBuilder withIsMarked(Object isMarked) {
-        model.newProperty(CardModel.PROP_MARKED, new Value(isMarked), false);
+        model.set(context, CardModel.PROP_MARKED, new Value(isMarked));
         return this;
     }
 
     public CardModelBuilder withCantDelete(Object v) {
-        model.newProperty(CardModel.PROP_CANTDELETE, new Value(v), false);
+        model.set(context, CardModel.PROP_CANTDELETE, new Value(v));
         return this;
     }
 
     public CardModelBuilder withDontSearch(Object v) {
-        model.newProperty(CardModel.PROP_DONTSEARCH, new Value(v), false);
+        model.set(context, CardModel.PROP_DONTSEARCH, new Value(v));
         return this;
     }
 
     public CardModelBuilder withShowPict(Object v) {
-        model.newProperty(CardModel.PROP_SHOWPICT, new Value(v), false);
+        model.set(context, CardModel.PROP_SHOWPICT, new Value(v));
         return this;
     }
 

@@ -1,6 +1,9 @@
 package com.defano.wyldcard.parts.stack;
 
-import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.LengthAdjective;
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.wyldcard.WyldCard;
@@ -40,8 +43,8 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     public static final String PROP_LONGNAME = "long name";
 
     private Map<Integer, BackgroundModel> backgroundModels = new HashMap<>();
-    private Map<String, BufferedImage> userIcons = new HashMap<>();
-    private Map<Integer, BufferedImage> userPatterns = new HashMap<>();
+    private Map<String, BufferedImage> userIcons;
+    private Map<Integer, BufferedImage> userPatterns;
 
     // Model properties that are not HyperTalk-addressable
     private int nextPartId = 0;
@@ -56,26 +59,25 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     public StackModel() {
         super(PartType.STACK, Owner.HYPERCARD, null);
 
-        newProperty(PROP_NAME, new Value("Untitled"), false);
-        newProperty(PROP_WIDTH, new Value(640), false);
-        newProperty(PROP_HEIGHT, new Value(480), false);
-        newProperty(PROP_RESIZABLE, new Value(false), false);
-        newProperty(PROP_CANTPEEK, new Value(false), false);
-        newProperty(PROP_CANTABORT, new Value(false), false);       // TODO: Not implemented
+        define(PROP_NAME).asValue("Untitled");
+        define(PROP_WIDTH).asValue(640);
+        define(PROP_HEIGHT).asValue(480);
+        define(PROP_RESIZABLE).asValue(false);
+        define(PROP_CANTPEEK).asValue(false);
+        define(PROP_CANTABORT).asValue(false);      // TODO: Not implemented
 
-        initialize();
+        postConstructStackModel();
     }
 
     @PostConstruct
     @SuppressWarnings("unused")
     public void postConstruct() {
-        initialize();
+        postConstructStackModel();
         relinkParentPartModel(null);
     }
 
-    @Override
-    public void initialize() {
-        super.initialize();
+    public void postConstructStackModel() {
+        super.postConstructPartModel();
 
         savedStackFileProvider = BehaviorSubject.createDefault(Optional.empty());
 
@@ -89,17 +91,20 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
             userIcons = new HashMap<>();
         }
 
-        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model) -> new Value(getLongName(context)));
-        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model) -> new Value(getAbbreviatedName(context)));
-        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model) -> new Value(getShortName(context)));
+        define(PROP_LONGNAME).asComputedReadOnlyValue((context, model) -> new Value(getLongName(context)));
+        define(PROP_ABBREVNAME).asComputedReadOnlyValue((context, model) -> new Value(getAbbreviatedName(context)));
+        define(PROP_SHORTNAME).asComputedReadOnlyValue((context, model) -> new Value(getShortName(context)));
 
-        newComputedGetterProperty(PartModel.PROP_LEFT, (context, model) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().x));
-        newComputedSetterProperty(PartModel.PROP_LEFT, (context, model, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(value.integerValue(), WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getY()));
-        newComputedGetterProperty(PartModel.PROP_TOP, (context, model) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().y));
-        newComputedSetterProperty(PartModel.PROP_TOP, (context, model, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getX(), value.integerValue()));
+        define(PROP_LEFT).asComputedValue()
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().x))
+                .withSetter((context, model, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(value.integerValue(), WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getY()));
 
-        if (!hasProperty(PartModel.PROP_ID)) {
-            newProperty(PartModel.PROP_ID, new Value(UUID.randomUUID().toString().hashCode()), true);
+        define(PROP_TOP).asComputedValue()
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().y))
+                .withSetter((context, model, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getX(), value.integerValue()));
+
+        if (!hasProperty(PROP_ID)) {
+            define(PROP_ID).asConstant(new Value(UUID.randomUUID().toString().hashCode()));
         }
     }
 
@@ -116,14 +121,8 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     @Override
     public void relinkParentPartModel(PartModel parentPartModel) {
         this.setParentPartModel(parentPartModel);
-
-        for (CardModel thisCard : cardModels) {
-            thisCard.relinkParentPartModel(this);
-        }
-
-        for (BackgroundModel thisBkgnd : backgroundModels.values()) {
-            thisBkgnd.relinkParentPartModel(this);
-        }
+        cardModels.forEach(model -> model.relinkParentPartModel(this));
+        backgroundModels.values().forEach(model -> model.relinkParentPartModel(this));
     }
 
     public Observable<Optional<File>> getSavedStackFileProvider() {
@@ -138,7 +137,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
             filename = filename.substring(0, filename.length() - FILE_EXTENSION.length());
         }
 
-        setKnownProperty(context, PROP_NAME, new Value(filename));
+        set(context, PROP_NAME, new Value(filename));
     }
 
     public void addCard(CardModel cardModel) {
@@ -164,11 +163,11 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     }
 
     public String getStackName(ExecutionContext context) {
-        return getKnownProperty(context, PROP_NAME).toString();
+        return get(context, PROP_NAME).toString();
     }
 
     public void setStackName(ExecutionContext context, String name) {
-        setKnownProperty(context, PROP_NAME, new Value(name));
+        set(context, PROP_NAME, new Value(name));
     }
 
     public List<CardModel> getCardModels() {
@@ -228,11 +227,11 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     }
 
     public boolean isResizable(ExecutionContext context) {
-        return getKnownProperty(context, PROP_RESIZABLE).booleanValue();
+        return get(context, PROP_RESIZABLE).booleanValue();
     }
 
     public void setResizable(ExecutionContext context, boolean resizable) {
-        setKnownProperty(context, PROP_RESIZABLE, new Value(resizable));
+        set(context, PROP_RESIZABLE, new Value(resizable));
     }
 
     public Dimension getSize(ExecutionContext context) {
@@ -240,11 +239,11 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     }
 
     public int getWidth(ExecutionContext context) {
-        return getKnownProperty(context, PROP_WIDTH).integerValue();
+        return get(context, PROP_WIDTH).integerValue();
     }
 
     public int getHeight(ExecutionContext context) {
-        return getKnownProperty(context, PROP_HEIGHT).integerValue();
+        return get(context, PROP_HEIGHT).integerValue();
     }
 
     public Dimension getDimension(ExecutionContext context) {
@@ -252,8 +251,8 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     }
 
     public void setDimension(ExecutionContext context, Dimension dimension) {
-        setKnownProperty(context, PROP_WIDTH, new Value(dimension.width));
-        setKnownProperty(context, PROP_HEIGHT, new Value(dimension.height));
+        set(context, PROP_WIDTH, new Value(dimension.width));
+        set(context, PROP_HEIGHT, new Value(dimension.height));
     }
 
     public BackgroundModel getBackground(int backgroundId) {
@@ -282,7 +281,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
 
     public List<CardModel> getMarkedCards(ExecutionContext context) {
         return getCardModels().stream()
-                .filter(c -> c.getKnownProperty(context, CardModel.PROP_MARKED).booleanValue())
+                .filter(c -> c.get(context, CardModel.PROP_MARKED).booleanValue())
                 .collect(Collectors.toList());
     }
 
@@ -403,7 +402,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
 
     @Override
     public String getShortName(ExecutionContext context) {
-        return getKnownProperty(context, PROP_NAME).toString();
+        return get(context, PROP_NAME).toString();
     }
 
     @Override

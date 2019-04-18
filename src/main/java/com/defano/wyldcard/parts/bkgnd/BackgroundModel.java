@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.bkgnd;
 
 import com.defano.hypertalk.ast.model.LengthAdjective;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
@@ -45,35 +46,32 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder, Par
     public BackgroundModel(StackModel model) {
         super(PartType.BACKGROUND, Owner.STACK, model);
 
-        newProperty(PROP_ID, new Value(), true);
-        newProperty(PROP_NAME, new Value(), false);
-        newProperty(PROP_CANTDELETE, new Value(false), false);
-        newProperty(PROP_DONTSEARCH, new Value(false), false);
-        newProperty(PROP_CONTENTS, new Value(), false);
-        newProperty(PROP_SHOWPICT, new Value(true), false);
+        define(PROP_ID).asConstant(new Value());
+        define(PROP_NAME).asValue();
+        define(PROP_CANTDELETE).asValue(false);
+        define(PROP_DONTSEARCH).asValue(false);
+        define(PROP_CONTENTS).asValue();
+        define(PROP_SHOWPICT).asValue(true);
 
-        initialize();
+        postConstructBackgroundModel();
     }
 
-    @Override
     @PostConstruct
-    public void initialize() {
-        super.initialize();
+    public void postConstructBackgroundModel() {
+        super.postConstructPartModel();
 
-        // When no name of card is provided, returns 'background id xxx'
-        newComputedGetterProperty(PROP_NAME, (context, model) -> {
-            Value raw = model.getRawProperty(PROP_NAME);
+        findProperty(PROP_NAME).value().applyOnGetTransform((context, model, raw) -> {
             if (raw == null || raw.isEmpty()) {
-                return new Value("bkgnd id " + model.getKnownProperty(context, PROP_ID));
+                return new Value("bkgnd id " + model.get(context, PROP_ID));
             } else {
                 return raw;
             }
         });
 
-        newComputedReadOnlyProperty(PROP_NUMBER, (context, model) -> new Value(((OrderedPartFinder) ((BackgroundModel) model).getParentPartModel()).getPartNumber(context, (BackgroundModel) model, PartType.CARD)));
-        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model) -> new Value(getLongName(context)));
-        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model) -> new Value(getAbbrevName(context)));
-        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model) -> new Value(getShortName(context)));
+        define(PROP_NUMBER).asComputedReadOnlyValue((context, model) -> new Value(((OrderedPartFinder) ((BackgroundModel) model).getParentPartModel()).getPartNumber(context, (BackgroundModel) model, PartType.CARD)));
+        define(PROP_LONGNAME).asComputedReadOnlyValue((context, model) -> new Value(getLongName(context)));
+        define(PROP_ABBREVNAME).asComputedReadOnlyValue((context, model) -> new Value(getAbbrevName(context)));
+        define(PROP_SHORTNAME).asComputedReadOnlyValue((context, model) -> new Value(getShortName(context)));
     }
 
     @Override
@@ -179,12 +177,15 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder, Par
     }
 
     public boolean hasName() {
-        Value raw = getRawProperty(PROP_NAME);
-        return raw != null && !raw.isEmpty();
+        try {
+            return !findProperty(PROP_NAME).value().get(new ExecutionContext(), null).isEmpty();
+        } catch (HtException e) {
+            return false;
+        }
     }
 
     public String getShortName(ExecutionContext context) {
-        return getKnownProperty(context, PROP_NAME).toString();
+        return get(context, PROP_NAME).toString();
     }
 
     public String getAbbrevName(ExecutionContext context) {

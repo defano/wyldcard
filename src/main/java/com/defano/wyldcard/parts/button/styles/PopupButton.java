@@ -6,8 +6,8 @@ import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.HyperCardButton;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
@@ -56,10 +56,15 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
     }
 
     @Override
-    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public ToolEditablePart getToolEditablePart() {
+        return toolEditablePart;
+    }
+
+    @Override
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case PartModel.PROP_CONTENTS:
-                int lastSelection = model.getKnownProperty(context, ButtonModel.PROP_SELECTEDITEM).integerValue();
+                int lastSelection = model.get(context, ButtonModel.PROP_SELECTEDITEM).integerValue();
                 putValueInMenu(context, newValue);
                 selectItem(lastSelection);
                 break;
@@ -97,7 +102,7 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
         }
 
         // Convert item list to line list
-        toolEditablePart.getPartModel().setKnownProperty(context, PartModel.PROP_CONTENTS, Value.ofLines(items), true);
+        toolEditablePart.getPartModel().setQuietly(context, PartModel.PROP_CONTENTS, Value.ofLines(items));
     }
 
     private boolean isDividerElement(Object element) {
@@ -111,7 +116,7 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
             if (isDividerElement(getSelectedItem())) {
                 setSelectedIndex(0);
             } else {
-                toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_SELECTEDITEM, new Value(getSelectedIndex() + 1), true);
+                toolEditablePart.getPartModel().setQuietly(new ExecutionContext(), ButtonModel.PROP_SELECTEDITEM, new Value(getSelectedIndex() + 1));
             }
         }
     }

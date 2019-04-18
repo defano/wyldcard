@@ -113,18 +113,18 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         partLabelValue.setText(partNumber + " of " + partCount);
         idLabelValue.setText(String.valueOf(model.getId(context)));
 
-        buttonName.setText(model.getKnownProperty(context, ButtonModel.PROP_NAME).toString());
-        buttonTop.setValue(model.getKnownProperty(context, ButtonModel.PROP_TOP).integerValue());
-        buttonLeft.setValue(model.getKnownProperty(context, ButtonModel.PROP_LEFT).integerValue());
-        buttonHeight.setValue(model.getKnownProperty(context, ButtonModel.PROP_HEIGHT).integerValue());
-        buttonWidth.setValue(model.getKnownProperty(context, ButtonModel.PROP_WIDTH).integerValue());
-        isEnabled.setSelected(model.getKnownProperty(context, ButtonModel.PROP_ENABLED).booleanValue());
-        isShowTitle.setSelected(model.getKnownProperty(context, ButtonModel.PROP_SHOWNAME).booleanValue());
-        isVisible.setSelected(model.getKnownProperty(context, ButtonModel.PROP_VISIBLE).booleanValue());
-        style.setSelectedItem(ButtonStyle.fromName(model.getKnownProperty(context, ButtonModel.PROP_STYLE).toString()));
-        family.setSelectedItem(model.getKnownProperty(context, ButtonModel.PROP_FAMILY).toString());
-        autoHilite.setSelected(model.getKnownProperty(context, ButtonModel.PROP_AUTOHILIGHT).booleanValue());
-        sharedHilite.setSelected(model.getKnownProperty(context, ButtonModel.PROP_SHAREDHILITE).booleanValue());
+        buttonName.setText(model.get(context, ButtonModel.PROP_NAME).toString());
+        buttonTop.setValue(model.get(context, ButtonModel.PROP_TOP).integerValue());
+        buttonLeft.setValue(model.get(context, ButtonModel.PROP_LEFT).integerValue());
+        buttonHeight.setValue(model.get(context, ButtonModel.PROP_HEIGHT).integerValue());
+        buttonWidth.setValue(model.get(context, ButtonModel.PROP_WIDTH).integerValue());
+        isEnabled.setSelected(model.get(context, ButtonModel.PROP_ENABLED).booleanValue());
+        isShowTitle.setSelected(model.get(context, ButtonModel.PROP_SHOWNAME).booleanValue());
+        isVisible.setSelected(model.get(context, ButtonModel.PROP_VISIBLE).booleanValue());
+        style.setSelectedItem(ButtonStyle.fromName(model.get(context, ButtonModel.PROP_STYLE).toString()));
+        family.setSelectedItem(model.get(context, ButtonModel.PROP_FAMILY).toString());
+        autoHilite.setSelected(model.get(context, ButtonModel.PROP_AUTOHILIGHT).booleanValue());
+        sharedHilite.setSelected(model.get(context, ButtonModel.PROP_SHAREDHILITE).booleanValue());
 
         // Shared hilite option only available on background buttons
         sharedHilite.setEnabled(model.getOwner() != Owner.CARD);
@@ -145,26 +145,26 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
     private void updateProperties() {
         ExecutionContext context = new ExecutionContext();
 
-        model.setKnownProperty(context, ButtonModel.PROP_NAME, new Value(buttonName.getText()));
-        model.setKnownProperty(context, ButtonModel.PROP_TOP, new Value(buttonTop.getValue()));
-        model.setKnownProperty(context, ButtonModel.PROP_LEFT, new Value(buttonLeft.getValue()));
-        model.setKnownProperty(context, ButtonModel.PROP_HEIGHT, new Value(buttonHeight.getValue()));
-        model.setKnownProperty(context, ButtonModel.PROP_WIDTH, new Value(buttonWidth.getValue()));
-        model.setKnownProperty(context, ButtonModel.PROP_ENABLED, new Value(isEnabled.isSelected()));
-        model.setKnownProperty(context, ButtonModel.PROP_SHOWNAME, new Value(isShowTitle.isSelected()));
-        model.setKnownProperty(context, ButtonModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
-        model.setKnownProperty(context, ButtonModel.PROP_STYLE, new Value(String.valueOf(style.getSelectedItem())));
-        model.setKnownProperty(context, ButtonModel.PROP_FAMILY, new Value(String.valueOf(family.getSelectedItem())));
-        model.setKnownProperty(context, ButtonModel.PROP_AUTOHILIGHT, new Value(autoHilite.isSelected()));
-        model.setKnownProperty(context, ButtonModel.PROP_SHAREDHILITE, new Value(sharedHilite.isSelected()));
+        model.set(context, ButtonModel.PROP_NAME, new Value(buttonName.getText()));
+        model.set(context, ButtonModel.PROP_TOP, new Value(buttonTop.getValue()));
+        model.set(context, ButtonModel.PROP_LEFT, new Value(buttonLeft.getValue()));
+        model.set(context, ButtonModel.PROP_HEIGHT, new Value(buttonHeight.getValue()));
+        model.set(context, ButtonModel.PROP_WIDTH, new Value(buttonWidth.getValue()));
+        model.set(context, ButtonModel.PROP_ENABLED, new Value(isEnabled.isSelected()));
+        model.set(context, ButtonModel.PROP_SHOWNAME, new Value(isShowTitle.isSelected()));
+        model.set(context, ButtonModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
+        model.set(context, ButtonModel.PROP_STYLE, new Value(String.valueOf(style.getSelectedItem())));
+        model.set(context, ButtonModel.PROP_FAMILY, new Value(String.valueOf(family.getSelectedItem())));
+        model.set(context, ButtonModel.PROP_AUTOHILIGHT, new Value(autoHilite.isSelected()));
+        model.set(context, ButtonModel.PROP_SHAREDHILITE, new Value(sharedHilite.isSelected()));
     }
 
     @RunOnDispatch
     private void showContentsEditor() {
         dispose();
-        String contents = PartContentsEditor.editContents(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_CONTENTS).toString(), getWindowPanel());
+        String contents = PartContentsEditor.editContents(model.get(new ExecutionContext(), PartModel.PROP_CONTENTS).toString(), getWindowPanel());
         if (contents != null) {
-            model.setKnownProperty(new ExecutionContext(), PartModel.PROP_CONTENTS, new Value(contents));
+            model.set(new ExecutionContext(), PartModel.PROP_CONTENTS, new Value(contents));
         }
     }
 

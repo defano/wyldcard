@@ -30,9 +30,9 @@ import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.util.TextArrowsMessageCompletionObserver;
+import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.PartTable;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
@@ -260,7 +260,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
                     if (!visible) {
                         getPart(thisPartModel).getComponent().setVisible(false);
                     } else {
-                        getPart(thisPartModel).getComponent().setVisible(thisPartModel.getKnownProperty(context, PartModel.PROP_VISIBLE).booleanValue());
+                        getPart(thisPartModel).getComponent().setVisible(thisPartModel.get(context, PartModel.PROP_VISIBLE).booleanValue());
                     }
                 }
             }
@@ -699,7 +699,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         if (CardModel.PROP_SHOWPICT.equals(property.toLowerCase())) {
             if (model == getPartModel()) {
                 setCardImageVisible(newValue.booleanValue());

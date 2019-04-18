@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.model;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
@@ -38,9 +39,9 @@ public class LogicalLinkObserver implements PropertyChangeObserver {
     }
 
     @Override
-    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         if (property.equalsIgnoreCase(whenProperty) && newValue.booleanValue() == whenState) {
-            model.setKnownProperty(context, thenProperty, new Value(thenState));
+            model.set(context, thenProperty, new Value(thenState));
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.button;
 
+import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 
 /**
@@ -8,4 +9,5 @@ import com.defano.wyldcard.parts.model.PropertyChangeObserver;
  */
 public interface HyperCardButton extends PropertyChangeObserver {
 
+    ToolEditablePart getToolEditablePart();
 }

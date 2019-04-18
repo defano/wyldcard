@@ -7,6 +7,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.properties.value.BasicValue;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.WyldCardDialog;
@@ -53,10 +54,10 @@ public class CardPropertyEditor extends WyldCardDialog<CardPart> {
     private void updateProperties() {
         ExecutionContext context = new ExecutionContext();
 
-        cardModel.setKnownProperty(context, CardModel.PROP_NAME, new Value(cardName.getText()));
-        cardModel.setKnownProperty(context, CardModel.PROP_MARKED, new Value(cardMarkedCheckBox.isSelected()));
-        cardModel.setKnownProperty(context, CardModel.PROP_CANTDELETE, new Value(cantDeleteCardCheckBox.isSelected()));
-        cardModel.setKnownProperty(context, CardModel.PROP_DONTSEARCH, new Value(dontSearchCheckBox.isSelected()));
+        cardModel.set(context, CardModel.PROP_NAME, new Value(cardName.getText()));
+        cardModel.set(context, CardModel.PROP_MARKED, new Value(cardMarkedCheckBox.isSelected()));
+        cardModel.set(context, CardModel.PROP_CANTDELETE, new Value(cantDeleteCardCheckBox.isSelected()));
+        cardModel.set(context, CardModel.PROP_DONTSEARCH, new Value(dontSearchCheckBox.isSelected()));
     }
 
     @Override
@@ -76,15 +77,15 @@ public class CardPropertyEditor extends WyldCardDialog<CardPart> {
         cardModel = card.getPartModel();
 
         // Don't display "default" name ('card id xxx')
-        Value cardNameValue = cardModel.getRawProperty(CardModel.PROP_NAME);
+        Value cardNameValue = ((BasicValue) cardModel.findProperty(CardModel.PROP_NAME).value()).rawValue();
         if (cardNameValue != null && !cardNameValue.isEmpty()) {
-            cardName.setText(cardModel.getKnownProperty(context, CardModel.PROP_NAME).toString());
+            cardName.setText(cardModel.get(context, CardModel.PROP_NAME).toString());
         }
 
-        cardMarkedCheckBox.setSelected(cardModel.getKnownProperty(context, CardModel.PROP_MARKED).booleanValue());
-        cantDeleteCardCheckBox.setSelected(cardModel.getKnownProperty(context, CardModel.PROP_CANTDELETE).booleanValue());
-        dontSearchCheckBox.setSelected(cardModel.getKnownProperty(context, CardModel.PROP_DONTSEARCH).booleanValue());
-        cardIdLabel.setText(String.valueOf(cardModel.getKnownProperty(context, CardModel.PROP_ID).toString()));
+        cardMarkedCheckBox.setSelected(cardModel.get(context, CardModel.PROP_MARKED).booleanValue());
+        cantDeleteCardCheckBox.setSelected(cardModel.get(context, CardModel.PROP_CANTDELETE).booleanValue());
+        dontSearchCheckBox.setSelected(cardModel.get(context, CardModel.PROP_DONTSEARCH).booleanValue());
+        cardIdLabel.setText(String.valueOf(cardModel.get(context, CardModel.PROP_ID).toString()));
 
         long fieldCount = card.getPartModel().getPartCount(context, PartType.FIELD, Owner.CARD);
         long buttonCount = card.getPartModel().getPartCount(context, PartType.BUTTON, Owner.CARD);
@@ -99,10 +100,10 @@ public class CardPropertyEditor extends WyldCardDialog<CardPart> {
 
     private void showContentsEditor() {
         ExecutionContext context = new ExecutionContext();
-        String contents = PartContentsEditor.editContents(cardModel.getKnownProperty(context, PartModel.PROP_CONTENTS).toString(), getWindowPanel());
+        String contents = PartContentsEditor.editContents(cardModel.get(context, PartModel.PROP_CONTENTS).toString(), getWindowPanel());
 
         if (contents != null) {
-            cardModel.setKnownProperty(context, PartModel.PROP_CONTENTS, new Value(contents));
+            cardModel.set(context, PartModel.PROP_CONTENTS, new Value(contents));
         }
     }
 

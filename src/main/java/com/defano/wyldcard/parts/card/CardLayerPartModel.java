@@ -1,15 +1,15 @@
 package com.defano.wyldcard.parts.card;
 
 import com.defano.hypertalk.ast.model.LengthAdjective;
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.ast.model.Value;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
@@ -41,28 +41,27 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
     public CardLayerPartModel(PartType type, Owner owner, PartModel parentPartModel) {
         super(type, owner, parentPartModel);
 
-        newProperty(PROP_ZORDER, new Value(0), false);
-        newProperty(PROP_SELECTEDTEXT, new Value(""), true);
-        newProperty(PROP_SELECTEDLINE, new Value(""), true);
-        newProperty(PROP_SELECTEDCHUNK, new Value(""), true);
-        newProperty(PROP_TEXTSIZE, new Value(((Font) UIManager.get("Button.font")).getSize()), false);
-        newProperty(PROP_TEXTFONT, new Value(((Font) UIManager.get("Button.font")).getFamily()), false);
-        newProperty(PROP_TEXTSTYLE, new Value("plain"), false);
-        newProperty(PROP_TEXTALIGN, new Value("center"), false);
-        newProperty(PROP_ENABLED, new Value(true), false);
+        define(PROP_ZORDER).asValue(0);
+        define(PROP_SELECTEDTEXT).asValue();
+        define(PROP_SELECTEDLINE).asValue();
+        define(PROP_SELECTEDCHUNK).asValue();
+        define(PROP_TEXTSIZE).asValue(((Font) UIManager.get("Button.font")).getSize());
+        define(PROP_TEXTFONT).asValue(((Font) UIManager.get("Button.font")).getFamily());
+        define(PROP_TEXTSTYLE).asValue("plain");
+        define(PROP_TEXTALIGN).asValue("center");
+        define(PROP_ENABLED).asValue(true);
     }
 
     @PostConstruct
-    @Override
-    public void initialize() {
-        super.initialize();
+    public void postConstructCardLayerPartModel() {
+        super.postConstructAdvancedPropertiesModel();
 
         this.currentCardId = new ThreadLocal<>();
         this.currentCardId.set(new ExecutionContext().getCurrentCard().getId(new ExecutionContext()));
 
-        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model) -> new Value(getLongName(context)));
-        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model) -> new Value(getAbbreviatedName(context)));
-        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model) -> new Value(getShortName(context)));
+        define(PROP_LONGNAME).asComputedReadOnlyValue((context, model) -> new Value(getLongName(context)));
+        define(PROP_ABBREVNAME).asComputedReadOnlyValue((context, model) -> new Value(getAbbreviatedName(context)));
+        define(PROP_SHORTNAME).asComputedReadOnlyValue((context, model) -> new Value(getShortName(context)));
     }
 
     /** {@inheritDoc} */
@@ -82,23 +81,23 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
 
     public TextStyleSpecifier getTextStyle(ExecutionContext context) {
         return TextStyleSpecifier.fromAlignNameStyleSize(
-                getKnownProperty(context, PROP_TEXTALIGN),
-                getKnownProperty(context, PROP_TEXTFONT),
-                getKnownProperty(context, PROP_TEXTSTYLE),
-                getKnownProperty(context, PROP_TEXTSIZE));
+                get(context, PROP_TEXTALIGN),
+                get(context, PROP_TEXTFONT),
+                get(context, PROP_TEXTSTYLE),
+                get(context, PROP_TEXTSIZE));
     }
 
     public void setTextStyle(ExecutionContext context, TextStyleSpecifier style) {
         if (style != null) {
             if (style.getFontSize() > 0) {
-                setKnownProperty(context, PROP_TEXTSIZE, new Value(style.getFontSize()));
+                set(context, PROP_TEXTSIZE, new Value(style.getFontSize()));
             }
 
             if (style.getFontFamily() != null) {
-                setKnownProperty(context, PROP_TEXTFONT, new Value(style.getFontFamily()));
+                set(context, PROP_TEXTFONT, new Value(style.getFontFamily()));
             }
 
-            setKnownProperty(context, PROP_TEXTSTYLE, style.getHyperTalkStyle());
+            set(context, PROP_TEXTSTYLE, style.getHyperTalkStyle());
         }
     }
 
@@ -193,7 +192,7 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
 
     @Override
     public String getShortName(ExecutionContext context) {
-        return getKnownProperty(context, PROP_NAME).toString();
+        return get(context, PROP_NAME).toString();
     }
 
     @Override
@@ -229,6 +228,6 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
 
         return getLayer().hyperTalkName + " " +
                 getType().hypertalkName + " " +
-                getKnownProperty(context, PROP_NUMBER);
+                get(context, PROP_NUMBER);
     }
 }

@@ -65,7 +65,7 @@ public interface CardLayerPart<T extends PartModel> extends Part<T> {
 
         for (int index = 0; index < parts.size(); index++) {
             PartModel thisPart = parts.get(index);
-            thisPart.setKnownProperty(context, CardLayerPartModel.PROP_ZORDER, new Value(index), true);
+            thisPart.setQuietly(context, CardLayerPartModel.PROP_ZORDER, new Value(index));
         }
 
         card.onDisplayOrderChanged(context);

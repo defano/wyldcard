@@ -432,11 +432,11 @@ public class ExecutionContext {
      * @throws NoSuchPropertyException Thrown if the property does not exist on the given part
      * @throws PartException           Thrown if the part does not exist
      */
-    public Value getProperty(String property, PartSpecifier ps) throws NoSuchPropertyException, PartException {
+    public Value getProperty(String property, PartSpecifier ps) throws HtException {
         if (ps == null) {
-            return WyldCard.getInstance().getWyldCardPart().getProperty(this, property);
+            return WyldCard.getInstance().getWyldCardPart().tryGet(this, property);
         } else {
-            return getPart(ps).getProperty(this, property);
+            return getPart(ps).tryGet(this, property);
         }
     }
 
@@ -461,9 +461,9 @@ public class ExecutionContext {
         }
 
         if (ps == null) {
-            WyldCard.getInstance().getWyldCardPart().setProperty(this, property, mutable);
+            WyldCard.getInstance().getWyldCardPart().trySet(this, property, mutable);
         } else {
-            getPart(ps).setProperty(this, property, mutable);
+            getPart(ps).trySet(this, property, mutable);
         }
     }
 

@@ -30,7 +30,7 @@ public class ShowAtCmd extends Command {
             throw new HtSemanticException("Expected a location, but got " + location.toString());
         }
 
-        part.setKnownProperty(context, PartModel.PROP_LOC, location);
-        part.setKnownProperty(context, PartModel.PROP_VISIBLE, new Value(true));
+        part.set(context, PartModel.PROP_LOC, location);
+        part.set(context, PartModel.PROP_VISIBLE, new Value(true));
     }
 }

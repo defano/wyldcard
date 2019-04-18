@@ -140,7 +140,7 @@ public class SearchIndexer {
     private static void indexField(ExecutionContext context, SearchQuery query, FieldModel fieldModel, int cardIndex, List<SearchResult> results) {
 
         // Ignore fields marked "don't search"
-        if (fieldModel.getKnownProperty(context, FieldModel.PROP_DONTSEARCH).booleanValue()) {
+        if (fieldModel.get(context, FieldModel.PROP_DONTSEARCH).booleanValue()) {
             return;
         }
 
@@ -172,8 +172,8 @@ public class SearchIndexer {
      */
     private static boolean isCardSearchable(ExecutionContext context, SearchQuery query, CardModel cardModel) {
         return (!query.isSearchOnlyMarkedCards() || cardModel.isMarked(context)) &&
-                !cardModel.getKnownProperty(context, CardModel.PROP_DONTSEARCH).booleanValue()
-                && !cardModel.getBackgroundModel().getKnownProperty(context, BackgroundModel.PROP_DONTSEARCH).booleanValue();
+                !cardModel.get(context, CardModel.PROP_DONTSEARCH).booleanValue()
+                && !cardModel.getBackgroundModel().get(context, BackgroundModel.PROP_DONTSEARCH).booleanValue();
     }
 
 }

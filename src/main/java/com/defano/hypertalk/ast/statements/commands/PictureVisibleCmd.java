@@ -35,9 +35,9 @@ public class PictureVisibleCmd extends Command {
         if (layerExpression == null) {
             CardModel currentCard = context.getCurrentCard().getPartModel();
             if (owningLayer == Owner.CARD) {
-                currentCard.setKnownProperty(context, CardModel.PROP_SHOWPICT, visibility);
+                currentCard.set(context, CardModel.PROP_SHOWPICT, visibility);
             } else if (owningLayer == Owner.BACKGROUND) {
-                currentCard.getBackgroundModel().setKnownProperty(context, BackgroundModel.PROP_SHOWPICT, visibility);
+                currentCard.getBackgroundModel().set(context, BackgroundModel.PROP_SHOWPICT, visibility);
             } else {
                 throw new IllegalArgumentException("Bug! Invalid picture layer.");
             }
@@ -47,13 +47,13 @@ public class PictureVisibleCmd extends Command {
         else {
             CardModel cardModel = layerExpression.partFactor(context, CardModel.class);
             if (cardModel != null) {
-                cardModel.setKnownProperty(context, CardModel.PROP_SHOWPICT, visibility);
+                cardModel.set(context, CardModel.PROP_SHOWPICT, visibility);
                 return;
             }
 
             BackgroundModel backgroundModel = layerExpression.partFactor(context, BackgroundModel.class);
             if (backgroundModel != null) {
-                backgroundModel.setKnownProperty(context, BackgroundModel.PROP_SHOWPICT, visibility);
+                backgroundModel.set(context, BackgroundModel.PROP_SHOWPICT, visibility);
                 return;
             }
 

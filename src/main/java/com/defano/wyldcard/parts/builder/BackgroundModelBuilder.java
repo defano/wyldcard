@@ -16,17 +16,17 @@ public class BackgroundModelBuilder extends PartModelBuilder<BackgroundModel, Ba
     }
 
     public BackgroundModelBuilder withCantDelete(Object v) {
-        model.newProperty(CardModel.PROP_CANTDELETE, new Value(v), false);
+        model.set(context, CardModel.PROP_CANTDELETE, new Value(v));
         return this;
     }
 
     public BackgroundModelBuilder withDontSearch(Object v) {
-        model.newProperty(CardModel.PROP_DONTSEARCH, new Value(v), false);
+        model.set(context, CardModel.PROP_DONTSEARCH, new Value(v));
         return this;
     }
 
     public BackgroundModelBuilder withShowPict(Object v) {
-        model.newProperty(CardModel.PROP_SHOWPICT, new Value(v), false);
+        model.set(context, CardModel.PROP_SHOWPICT, new Value(v));
         return this;
     }
 

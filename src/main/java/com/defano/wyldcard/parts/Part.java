@@ -2,6 +2,7 @@ package com.defano.wyldcard.parts;
 
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;
@@ -65,8 +66,8 @@ public interface Part<T extends PartModel> {
      * @throws PropertyPermissionException Thrown when attempting to write a read-only property (like ID)
      * @throws HtSemanticException Thrown if value provided is invalid for this property
      */
-    default void setProperty(ExecutionContext context, String property, Value value) throws HtSemanticException {
-        getPartModel().setProperty(context, property, value);
+    default void setProperty(ExecutionContext context, String property, Value value) throws HtException {
+        getPartModel().trySet(context, property, value);
     }
 
     /**
@@ -77,8 +78,8 @@ public interface Part<T extends PartModel> {
      * @return The value of the property
      * @throws NoSuchPropertyException Thrown if no such property exists on the part.
      */
-    default Value getProperty(ExecutionContext context, String property) throws NoSuchPropertyException {
-        return getPartModel().getProperty(context, property);
+    default Value getProperty(ExecutionContext context, String property) throws HtException {
+        return getPartModel().tryGet(context, property);
     }
 
     /**
@@ -96,7 +97,7 @@ public interface Part<T extends PartModel> {
      * @param context The execution context.
      */
     default int getId(ExecutionContext context) {
-        return getPartModel().getKnownProperty(context, PartModel.PROP_ID).integerValue();
+        return getPartModel().get(context, PartModel.PROP_ID).integerValue();
     }
 
     /**
@@ -105,7 +106,7 @@ public interface Part<T extends PartModel> {
      * @param context The execution context.
      */
     default String getName(ExecutionContext context) {
-        return getPartModel().getKnownProperty(context, PartModel.PROP_NAME).toString();
+        return getPartModel().get(context, PartModel.PROP_NAME).toString();
     }
 
     /**

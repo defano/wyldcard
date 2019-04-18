@@ -60,7 +60,7 @@ public class CardPartTransferHandler extends TransferHandler {
             // Position pasted part over the mouse cursor
             Point mouseLoc = WyldCard.getInstance().getMouseManager().getMouseLoc(new ExecutionContext());
             if (focusedCard.getBounds().contains(mouseLoc)) {
-                importedPart.getPartModel().setKnownProperty(new ExecutionContext(), PartModel.PROP_LOC, new Value(mouseLoc));
+                importedPart.getPartModel().set(new ExecutionContext(), PartModel.PROP_LOC, new Value(mouseLoc));
             }
 
             SwingUtilities.invokeLater(() -> {
@@ -80,7 +80,7 @@ public class CardPartTransferHandler extends TransferHandler {
     private ToolEditablePart duplicatePart(ExecutionContext context, ToolEditablePart original, CardPart parentCard) {
         PartModel copiedPartModel = Serializer.copy(original.getPartModel());
 
-        copiedPartModel.newProperty(PartModel.PROP_ID, getNewId(copiedPartModel, parentCard.getOwningStackModel()), true);
+        copiedPartModel.define(PartModel.PROP_ID).asConstant(getNewId(copiedPartModel, parentCard.getOwningStackModel()));
         copiedPartModel.setOwner(CardLayerPart.getActivePartLayer().asOwner());
 
         if (copiedPartModel instanceof ButtonModel) {

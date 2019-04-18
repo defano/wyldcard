@@ -67,8 +67,8 @@ public class WyldCardPartEditManager implements PartEditManager {
     private void doNewButton() {
         CardPart theCard = WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getDisplayedCard();
         ButtonPart theButton = theCard.newButton(new ExecutionContext(), new Rectangle(clickLoc, NEW_PART_DIM));
-        theButton.getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_STYLE, new Value("transparent"));
-        theButton.getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_SHOWNAME, new Value("false"));
+        theButton.getPartModel().set(new ExecutionContext(), ButtonModel.PROP_STYLE, new Value("transparent"));
+        theButton.getPartModel().set(new ExecutionContext(), ButtonModel.PROP_SHOWNAME, new Value("false"));
 
         WyldCard.getInstance().getPartToolManager().setSelectedPart(theButton);
 

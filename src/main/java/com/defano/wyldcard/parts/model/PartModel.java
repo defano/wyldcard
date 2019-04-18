@@ -13,6 +13,7 @@ import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.stack.StackModel;
+import com.defano.wyldcard.properties.SimplePropertiesModel;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.TwoPhaseParser;
@@ -32,7 +33,7 @@ import java.util.Objects;
 /**
  * A base model object for all HyperCard "parts" that Defines properties common to all part objects.
  */
-public abstract class PartModel extends WyldCardPropertiesModel implements Messagable {
+public abstract class PartModel extends SimplePropertiesModel implements Messagable {
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";
@@ -73,11 +74,11 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
         this.owner = owner;
         this.parentPartModel = parentPartModel;
 
-        newProperty(PROP_VISIBLE, new Value(true), false);
-        newProperty(PROP_SCRIPTTEXT, new Value(), false);
-        newProperty(PROP_BREAKPOINTS, new Value(), false);
+        define(PROP_VISIBLE).asValue(true);
+        define(PROP_SCRIPTTEXT).asValue();
+        define(PROP_BREAKPOINTS, PROP_CHECKPOINTS).asValue();
 
-        initialize();
+        postConstructPartModel();
     }
 
     /**
@@ -97,94 +98,78 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
     public abstract void relinkParentPartModel(PartModel parentPartModel);
 
     @PostConstruct
-    @Override
-    public void initialize() {
-        super.initialize();
+    protected void postConstructPartModel() {
+        super.postConstructAdvancedPropertiesModel();
 
-        // Convert rectangle (consisting of top left and bottom right coordinates) into top, left, height and width
-        newComputedSetterProperty(PROP_RECT, (context, model, value) -> {
-            if (value.isRect()) {
-                model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
-                model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
-                model.setKnownProperty(context, PROP_HEIGHT, new Value(value.getItemAt(context, 3).longValue() - value.getItemAt(context, 1).longValue()));
-                model.setKnownProperty(context, PROP_WIDTH, new Value(value.getItemAt(context, 2).longValue() - value.getItemAt(context, 0).longValue()));
-            } else {
-                throw new HtSemanticException("Expected a rectangle, but got " + value.toString());
-            }
-        });
+        define(PROP_RECT, PROP_RECTANGLE).asComputedValue()
+                .withSetter((context, model, value) -> {
+                    if (value.isRect()) {
+                        model.set(context, PROP_LEFT, value.getItemAt(context, 0));
+                        model.set(context, PROP_TOP, value.getItemAt(context, 1));
+                        model.set(context, PROP_HEIGHT, new Value(value.getItemAt(context, 3).longValue() - value.getItemAt(context, 1).longValue()));
+                        model.set(context, PROP_WIDTH, new Value(value.getItemAt(context, 2).longValue() - value.getItemAt(context, 0).longValue()));
+                    } else {
+                        throw new HtSemanticException("Expected a rectangle, but got " + value.toString());
+                    }
+                })
+                .withGetter((context, model) -> {
+                    Value left = model.get(context, PROP_LEFT);
+                    Value top = model.get(context, PROP_TOP);
+                    Value height = model.get(context, PROP_HEIGHT);
+                    Value width = model.get(context, PROP_WIDTH);
 
-        newComputedGetterProperty(PROP_RECT, (context, model) -> {
-            Value left = model.getKnownProperty(context, PROP_LEFT);
-            Value top = model.getKnownProperty(context, PROP_TOP);
-            Value height = model.getKnownProperty(context, PROP_HEIGHT);
-            Value width = model.getKnownProperty(context, PROP_WIDTH);
+                    return new Value(left.integerValue(), top.integerValue(), left.integerValue() + width.integerValue(), top.integerValue() + height.integerValue());
+                });
 
-            return new Value(left.integerValue(), top.integerValue(), left.integerValue() + width.integerValue(), top.integerValue() + height.integerValue());
-        });
+        define(PROP_RIGHT).asComputedValue()
+                .withGetter((context, model) -> new Value(model.get(context, PROP_LEFT).integerValue() + model.get(context, PROP_WIDTH).integerValue()))
+                .withSetter((context, model, value) -> model.set(context, PROP_LEFT, new Value(value.integerValue() - model.get(context, PROP_WIDTH).integerValue())));
 
-        newComputedGetterProperty(PROP_RIGHT, (context, model) ->
-                new Value(model.getKnownProperty(context, PROP_LEFT).integerValue() + model.getKnownProperty(context, PROP_WIDTH).integerValue())
-        );
+        define(PROP_BOTTOM).asComputedValue()
+                .withGetter((context, model) -> new Value(model.get(context, PROP_TOP).integerValue() + model.get(context, PROP_HEIGHT).integerValue()))
+                .withSetter((context, model, value) -> model.set(context, PROP_TOP, new Value(value.integerValue() - model.get(context, PROP_HEIGHT).integerValue())));
 
-        newComputedSetterProperty(PROP_RIGHT, (context, model, value) ->
-                model.setKnownProperty(context, PROP_LEFT, new Value(value.integerValue() - model.getKnownProperty(context, PROP_WIDTH).integerValue()))
-        );
+        define(PROP_TOPLEFT).asComputedValue()
+                .withSetter((context, model, value) -> {
+                    if (value.isPoint()) {
+                        model.set(context, PROP_LEFT, value.getItemAt(context, 0));
+                        model.set(context, PROP_TOP, value.getItemAt(context, 1));
+                    } else {
+                        throw new HtSemanticException("Expected a point, but got " + value.toString());
+                    }
+                })
+                .withGetter((context, model) -> new Value(model.get(context, PROP_LEFT).integerValue(), model.get(context, PROP_TOP).integerValue()));
 
-        newComputedGetterProperty(PROP_BOTTOM, (context, model) ->
-                new Value(model.getKnownProperty(context, PROP_TOP).integerValue() + model.getKnownProperty(context, PROP_HEIGHT).integerValue())
-        );
+        define(PROP_BOTTOMRIGHT, PROP_BOTRIGHT).asComputedValue()
+                .withSetter((context, model, value) -> {
+                    if (value.isPoint()) {
+                        model.set(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.get(context, PROP_WIDTH).longValue()));
+                        model.set(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.get(context, PROP_HEIGHT).longValue()));
+                    } else {
+                        throw new HtSemanticException("Expected a point, but got " + value.toString());
+                    }
+                })
+                .withGetter((context, model) -> new Value(
+                        model.get(context, PROP_LEFT).integerValue() + model.get(context, PROP_WIDTH).integerValue(),
+                        model.get(context, PROP_TOP).integerValue() + model.get(context, PROP_HEIGHT).integerValue()
+                ));
 
-        newComputedSetterProperty(PROP_BOTTOM, (context, model, value) ->
-                model.setKnownProperty(context, PROP_TOP, new Value(value.integerValue() - model.getKnownProperty(context, PROP_HEIGHT).integerValue()))
-        );
-
-        newComputedSetterProperty(PROP_TOPLEFT, (context, model, value) -> {
+        define(PROP_LOCATION, PROP_LOC).asComputedValue()
+                .withGetter((context, model) -> new Value(
+                        model.get(context, PROP_LEFT).integerValue() + model.get(context, PROP_WIDTH).integerValue() / 2,
+                        model.get(context, PROP_TOP).integerValue() + model.get(context, PROP_HEIGHT).integerValue() / 2
+                )).withSetter((context, model, value) -> {
             if (value.isPoint()) {
-                model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
-                model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
+                model.set(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.get(context, PROP_WIDTH).longValue() / 2));
+                model.set(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.get(context, PROP_HEIGHT).longValue() / 2));
             } else {
                 throw new HtSemanticException("Expected a point, but got " + value.toString());
             }
         });
 
-        newComputedGetterProperty(PROP_TOPLEFT, (context, model) ->
-                new Value(model.getKnownProperty(context, PROP_LEFT).integerValue(), model.getKnownProperty(context, PROP_TOP).integerValue())
-        );
-
-        newComputedSetterProperty(PROP_BOTTOMRIGHT, (context, model, value) -> {
-            if (value.isPoint()) {
-                model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue()));
-                model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue()));
-            } else {
-                throw new HtSemanticException("Expected a point, but got " + value.toString());
-            }
-        });
-        newPropertyAlias(PROP_BOTTOMRIGHT, PROP_BOTRIGHT);
-
-        newComputedGetterProperty(PROP_BOTTOMRIGHT, (context, model) ->
-                new Value(
-                        model.getKnownProperty(context, PROP_LEFT).integerValue() + model.getKnownProperty(context, PROP_WIDTH).integerValue(),
-                        model.getKnownProperty(context, PROP_TOP).integerValue() + model.getKnownProperty(context, PROP_HEIGHT).integerValue()
-                )
-        );
-
-        newPropertyAlias(PROP_LOCATION, PROP_LOC);
-        newComputedGetterProperty(PROP_LOCATION, (context, model) ->
-                new Value(
-                        model.getKnownProperty(context, PROP_LEFT).integerValue() + model.getKnownProperty(context, PROP_WIDTH).integerValue() / 2,
-                        model.getKnownProperty(context, PROP_TOP).integerValue() + model.getKnownProperty(context, PROP_HEIGHT).integerValue() / 2
-                )
-        );
-        newComputedSetterProperty(PROP_LOCATION, (context, model, value) -> {
-            if (value.isPoint()) {
-                model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue() / 2));
-                model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue() / 2));
-            } else {
-                throw new HtSemanticException("Expected a point, but got " + value.toString());
-            }
-        });
-
-        newPropertyAlias(PROP_RECT, PROP_RECTANGLE);
+        define(PROP_SCRIPT).asComputedValue()
+                .withSetter((context, model, value) -> setScriptText(context, value.toString()))
+                .withGetter((context, model) -> model.get(context, PROP_SCRIPTTEXT));
 
         // When breakpoints change, automatically apply them to the script
         addPropertyChangedObserver((context, model, property, oldValue, newValue) -> {
@@ -195,10 +180,6 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
                 }
             }
         });
-        newPropertyAlias(PROP_BREAKPOINTS, PROP_CHECKPOINTS);
-
-        newComputedGetterProperty(PROP_SCRIPT, (context, model) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
-        newComputedSetterProperty(PROP_SCRIPT, (context, model, value) -> model.setKnownProperty(context, PROP_SCRIPTTEXT, new Value(TwoPhaseParser.commentNonHandlerLines(value.toString()))));
     }
 
     /**
@@ -227,10 +208,10 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
     public Rectangle getRect(ExecutionContext context) {
         try {
             Rectangle rect = new Rectangle();
-            rect.x = getProperty(context, PROP_LEFT).integerValue();
-            rect.y = getProperty(context, PROP_TOP).integerValue();
-            rect.height = getProperty(context, PROP_HEIGHT).integerValue();
-            rect.width = getProperty(context, PROP_WIDTH).integerValue();
+            rect.x = get(context, PROP_LEFT).integerValue();
+            rect.y = get(context, PROP_TOP).integerValue();
+            rect.height = get(context, PROP_HEIGHT).integerValue();
+            rect.width = get(context, PROP_WIDTH).integerValue();
 
             return rect;
         } catch (Exception e) {
@@ -253,10 +234,8 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
                 Script script = (Script) Compiler.blockingCompile(CompilationUnit.SCRIPT, scriptText);
 
                 if (script != null) {
-                    System.err.println("Compiled " + scriptText.length() + " " + getLongName(context));
-                    setScript(script);
+                    return setScript(script, scriptText.hashCode());
                 }
-                this.scriptHash = scriptText.hashCode();
             } catch (HtException e) {
                 deferCompilation = System.currentTimeMillis() + 5000;
                 e.getBreadcrumb().setContext(context);
@@ -264,24 +243,28 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
                 WyldCard.getInstance().showErrorDialogAndAbort(e);
             }
         }
-        return script == null ? new Script() : script;
+
+        return this.script == null ? new Script() : this.script;
     }
 
-    private synchronized void setScript(Script script) {
+    private synchronized Script setScript(Script script, long scriptHash) {
         this.script = script;
+        this.scriptHash = scriptHash;
         this.script.applyBreakpoints(getBreakpoints());
+
+        return script;
     }
 
     public String getScriptText(ExecutionContext context) {
-        if (hasProperty(PROP_SCRIPTTEXT)) {
-            return getKnownProperty(context, PROP_SCRIPTTEXT).toString();
-        } else {
-            return "";
-        }
+        return get(context, PROP_SCRIPT).toString();
+    }
+
+    private void setScriptText(ExecutionContext context, String scriptText) {
+        set(context, PROP_SCRIPTTEXT, new Value(TwoPhaseParser.commentNonHandlerLines(scriptText)));
     }
 
     private boolean isScriptDirty(ExecutionContext context) {
-        return getScriptText(context).hashCode() != scriptHash;
+        return hasProperty(PROP_SCRIPT) && getScriptText(context).hashCode() != scriptHash;
     }
 
     public Owner getOwner() {
@@ -304,7 +287,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
     }
 
     public int getId(ExecutionContext context) {
-        return getKnownProperty(context, PROP_ID).integerValue();
+        return get(context, PROP_ID).integerValue();
     }
 
     public String getLongName(ExecutionContext context) {
@@ -316,7 +299,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
     }
 
     public String getName(ExecutionContext context) {
-        return getKnownProperty(context, PROP_NAME).toString();
+        return get(context, PROP_NAME).toString();
     }
 
     public PartSpecifier getPartSpecifier(ExecutionContext context) {
@@ -330,7 +313,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
      * @return The value of this property
      */
     public Value getValue(ExecutionContext context) {
-        return getKnownProperty(context, getValueProperty());
+        return get(context, getValueProperty());
     }
 
     /**
@@ -341,7 +324,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
      */
     public void setValue(Value value, ExecutionContext context) {
         try {
-            setProperty(context, getValueProperty(), value);
+            set(context, getValueProperty(), value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -405,7 +388,7 @@ public abstract class PartModel extends WyldCardPropertiesModel implements Messa
     public List<Integer> getBreakpoints() {
         ExecutionContext context = new ExecutionContext();
         ArrayList<Integer> breakpoints = new ArrayList<>();
-        List<Value> breakpointValues = getKnownProperty(context, PROP_BREAKPOINTS).getItems(context);
+        List<Value> breakpointValues = get(context, PROP_BREAKPOINTS).getItems(context);
         for (Value thisBreakpoint : breakpointValues) {
             breakpoints.add(thisBreakpoint.integerValue());
         }

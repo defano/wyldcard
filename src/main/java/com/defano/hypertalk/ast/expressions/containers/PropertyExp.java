@@ -39,13 +39,13 @@ public class PropertyExp extends ContainerExp {
 
         // Getting a HyperCard (global) property
         else if (propertySpec.isGlobalPropertySpecifier(context)) {
-            propertyValue = WyldCard.getInstance().getWyldCardPart().getProperty(context, propertySpec.getProperty());
+            propertyValue = WyldCard.getInstance().getWyldCardPart().tryGet(context, propertySpec.getProperty());
         }
 
         // Getting a part property
         else {
             PartSpecifier partSpecifier = getPartSpecifier(context);
-            propertyValue = context.getPart(partSpecifier).getProperty(context, propertySpec.getAdjectiveAppliedPropertyName(context));
+            propertyValue = context.getPart(partSpecifier).tryGet(context, propertySpec.getAdjectiveAppliedPropertyName(context));
         }
 
         return chunkOf(context, propertyValue, getChunk());

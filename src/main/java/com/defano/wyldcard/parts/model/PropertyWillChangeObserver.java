@@ -1,10 +1,11 @@
 package com.defano.wyldcard.parts.model;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.properties.SimplePropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
- * An observer to pending changes in a {@link WyldCardPropertiesModel}.
+ * An observer to pending changes in a {@link SimplePropertiesModel}.
  */
 public interface PropertyWillChangeObserver {
     /**

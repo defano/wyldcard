@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.model.LengthAdjective;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.button.ButtonModel;
@@ -16,7 +17,6 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.BufferedImageSerializer;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.thread.Invoke;
-import com.google.common.collect.Lists;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
@@ -57,66 +57,60 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
     public CardModel(StackModel parentPartModel) {
         super(PartType.CARD, Owner.STACK, parentPartModel);
 
-        newProperty(PROP_ID, new Value(), true);
-        newProperty(PROP_MARKED, new Value(false), false);
-        newProperty(PROP_CANTDELETE, new Value(false), false);
-        newProperty(PROP_DONTSEARCH, new Value(false), false);
-        newProperty(PROP_NAME, new Value(), false);
-        newProperty(PROP_CONTENTS, new Value(), false);
-        newProperty(PROP_SHOWPICT, new Value(true), false);
+        define(PROP_ID).asConstant(new Value());
+        define(PROP_MARKED).asValue(false);
+        define(PROP_CANTDELETE).asValue(false);
+        define(PROP_DONTSEARCH).asValue(false);
+        define(PROP_NAME).asValue();
+        define(PROP_CONTENTS).asValue();
+        define(PROP_SHOWPICT).asValue(true);
+        define(PROP_TOP).asConstant(0);
+        define(PROP_LEFT).asConstant(0);
+        define(PROP_TOPLEFT).asConstant("0,0");
 
-        initialize();
+        postConstructCardModel();
     }
 
-    @Override
     @PostConstruct
-    public void initialize() {
-        super.initialize();
+    public void postConstructCardModel() {
+        super.postConstructAdvancedPropertiesModel();
 
-        newComputedReadOnlyProperty(PROP_NUMBER, (context, model) -> new Value(((OrderedPartFinder) ((CardModel) model).getParentPartModel()).getPartNumber(context, (CardModel) model, PartType.CARD)));
+        define(PROP_NUMBER).asComputedReadOnlyValue((context, model) -> new Value(((OrderedPartFinder) ((CardModel) model).getParentPartModel()).getPartNumber(context, (CardModel) model, PartType.CARD)));
 
-        newComputedReadOnlyProperty(PROP_OWNER, (context, model) -> new Value(getBackgroundModel().getName(context)));
-        newComputedReadOnlyProperty(PROP_LONGOWNER, (context, model) -> new Value(getBackgroundModel().getLongName(context)));
-        newComputedReadOnlyProperty(PROP_SHORTOWNER, (context, model) -> new Value(getBackgroundModel().getShortName(context)));
+        define(PROP_OWNER).asComputedReadOnlyValue((context, model) -> new Value(getBackgroundModel().getName(context)));
+        define(PROP_LONGOWNER).asComputedReadOnlyValue((context, model) -> new Value(getBackgroundModel().getLongName(context)));
+        define(PROP_SHORTOWNER).asComputedReadOnlyValue((context, model) -> new Value(getBackgroundModel().getShortName(context)));
 
-        newComputedReadOnlyProperty(PROP_LONGNAME, (context, model) -> new Value(getLongName(context)));
-        newComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model) -> new Value(getAbbreviatedName(context)));
-        newComputedReadOnlyProperty(PROP_SHORTNAME, (context, model) -> new Value(getShortName(context)));
+        define(PROP_LONGNAME).asComputedReadOnlyValue((context, model) -> new Value(getLongName(context)));
+        define(PROP_ABBREVNAME).asComputedReadOnlyValue((context, model) -> new Value(getAbbreviatedName(context)));
+        define(PROP_SHORTNAME).asComputedReadOnlyValue((context, model) -> new Value(getShortName(context)));
 
-        newComputedReadOnlyProperty(PROP_LONGID, (context, model) -> new Value(getLongId(context)));
-        newComputedReadOnlyProperty(PROP_ABBREVID, (context, model) -> new Value(getAbbrevId(context)));
-        newComputedReadOnlyProperty(PROP_SHORTID, (context, model) -> new Value(getShortId(context)));
+        define(PROP_LONGID).asComputedReadOnlyValue((context, model) -> new Value(getLongId(context)));
+        define(PROP_ABBREVID).asComputedReadOnlyValue((context, model) -> new Value(getAbbrevId(context)));
+        define(PROP_SHORTID).asComputedReadOnlyValue((context, model) -> new Value(getShortId(context)));
 
-        // When no name of card is provided, returns 'card id xxx'
-        newComputedGetterProperty(PROP_NAME, (context, model) -> {
-            Value raw = model.getRawProperty(PROP_NAME);
+        findProperty(PROP_NAME).value().applyOnGetTransform((context, model, raw) -> {
             if (raw == null || raw.isEmpty()) {
-                return new Value("card id " + model.getKnownProperty(context, PROP_ID));
+                return new Value("card id " + model.get(context, PROP_ID));
             } else {
                 return raw;
             }
         });
 
-        newComputedReadOnlyProperty(PROP_TOP, (context, model) -> new Value(0));
-        newComputedReadOnlyProperty(PROP_BOTTOM, (context, model) -> getKnownProperty(context, PROP_HEIGHT));
-        newComputedReadOnlyProperty(PROP_RIGHT, (context, model) -> getKnownProperty(context, PROP_WIDTH));
-        newComputedReadOnlyProperty(PROP_LEFT, (context, model) -> new Value(0));
-        newComputedReadOnlyProperty(PROP_TOPLEFT, (context, model) -> new Value("0,0"));
-        newComputedReadOnlyProperty(PROP_BOTTOMRIGHT, (context, model) -> new Value(new Point(
-                getKnownProperty(context, PROP_WIDTH).integerValue(),
-                getKnownProperty(context, PROP_HEIGHT).integerValue()
+        define(PROP_BOTTOM).asComputedReadOnlyValue((context, model) -> model.get(context, PROP_HEIGHT));
+        define(PROP_RIGHT).asComputedReadOnlyValue((context, model) -> model.get(context, PROP_WIDTH));
+        define(PROP_BOTTOMRIGHT).asComputedReadOnlyValue((context, model) -> new Value(new Point(
+                get(context, PROP_WIDTH).integerValue(),
+                get(context, PROP_HEIGHT).integerValue()
         )));
-        newComputedReadOnlyProperty(PROP_RECT, (context, model) -> new Value(new Rectangle(
+        define(PROP_RECT, PROP_RECTANGLE).asComputedReadOnlyValue((context, model) -> new Value(new Rectangle(
                 0,
                 0,
-                getKnownProperty(context, PROP_WIDTH).integerValue(),
-                getKnownProperty(context, PROP_HEIGHT).integerValue()
+                get(context, PROP_WIDTH).integerValue(),
+                get(context, PROP_HEIGHT).integerValue()
         )));
-        newPropertyAlias(PROP_RECT, PROP_RECTANGLE);
 
-        // Card inherits height and width from the stack
-        delegateProperties(Lists.newArrayList(PROP_HEIGHT, PROP_WIDTH, StackModel.PROP_RESIZABLE),
-                (context, property) -> context.getCurrentStack().getStackModel());
+        define(PROP_HEIGHT, PROP_WIDTH, StackModel.PROP_RESIZABLE).byDelegatingToModel(context -> context.getCurrentStack().getStackModel());
     }
 
     @Override
@@ -241,11 +235,11 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
     }
 
     public boolean isMarked(ExecutionContext context) {
-        return getKnownProperty(context, PROP_MARKED).booleanValue();
+        return get(context, PROP_MARKED).booleanValue();
     }
 
     public void setMarked(ExecutionContext context, boolean marked) {
-        setKnownProperty(context, PROP_MARKED, new Value(marked));
+        set(context, PROP_MARKED, new Value(marked));
     }
 
     /**
@@ -308,13 +302,16 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
     }
 
     private boolean hasName() {
-        Value raw = getRawProperty(PROP_NAME);
-        return raw != null && !raw.isEmpty();
+        try {
+            return !findProperty(PROP_NAME).value().get(new ExecutionContext(), null).isEmpty();
+        } catch (HtException e) {
+            return false;
+        }
     }
 
     @Override
     public String getShortName(ExecutionContext context) {
-        return getKnownProperty(context, PROP_NAME).toString();
+        return get(context, PROP_NAME).toString();
     }
 
     @Override

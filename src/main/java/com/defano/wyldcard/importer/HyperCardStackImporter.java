@@ -127,13 +127,13 @@ public class HyperCardStackImporter {
                     .orElse(null);
         }
 
-        if (field != null && (!sharedText || field.getKnownProperty(context, FieldModel.PROP_SHAREDTEXT).booleanValue())) {
+        if (field != null && (!sharedText || field.get(context, FieldModel.PROP_SHAREDTEXT).booleanValue())) {
             int cardId = cardModel.getId(context);
 
             if (pcr.isPlaintext()) {
-                field.applyFont(context, cardId, 0, field.getKnownProperty(context, FieldModel.PROP_TEXTFONT).toString());
-                field.applyFontSize(context, cardId, 0, field.getKnownProperty(context, FieldModel.PROP_TEXTSIZE).integerValue());
-                field.applyFontStyle(context, cardId, 0, field.getKnownProperty(context, FieldModel.PROP_TEXTSTYLE));
+                field.applyFont(context, cardId, 0, field.get(context, FieldModel.PROP_TEXTFONT).toString());
+                field.applyFontSize(context, cardId, 0, field.get(context, FieldModel.PROP_TEXTSIZE).integerValue());
+                field.applyFontStyle(context, cardId, 0, field.get(context, FieldModel.PROP_TEXTSTYLE));
             } else {
                 applyStyleSpans(context, field, cardModel.getId(context), cardBlock.getStack(), pcr.getStyleSpans());
             }
@@ -145,9 +145,9 @@ public class HyperCardStackImporter {
             FieldModel field = cardModel.getBackgroundModel().getField(pcr.getRawPartId());
 
             // Set un-shared text value
-            if (field != null && (!sharedText || field.getKnownProperty(context, FieldModel.PROP_SHAREDTEXT).booleanValue())) {
+            if (field != null && (!sharedText || field.get(context, FieldModel.PROP_SHAREDTEXT).booleanValue())) {
                 field.setCurrentCardId(cardModel.getId(context));
-                field.setKnownProperty(context, FieldModel.PROP_TEXT, new Value(pcr.getText()));
+                field.set(context, FieldModel.PROP_TEXT, new Value(pcr.getText()));
             }
         }
     }
@@ -169,7 +169,7 @@ public class HyperCardStackImporter {
 
             if (bm != null) {
                 bm.setCurrentCardId(cardModel.getId(context));
-                bm.setKnownProperty(context, ButtonModel.PROP_HILITE, new Value(pcr.isBkgndButtonHilited()));
+                bm.set(context, ButtonModel.PROP_HILITE, new Value(pcr.isBkgndButtonHilited()));
             }
         }
     }
@@ -286,13 +286,13 @@ public class HyperCardStackImporter {
             if (style.getFontId() != -1) {
                 fieldModel.applyFont(context, cardId, position, fontTableBlock.getFont(style.getFontId()).getFontName());
             } else {
-                fieldModel.applyFont(context, cardId, position, fieldModel.getKnownProperty(context, FieldModel.PROP_TEXTFONT).toString());
+                fieldModel.applyFont(context, cardId, position, fieldModel.get(context, FieldModel.PROP_TEXTFONT).toString());
             }
 
             if (style.getFontSize() != -1) {
                 fieldModel.applyFontSize(context, cardId, position, (int) style.getFontSize());
             } else {
-                fieldModel.applyFontSize(context, cardId, position, fieldModel.getKnownProperty(context, FieldModel.PROP_TEXTSIZE).integerValue());
+                fieldModel.applyFontSize(context, cardId, position, fieldModel.get(context, FieldModel.PROP_TEXTSIZE).integerValue());
             }
 
             String styleString = FontStyle.asHypertalkList(style.getStyles());

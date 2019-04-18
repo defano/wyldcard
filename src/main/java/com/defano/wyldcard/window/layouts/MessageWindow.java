@@ -3,9 +3,9 @@ package com.defano.wyldcard.window.layouts;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.msg.MsgBoxModel;
+import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WyldCardWindow;
@@ -60,14 +60,14 @@ public class MessageWindow extends WyldCardWindow<Object> implements PropertyCha
 
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         if (MsgBoxModel.PROP_CONTENTS.equals(property)) {
             getTextComponent().setText(newValue.toString());
         }
     }
 
     public void setMsgBoxText(String text) {
-        Invoke.onDispatch(() -> partModel.setKnownProperty(new ExecutionContext(), MsgBoxModel.PROP_CONTENTS, new Value(text)));
+        Invoke.onDispatch(() -> partModel.set(new ExecutionContext(), MsgBoxModel.PROP_CONTENTS, new Value(text)));
     }
 
     public String getMsgBoxText() {

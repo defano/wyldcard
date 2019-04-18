@@ -109,7 +109,7 @@ public class WyldCardKeyboardManager implements KeyboardManager {
         return isAltOptionDown() && isCtrlCommandDown() &&
                 !WyldCard.getInstance().getStackManager().getFocusedStack()
                         .getStackModel()
-                        .getKnownProperty(context, StackModel.PROP_CANTPEEK)
+                        .get(context, StackModel.PROP_CANTPEEK)
                         .booleanValue();
     }
 

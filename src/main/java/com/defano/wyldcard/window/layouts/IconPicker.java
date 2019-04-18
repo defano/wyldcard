@@ -34,11 +34,11 @@ public class IconPicker extends WyldCardDialog<ButtonModel> {
     public IconPicker() {
         okButton.addActionListener(e -> dispose());
         noneButton.addActionListener(e -> {
-            model.setKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICON, new Value());
+            model.set(new ExecutionContext(), ButtonModel.PROP_ICON, new Value());
             dispose();
         });
 
-        iconAlign.addActionListener(e -> model.setKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICONALIGN, new Value(iconAlign.getSelectedItem())));
+        iconAlign.addActionListener(e -> model.set(new ExecutionContext(), ButtonModel.PROP_ICONALIGN, new Value(iconAlign.getSelectedItem())));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class IconPicker extends WyldCardDialog<ButtonModel> {
     public void bindModel(ButtonModel data) {
         this.model = data;
 
-        iconAlign.setSelectedItem(this.model.getKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICONALIGN).toString());
+        iconAlign.setSelectedItem(this.model.get(new ExecutionContext(), ButtonModel.PROP_ICONALIGN).toString());
         buttons = getButtons();
 
         for (JButton thisButt : buttons) {
@@ -76,7 +76,7 @@ public class IconPicker extends WyldCardDialog<ButtonModel> {
         List<JButton> buttons = new ArrayList<>();
 
         List<ButtonIcon> icons = IconDatabase.getInstance().getAllIcons();
-        ButtonIcon selectedIcon = IconDatabase.getInstance().findIconForValue(this.model.getKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICON), icons);
+        ButtonIcon selectedIcon = IconDatabase.getInstance().findIconForValue(this.model.get(new ExecutionContext(), ButtonModel.PROP_ICON), icons);
 
         for (ButtonIcon thisIcon : IconDatabase.getInstance().getAllIcons()) {
             buttons.add(getButtonForIcon(thisIcon, thisIcon == selectedIcon));
@@ -95,7 +95,7 @@ public class IconPicker extends WyldCardDialog<ButtonModel> {
         button.addActionListener(e -> {
             enableButtons();
             ((JButton) e.getSource()).setEnabled(false);
-            this.model.setKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICON, new Value(buttonIcon.getId()));
+            this.model.set(new ExecutionContext(), ButtonModel.PROP_ICON, new Value(buttonIcon.getId()));
             iconSelection.setText("Icon ID: " + buttonIcon.getId() + " \"" + buttonIcon.getName() + "\"");
         });
 

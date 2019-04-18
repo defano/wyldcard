@@ -13,8 +13,8 @@ import com.defano.wyldcard.parts.builder.CardModelBuilder;
 import com.defano.wyldcard.parts.builder.StackModelBuilder;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
+import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.layouts.StackWindow;
@@ -204,7 +204,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
 
             CardModel card = cardClipboardProvider.blockingFirst().get().getPartModel().copyOf();
             card.relinkParentPartModel(getStackModel());
-            card.newProperty(CardModel.PROP_ID, new Value(getStackModel().getNextCardId()), true);
+            card.define(CardModel.PROP_ID).asConstant(new Value(getStackModel().getNextCardId()));
 
             insertCard(card);
             cardCountProvider.onNext(stackModel.getCardCount());
@@ -304,7 +304,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
      */
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case StackModel.PROP_NAME:
                 fireOnStackNameChanged(newValue.toString());
@@ -416,8 +416,8 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
         long cardCountInBackground = stackModel.getCardsInBackground(getDisplayedCard().getPartModel().getBackgroundId()).size();
 
         return stackModel.getCardCount() > 1 &&
-                !getDisplayedCard().getPartModel().getKnownProperty(context, CardModel.PROP_CANTDELETE).booleanValue() &&
-                (cardCountInBackground > 1 || !getDisplayedCard().getPartModel().getBackgroundModel().getKnownProperty(context, BackgroundModel.PROP_CANTDELETE).booleanValue());
+                !getDisplayedCard().getPartModel().get(context, CardModel.PROP_CANTDELETE).booleanValue() &&
+                (cardCountInBackground > 1 || !getDisplayedCard().getPartModel().getBackgroundModel().get(context, BackgroundModel.PROP_CANTDELETE).booleanValue());
     }
 
     private void fireOnStackOpened() {

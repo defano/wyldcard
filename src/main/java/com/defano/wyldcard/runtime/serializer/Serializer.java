@@ -1,6 +1,7 @@
 package com.defano.wyldcard.runtime.serializer;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.properties.PropertyList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -22,6 +23,7 @@ public class Serializer {
             .registerTypeAdapter(byte[].class, new ByteArraySerializer())
             .registerTypeAdapter(BufferedImage.class, new BufferedImageSerializer())
             .registerTypeAdapter(StyledDocument.class, new StyledDocumentSerializer())
+            .registerTypeAdapter(PropertyList.class, new PropertyListSerializer())
             .enableComplexMapKeySerialization()
             .setPrettyPrinting()
             .create();

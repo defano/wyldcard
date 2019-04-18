@@ -23,12 +23,12 @@ public class StackModelBuilder extends PartModelBuilder<StackModel, StackModelBu
     }
 
     public StackModelBuilder withResizable(Object v) {
-        model.setKnownProperty(context, StackModel.PROP_RESIZABLE, new Value(v));
+        model.set(context, StackModel.PROP_RESIZABLE, new Value(v));
         return getBuilder();
     }
 
     public StackModelBuilder withCantPeek(Object v) {
-        model.setKnownProperty(context, StackModel.PROP_CANTPEEK, new Value(v));
+        model.set(context, StackModel.PROP_CANTPEEK, new Value(v));
         return getBuilder();
     }
 

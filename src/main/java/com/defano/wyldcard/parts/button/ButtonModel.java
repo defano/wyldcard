@@ -43,39 +43,35 @@ public class ButtonModel extends CardLayerPartModel {
 
         this.setCurrentCardId(parentPartModel.getId(new ExecutionContext()));
 
-        newProperty(PROP_SCRIPT, new Value(), false);
-        newProperty(PROP_ID, new Value(), true);
-        newProperty(PROP_NAME, new Value("New Button"), false);
-        newProperty(PROP_LEFT, new Value(), false);
-        newProperty(PROP_TOP, new Value(), false);
-        newProperty(PROP_WIDTH, new Value(), false);
-        newProperty(PROP_HEIGHT, new Value(), false);
-        newProperty(PROP_SHOWNAME, new Value(true), false);
-        newProperty(PROP_STYLE, new Value(ButtonStyle.ROUND_RECT.toString()), false);
-        newProperty(PROP_FAMILY, new Value(), false);
-        newProperty(PROP_AUTOHILITE, new Value(true), false);
-        newProperty(PROP_CONTENTS, new Value(), false);
-        newProperty(PROP_ICON, new Value(), false);
-        newProperty(PROP_ICONALIGN, new Value("default"), false);
-        newProperty(PROP_SELECTEDITEM, new Value(), false);
-        newProperty(PROP_SHAREDHILITE, new Value(true), false);
+        define(PROP_SCRIPT).asValue();
+        define(PROP_ID).asConstant(new Value());
+        define(PROP_NAME).asValue("New Button");
+        define(PROP_LEFT).asValue();
+        define(PROP_TOP).asValue();
+        define(PROP_WIDTH).asValue();
+        define(PROP_HEIGHT).asValue();
+        define(PROP_SHOWNAME).asValue(true);
+        define(PROP_STYLE).asValue(ButtonStyle.ROUND_RECT.toString());
+        define(PROP_FAMILY).asValue();
+        define(PROP_AUTOHILITE).asValue(true);
+        define(PROP_CONTENTS).asValue();
+        define(PROP_ICON).asValue();
+        define(PROP_ICONALIGN).asValue("default");
+        define(PROP_SELECTEDITEM).asValue();
+        define(PROP_SHAREDHILITE).asValue(true);
 
-        initialize();
+        postConstructButtonModel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @PostConstruct
-    @Override
-    public void initialize() {
-        super.initialize();
+    private void postConstructButtonModel() {
+        super.postConstructCardLayerPartModel();
 
-        newComputedReadOnlyProperty(PROP_NUMBER, (context, model) -> new Value(((LayeredPartFinder) ((ButtonModel) model).getParentPartModel()).getPartNumber(context, (ButtonModel) model, PartType.BUTTON)));
-        newComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model) -> new Value(getSelectedLineExpression(context)));
-        newComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model) -> {
-            List<Value> lines = getKnownProperty(context, PROP_CONTENTS).getLines(context);
-            int selectedLineIdx = getKnownProperty(context, PROP_SELECTEDITEM).integerValue() - 1;
+        define(PROP_NUMBER).asComputedReadOnlyValue((context, model) -> new Value(((LayeredPartFinder) ((ButtonModel) model).getParentPartModel()).getPartNumber(context, (ButtonModel) model, PartType.BUTTON)));
+        define(PROP_SELECTEDLINE).asComputedReadOnlyValue((context, model) -> new Value(getSelectedLineExpression(context)));
+        define(PROP_SELECTEDTEXT).asComputedReadOnlyValue((context, model) -> {
+            List<Value> lines = get(context, PROP_CONTENTS).getLines(context);
+            int selectedLineIdx = get(context, PROP_SELECTEDITEM).integerValue() - 1;
 
             // Invalid state... shouldn't be possible
             if (selectedLineIdx < 0 || selectedLineIdx >= lines.size()) {
@@ -85,26 +81,26 @@ public class ButtonModel extends CardLayerPartModel {
             return lines.get(selectedLineIdx);
         });
 
-        newPropertyAlias(PROP_HILITE, PROP_HIGHLITE, PROP_HILIGHT, PROP_HIGHLIGHT);
-        newPropertyAlias(PROP_AUTOHILITE, PROP_AUTOHIGHLITE, PROP_AUTOHILIGHT, PROP_AUTOHIGHLIGHT);
+        define(PROP_AUTOHIGHLITE, PROP_AUTOHILIGHT, PROP_AUTOHIGHLIGHT).asAliasOf(PROP_AUTOHILITE);
 
-        newComputedGetterProperty(PROP_HILITE, (context, model) -> getHilite(context));
-        newComputedSetterProperty(PROP_HILITE, (context, model, value) -> setHilite(context, value));
+        define(PROP_HILITE, PROP_HIGHLITE, PROP_HILIGHT, PROP_HIGHLIGHT).asComputedValue()
+                .withGetter((context, model) -> getHilite(context))
+                .withSetter((context, model, value) -> setHilite(context, value));
 
         // When an icon has been applied to a button, HyperCard automatically forces the button font to 10pt Geneva
         addPropertyWillChangeObserver((context, property, oldValue, newValue) -> {
             if (property.equalsIgnoreCase(PROP_ICON) && !newValue.isZero()) {
-                setKnownProperty(context, PROP_TEXTSIZE, new Value(10));
-                setKnownProperty(context, PROP_TEXTFONT, new Value("Geneva"));
+                set(context, PROP_TEXTSIZE, new Value(10));
+                set(context, PROP_TEXTFONT, new Value("Geneva"));
             }
         });
     }
 
-    public void setHilite(ExecutionContext context, Value hilite) {
+    private void setHilite(ExecutionContext context, Value hilite) {
         setHilite(context, getCurrentCardId(context), hilite);
     }
 
-    public void setHilite(ExecutionContext context, int forCardId, Value hilite) {
+    private void setHilite(ExecutionContext context, int forCardId, Value hilite) {
         if (isSharedHilite(context)) {
             sharedHilite = hilite.booleanValue();
         } else {
@@ -112,11 +108,11 @@ public class ButtonModel extends CardLayerPartModel {
         }
     }
 
-    public Value getHilite(ExecutionContext context) {
+    private Value getHilite(ExecutionContext context) {
         return getHilite(context, getCurrentCardId(context));
     }
 
-    public Value getHilite(ExecutionContext context, int forCardId) {
+    private Value getHilite(ExecutionContext context, int forCardId) {
         if (isSharedHilite(context)) {
             return new Value(sharedHilite);
         } else {
@@ -124,8 +120,8 @@ public class ButtonModel extends CardLayerPartModel {
         }
     }
 
-    public boolean isSharedHilite(ExecutionContext context) {
-        return getOwner() == Owner.CARD || getKnownProperty(context, ButtonModel.PROP_SHAREDHILITE).booleanValue();
+    private boolean isSharedHilite(ExecutionContext context) {
+        return getOwner() == Owner.CARD || get(context, ButtonModel.PROP_SHAREDHILITE).booleanValue();
     }
 
     /**
@@ -137,7 +133,7 @@ public class ButtonModel extends CardLayerPartModel {
     }
 
     private String getSelectedLineExpression(ExecutionContext context) {
-        Value selectedItem = getKnownProperty(context, PROP_SELECTEDITEM);
+        Value selectedItem = get(context, PROP_SELECTEDITEM);
         if (selectedItem.isEmpty()) {
             return "";
         } else {

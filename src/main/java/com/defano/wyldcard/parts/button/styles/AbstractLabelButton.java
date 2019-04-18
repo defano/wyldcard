@@ -9,8 +9,8 @@ import com.defano.wyldcard.parts.button.HyperCardButton;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.button.IconAlignable;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
@@ -59,12 +59,17 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
     }
 
     @Override
-    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public ToolEditablePart getToolEditablePart() {
+        return toolEditablePart;
+    }
+
+    @Override
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:
-                boolean showName = toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_SHOWNAME).booleanValue();
-                label.setText(showName ? toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_NAME).toString() : "");
+                boolean showName = toolEditablePart.getPartModel().get(context, ButtonModel.PROP_SHOWNAME).booleanValue();
+                label.setText(showName ? toolEditablePart.getPartModel().get(context, ButtonModel.PROP_NAME).toString() : "");
                 break;
 
             case ButtonModel.PROP_HILITE:

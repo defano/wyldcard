@@ -1,14 +1,14 @@
 package com.defano.wyldcard.parts.button.styles;
 
-import com.defano.wyldcard.border.PartBorderFactory;
-import com.defano.wyldcard.parts.button.HyperCardButton;
-import com.defano.wyldcard.parts.button.ButtonPart;
-import com.defano.wyldcard.parts.ToolEditablePart;
-import com.defano.wyldcard.parts.button.SharedHilite;
-import com.defano.wyldcard.parts.button.ButtonModel;
-import com.defano.wyldcard.fonts.FontUtils;
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.border.PartBorderFactory;
+import com.defano.wyldcard.fonts.FontUtils;
+import com.defano.wyldcard.parts.ToolEditablePart;
+import com.defano.wyldcard.parts.button.ButtonModel;
+import com.defano.wyldcard.parts.button.ButtonPart;
+import com.defano.wyldcard.parts.button.HyperCardButton;
+import com.defano.wyldcard.parts.button.SharedHilite;
+import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
@@ -37,12 +37,18 @@ public class CheckboxButton extends JCheckBox implements SharedHilite, HyperCard
     }
 
     @Override
-    public void onPropertyChanged(ExecutionContext context, WyldCardPropertiesModel model, String property, Value oldValue, Value newValue) {
+    public ToolEditablePart getToolEditablePart() {
+        return toolEditablePart;
+    }
+
+    @Override
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:
-                boolean showName = toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_SHOWNAME).booleanValue();
-                CheckboxButton.super.setText(showName ? toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_NAME).toString() : "");
+                boolean showName = toolEditablePart.getPartModel().get(context, ButtonModel.PROP_SHOWNAME).booleanValue();
+                String buttonName = toolEditablePart.getPartModel().get(context, ButtonModel.PROP_NAME).toString();
+                setText(showName ? buttonName : "");
                 break;
 
             case ButtonModel.PROP_HILITE:
@@ -51,6 +57,7 @@ public class CheckboxButton extends JCheckBox implements SharedHilite, HyperCard
 
             case ButtonModel.PROP_ENABLED:
                 CheckboxButton.super.setEnabled(newValue.booleanValue());
+                break;
 
             case ButtonModel.PROP_TEXTSIZE:
                 setFont(FontUtils.getFontByNameStyleSize(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
@@ -82,7 +89,7 @@ public class CheckboxButton extends JCheckBox implements SharedHilite, HyperCard
     }
 
     private boolean isAutoHilited() {
-        return toolEditablePart.getPartModel().getKnownProperty(new ExecutionContext(), ButtonModel.PROP_AUTOHILIGHT).booleanValue();
+        return toolEditablePart.getPartModel().get(new ExecutionContext(), ButtonModel.PROP_AUTOHILIGHT).booleanValue();
     }
 
 }

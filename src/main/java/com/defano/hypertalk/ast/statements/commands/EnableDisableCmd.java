@@ -43,7 +43,7 @@ public class EnableDisableCmd extends Command {
 
     private void disablePart(PartExp partExp, ExecutionContext context) throws HtException {
         PartModel model = context.getPart(partExp.evaluateAsSpecifier(context));
-        model.setProperty(context, CardLayerPartModel.PROP_ENABLED, new Value(enable));
+        model.trySet(context, CardLayerPartModel.PROP_ENABLED, new Value(enable));
     }
 
     private void disableMenuItem(ExecutionContext context, MenuItemExp menuItemExp) throws HtException {

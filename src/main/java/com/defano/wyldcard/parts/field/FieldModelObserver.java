@@ -1,6 +1,5 @@
 package com.defano.wyldcard.parts.field;
 
-import com.defano.wyldcard.parts.model.WyldCardPropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.hypertalk.utils.Range;
 

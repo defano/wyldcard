@@ -106,7 +106,7 @@ public class SortCardsCmd extends Command {
     }
 
     private boolean cardMatchesMarked(ExecutionContext context, CardModel cardModel) {
-        return !markedCards || cardModel.getKnownProperty(context, CardModel.PROP_MARKED).booleanValue();
+        return !markedCards || cardModel.get(context, CardModel.PROP_MARKED).booleanValue();
     }
 
     private boolean cardMatchesBackground(ExecutionContext context, CardModel cardModel) throws HtException {

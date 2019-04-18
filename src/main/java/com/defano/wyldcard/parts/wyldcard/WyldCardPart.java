@@ -38,18 +38,18 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
         super(null, null, null);
         super.clear();
 
-        newProperty(PROP_ITEMDELIMITER, new Value(","), false);
-        newProperty(PROP_LOCKSCREEN, new Value(false), false);
-        newProperty(PROP_SCRIPTTEXTFONT, new Value("Monaco"), false);
-        newProperty(PROP_SCRIPTTEXTSIZE, new Value(12), false);
-        newProperty(PROP_LOCKMESSAGES, new Value(false), false);
-        newProperty(PROP_TEXTARROWS, new Value(true), false);
+        define(PROP_ITEMDELIMITER).asValue(",");
+        define(PROP_LOCKSCREEN).asValue(false);
+        define(PROP_SCRIPTTEXTFONT).asValue("Monaco");
+        define(PROP_SCRIPTTEXTSIZE).asValue(12);
+        define(PROP_LOCKMESSAGES).asValue(false);
+        define(PROP_TEXTARROWS).asValue(true);
 
-        newProperty(PROP_USERLEVEL, new Value(5), false);       // TODO: Not implemented
-        newProperty(PROP_BLINDTYPING, new Value(true), false);  // TODO: Not implemented
-        newProperty(PROP_POWERKEYS, new Value(true), false);    // TODO: Not implemented
+        define(PROP_USERLEVEL).asValue(5);       // TODO: Not implemented
+        define(PROP_BLINDTYPING).asValue(true);  // TODO: Not implemented
+        define(PROP_POWERKEYS).asValue(true);    // TODO: Not implemented
 
-        newComputedReadOnlyProperty(PROP_ADDRESS, (context, model) -> {
+        define(PROP_ADDRESS).asComputedReadOnlyValue((context, model) -> {
             try {
                 return new Value(Inet4Address.getLocalHost().getHostAddress());
             } catch (UnknownHostException e) {
@@ -57,49 +57,63 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
             }
         });
 
-        newComputedReadOnlyProperty(PROP_THEMS, (context, model) -> Value.ofItems(WyldCard.getInstance().getWindowManager().getThemeNames()));
-        newComputedGetterProperty(PROP_THEME, (context, model) -> new Value(WyldCard.getInstance().getWindowManager().getCurrentThemeName()));
-        newComputedSetterProperty(PROP_THEME, (context, model, value) -> WyldCard.getInstance().getWindowManager().setTheme(WyldCard.getInstance().getWindowManager().getThemeClassForName(value.toString())));
+        define(PROP_THEMS).asComputedReadOnlyValue((context, model) -> Value.ofItems(WyldCard.getInstance().getWindowManager().getThemeNames()));
 
-        newComputedSetterProperty(PROP_TEXTFONT, (context, model, value) -> WyldCard.getInstance().getFontManager().setSelectedFontFamily(value.toString()));
-        newComputedGetterProperty(PROP_TEXTFONT, (context, model) -> new Value(WyldCard.getInstance().getFontManager().getSelectedFontFamily()));
+        define(PROP_THEME).asComputedValue()
+                .withSetter((context, model, value) -> WyldCard.getInstance().getWindowManager().setTheme(WyldCard.getInstance().getWindowManager().getThemeClassForName(value.toString())))
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getWindowManager().getCurrentThemeName()));
 
-        newComputedSetterProperty(PROP_TEXTSTYLE, (context, model, value) -> WyldCard.getInstance().getFontManager().setSelectedFontStyle(value));
-        newComputedGetterProperty(PROP_TEXTSTYLE, (context, model) -> new Value(WyldCard.getInstance().getFontManager().getSelectedFontStyle()));
+        define(PROP_TEXTFONT).asComputedValue()
+                .withSetter((context, model, value) -> WyldCard.getInstance().getFontManager().setSelectedFontFamily(value.toString()))
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getFontManager().getSelectedFontFamily()));
 
-        newComputedSetterProperty(PROP_TEXTSIZE, (context, model, value) -> WyldCard.getInstance().getFontManager().setSelectedFontSize(value.integerValue()));
-        newComputedGetterProperty(PROP_TEXTSIZE, (context, model) -> new Value(WyldCard.getInstance().getFontManager().getSelectedFontSize()));
+        define(PROP_TEXTSTYLE).asComputedValue()
+                .withSetter((context, model, value) -> WyldCard.getInstance().getFontManager().setSelectedFontStyle(value))
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getFontManager().getSelectedFontStyle()));
 
-        newComputedGetterProperty(PROP_BRUSH, (context, model) -> BasicBrushResolver.valueOfBasicBrush(WyldCard.getInstance().getToolsManager().getSelectedBrush()));
-        newComputedSetterProperty(PROP_BRUSH, (context, model, value) -> WyldCard.getInstance().getToolsManager().setSelectedBrush(BasicBrushResolver.basicBrushOfValue(value)));
+        define(PROP_TEXTSIZE).asComputedValue()
+                .withSetter((context, model, value) -> WyldCard.getInstance().getFontManager().setSelectedFontSize(value.integerValue()))
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getFontManager().getSelectedFontSize()));
 
-        newComputedSetterProperty(PROP_LINESIZE, (context, model, value) -> WyldCard.getInstance().getToolsManager().setLineWidth(value.integerValue()));
-        newComputedGetterProperty(PROP_LINESIZE, (context, model) -> new Value(WyldCard.getInstance().getToolsManager().getLineWidth()));
+        define(PROP_BRUSH).asComputedValue()
+                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setSelectedBrush(BasicBrushResolver.basicBrushOfValue(value)))
+                .withGetter((context, model) -> BasicBrushResolver.valueOfBasicBrush(WyldCard.getInstance().getToolsManager().getSelectedBrush()));
 
-        newComputedSetterProperty(PROP_FILLED, (context, model, value) -> WyldCard.getInstance().getToolsManager().setShapesFilled(value.booleanValue()));
-        newComputedGetterProperty(PROP_FILLED, (context, model) -> new Value(WyldCard.getInstance().getToolsManager().isShapesFilled()));
+        define(PROP_LINESIZE).asComputedValue()
+                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setLineWidth(value.integerValue()))
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getToolsManager().getLineWidth()));
 
-        newComputedSetterProperty(PROP_CENTERED, (context, model, value) -> WyldCard.getInstance().getToolsManager().setDrawCentered(value.booleanValue()));
-        newComputedGetterProperty(PROP_CENTERED, (context, model) -> new Value(WyldCard.getInstance().getToolsManager().isDrawCentered()));
+        define(PROP_FILLED).asComputedValue()
+                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setShapesFilled(value.booleanValue()))
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getToolsManager().isShapesFilled()));
 
-        newComputedSetterProperty(PROP_MULTIPLE, (context, model, value) -> WyldCard.getInstance().getToolsManager().setDrawMultiple(value.booleanValue()));
-        newComputedGetterProperty(PROP_MULTIPLE, (context, model) -> new Value(WyldCard.getInstance().getToolsManager().isDrawMultiple()));
+        define(PROP_CENTERED).asComputedValue()
+                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setDrawCentered(value.booleanValue()))
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getToolsManager().isDrawCentered()));
 
-        newComputedSetterProperty(PROP_CURSOR, (context, model, value) -> WyldCard.getInstance().getCursorManager().setActiveCursor(value));
-        newComputedGetterProperty(PROP_CURSOR, (context, model) -> new Value (WyldCard.getInstance().getCursorManager().getActiveCursor().hyperTalkName));
+        define(PROP_MULTIPLE).asComputedValue()
+                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setDrawMultiple(value.booleanValue()))
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getToolsManager().isDrawMultiple()));
 
-        newComputedSetterProperty(PROP_GRID, (context, model, value) -> WyldCard.getInstance().getToolsManager().setGridSpacing(value.booleanValue() ? 8 : 1));
-        newComputedGetterProperty(PROP_GRID, (context, model) -> new Value (WyldCard.getInstance().getToolsManager().getGridSpacing() > 1));
+        define(PROP_CURSOR).asComputedValue()
+                .withSetter((context, model, value) -> WyldCard.getInstance().getCursorManager().setActiveCursor(value))
+                .withGetter((context, model) -> new Value (WyldCard.getInstance().getCursorManager().getActiveCursor().hyperTalkName));
 
-        newComputedSetterProperty(PROP_POLYSIDES, (context, model, value) -> WyldCard.getInstance().getToolsManager().setShapeSides(value.integerValue()));
-        newComputedGetterProperty(PROP_POLYSIDES, (context, model) -> new Value (WyldCard.getInstance().getToolsManager().getShapeSides()));
+        define(PROP_GRID).asComputedValue()
+                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setGridSpacing(value.booleanValue() ? 8 : 1))
+                .withGetter((context, model) -> new Value (WyldCard.getInstance().getToolsManager().getGridSpacing() > 1));
 
-        newComputedSetterProperty(PROP_PATTERN, (context, model, value) -> {
-            if (value.integerValue() >= 1 && value.integerValue() <= 40) {
-                WyldCard.getInstance().getToolsManager().setFillPattern(value.integerValue() - 1);
-            }
-        });
-        newComputedGetterProperty(PROP_PATTERN, (context, model) -> new Value (WyldCard.getInstance().getToolsManager().getFillPattern() + 1));
+        define(PROP_POLYSIDES).asComputedValue()
+                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setShapeSides(value.integerValue()))
+                .withGetter((context, model) -> new Value (WyldCard.getInstance().getToolsManager().getShapeSides()));
+
+        define(PROP_PATTERN).asComputedValue()
+                .withSetter((context, model, value) -> {
+                    if (value.integerValue() >= 1 && value.integerValue() <= 40) {
+                        WyldCard.getInstance().getToolsManager().setFillPattern(value.integerValue() - 1);
+                    }
+                })
+                .withGetter((context, model) -> new Value (WyldCard.getInstance().getToolsManager().getFillPattern() + 1));
 
         addPropertyWillChangeObserver((context, property, oldValue, newValue) -> {
             if (PROP_LOCKSCREEN.equals(property.toLowerCase())) {
@@ -159,21 +173,21 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
 
     @Override
     public void resetProperties(ExecutionContext context) {
-        setKnownProperty(context, PROP_ITEMDELIMITER, new Value(","));
-        setKnownProperty(context, PROP_LOCKSCREEN, new Value(false));
-        setKnownProperty(context, PROP_LOCKMESSAGES, new Value(false));
+        set(context, PROP_ITEMDELIMITER, new Value(","));
+        set(context, PROP_LOCKSCREEN, new Value(false));
+        set(context, PROP_LOCKMESSAGES, new Value(false));
 
         WyldCard.getInstance().getCursorManager().setActiveCursor(HyperCardCursor.HAND);
     }
 
     @Override
     public boolean isTextArrows() {
-        return getKnownProperty(new ExecutionContext(), PROP_TEXTARROWS).booleanValue();
+        return get(new ExecutionContext(), PROP_TEXTARROWS).booleanValue();
     }
 
     @Override
     public boolean isLockMessages() {
-        return getKnownProperty(new ExecutionContext(), PROP_LOCKMESSAGES).booleanValue();
+        return get(new ExecutionContext(), PROP_LOCKMESSAGES).booleanValue();
     }
 
     @Override
