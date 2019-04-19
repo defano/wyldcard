@@ -1,7 +1,6 @@
 package com.defano.wyldcard.importer;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.builder.*;
 import com.defano.wyldcard.parts.button.ButtonModel;
@@ -15,41 +14,52 @@ import com.defano.wyldcard.stackreader.block.*;
 import com.defano.wyldcard.stackreader.enums.*;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.record.*;
+import com.defano.wyldcard.thread.Invoke;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.List;
 
-public class HyperCardStackImporter {
+public class StackFormatConverter {
 
-    public static void importStack(ExecutionContext context) {
+    private ConversionStatusObserver status;
+    private ConversionProgressObserver progress;
 
-        File stackFile = findFile(context);
+    private StackFormatConverter(ConversionStatusObserver status, ConversionProgressObserver progress) {
+        this.status = status;
+        this.progress = progress;
+    }
+
+    public static void startConversion(File stackFile, ConversionStatusObserver status, ConversionProgressObserver progress) {
+        if (progress == null) {
+            throw new IllegalArgumentException("Conversion status observer cannot be null.");
+        }
+
+        StackFormatConverter importer = new StackFormatConverter(status, progress);
+
+        Invoke.asynchronouslyOnWorkerThread(() -> importer.convert(stackFile));
+    }
+
+    private void convert(File stackFile) {
 
         try {
             HyperCardStack hcStack = HyperCardStack.fromFile(stackFile, null);
-            StackModel model = buildStack(context, stackFile.getName(), hcStack);
-            WyldCard.getInstance().getStackManager().openStack(context, model, true);
+            StackModel model = buildStack(new ExecutionContext(), stackFile.getName(), hcStack);
+            status.onConversionSucceeded(model);
 
-        } catch (FileNotFoundException | ImportException e) {
-            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            status.onConversionFailed("Cannot find or open file " + stackFile.getAbsolutePath(), e);
+        } catch (ImportException e) {
+            status.onConversionFailed("File is not a HyperCard stack or the stack file is corrupted.", e);
+        } catch (Exception t) {
+            status.onConversionFailed("An unexpected error occurred while reading the stack file.", t);
         }
     }
 
-    private static File findFile(ExecutionContext context) {
-        FileDialog fd = new FileDialog(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow(), "Choose stack to import", FileDialog.LOAD);
-        fd.setMultipleMode(false);
-        fd.setVisible(true);
+    private StackModel buildStack(ExecutionContext context, String name, HyperCardStack hcStack) {
 
-        if (fd.getFiles().length > 0) {
-            return fd.getFiles()[0];
-        }
-
-        return null;
-    }
-
-    private static StackModel buildStack(ExecutionContext context, String name, HyperCardStack hcStack) {
+        List<CardBlock> cardBlocks = hcStack.getCardBlocks();
 
         StackBlock stackBlock = hcStack.getBlock(StackBlock.class);
         StackModel stackModel = new StackModelBuilder()
@@ -59,14 +69,15 @@ public class HyperCardStackImporter {
                 .withScript(stackBlock.getStackScript())
                 .build();
 
-        for (CardBlock cardBlock : hcStack.getCardBlocks()) {
-            buildCard(context, cardBlock, stackModel);
+        for (int cardIdx = 0; cardIdx < cardBlocks.size(); cardIdx++) {
+            buildCard(context, cardBlocks.get(cardIdx), stackModel);
+            progress.onConversionProgressUpdate(cardIdx + 1, cardBlocks.size(), "Imported card " + (cardIdx + 1) + " of " + cardBlocks.size());
         }
 
         return stackModel;
     }
 
-    private static void buildCard(ExecutionContext context, CardBlock cardBlock, StackModel stackModel) {
+    private void buildCard(ExecutionContext context, CardBlock cardBlock, StackModel stackModel) {
 
         // Create card
         CardModel cardModel = new CardModelBuilder(stackModel)
@@ -82,10 +93,10 @@ public class HyperCardStackImporter {
                 .build();
 
         // Create background (if does not exist)
-        buildBackground(context, cardBlock.getBkgndBlock(), stackModel);
+        buildBackground(cardBlock.getBkgndBlock(), stackModel);
 
         // Create all buttons and fields and on this card
-        buildParts(context, cardBlock.getParts(), cardModel, cardBlock);
+        buildParts(cardBlock.getParts(), cardModel, cardBlock);
 
         // Set card-contextual properties (unshared field text, button hilite, etc.)
         for (PartContentRecord pcr : cardBlock.getContents()) {
@@ -112,7 +123,7 @@ public class HyperCardStackImporter {
      * @param cardBlock The HyperCard stack's {@link CardBlock} or {@link BackgroundBlock}
      * @param sharedText When true, style applies to shared text, when false, style applies to unshared text.
      */
-    private static void applyTextStyles(ExecutionContext context, PartContentRecord pcr, CardModel cardModel, CardLayerBlock cardBlock, boolean sharedText) {
+    private void applyTextStyles(ExecutionContext context, PartContentRecord pcr, CardModel cardModel, CardLayerBlock cardBlock, boolean sharedText) {
         FieldModel field;
 
         if (pcr.isBackgroundPart()) {
@@ -140,7 +151,7 @@ public class HyperCardStackImporter {
         }
     }
 
-    private static void applyTextContents(ExecutionContext context, PartContentRecord pcr, CardModel cardModel, boolean sharedText) {
+    private void applyTextContents(ExecutionContext context, PartContentRecord pcr, CardModel cardModel, boolean sharedText) {
         if (pcr.isBackgroundPart()) {
             FieldModel field = cardModel.getBackgroundModel().getField(pcr.getRawPartId());
 
@@ -163,7 +174,7 @@ public class HyperCardStackImporter {
      * @param pcr       The button's PartContentRecord.
      * @param cardModel The model of the card whose hilite is being adjusted.
      */
-    private static void applyUnsharedButtonHilite(ExecutionContext context, PartContentRecord pcr, CardModel cardModel) {
+    private void applyUnsharedButtonHilite(ExecutionContext context, PartContentRecord pcr, CardModel cardModel) {
         if (pcr.isBackgroundPart()) {   // Only applies to background buttons
             ButtonModel bm = cardModel.getBackgroundModel().getButton(pcr.getRawPartId());
 
@@ -174,7 +185,7 @@ public class HyperCardStackImporter {
         }
     }
 
-    private static void buildBackground(ExecutionContext context, BackgroundBlock backgroundBlock, StackModel stackModel) {
+    private void buildBackground(BackgroundBlock backgroundBlock, StackModel stackModel) {
         int backgroundId = backgroundBlock.getBlockId();
 
         // Skip building background if it already exists
@@ -193,23 +204,23 @@ public class HyperCardStackImporter {
                 .build();
 
         // Create all buttons and fields
-        buildParts(context, backgroundBlock.getParts(), backgroundModel, backgroundBlock);
+        buildParts(backgroundBlock.getParts(), backgroundModel, backgroundBlock);
 
         stackModel.addBackground(backgroundModel);
     }
 
-    private static void buildParts(ExecutionContext context, PartRecord[] parts, PartOwner parent, CardLayerBlock block) {
+    private void buildParts(PartRecord[] parts, PartOwner parent, CardLayerBlock block) {
         for (int partNumber = 0; partNumber < parts.length; partNumber++) {
             PartRecord partRecord = parts[partNumber];
             if (partRecord.getPartType() == PartType.BUTTON) {
-                buildButton(context, partRecord, partNumber, parent, block);
+                buildButton(partRecord, partNumber, parent, block);
             } else {
-                buildField(context, partRecord, partNumber, parent, block);
+                buildField(partRecord, partNumber, parent, block);
             }
         }
     }
 
-    private static void buildButton(ExecutionContext context, PartRecord partRecord, int partNumber, PartOwner parent, CardLayerBlock block) {
+    private void buildButton(PartRecord partRecord, int partNumber, PartOwner parent, CardLayerBlock block) {
 
         ButtonModel buttonModel = new ButtonModelBuilder(parent.getType().asOwner(), parent.getParentPartModel())
                 .withPartNumber(partNumber)
@@ -240,7 +251,7 @@ public class HyperCardStackImporter {
         parent.addPartModel(buttonModel);
     }
 
-    private static void buildField(ExecutionContext context, PartRecord partRecord, int partNumber, PartOwner parent, CardLayerBlock block) {
+    private void buildField(PartRecord partRecord, int partNumber, PartOwner parent, CardLayerBlock block) {
 
         FieldModel fieldModel = new FieldModelBuilder(parent.getType().asOwner(), parent.getParentPartModel())
                 .withPartNumber(partNumber)
@@ -269,12 +280,10 @@ public class HyperCardStackImporter {
                 .withScript(partRecord.getScript())
                 .build();
 
-        System.err.println("Setting wide margins of field " + partRecord.getName() + " to " + Arrays.stream(partRecord.getExtendedFlags()).anyMatch(f -> f == ExtendedPartFlag.WIDE_MARGINS));
-
         parent.addPartModel(fieldModel);
     }
 
-    private static void applyStyleSpans(ExecutionContext context, FieldModel fieldModel, int cardId, HyperCardStack stack, StyleSpanRecord[] styleSpans) {
+    private void applyStyleSpans(ExecutionContext context, FieldModel fieldModel, int cardId, HyperCardStack stack, StyleSpanRecord[] styleSpans) {
 
         FontTableBlock fontTableBlock = stack.getBlock(FontTableBlock.class);
         StyleTableBlock styleTableBlock = stack.getBlock(StyleTableBlock.class);
@@ -300,7 +309,7 @@ public class HyperCardStackImporter {
         }
     }
 
-    private static boolean isCardMarked(int cardId, HyperCardStack stack) {
+    private boolean isCardMarked(int cardId, HyperCardStack stack) {
         for (PageBlock thisPage : stack.getBlocks(PageBlock.class)) {
             for (PageEntryRecord thisEntry : thisPage.getPageEntries()) {
                 if (thisEntry.getCardId() == cardId) {

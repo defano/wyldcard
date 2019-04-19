@@ -1,4 +1,4 @@
-package com.defano.wyldcard.awt;
+package com.defano.wyldcard.awt.mouse;
 
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -21,7 +21,7 @@ public interface MouseManager {
 
     boolean isMouseDown();
 
-    void notifyOnMousePressed(WyldCardMouseManager.MousePressedObserver observer);
+    void notifyOnMousePressed(MousePressedObserver observer);
 
-    void notifyOnMouseReleased(WyldCardMouseManager.MouseReleasedObserver observer);
+    void notifyOnMouseReleased(MouseReleasedObserver observer);
 }

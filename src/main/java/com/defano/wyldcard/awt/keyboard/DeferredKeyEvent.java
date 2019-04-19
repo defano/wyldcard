@@ -1,4 +1,4 @@
-package com.defano.wyldcard.awt;
+package com.defano.wyldcard.awt.keyboard;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

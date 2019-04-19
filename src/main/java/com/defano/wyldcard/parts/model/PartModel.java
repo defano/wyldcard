@@ -55,12 +55,12 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
     public static final String PROP_LOCATION = "location";
     public static final String PROP_CONTENTS = "contents";
     public static final String PROP_SCRIPTTEXT = "scripttext";
-    public static final String PROP_BREAKPOINTS = "breakpoints";
-    public static final String PROP_CHECKPOINTS = "checkpoints";
+    public static final String PROP_BREAKPOINTS = "checkpoints";
 
     private final PartType type;
     private Owner owner;
     private int scriptEditorCaretPosition;
+    private Value checkpoints = new Value();
 
     private transient PartModel parentPartModel;
     private transient Script script;
@@ -76,7 +76,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
 
         define(PROP_VISIBLE).asValue(true);
         define(PROP_SCRIPTTEXT).asValue();
-        define(PROP_BREAKPOINTS, PROP_CHECKPOINTS).asValue();
+        define(PROP_BREAKPOINTS).asValue();
 
         postConstructPartModel();
     }
@@ -171,15 +171,15 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
                 .withSetter((context, model, value) -> setScriptText(context, value.toString()))
                 .withGetter((context, model) -> model.get(context, PROP_SCRIPTTEXT));
 
-        // When breakpoints change, automatically apply them to the script
-        addPropertyChangedObserver((context, model, property, oldValue, newValue) -> {
-            if (property.equalsIgnoreCase(PROP_BREAKPOINTS)) {
-                Script script = getScript(context);
-                if (script != null) {
-                    script.applyBreakpoints(getBreakpoints());
-                }
-            }
-        });
+        define(PROP_BREAKPOINTS).asComputedValue()
+                .withGetter((context, model) -> checkpoints)
+                .withSetter((context, model, value) -> {
+                    PartModel.this.checkpoints = value;
+                    Script script = getScript(context);
+                    if (script != null) {
+                        script.applyBreakpoints(getBreakpoints());
+                    }
+                });
     }
 
     /**
@@ -215,7 +215,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
 
             return rect;
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't get geometry for part model.", e);
+            throw new RuntimeException("Bug! Can't get geometry for part.", e);
         }
     }
 

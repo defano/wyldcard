@@ -1,7 +1,7 @@
 package com.defano.wyldcard.menubar.main;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.importer.HyperCardStackImporter;
+import com.defano.wyldcard.importer.StackImporter;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ArtVandelay;
@@ -63,7 +63,7 @@ public class FileMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Import HyperCard Stack...")
                 .withShiftShortcut('I')
-                .withAction(e -> HyperCardStackImporter.importStack(new ExecutionContext()))
+                .withAction(e -> StackImporter.importStack(new ExecutionContext()))
                 .build(this);
 
         this.addSeparator();

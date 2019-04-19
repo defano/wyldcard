@@ -2,9 +2,9 @@ package com.defano.wyldcard.parts.field.styles;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.awt.KeyListenable;
-import com.defano.wyldcard.awt.MouseListenable;
-import com.defano.wyldcard.awt.MouseMotionListenable;
+import com.defano.wyldcard.awt.keyboard.KeyListenable;
+import com.defano.wyldcard.awt.mouse.MouseListenable;
+import com.defano.wyldcard.awt.mouse.MouseMotionListenable;
 import com.defano.wyldcard.border.PartBorderFactory;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;

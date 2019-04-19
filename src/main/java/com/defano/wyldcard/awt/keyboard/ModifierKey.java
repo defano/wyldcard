@@ -1,4 +1,4 @@
-package com.defano.wyldcard.awt;
+package com.defano.wyldcard.awt.keyboard;
 
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;

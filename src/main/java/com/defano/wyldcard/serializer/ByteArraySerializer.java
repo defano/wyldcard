@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.serializer;
+package com.defano.wyldcard.serializer;
 
 import com.google.gson.*;
 

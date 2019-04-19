@@ -14,8 +14,8 @@ import com.defano.wyldcard.parts.finder.OrderedPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.serializer.BufferedImageSerializer;
-import com.defano.wyldcard.runtime.serializer.Serializer;
+import com.defano.wyldcard.serializer.BufferedImageSerializer;
+import com.defano.wyldcard.serializer.Serializer;
 import com.defano.wyldcard.thread.Invoke;
 
 import javax.annotation.PostConstruct;

@@ -1,4 +1,4 @@
-package com.defano.wyldcard.awt;
+package com.defano.wyldcard.awt.mouse;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.thread.Throttle;

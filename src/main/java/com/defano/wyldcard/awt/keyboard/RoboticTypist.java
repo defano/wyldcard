@@ -1,4 +1,4 @@
-package com.defano.wyldcard.awt;
+package com.defano.wyldcard.awt.keyboard;
 
 import com.defano.hypertalk.ast.model.ArrowDirection;
 import com.defano.hypertalk.exception.HtException;

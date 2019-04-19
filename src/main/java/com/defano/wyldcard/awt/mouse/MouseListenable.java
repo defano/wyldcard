@@ -1,4 +1,4 @@
-package com.defano.wyldcard.awt;
+package com.defano.wyldcard.awt.mouse;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

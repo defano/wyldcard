@@ -2,7 +2,7 @@ package com.defano.wyldcard.window.layouts;
 
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.serializer.Serializer;
+import com.defano.wyldcard.serializer.Serializer;
 import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.defano.hypertalk.ast.model.Value;

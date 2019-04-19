@@ -1,4 +1,6 @@
-package com.defano.wyldcard.awt;
+package com.defano.wyldcard.awt.keyboard;
+
+import com.defano.wyldcard.awt.mouse.MouseListenable;
 
 import java.awt.event.*;
 

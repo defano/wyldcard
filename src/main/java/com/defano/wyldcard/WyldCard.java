@@ -2,10 +2,10 @@ package com.defano.wyldcard;
 
 import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.awt.KeyboardManager;
-import com.defano.wyldcard.awt.MouseManager;
-import com.defano.wyldcard.awt.WyldCardKeyboardManager;
-import com.defano.wyldcard.awt.WyldCardMouseManager;
+import com.defano.wyldcard.awt.keyboard.KeyboardManager;
+import com.defano.wyldcard.awt.mouse.MouseManager;
+import com.defano.wyldcard.awt.keyboard.WyldCardKeyboardManager;
+import com.defano.wyldcard.awt.mouse.WyldCardMouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.cursor.WyldCardCursorManager;
 import com.defano.wyldcard.menubar.main.MainWyldCardMenuBar;

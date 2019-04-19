@@ -1,4 +1,4 @@
-package com.defano.wyldcard.awt;
+package com.defano.wyldcard.awt.mouse;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.card.CardPart;
@@ -28,26 +28,34 @@ public class WyldCardMouseManager implements MouseManager {
     private static final Set<MousePressedObserver> pressedObserverSet = new HashSet<>();
     private static final Set<MouseReleasedObserver> releasedObserverSet = new HashSet<>();
 
-    public interface MousePressedObserver {
-        void onMousePressed();
-    }
-
-    public interface MouseReleasedObserver {
-        void onMouseReleased();
-    }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void start() {
         Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Point getClickLoc() {
         return clickLoc;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Long getClickTimeMs() {
         return clickTime;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Point getMouseLoc(ExecutionContext context) {
         Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
 
@@ -59,6 +67,10 @@ public class WyldCardMouseManager implements MouseManager {
         return mouseLoc;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void dragFrom(Point p1, Point p2, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
 
         Component cardComponent = WyldCard.getInstance().getStackManager().getFocusedCard();
@@ -89,6 +101,10 @@ public class WyldCardMouseManager implements MouseManager {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void clickAt(Point p, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
 
         SwingUtilities.convertPointToScreen(p, WyldCard.getInstance().getStackManager().getFocusedCard());
@@ -115,14 +131,26 @@ public class WyldCardMouseManager implements MouseManager {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isMouseDown() {
         return mouseIsDown;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void notifyOnMousePressed(MousePressedObserver observer) {
         pressedObserverSet.add(observer);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void notifyOnMouseReleased(MouseReleasedObserver observer) {
         releasedObserverSet.add(observer);
     }

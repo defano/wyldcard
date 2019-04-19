@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.defano.wyldcard.runtime.serializer;
+package com.defano.wyldcard.serializer;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

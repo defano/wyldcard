@@ -12,7 +12,7 @@ import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.runtime.serializer.Serializer;
+import com.defano.wyldcard.serializer.Serializer;
 
 import javax.swing.*;
 import java.awt.*;

@@ -51,7 +51,7 @@ public class ImportResult {
             this.message = message;
             this.source = source;
             this.cause = cause;
-            this.stack = source.getStack();
+            this.stack = source == null ? null : source.getStack();
         }
 
         @Override

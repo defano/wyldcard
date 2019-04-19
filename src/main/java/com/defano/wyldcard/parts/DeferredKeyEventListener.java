@@ -1,7 +1,7 @@
 package com.defano.wyldcard.parts;
 
 import com.defano.hypertalk.ast.expressions.ListExp;
-import com.defano.wyldcard.awt.DeferredKeyEvent;
+import com.defano.wyldcard.awt.keyboard.DeferredKeyEvent;
 import com.defano.wyldcard.message.Messagable;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 

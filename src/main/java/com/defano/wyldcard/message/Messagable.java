@@ -5,7 +5,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.DeferredKeyEvent;
+import com.defano.wyldcard.awt.keyboard.DeferredKeyEvent;
 import com.defano.wyldcard.parts.DeferredKeyEventListener;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;

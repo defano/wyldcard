@@ -5,7 +5,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.awt.MouseManager;
+import com.defano.wyldcard.awt.mouse.MouseManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;

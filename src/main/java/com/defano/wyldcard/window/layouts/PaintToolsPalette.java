@@ -3,7 +3,7 @@ package com.defano.wyldcard.window.layouts;
 import com.defano.jmonet.tools.base.Tool;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.awt.DoubleClickListenable;
+import com.defano.wyldcard.awt.keyboard.DoubleClickListenable;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.hypertalk.ast.model.ToolType;

@@ -1,7 +1,7 @@
 package com.defano.wyldcard.editor;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.awt.KeyListenable;
+import com.defano.wyldcard.awt.keyboard.KeyListenable;
 import org.fife.ui.autocomplete.AutoCompletion;
 import org.fife.ui.autocomplete.CompletionProvider;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;

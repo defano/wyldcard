@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.serializer;
+package com.defano.wyldcard.serializer;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.properties.Property;

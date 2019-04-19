@@ -1,4 +1,4 @@
-package com.defano.wyldcard.awt;
+package com.defano.wyldcard.awt.keyboard;
 
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.wyldcard.WyldCard;
@@ -24,7 +24,7 @@ public class WyldCardKeyboardManager implements KeyboardManager {
 
     private boolean isShiftDown;
     private boolean isAltOptionDown;          // Either 'alt' or 'option' (Mac)
-    private boolean isCtrlCommandDown;        // Either 'ctrl' or 'command' (Mac
+    private boolean isCtrlCommandDown;        // Either 'ctrl' or 'command' (Mac)
     private Long breakTime;
 
     /**
