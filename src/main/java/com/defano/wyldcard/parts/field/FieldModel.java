@@ -88,7 +88,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public FieldModel(Owner owner, PartModel parentPartModel) {
         super(PartType.FIELD, owner, parentPartModel);
 
-        this.setCurrentCardId(parentPartModel.getId(new ExecutionContext()));
+        this.setCurrentCardId(parentPartModel.getId());
 
         define(PROP_SCRIPT).asValue();
         define(PROP_ID).asConstant(new Value());
@@ -659,7 +659,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     @Override
     public PartSpecifier getPartSpecifier(ExecutionContext context) {
-        return new PartIdSpecifier(getOwner(), PartType.FIELD, getId(context));
+        return new PartIdSpecifier(getOwner(), PartType.FIELD, getId());
     }
 
     /**

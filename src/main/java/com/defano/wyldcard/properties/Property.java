@@ -18,7 +18,8 @@ public class Property {
 
     /**
      * Constructs a Property with a given value and one or more names/aliases.
-     * @param value The value of this property.
+     *
+     * @param value   The value of this property.
      * @param aliases The name (or names) that can be used to refer to this property.
      */
     public Property(PropertyValue value, String... aliases) {
@@ -36,6 +37,7 @@ public class Property {
 
     /**
      * Gets the primary or default name of this property.
+     *
      * @return The primary name of this property.
      */
     public String name() {
@@ -44,6 +46,7 @@ public class Property {
 
     /**
      * Gets a list of all names associated with this property, including the primary name.
+     *
      * @return A list of all names associated with this property.
      */
     public List<String> aliases() {
@@ -52,6 +55,7 @@ public class Property {
 
     /**
      * Adds zero or more new aliases to this property. Does not affect or replace existing aliases.
+     *
      * @param aliases Additional aliases that this property should be known by.
      */
     public void addAliases(String... aliases) {
@@ -60,6 +64,7 @@ public class Property {
 
     /**
      * Gets the {@link PropertyValue} associated with this property.
+     *
      * @return The value of this property.
      */
     public PropertyValue value() {
@@ -71,6 +76,6 @@ public class Property {
      */
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE, true);
     }
 }

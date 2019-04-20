@@ -39,7 +39,6 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
         super.clear();
 
         define(PROP_ITEMDELIMITER).asValue(",");
-        define(PROP_LOCKSCREEN).asValue(false);
         define(PROP_SCRIPTTEXTFONT).asValue("Monaco");
         define(PROP_SCRIPTTEXTSIZE).asValue(12);
         define(PROP_LOCKMESSAGES).asValue(false);
@@ -115,15 +114,15 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
                 })
                 .withGetter((context, model) -> new Value (WyldCard.getInstance().getToolsManager().getFillPattern() + 1));
 
-        addPropertyWillChangeObserver((context, property, oldValue, newValue) -> {
-            if (PROP_LOCKSCREEN.equals(property.toLowerCase())) {
-                if (newValue.booleanValue()) {
-                    WyldCard.getInstance().getStackManager().getFocusedStack().getCurtainManager().lockScreen(new ExecutionContext());
-                } else {
-                    WyldCard.getInstance().getStackManager().getFocusedStack().getCurtainManager().unlockScreen(new ExecutionContext(), context.getVisualEffect());
-                }
-            }
-        });
+        define(PROP_LOCKSCREEN).asComputedValue()
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getStackManager().getFocusedStack().getCurtainManager().isScreenLocked()))
+                .withSetter((context, model, value) -> {
+                    if (value.booleanValue()) {
+                        WyldCard.getInstance().getStackManager().getFocusedStack().getCurtainManager().lockScreen(new ExecutionContext());
+                    } else {
+                        WyldCard.getInstance().getStackManager().getFocusedStack().getCurtainManager().unlockScreen(new ExecutionContext(), context.getVisualEffect());
+                    }
+                });
     }
 
     @Override

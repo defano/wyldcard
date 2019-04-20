@@ -47,14 +47,12 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     private Map<Integer, BufferedImage> userPatterns;
 
     // Model properties that are not HyperTalk-addressable
-    private int nextPartId = 0;
-    private int nextCardId = 0;
-    private int nextBackgroundId = 0;
     private int currentCardIndex = 0;
     private List<CardModel> cardModels = new ArrayList<>();
 
     // The location where this stack was saved to, or opened from, on disk. Null if the stack has not been saved.
     private transient Subject<Optional<File>> savedStackFileProvider;
+    private transient int nextPartId = new Random().nextInt();
 
     public StackModel() {
         super(PartType.STACK, Owner.HYPERCARD, null);
@@ -104,7 +102,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
                 .withSetter((context, model, value) -> WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getX(), value.integerValue()));
 
         if (!hasProperty(PROP_ID)) {
-            define(PROP_ID).asConstant(new Value(UUID.randomUUID().toString().hashCode()));
+            define(PROP_ID).asConstant(getNextId(nextPartId));
         }
     }
 
@@ -140,6 +138,30 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         set(context, PROP_NAME, new Value(filename));
     }
 
+    public int getNextButtonId(int parentPartId) {
+        return getNextId(parentPartId);
+    }
+
+    public int getNextFieldId(int parentPartId) {
+        return getNextId(parentPartId);
+    }
+
+    public int getNextCardId() {
+        return getNextId(getId());
+    }
+
+    public int getNextBackgroundId() {
+        return getNextId(getId());
+    }
+
+    private int getNextId(int seed) {
+        int hash = String.valueOf(seed * nextPartId).hashCode();
+        int high = (hash & 0xffff0000) >> 16;
+        int low = hash & 0xffff;
+        nextPartId = (high ^ low) & 0xffff;
+        return nextPartId;
+    }
+
     public void addCard(CardModel cardModel) {
         cardModels.add(cardModel);
     }
@@ -149,10 +171,10 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     }
 
     public void addBackground(BackgroundModel backgroundModel) {
-        backgroundModels.put(backgroundModel.getId(new ExecutionContext()), backgroundModel);
+        backgroundModels.put(backgroundModel.getId(), backgroundModel);
     }
 
-    public int newBackgroundModel() {
+    public int newBackground() {
         int newBackgroundId = getNextBackgroundId();
         backgroundModels.put(newBackgroundId, new BackgroundModelBuilder(this).withId(newBackgroundId).build());
         return newBackgroundId;
@@ -208,7 +230,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
 
     public Integer getIndexOfCardId(int cardId) {
         return cardModels.stream()
-                .filter(c -> c.getId(null) == cardId)
+                .filter(c -> c.getId() == cardId)
                 .map(c -> cardModels.indexOf(c))
                 .findFirst()
                 .orElse(null);
@@ -257,22 +279,6 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
 
     public BackgroundModel getBackground(int backgroundId) {
         return backgroundModels.get(backgroundId);
-    }
-
-    public int getNextButtonId() {
-        return nextPartId++;
-    }
-
-    public int getNextFieldId() {
-        return nextPartId++;
-    }
-
-    public int getNextCardId() {
-        return nextCardId++;
-    }
-
-    public int getNextBackgroundId() {
-        return nextBackgroundId++;
     }
 
     public int getBackgroundCount() {

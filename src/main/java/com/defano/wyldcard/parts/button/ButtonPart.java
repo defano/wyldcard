@@ -218,7 +218,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
     private void initProperties(Rectangle geometry, PartModel parentPartModel) {
         CardPart cardPart = parent.get();
         if (cardPart != null) {
-            int id = cardPart.getPartModel().getStackModel().getNextButtonId();
+            int id = cardPart.getPartModel().getStackModel().getNextButtonId(parentPartModel.getId());
             partModel = new ButtonModelBuilder(owner, parentPartModel).withId(id).withBounds(geometry).build();
         }
     }

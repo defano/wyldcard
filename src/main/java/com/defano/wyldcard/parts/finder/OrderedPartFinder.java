@@ -91,7 +91,7 @@ public interface OrderedPartFinder {
                 number++;
             }
 
-            if (thisPart.getId(context) == part.getId(context) && thisPart.getType() == ofType) {
+            if (thisPart.getId() == part.getId() && thisPart.getType() == ofType) {
                 return number;
             }
         }
@@ -115,7 +115,7 @@ public interface OrderedPartFinder {
 
         for (PartModel thisPart : parts) {
             number++;
-            if (thisPart.getId(context) == part.getId(context)) {
+            if (thisPart.getId() == part.getId()) {
                 return number;
             }
         }

@@ -3,7 +3,6 @@ package com.defano.wyldcard.properties;
 import com.defano.hypertalk.GuiceTest;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.serializer.Serializer;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
@@ -61,9 +60,4 @@ public class PropertiesModelTest extends GuiceTest {
         assertEquals(new Value(20), model.get(context, "that"));
     }
 
-    @Test
-    public void testSerialization() {
-        model.define("something").asValue("new value");
-        System.err.println(Serializer.serialize(model));
-    }
 }

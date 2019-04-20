@@ -65,7 +65,7 @@ public class CompositePartSpecifier implements PartSpecifier {
 
             // Special case: Field needs to be evaluated in the context of the requested card
             if (foundPart instanceof CardLayerPartModel) {
-                ((CardLayerPartModel) foundPart).setCurrentCardId(owningPart.getId(context));
+                ((CardLayerPartModel) foundPart).setCurrentCardId(owningPart.getId());
             }
 
             return foundPart;

@@ -1,9 +1,10 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.ASTNode;
-import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
+import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.google.common.collect.Lists;
@@ -27,6 +28,11 @@ public abstract class Statement extends ASTNode {
 
     public void execute(ExecutionContext context) throws HtException, Preemption {
         try {
+            // Check for abort
+            if (context.didAbort()) {
+                throw new HtSemanticException("Script aborted.");
+            }
+
             // Check to see if we need to break before executing this statement
             handleBreakpoints(context);
 

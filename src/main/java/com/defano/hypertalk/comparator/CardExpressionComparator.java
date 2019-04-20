@@ -84,11 +84,11 @@ public class CardExpressionComparator implements Comparator<CardModel> {
 
         // Shared background fields in cached cards maintain original text; update the shared text context
         for (FieldPart thisPart : card.getFields()) {
-            thisPart.getPartModel().setCurrentCardId(model.getId(context));
+            thisPart.getPartModel().setCurrentCardId(model.getId());
         }
 
         for (ButtonPart thisPart : card.getButtons()) {
-            thisPart.getPartModel().setCurrentCardId(model.getId(context));
+            thisPart.getPartModel().setCurrentCardId(model.getId());
         }
 
         return card;

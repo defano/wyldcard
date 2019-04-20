@@ -32,12 +32,12 @@ public class StackFormatConverter {
     }
 
     public static void startConversion(File stackFile, ConversionStatusObserver status, ConversionProgressObserver progress) {
-        if (progress == null) {
-            throw new IllegalArgumentException("Conversion status observer cannot be null.");
+        if (progress == null || status == null) {
+            throw new IllegalArgumentException("Conversion observer cannot be null.");
         }
 
         StackFormatConverter importer = new StackFormatConverter(status, progress);
-
+//        importer.convert(stackFile);
         Invoke.asynchronouslyOnWorkerThread(() -> importer.convert(stackFile));
     }
 
@@ -128,25 +128,25 @@ public class StackFormatConverter {
 
         if (pcr.isBackgroundPart()) {
             field = cardModel.getBackgroundModel().getFieldModels().stream()
-                    .filter(f -> f.getId(context) == pcr.getRawPartId())
+                    .filter(f -> f.getId() == pcr.getRawPartId())
                     .findFirst()
                     .orElse(null);
         } else {
             field = cardModel.getFieldModels().stream()
-                    .filter(f -> f.getId(context) == -pcr.getRawPartId())
+                    .filter(f -> f.getId() == -pcr.getRawPartId())
                     .findFirst()
                     .orElse(null);
         }
 
         if (field != null && (!sharedText || field.get(context, FieldModel.PROP_SHAREDTEXT).booleanValue())) {
-            int cardId = cardModel.getId(context);
+            int cardId = cardModel.getId();
 
             if (pcr.isPlaintext()) {
                 field.applyFont(context, cardId, 0, field.get(context, FieldModel.PROP_TEXTFONT).toString());
                 field.applyFontSize(context, cardId, 0, field.get(context, FieldModel.PROP_TEXTSIZE).integerValue());
                 field.applyFontStyle(context, cardId, 0, field.get(context, FieldModel.PROP_TEXTSTYLE));
             } else {
-                applyStyleSpans(context, field, cardModel.getId(context), cardBlock.getStack(), pcr.getStyleSpans());
+                applyStyleSpans(context, field, cardModel.getId(), cardBlock.getStack(), pcr.getStyleSpans());
             }
         }
     }
@@ -157,7 +157,7 @@ public class StackFormatConverter {
 
             // Set un-shared text value
             if (field != null && (!sharedText || field.get(context, FieldModel.PROP_SHAREDTEXT).booleanValue())) {
-                field.setCurrentCardId(cardModel.getId(context));
+                field.setCurrentCardId(cardModel.getId());
                 field.set(context, FieldModel.PROP_TEXT, new Value(pcr.getText()));
             }
         }
@@ -179,7 +179,7 @@ public class StackFormatConverter {
             ButtonModel bm = cardModel.getBackgroundModel().getButton(pcr.getRawPartId());
 
             if (bm != null) {
-                bm.setCurrentCardId(cardModel.getId(context));
+                bm.setCurrentCardId(cardModel.getId());
                 bm.set(context, ButtonModel.PROP_HILITE, new Value(pcr.isBkgndButtonHilited()));
             }
         }

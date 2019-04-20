@@ -138,7 +138,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
 
         insertCard(new CardModelBuilder(getStackModel())
                 .withId(getStackModel().getNextCardId())
-                .withBackgroundId(getStackModel().newBackgroundModel())
+                .withBackgroundId(getStackModel().newBackground())
                 .build());
 
         cardCountProvider.onNext(stackModel.getCardCount());

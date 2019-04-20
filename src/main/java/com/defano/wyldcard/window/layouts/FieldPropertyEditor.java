@@ -100,7 +100,7 @@ public class FieldPropertyEditor extends WyldCardDialog<FieldModel> implements A
 
         partLabel.setText(layer + " Part:");
         partLabelValue.setText(partNumber + " of " + partCount);
-        idLabelValue.setText(String.valueOf(model.getId(context)));
+        idLabelValue.setText(String.valueOf(model.getId()));
 
         fieldName.setText(model.get(context, FieldModel.PROP_NAME).toString());
         idLabelValue.setText(model.get(context, FieldModel.PROP_ID).toString());

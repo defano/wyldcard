@@ -134,9 +134,6 @@ public class RepeatStatement extends Statement {
 
         try {
             statements.execute(context);
-            if (context.didAbort()) {
-                throw new HtSemanticException("Script aborted.");
-            }
         } catch (TerminateIterationPreemption e) {
             // Nothing to do; keep repeating
         }

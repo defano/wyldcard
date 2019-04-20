@@ -4,8 +4,7 @@ import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.exception.NoSuchPropertyException;
-import com.defano.hypertalk.exception.PropertyPermissionException;
+import com.defano.hypertalk.exception.HtNoSuchPropertyException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
@@ -62,8 +61,7 @@ public interface Part<T extends PartModel> {
      * @param context The execution context.
      * @param property The name of the property to set
      * @param value The value to which it should be set
-     * @throws NoSuchPropertyException Thrown if no such property exists on this part
-     * @throws PropertyPermissionException Thrown when attempting to write a read-only property (like ID)
+     * @throws HtNoSuchPropertyException Thrown if no such property exists on this part
      * @throws HtSemanticException Thrown if value provided is invalid for this property
      */
     default void setProperty(ExecutionContext context, String property, Value value) throws HtException {
@@ -76,7 +74,7 @@ public interface Part<T extends PartModel> {
      * @param context The execution context.
      * @param property The name of the property to get
      * @return The value of the property
-     * @throws NoSuchPropertyException Thrown if no such property exists on the part.
+     * @throws HtNoSuchPropertyException Thrown if no such property exists on the part.
      */
     default Value getProperty(ExecutionContext context, String property) throws HtException {
         return getPartModel().tryGet(context, property);

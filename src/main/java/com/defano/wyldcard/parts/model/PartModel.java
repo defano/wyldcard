@@ -16,7 +16,6 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.properties.SimplePropertiesModel;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.compiler.Compiler;
-import com.defano.wyldcard.runtime.compiler.TwoPhaseParser;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WindowBuilder;
@@ -54,8 +53,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
     public static final String PROP_LOC = "loc";
     public static final String PROP_LOCATION = "location";
     public static final String PROP_CONTENTS = "contents";
-    public static final String PROP_SCRIPTTEXT = "scripttext";
-    public static final String PROP_BREAKPOINTS = "checkpoints";
+    public static final String PROP_CHECKPOINTS = "checkpoints";
 
     private final PartType type;
     private Owner owner;
@@ -63,7 +61,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
     private Value checkpoints = new Value();
 
     private transient PartModel parentPartModel;
-    private transient Script script;
+    private transient Script compiledScript;
     private transient long deferCompilation = 0;
     private transient long scriptHash;
 
@@ -75,8 +73,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
         this.parentPartModel = parentPartModel;
 
         define(PROP_VISIBLE).asValue(true);
-        define(PROP_SCRIPTTEXT).asValue();
-        define(PROP_BREAKPOINTS).asValue();
+        define(PROP_SCRIPT).asValue();
 
         postConstructPartModel();
     }
@@ -167,11 +164,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
             }
         });
 
-        define(PROP_SCRIPT).asComputedValue()
-                .withSetter((context, model, value) -> setScriptText(context, value.toString()))
-                .withGetter((context, model) -> model.get(context, PROP_SCRIPTTEXT));
-
-        define(PROP_BREAKPOINTS).asComputedValue()
+        define(PROP_CHECKPOINTS).asComputedValue()
                 .withGetter((context, model) -> checkpoints)
                 .withSetter((context, model, value) -> {
                     PartModel.this.checkpoints = value;
@@ -223,6 +216,10 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
         return type;
     }
 
+    public String getScriptText(ExecutionContext context) {
+        return get(context, PROP_SCRIPT).toString();
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -244,23 +241,15 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
             }
         }
 
-        return this.script == null ? new Script() : this.script;
+        return this.compiledScript == null ? new Script() : this.compiledScript;
     }
 
     private synchronized Script setScript(Script script, long scriptHash) {
-        this.script = script;
+        this.compiledScript = script;
         this.scriptHash = scriptHash;
-        this.script.applyBreakpoints(getBreakpoints());
+        this.compiledScript.applyBreakpoints(getBreakpoints());
 
         return script;
-    }
-
-    public String getScriptText(ExecutionContext context) {
-        return get(context, PROP_SCRIPT).toString();
-    }
-
-    private void setScriptText(ExecutionContext context, String scriptText) {
-        set(context, PROP_SCRIPTTEXT, new Value(TwoPhaseParser.commentNonHandlerLines(scriptText)));
     }
 
     private boolean isScriptDirty(ExecutionContext context) {
@@ -286,8 +275,8 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
         }
     }
 
-    public int getId(ExecutionContext context) {
-        return get(context, PROP_ID).integerValue();
+    public int getId() {
+        return get(null, PROP_ID).integerValue();
     }
 
     public String getLongName(ExecutionContext context) {
@@ -303,7 +292,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
     }
 
     public PartSpecifier getPartSpecifier(ExecutionContext context) {
-        return new PartIdSpecifier(getOwner(), getType(), getId(context));
+        return new PartIdSpecifier(getOwner(), getType(), getId());
     }
 
     /**
@@ -350,7 +339,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
      */
     public PartSpecifier getMe(ExecutionContext context) {
         PartModel parent = getParentPartModel();
-        PartSpecifier localPart = new PartIdSpecifier(getOwner(), getType(), getId(context));
+        PartSpecifier localPart = new PartIdSpecifier(getOwner(), getType(), getId());
 
         if (getType() == PartType.BUTTON || getType() == PartType.FIELD) {
             return new CompositePartSpecifier(context, localPart, new LiteralPartExp(null, parent.getMe(context)));
@@ -388,7 +377,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
     public List<Integer> getBreakpoints() {
         ExecutionContext context = new ExecutionContext();
         ArrayList<Integer> breakpoints = new ArrayList<>();
-        List<Value> breakpointValues = get(context, PROP_BREAKPOINTS).getItems(context);
+        List<Value> breakpointValues = get(context, PROP_CHECKPOINTS).getItems(context);
         for (Value thisBreakpoint : breakpointValues) {
             breakpoints.add(thisBreakpoint.integerValue());
         }
@@ -487,11 +476,11 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
         PartModel that = (PartModel) o;
         return this.getType() == that.getType() &&
                 this.owner == that.getOwner() &&
-                this.getId(null) == that.getId(null);
+                this.getId() == that.getId();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, getId(null), getOwner());
+        return Objects.hash(type, getId(), getOwner());
     }
 }

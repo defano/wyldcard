@@ -43,13 +43,13 @@ public class WindowsMenu extends HyperCardMenu {
 
                 MenuItemBuilder.ofDefaultType()
                         .named("Next Window")
-                        .withShortcut('.')
+                        .withShiftShortcut('.')
                         .withAction(a -> WyldCard.getInstance().getWindowManager().nextWindow().getWindow().requestFocus())
                         .build(WindowsMenu.this);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("Previous Window")
-                        .withShortcut(',')
+                        .withShiftShortcut(',')
                         .withAction(a -> WyldCard.getInstance().getWindowManager().prevWindow().getWindow().requestFocus())
                         .build(WindowsMenu.this);
 

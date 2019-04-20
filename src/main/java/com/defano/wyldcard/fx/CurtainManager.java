@@ -112,7 +112,7 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
         }
     }
 
-    private boolean isScreenLocked() {
+    public boolean isScreenLocked() {
         return animationResult != null && !animationResult.isDone();
     }
 

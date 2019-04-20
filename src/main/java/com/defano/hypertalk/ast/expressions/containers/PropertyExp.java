@@ -9,7 +9,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PropertySpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.exception.NoSuchPropertyException;
+import com.defano.hypertalk.exception.HtNoSuchPropertyException;
 import com.defano.hypertalk.utils.ChunkPropertiesDelegate;
 import com.defano.hypertalk.utils.MenuPropertiesDelegate;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -66,7 +66,7 @@ public class PropertyExp extends ContainerExp {
         } else {
             try {
                 context.setProperty(propertySpec.getProperty(), getPartSpecifier(context), preposition, getChunk(), value);
-            } catch (NoSuchPropertyException e) {
+            } catch (HtNoSuchPropertyException e) {
                 // Context sensitive: Unknown HC property references are assumed to be local variable references
                 context.setVariable(propertySpec.getProperty(), preposition, getChunk(), value);
             }

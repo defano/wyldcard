@@ -2,6 +2,7 @@ package com.defano.wyldcard.message;
 
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
@@ -36,10 +37,15 @@ public interface Messagable {
     PartSpecifier getMe(ExecutionContext context);
 
     /**
-     * Asynchronously sends a message with bound arguments (i.e., 'doMenu') to this part's message passing hierarchy.
+     * Asynchronously sends a message to this part's message passing hierarchy.
+     * <p>
+     * If an error occurs while executing the script handler associated with the message, the syntax error dialog will
+     * be displayed and {@link ExitToHyperCardPreemption} (a {@link RuntimeException}) will be thrown to prevent any
+     * further script execution.
      *
      * @param context The execution context
      * @param message The message to be passed
+     * @throws ExitToHyperCardPreemption Thrown if execution of the message handler produces an error.
      */
     default void receiveMessage(ExecutionContext context, Message message) {
         receiveMessage(context, message, (command, trapped, err) -> {
@@ -51,7 +57,7 @@ public interface Messagable {
 
     /**
      * Asynchronously sends a message with arguments (i.e., 'doMenu theMenu, theItem') to this part's message passing
-     * hierarchy, notifying an observer when complete.
+     * hierarchy, notifying an observer with completion status when complete.
      *
      * @param context      The execution context
      * @param message      The message to be received by this part
@@ -71,6 +77,7 @@ public interface Messagable {
 
         // Attempt to invoke command handler in this part and listen for completion
         Compiler.asyncExecuteHandler(context, getMe(context), getScript(context), message, (me, script, handler, trappedMessage, exception) -> {
+
             // Did message generate an error
             if (exception != null) {
                 onCompletion.onMessagePassed(message, true, exception);
@@ -83,9 +90,8 @@ public interface Messagable {
 
             // Message not trapped, send message to next part in the hierarchy
             else {
-                // Get next recipient in message passing order; null if no other parts receive message
-                Messagable nextRecipient = getNextMessageRecipient(context, getMe(context).getType());
-                nextRecipient.receiveMessage(context, message, onCompletion);
+                getNextMessageRecipient(context, getMe(context).getType())
+                        .receiveMessage(context, message, onCompletion);
             }
         });
     }

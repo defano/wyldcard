@@ -14,8 +14,8 @@ public class StackModelBuilder extends PartModelBuilder<StackModel, StackModelBu
     public StackModelBuilder withInitialCard() {
         model.addCard(
                 new CardModelBuilder(model)
+                        .withBackgroundId(model.newBackground())
                         .withId(model.getNextCardId())
-                        .withBackgroundId(model.newBackgroundModel())
                         .build()
         );
 

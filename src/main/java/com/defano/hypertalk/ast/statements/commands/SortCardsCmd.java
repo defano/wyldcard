@@ -43,7 +43,7 @@ public class SortCardsCmd extends Command {
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
         // Remember which card we're currently viewing
-        int thisCardId = context.getCurrentStack().getDisplayedCard().getPartModel().getId(context);
+        int thisCardId = context.getCurrentStack().getDisplayedCard().getPartModel().getId();
 
         // Get a copy of the list of cards in the stack
         List<CardModel> allCards = context.getCurrentStack().getStackModel().getCardModels();
@@ -116,7 +116,7 @@ public class SortCardsCmd extends Command {
 
         BackgroundModel backgroundModel = background.partFactor(context, BackgroundModel.class, new HtSemanticException("Can't sort that."));
         for (CardModel thisCard : backgroundModel.getCardModels(context)) {
-            if (thisCard.getId(context) == cardModel.getId(context)) {
+            if (thisCard.getId() == cardModel.getId()) {
                 return true;
             }
         }
@@ -126,7 +126,7 @@ public class SortCardsCmd extends Command {
 
     private int indexOfCardId(ExecutionContext context, List<CardModel> cardModels, int id) {
         for (int index = 0; index < cardModels.size(); index++) {
-            if (cardModels.get(index).getId(context) == id) {
+            if (cardModels.get(index).getId() == id) {
                 return index;
             }
         }

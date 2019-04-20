@@ -17,6 +17,19 @@ public class StackImportProgress extends WyldCardDialog implements ConversionPro
     private JButton cancelButton;
     private JLabel progressLabel;
 
+    private boolean cancelled = false;
+
+    public StackImportProgress() {
+        cancelButton.addActionListener(e -> {
+            this.dispose();
+            cancelled = true;
+        });
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
     @Override
     public JComponent getWindowPanel() {
         return windowPanel;
@@ -25,6 +38,11 @@ public class StackImportProgress extends WyldCardDialog implements ConversionPro
     @Override
     public void bindModel(Object data) {
         // Nothing to do
+    }
+
+    @Override
+    public JButton getDefaultButton() {
+        return cancelButton;
     }
 
     @Override

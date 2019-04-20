@@ -29,7 +29,7 @@ public class PartIdSpecifier implements FindInCollectionSpecifier {
         Optional<PartModel> foundPart = parts.stream()
                 .filter(p -> getType() == null || p.getType() == getType())
                 .filter(p -> getOwner() == null || p.getOwner() == getOwner())
-                .filter(p -> p.getId(context) == getValue())
+                .filter(p -> p.getId() == getValue())
                 .findFirst();
 
         if (foundPart.isPresent()) {

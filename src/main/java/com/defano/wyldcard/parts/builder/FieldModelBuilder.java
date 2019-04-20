@@ -25,7 +25,9 @@ public class FieldModelBuilder extends PartModelBuilder<FieldModel, FieldModelBu
     }
 
     public FieldModelBuilder withText(Object v) {
-        this.fieldModel.set(context, FieldModel.PROP_TEXT, new Value(v));
+        if (v != null) {
+            this.fieldModel.set(context, FieldModel.PROP_TEXT, new Value(v));
+        }
         return this;
     }
 

@@ -54,7 +54,7 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
 
     @PostConstruct
     public void postConstructCardLayerPartModel() {
-        super.postConstructAdvancedPropertiesModel();
+        super.postConstructPartModel();
 
         this.currentCardId = new ThreadLocal<>();
         this.currentCardId.set(new ExecutionContext().getCurrentCard().getId(new ExecutionContext()));

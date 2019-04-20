@@ -51,10 +51,10 @@ public class PushCardCmd extends Command {
 
     private Integer evaluateAsCardId(ExecutionContext context, PartModel model) {
         if (model instanceof CardModel) {
-            return model.getId(context);
+            return model.getId();
         } else if (model instanceof BackgroundModel) {
-            int cardIndex = context.getCurrentStack().getStackModel().getIndexOfBackground(model.getId(context));
-            return context.getCurrentStack().getStackModel().getCardModel(cardIndex).getId(context);
+            int cardIndex = context.getCurrentStack().getStackModel().getIndexOfBackground(model.getId());
+            return context.getCurrentStack().getStackModel().getCardModel(cardIndex).getId();
         } else {
             return null;
         }

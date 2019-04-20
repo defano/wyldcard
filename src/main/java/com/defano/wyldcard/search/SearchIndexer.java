@@ -147,7 +147,7 @@ public class SearchIndexer {
         int searchFrom = 0;
         Range result;
 
-        int cardId = context.getCurrentStack().getStackModel().getCardModel(cardIndex).getId(context);
+        int cardId = context.getCurrentStack().getStackModel().getCardModel(cardIndex).getId();
         String fieldText = fieldModel.getText(context, cardId);
 
         do {

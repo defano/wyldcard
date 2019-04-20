@@ -32,19 +32,19 @@ public class Destination {
         // Part is a card in a stack
         if (model instanceof CardModel) {
             destinationStack = ((CardModel) model).getStackModel();
-            return new Destination(destinationStack, model.getId(context));
+            return new Destination(destinationStack, model.getId());
         }
 
         // Part is a background in a stack
         else if (model instanceof BackgroundModel) {
             destinationStack = ((BackgroundModel) model).getStackModel();
-            destinationIndex = destinationStack.getIndexOfBackground(model.getId(context));
-            return new Destination(destinationStack, destinationStack.getCardModels().get(destinationIndex).getId(context));
+            destinationIndex = destinationStack.getIndexOfBackground(model.getId());
+            return new Destination(destinationStack, destinationStack.getCardModels().get(destinationIndex).getId());
         }
 
         // Part is the stack itself
         else if (model instanceof StackModel) {
-            return new Destination((StackModel) model, ((StackModel) model).getCardModels().get(((StackModel) model).getCurrentCardIndex()).getId(context));
+            return new Destination((StackModel) model, ((StackModel) model).getCardModels().get(((StackModel) model).getCurrentCardIndex()).getId());
         }
 
         // Part model was null or otherwise can't resolve destination

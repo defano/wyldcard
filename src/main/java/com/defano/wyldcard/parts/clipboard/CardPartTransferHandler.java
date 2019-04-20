@@ -94,9 +94,9 @@ public class CardPartTransferHandler extends TransferHandler {
 
     private Value getNewId(PartModel partModel, StackModel owningStack) {
         if (partModel instanceof FieldModel) {
-            return new Value(owningStack.getNextFieldId());
+            return new Value(owningStack.getNextFieldId(partModel.getParentPartModel().getId()));
         } else if (partModel instanceof ButtonModel) {
-            return new Value(owningStack.getNextButtonId());
+            return new Value(owningStack.getNextButtonId(partModel.getParentPartModel().getId()));
         } else {
             throw new IllegalStateException("Bug! Not a supported type: " + partModel);
         }

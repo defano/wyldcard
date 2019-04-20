@@ -4,6 +4,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layouts.StackImportProgress;
 
@@ -22,15 +23,22 @@ public class StackImporter {
         StackFormatConverter.startConversion(stackFile, new ConversionStatusObserver() {
             @Override
             public void onConversionFailed(String message, Exception cause) {
-                progressWindow.dispose();
-                WyldCard.getInstance().showErrorDialog(new HtException(message));
-                cause.printStackTrace();
+                Invoke.onDispatch(() -> {
+                    progressWindow.dispose();
+                    if (!progressWindow.isCancelled()) {
+                        WyldCard.getInstance().showErrorDialog(new HtException(message));
+                        cause.printStackTrace();
+                    }
+                });
             }
-
             @Override
             public void onConversionSucceeded(StackModel importedStack) {
-                progressWindow.dispose();
-                WyldCard.getInstance().getStackManager().openStack(context, importedStack, true);
+                Invoke.onDispatch(() -> {
+                    progressWindow.dispose();
+                    if (!progressWindow.isCancelled()) {
+                        WyldCard.getInstance().getStackManager().openStack(context, importedStack, true);
+                    }
+                });
             }
         }, progressWindow);
     }

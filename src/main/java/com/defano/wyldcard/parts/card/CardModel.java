@@ -73,7 +73,7 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
 
     @PostConstruct
     public void postConstructCardModel() {
-        super.postConstructAdvancedPropertiesModel();
+        super.postConstructPartModel();
 
         define(PROP_NUMBER).asComputedReadOnlyValue((context, model) -> new Value(((OrderedPartFinder) ((CardModel) model).getParentPartModel()).getPartNumber(context, (CardModel) model, PartType.CARD)));
 
@@ -290,7 +290,7 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
     }
 
     public String getShortId(ExecutionContext context) {
-        return String.valueOf(getId(context));
+        return String.valueOf(getId());
     }
 
     public String getAbbrevId(ExecutionContext context) {
@@ -303,7 +303,7 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
 
     private boolean hasName() {
         try {
-            return !findProperty(PROP_NAME).value().get(new ExecutionContext(), null).isEmpty();
+            return !findProperty(PROP_NAME).value().get(new ExecutionContext(), this).isEmpty();
         } catch (HtException e) {
             return false;
         }

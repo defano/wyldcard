@@ -157,7 +157,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
 
     @RunOnDispatch
     private void saveBreakpoints() {
-        model.set(new ExecutionContext(), PartModel.PROP_BREAKPOINTS, Value.ofItems(StringUtils.getValueList(editor.getBreakpoints())));
+        model.set(new ExecutionContext(), PartModel.PROP_CHECKPOINTS, Value.ofItems(StringUtils.getValueList(editor.getBreakpoints())));
     }
 
     @RunOnDispatch

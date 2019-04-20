@@ -111,7 +111,7 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
 
         partLabel.setText(layer + " Part:");
         partLabelValue.setText(partNumber + " of " + partCount);
-        idLabelValue.setText(String.valueOf(model.getId(context)));
+        idLabelValue.setText(String.valueOf(model.getId()));
 
         buttonName.setText(model.get(context, ButtonModel.PROP_NAME).toString());
         buttonTop.setValue(model.get(context, ButtonModel.PROP_TOP).integerValue());

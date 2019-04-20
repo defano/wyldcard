@@ -10,10 +10,6 @@ public class HtException extends Exception {
 
     private Breadcrumb breadcrumb;
 
-    public HtException(HtException cause) {
-        this(getRootCause(cause).getMessage(), getRootCause(cause));
-    }
-
     public HtException(String message) {
         super(message);
     }
@@ -21,6 +17,11 @@ public class HtException extends Exception {
     public HtException(String message, HtException cause) {
         super(message, cause);
         this.breadcrumb = cause.breadcrumb;
+    }
+
+    protected HtException(HtException cause) {
+        super(cause);
+        this.breadcrumb = cause.getBreadcrumb();
     }
 
     public static HtException getRootCause(HtException cause) {

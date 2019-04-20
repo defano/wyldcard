@@ -41,7 +41,7 @@ public class ButtonModel extends CardLayerPartModel {
     public ButtonModel(Owner owner, PartModel parentPartModel) {
         super(PartType.BUTTON, owner, parentPartModel);
 
-        this.setCurrentCardId(parentPartModel.getId(new ExecutionContext()));
+        this.setCurrentCardId(parentPartModel.getId());
 
         define(PROP_SCRIPT).asValue();
         define(PROP_ID).asConstant(new Value());
@@ -88,7 +88,7 @@ public class ButtonModel extends CardLayerPartModel {
                 .withSetter((context, model, value) -> setHilite(context, value));
 
         // When an icon has been applied to a button, HyperCard automatically forces the button font to 10pt Geneva
-        addPropertyWillChangeObserver((context, property, oldValue, newValue) -> {
+        addPropertyChangedObserver((context, model, property, oldValue, newValue) -> {
             if (property.equalsIgnoreCase(PROP_ICON) && !newValue.isZero()) {
                 set(context, PROP_TEXTSIZE, new Value(10));
                 set(context, PROP_TEXTFONT, new Value("Geneva"));
@@ -142,7 +142,7 @@ public class ButtonModel extends CardLayerPartModel {
                     " of " +
                     getOwner().hyperTalkName.toLowerCase() +
                     " button id " +
-                    getId(context);
+                    getId();
         }
     }
 

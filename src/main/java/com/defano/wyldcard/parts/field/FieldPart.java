@@ -350,7 +350,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         CardPart cardPart = parent.get();
 
         if (cardPart != null) {
-            int id = cardPart.getPartModel().getStackModel().getNextFieldId();
+            int id = cardPart.getPartModel().getStackModel().getNextFieldId(parentPartModel.getId());
             partModel = new FieldModelBuilder(owner, parentPartModel).withId(id).withBounds(geometry).build();
             partModel.addPropertyChangedObserver(this);
         }

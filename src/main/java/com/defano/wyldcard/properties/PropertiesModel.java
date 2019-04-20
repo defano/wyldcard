@@ -3,7 +3,6 @@ package com.defano.wyldcard.properties;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.parts.model.PropertyWillChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
@@ -100,14 +99,6 @@ public interface PropertiesModel {
      * @return True if the property exists, false otherwise.
      */
     boolean hasProperty(String propertyName);
-
-    /**
-     * Adds an observer of property will-change events. Note that observers are notified on whichever thread is
-     * responsible for changing the property value.
-     *
-     * @param listener The observer
-     */
-    void addPropertyWillChangeObserver(PropertyWillChangeObserver listener);
 
     /**
      * Adds an observer of property value changes. Note that observers are always notified of property changes on the

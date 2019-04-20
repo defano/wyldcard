@@ -1,9 +1,8 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.preemptions.Preemption;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,9 +29,6 @@ public class StatementList extends Statement {
 
     public void onExecute(ExecutionContext context) throws HtException, Preemption {
         for (Statement s : list) {
-            if (context.didAbort()) {
-                throw new HtSemanticException("Script aborted.");
-            }
             s.execute(context);
         }
     }

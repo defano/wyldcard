@@ -4,8 +4,8 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
+import com.defano.hypertalk.exception.HtNoSuchPropertyException;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.parts.model.PropertyWillChangeObserver;
 import com.defano.wyldcard.properties.builder.PropertyBuilder;
 import com.defano.wyldcard.properties.builder.PropertyValueBuilder;
 import com.defano.wyldcard.properties.value.BasicValue;
@@ -22,12 +22,10 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
 
     // Observers (not serialized)
     private transient ArrayList<PropertyChangeObserver> propertyChangeObservers = new ArrayList<>();
-    private transient ArrayList<PropertyWillChangeObserver> propertyWillChangeObservers = new ArrayList<>();
 
     @PostConstruct
     protected void postConstructAdvancedPropertiesModel() {
         propertyChangeObservers = new ArrayList<>();
-        propertyWillChangeObservers = new ArrayList<>();
     }
 
     /**
@@ -91,10 +89,6 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
         }
 
         try {
-            if (notifyObservers) {
-                fireOnPropertyWillChange(context, propertyName, get(context, propertyName), propertyValue);
-            }
-
             p.value().set(context, propertyValue, this);
 
             if (notifyObservers) {
@@ -114,10 +108,9 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
         Property p = findProperty(propertyName);
 
         if (p == null) {
-            throw new IllegalArgumentException("No such property named '" + propertyName + "'.");
+            throw new HtNoSuchPropertyException("No such property named '" + propertyName + "'.");
         }
 
-        fireOnPropertyWillChange(context, propertyName, get(context, propertyName), propertyValue);
         p.value().set(context, propertyValue, this);
         fireOnPropertyChanged(context, propertyName, get(context, propertyName), propertyValue);
     }
@@ -148,7 +141,7 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
         Property p = findProperty(propertyName);
 
         if (p == null) {
-            throw new IllegalArgumentException("No such property named '" + propertyName + "'.");
+            throw new HtNoSuchPropertyException("No such property named '" + propertyName + "'.");
         }
 
         return p.value().get(context, this);
@@ -172,14 +165,6 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
     @Override
     public boolean hasProperty(String propertyName) {
         return findProperty(propertyName) != null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void addPropertyWillChangeObserver(PropertyWillChangeObserver listener) {
-        propertyWillChangeObservers.add(listener);
     }
 
     /**
@@ -216,18 +201,8 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
         propertyChangeObservers.remove(listener);
     }
 
-    private void fireOnPropertyWillChange(ExecutionContext context, String property, Value oldValue, Value value) {
-        for (PropertyWillChangeObserver listener : propertyWillChangeObservers.toArray(new PropertyWillChangeObserver[0])) {
-            listener.onPropertyWillChange(context, property, oldValue, value);
-        }
-    }
-
     private void fireOnPropertyChanged(ExecutionContext context, String property, Value oldValue, Value value) {
-        Invoke.onDispatch(() -> {
-            for (PropertyChangeObserver listener : propertyChangeObservers.toArray(new PropertyChangeObserver[0])) {
-                listener.onPropertyChanged(context, this, property, oldValue, value);
-            }
-        });
+        Invoke.onDispatch(() -> propertyChangeObservers.forEach(l -> l.onPropertyChanged(context, this, property, oldValue, value)));
     }
 
 }

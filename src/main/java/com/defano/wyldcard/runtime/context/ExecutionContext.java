@@ -7,7 +7,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.exception.NoSuchPropertyException;
+import com.defano.hypertalk.exception.HtNoSuchPropertyException;
 import com.defano.wyldcard.StackManager;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.Part;
@@ -429,7 +429,7 @@ public class ExecutionContext {
      * @param property The name of the property to retrieve
      * @param ps       A part's specifier, or null to indicate a HyperCard property
      * @return The value of the requested property
-     * @throws NoSuchPropertyException Thrown if the property does not exist on the given part
+     * @throws HtNoSuchPropertyException Thrown if the property does not exist on the given part
      * @throws PartException           Thrown if the part does not exist
      */
     public Value getProperty(String property, PartSpecifier ps) throws HtException {
