@@ -46,6 +46,7 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
             ((AlphaImageIcon) label.getIcon()).setAlpha(isHilited ? 0.5f : 1.0f);
         }
 
+        System.err.println("Painting");
         paintHilite(isHilited && isEnabled(), (Graphics2D) g);
 
         label.setForeground(getLabelColor());

@@ -16,6 +16,7 @@ import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
 import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.util.HandlerComboBox;
 import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.WyldCardWindow;
@@ -66,12 +67,6 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
         editor.getScriptField().addCaretListener(e -> updateCaretPositionLabel());
         editor.addBreakpointToggleObserver(breakpoints -> saveBreakpoints());
 
-        editor.getScriptField().setFont(FontUtils.getFontByNameStyleSize(
-                WyldCard.getInstance().getWyldCardPart().get(new ExecutionContext(), WyldCardProperties.PROP_SCRIPTTEXTFONT).toString(),
-                Font.PLAIN,
-                WyldCard.getInstance().getWyldCardPart().get(new ExecutionContext(), WyldCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
-        ));
-
         textArea.add(editor);
         helpIcon.addMouseListener(new MouseAdapter() {
             @Override
@@ -97,6 +92,8 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
             }
         });
 
+        Invoke.asynchronouslyOnDispatch(() -> handlersMenu.invalidateDataset());
+        Invoke.asynchronouslyOnDispatch(() -> functionsMenu.invalidateDataset());
     }
 
     @Override
@@ -123,6 +120,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
 
         // Listen for programmatically-applied script changes
         this.model.addPropertyChangedObserver(this);
+        WyldCard.getInstance().getWyldCardPart().addPropertyChangedObserverAndNotify(new ExecutionContext(), this);
 
         restoreCaretPosition();
     }
@@ -554,10 +552,22 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
 
     @Override
     public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
-        // Special case: Script text was programatically changed
-        if (PartModel.PROP_SCRIPT.equals(property.toLowerCase())) {
-            saveCaretPosition();
-            applyScriptToEditor();
+        switch (property.toLowerCase()) {
+            // Special case: Script text was programmatically changed
+            case PartModel.PROP_SCRIPT:
+                saveCaretPosition();
+                applyScriptToEditor();
+                break;
+
+            case WyldCardProperties.PROP_SCRIPTTEXTFONT:
+            case WyldCardProperties.PROP_SCRIPTTEXTSIZE:
+                Font newFont = FontUtils.getFontByNameStyleSize(
+                        WyldCard.getInstance().getWyldCardPart().get(new ExecutionContext(), WyldCardProperties.PROP_SCRIPTTEXTFONT).toString(),
+                        Font.PLAIN,
+                        WyldCard.getInstance().getWyldCardPart().get(new ExecutionContext(), WyldCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
+                );
+                editor.getScriptField().setFont(newFont);
+                break;
         }
     }
 

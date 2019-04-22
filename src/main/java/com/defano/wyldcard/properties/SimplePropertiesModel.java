@@ -175,6 +175,12 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
         propertyChangeObservers.add(listener);
     }
 
+    @Override
+    public void addPropertyChangedObserverAndNotify(ExecutionContext context, PropertyChangeObserver listener) {
+        propertyChangeObservers.add(listener);
+        notifyPropertyChangedObserver(context, listener, true);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -202,7 +208,11 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
     }
 
     private void fireOnPropertyChanged(ExecutionContext context, String property, Value oldValue, Value value) {
-        Invoke.onDispatch(() -> propertyChangeObservers.forEach(l -> l.onPropertyChanged(context, this, property, oldValue, value)));
+        Invoke.onDispatch(() -> {
+            for (PropertyChangeObserver observer : propertyChangeObservers.toArray(new PropertyChangeObserver[0])) {
+                observer.onPropertyChanged(context, this, property, oldValue, value);
+            }
+        });
     }
 
 }

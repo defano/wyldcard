@@ -1,11 +1,13 @@
 package com.defano.wyldcard.parts.button.styles;
 
+import com.defano.wyldcard.awt.DisplayInverter;
 import com.defano.wyldcard.border.PartBorderFactory;
 import com.defano.wyldcard.parts.ToolEditablePart;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 
-public class OvalButton extends AbstractLabelButton {
+public class OvalButton extends AbstractLabelButton implements DisplayInverter {
 
     public OvalButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
@@ -16,15 +18,9 @@ public class OvalButton extends AbstractLabelButton {
     @Override
     protected void paintHilite(boolean isHilited, Graphics2D g) {
         if (isHilited) {
-            g.setPaint(DEFAULT_HILITE_COLOR);
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g.fillOval(
-                    getInsets().left - 1,
-                    getInsets().top - 1,
-                    getWidth() - getInsets().left - getInsets().right + 2,
-                    getHeight() - getInsets().top - getInsets().bottom + 2
-            );
+            Rectangle bounds = getBounds();
+            Shape oval = new Ellipse2D.Double(bounds.x, bounds.y, bounds.width, bounds.height);
+            g.drawImage(invertedPixels(oval, this), 0, 0, null);
         }
     }
-
 }

@@ -1,11 +1,12 @@
 package com.defano.wyldcard.parts.button.styles;
 
+import com.defano.wyldcard.awt.DisplayInverter;
 import com.defano.wyldcard.border.PartBorderFactory;
 import com.defano.wyldcard.parts.ToolEditablePart;
 
 import java.awt.*;
 
-public class TransparentButton extends AbstractLabelButton {
+public class TransparentButton extends AbstractLabelButton implements DisplayInverter {
 
     public TransparentButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
@@ -13,11 +14,9 @@ public class TransparentButton extends AbstractLabelButton {
         setOpaque(false);
     }
 
-    @Override
     protected void paintHilite(boolean isHilited, Graphics2D g) {
         if (isHilited) {
-            g.setPaint(DEFAULT_HILITE_COLOR);
-            g.fillRect(0, 0, getWidth(), getHeight());
+            g.drawImage(invertedPixels(getBounds(), this), 0, 0, null);
         }
     }
 
@@ -31,4 +30,5 @@ public class TransparentButton extends AbstractLabelButton {
             setBorder(PartBorderFactory.createLineBorder());
         }
     }
+
 }

@@ -108,6 +108,8 @@ public interface PropertiesModel {
      */
     void addPropertyChangedObserver(PropertyChangeObserver listener);
 
+    void addPropertyChangedObserverAndNotify(ExecutionContext context, PropertyChangeObserver listener);
+
     /**
      * Invokes the {@link PropertyChangeObserver#onPropertyChanged(ExecutionContext, PropertiesModel, String, Value, Value)} method for
      * all properties on the provided observer. Useful for listeners that wish to initialize themselves with the current
