@@ -16,7 +16,7 @@ public class TransparentButton extends AbstractLabelButton implements DisplayInv
 
     protected void paintHilite(boolean isHilited, Graphics2D g) {
         if (isHilited) {
-            g.drawImage(invertedPixels(getBounds(), this), 0, 0, null);
+            g.drawImage(invertDisplayedPixels(getBounds(), this), 0, 0, null);
         }
     }
 

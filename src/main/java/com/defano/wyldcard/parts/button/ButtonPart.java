@@ -138,7 +138,6 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
     @RunOnDispatch
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
-
         if (SwingUtilities.isLeftMouseButton(e) && !isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOWN);
             MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_STILL_DOWN));
@@ -161,7 +160,6 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
     @RunOnDispatch
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
-
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER);
             WyldCard.getInstance().getPeriodicMessageManager().addWithin(getPartModel());
@@ -172,7 +170,6 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
     @RunOnDispatch
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
-
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE);
             WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
@@ -210,7 +207,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
                 setVisibleWhenBrowsing(context, newValue.booleanValue());
                 break;
             case ButtonModel.PROP_ZORDER:
-                getCard().onDisplayOrderChanged(context);
+                getCard().invalidatePartsZOrder(context);
                 break;
         }
     }

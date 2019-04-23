@@ -1,5 +1,8 @@
 package com.defano.wyldcard.icons;
 
+import com.defano.jmonet.transform.image.ApplyPixelTransform;
+import com.defano.jmonet.transform.pixel.InvertPixelTransform;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -16,12 +19,16 @@ public interface ButtonIcon {
     String getName();
     Image getImage();
 
-    default AlphaImageIcon getPreviewIcon() {
-        return new AlphaImageIcon(new ImageIcon(scaleToIconSize(getImage())), 1.0f);
+    default ImageIcon getPreviewIcon() {
+        return new ImageIcon(scaleToIconSize(getImage()));
     }
 
-    default AlphaImageIcon getIcon() {
-        return new AlphaImageIcon(new ImageIcon(scaleToIconSize(getImage())), 1.0f);
+    default ImageIcon getIcon() {
+        return new ImageIcon(scaleToIconSize(getImage()));
+    }
+
+    default ImageIcon getInvertedIcon() {
+        return new ImageIcon(new ApplyPixelTransform(new InvertPixelTransform()).apply(scaleToIconSize(getImage())));
     }
 
     static BufferedImage scaleToIconSize(Image inputImage) {

@@ -50,6 +50,8 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
         define(PROP_TEXTSTYLE).asValue("plain");
         define(PROP_TEXTALIGN).asValue("center");
         define(PROP_ENABLED).asValue(true);
+
+        postConstructCardLayerPartModel();
     }
 
     @PostConstruct

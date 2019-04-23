@@ -3,7 +3,6 @@ package com.defano.wyldcard.parts.button.styles;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.icons.IconDatabase;
-import com.defano.wyldcard.icons.AlphaImageIcon;
 import com.defano.wyldcard.parts.ContainerWrappedPart;
 import com.defano.wyldcard.parts.button.HyperCardButton;
 import com.defano.wyldcard.parts.ToolEditablePart;
@@ -18,11 +17,10 @@ import java.awt.*;
 
 public abstract class AbstractLabelButton extends JPanel implements ContainerWrappedPart, HyperCardButton, IconAlignable {
 
-    protected final Color DEFAULT_HILITE_COLOR = new Color(0, 0, 0, 0x90);
-
     protected final ToolEditablePart toolEditablePart;
     private boolean isHilited = false;
     private JLabel label;
+    private ButtonIcon icon;
 
     protected abstract void paintHilite(boolean isHilited, Graphics2D g);
 
@@ -42,14 +40,11 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (label.getIcon() != null && label.getIcon() instanceof AlphaImageIcon) {
-            ((AlphaImageIcon) label.getIcon()).setAlpha(isHilited ? 0.5f : 1.0f);
+        if (icon == null) {
+            paintHilite(paintHilited(), (Graphics2D) g);
+            label.setForeground(getLabelColor());
         }
 
-        System.err.println("Painting");
-        paintHilite(isHilited && isEnabled(), (Graphics2D) g);
-
-        label.setForeground(getLabelColor());
         label.paintComponents(g);
     }
 
@@ -75,10 +70,12 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
 
             case ButtonModel.PROP_HILITE:
                 isHilited = newValue.booleanValue();
+                updateIconHiliteState();
                 break;
 
             case ButtonModel.PROP_ENABLED:
                 setEnabled(newValue.booleanValue());
+                updateIconHiliteState();
                 break;
 
             case ButtonModel.PROP_TEXTSIZE:
@@ -98,8 +95,7 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
                 break;
 
             case ButtonModel.PROP_ICON:
-                ButtonIcon icon = IconDatabase.getInstance().findIconForValue(newValue);
-                label.setIcon(icon == null ? null : icon.getIcon());
+                icon = IconDatabase.getInstance().findIconForValue(newValue);
                 label.setIconTextGap(1);
                 break;
 
@@ -122,8 +118,18 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
         return this;
     }
 
-    private Color getLabelColor() {
-        return isHilited ? Color.WHITE : isEnabled() ? Color.BLACK : Color.GRAY;
+    private void updateIconHiliteState() {
+        if (icon != null) {
+            label.setIcon(paintHilited() ? icon.getInvertedIcon() : icon.getIcon());
+        }
     }
 
+    private Color getLabelColor() {
+        return paintHilited() && icon == null ? Color.WHITE :
+                isEnabled() ? Color.BLACK : Color.GRAY;
+    }
+
+    private boolean paintHilited() {
+        return isHilited && isEnabled();
+    }
 }

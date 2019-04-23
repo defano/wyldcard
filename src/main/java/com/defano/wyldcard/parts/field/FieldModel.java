@@ -40,7 +40,7 @@ import java.util.*;
  * Third: TextAlign is a separate, managed property of the field and not of the document model because Java's
  * RTFEditorKit doesn't support saving text alignment. Ugh! That's okay though, because HyperCard supports only a
  * single alignment per field, which we can model as a standard read/writable property in the
- * {@link WyldCardPropertiesModel}.
+ * {@link com.defano.wyldcard.properties.PropertiesModel}.
  * <p>
  * Fourth: Changes to the field's DOM can originate from the UI (i.e., a user typing into the field) or from HyperTalk.
  * Because changes can originate in the view ({@link HyperCardTextField}, this
@@ -148,7 +148,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * should always be the field view object, {@link HyperCardTextField}.
      * <p>
      * In most every other case, a special observer interface is not required because observable attributes are modeled
-     * by {@link WyldCardPropertiesModel}. Unfortunately, this technique requires properties
+     * by {@link com.defano.wyldcard.properties.PropertiesModel}. Unfortunately, this technique requires properties
      * to be modeled as a HyperTalk {@link Value}. Coercing a byte array into and out of a Value would be ugly.
      *
      * @param observer The observer of DOM changes.

@@ -1,16 +1,17 @@
 package com.defano.wyldcard.parts.card;
 
-import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.parts.Part;
-import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.parts.Part;
+import com.defano.wyldcard.parts.finder.LayeredPartFinder;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Represents a part that exists as part of a layer of the card (that is, a button or a field).
+ * Represents a part that exists on a layer (foreground or background) of the card (i.e., either a button or a field).
  */
 public interface CardLayerPart<T extends PartModel> extends Part<T> {
 
@@ -52,7 +53,13 @@ public interface CardLayerPart<T extends PartModel> extends Part<T> {
      */
     default void setDisplayOrder(ExecutionContext context, int newPosition) {
         CardPart card = getCard();
-        ArrayList<PartModel> parts = new ArrayList<>(card.getPartModel().getPartsInDisplayOrder(context));
+
+        PartModel owner = getCardLayer() == CardLayer.BACKGROUND_PARTS ?
+                getCard().getPartModel().getBackgroundModel() :
+                getCard().getPartModel();
+
+        List<PartModel> parts = ((LayeredPartFinder) owner).getPartsInDisplayOrder(context);
+                // = card.getPartModel().getPartsInDisplayOrder(context, getCardLayer() == CardLayer.BACKGROUND_PARTS ? Owner.BACKGROUND : Owner.CARD);
 
         if (newPosition < 0) {
             newPosition = 0;
@@ -65,9 +72,11 @@ public interface CardLayerPart<T extends PartModel> extends Part<T> {
 
         for (int index = 0; index < parts.size(); index++) {
             PartModel thisPart = parts.get(index);
-            thisPart.setQuietly(context, CardLayerPartModel.PROP_ZORDER, new Value(index));
+            if (thisPart instanceof CardLayerPartModel) {
+                thisPart.setQuietly(context, CardLayerPartModel.PROP_ZORDER, new Value(index));
+            }
         }
 
-        card.onDisplayOrderChanged(context);
+        card.invalidatePartsZOrder(context);
     }
 }

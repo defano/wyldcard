@@ -33,7 +33,7 @@ public class UserIcon implements ButtonIcon {
     }
 
     @Override
-    public AlphaImageIcon getIcon() {
-        return new AlphaImageIcon(new ImageIcon(getImage()), 1.0f);
+    public ImageIcon getIcon() {
+        return new ImageIcon(getImage());
     }
 }

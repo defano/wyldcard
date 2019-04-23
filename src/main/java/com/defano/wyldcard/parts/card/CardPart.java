@@ -333,7 +333,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         removeSwingComponent(oldButtonComponent);
         addSwingComponent(newButtonComponent, forPart.getRect(context), partLayer);
         forPart.partOpened(context);
-        onDisplayOrderChanged(context);
+        invalidatePartsZOrder(context);
     }
 
     /**
@@ -341,12 +341,11 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * their new position).
      * @param context The execution context.
      */
-    public void onDisplayOrderChanged(ExecutionContext context) {
+    public void invalidatePartsZOrder(ExecutionContext context) {
         // Redraw all parts in their display order
         SwingUtilities.invokeLater(() -> {
-            for (PartModel thisPart : getPartModel().getPartsInDisplayOrder(context)) {
-                moveToFront(getPart(thisPart).getComponent());
-            }
+            getPartModel().getBackgroundModel().getPartsInDisplayOrder(context, Owner.BACKGROUND).forEach(thisPart -> moveToFront(getPart(thisPart).getComponent()));
+            getPartModel().getPartsInDisplayOrder(context, Owner.CARD).forEach(thisPart -> moveToFront(getPart(thisPart).getComponent()));
         });
     }
 
@@ -484,7 +483,6 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         component.setBounds(bounds);
         addToCardLayer(component, layer);
         moveToFront(component);
-
         revalidate(); repaint();
     }
 
@@ -527,6 +525,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         getBackgroundCanvas().addCanvasCommitObserver(this);
         getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(getBackgroundCanvas(), this));
         getBackgroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
+        getBackgroundCanvas().setCanvasBackground(Color.WHITE);
 
         // Resize card (Swing) component
         setMaximumSize(stack.getSize(context));

@@ -304,7 +304,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
                 setVisibleWhenBrowsing(context, newValue.booleanValue());
                 break;
             case CardLayerPartModel.PROP_ZORDER:
-                getCard().onDisplayOrderChanged(context);
+                getCard().invalidatePartsZOrder(context);
                 break;
         }
     }
