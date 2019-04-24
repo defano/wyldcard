@@ -31,9 +31,18 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
 
         this.toolEditablePart = toolEditablePart;
         super.setEnabled(true);
+    }
 
+    @Override
+    public void onStart() {
         super.addMouseListener(toolEditablePart);
         super.addKeyListener(toolEditablePart);
+    }
+
+    @Override
+    public void onStop() {
+        super.removeMouseListener(toolEditablePart);
+        super.removeKeyListener(toolEditablePart);
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * An observer of changes to properties of a field that are not modeled as addressable HyperTalk properties (and
  * therefore are not observed using the more typical
- * {@link WyldCardPropertiesModel#addPropertyChangedObserver(PropertyChangeObserver)}.
+ * {@link com.defano.wyldcard.properties.PropertiesModel#addPropertyChangedObserver(PropertyChangeObserver)}.
  */
 public interface FieldModelObserver {
     /**

@@ -14,6 +14,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldModelObserver;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
+import com.defano.wyldcard.parts.util.LifecycleObserver;
 import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
@@ -25,10 +26,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.*;
@@ -40,8 +38,9 @@ import java.util.Set;
  * An abstract HyperCard text field. That is, a field without a specific style bound to it. Encapsulates the styleable,
  * editable text component and the scrollable surface in which it is embedded.
  */
-public abstract class HyperCardTextField extends JScrollPane implements PropertyChangeObserver, DocumentListener, CaretListener, FieldModelObserver {
-
+public abstract class HyperCardTextField extends JScrollPane implements
+        PropertyChangeObserver, DocumentListener, CaretListener, FieldModelObserver, LifecycleObserver
+{
     protected final static int WIDE_MARGIN_PX = 6;
     protected final static int NARROW_MARGIN_PX = 1;
 
@@ -55,6 +54,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     private final AutoSelectObserver autoSelectObserver = new AutoSelectObserver();
     private final ScrollObserver scrollObserver = new ScrollObserver();
     private final FocusObserver focusObserver = new FocusObserver();
+    private final ViewportChangeListener viewportChangeListener = new ViewportChangeListener();
 
     private Disposable toolModeSubscription;
     private Disposable fontSizeSubscription;
@@ -78,8 +78,24 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
 
         this.setViewportView(textPane);
         textPane.setBorder(PartBorderFactory.createEmptyBorder());
+    }
 
-        getViewport().addChangeListener(e -> textPane.invalidateViewport(getViewport()));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onStart() {
+        toolEditablePart.getPartModel().addPropertyChangedObserver(this);
+        getViewport().addChangeListener(viewportChangeListener);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onStop() {
+        toolEditablePart.getPartModel().removePropertyChangedObserver(this);
+        getViewport().removeChangeListener(viewportChangeListener);
     }
 
     /**
@@ -605,6 +621,13 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
             didLoseFocusToMenu = e.getOppositeComponent() != null &&
                     (e.getOppositeComponent() instanceof JRootPane ||
                     SwingUtilities.getWindowAncestor(e.getOppositeComponent()) instanceof FontSizePicker);
+        }
+    }
+
+    private class ViewportChangeListener implements ChangeListener {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            textPane.invalidateViewport(getViewport());
         }
     }
 

@@ -21,12 +21,11 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
 
     private final ToolEditablePart toolEditablePart;
     private final DefaultComboBoxModel<String> menuItems = new DefaultComboBoxModel<>();
+    private final MenuButtonItemListener buttonItemListener = new MenuButtonItemListener();
 
     public PopupButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
-        this.addMouseListener(toolEditablePart);
-        this.addKeyListener(toolEditablePart);
         this.setBorder(PartBorderFactory.createEmptyBorder());
 
         final Component[] components = this.getComponents();
@@ -34,12 +33,27 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
             component.addMouseListener(toolEditablePart);
             component.addKeyListener(toolEditablePart);
         }
-        this.getEditor().getEditorComponent().addMouseListener(toolEditablePart);
-        this.getEditor().getEditorComponent().addKeyListener(toolEditablePart);
 
         setRenderer(new MenuButtonCellRenderer());
         setModel(menuItems);
-        addActionListener(new MenuButtonItemListener());
+    }
+
+    @Override
+    public void onStart() {
+        this.addMouseListener(toolEditablePart);
+        this.addKeyListener(toolEditablePart);
+        this.getEditor().getEditorComponent().addMouseListener(toolEditablePart);
+        this.getEditor().getEditorComponent().addKeyListener(toolEditablePart);
+        this.addActionListener(buttonItemListener);
+    }
+
+    @Override
+    public void onStop() {
+        this.removeMouseListener(toolEditablePart);
+        this.removeKeyListener(toolEditablePart);
+        this.getEditor().getEditorComponent().removeMouseListener(toolEditablePart);
+        this.getEditor().getEditorComponent().removeKeyListener(toolEditablePart);
+        this.removeActionListener(buttonItemListener);
     }
 
     public void selectItem(int item) {

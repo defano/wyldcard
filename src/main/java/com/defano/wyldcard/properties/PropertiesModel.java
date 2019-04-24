@@ -104,11 +104,22 @@ public interface PropertiesModel {
      * Adds an observer of property value changes. Note that observers are always notified of property changes on the
      * Swing dispatch thread.
      *
-     * @param listener The observer
+     * @param observer The observer
      */
-    void addPropertyChangedObserver(PropertyChangeObserver listener);
+    void addPropertyChangedObserver(PropertyChangeObserver observer);
 
-    void addPropertyChangedObserverAndNotify(ExecutionContext context, PropertyChangeObserver listener);
+    /**
+     * Adds an observer of property value changes and immediately fires the
+     * {@link PropertyChangeObserver#onPropertyChanged(ExecutionContext, PropertiesModel, String, Value, Value)} method
+     * for each property defined in the model.
+     * <p>
+     * This is a convenience method to use instead of {@link #addPropertyChangedObserverAndNotify(ExecutionContext, PropertyChangeObserver)}
+     * followed immediately by {@link #notifyPropertyChangedObserver(ExecutionContext, PropertyChangeObserver, boolean)}.
+     *
+     * @param context  The execution context
+     * @param observer The property change observer.
+     */
+    void addPropertyChangedObserverAndNotify(ExecutionContext context, PropertyChangeObserver observer);
 
     /**
      * Invokes the {@link PropertyChangeObserver#onPropertyChanged(ExecutionContext, PropertiesModel, String, Value, Value)} method for
@@ -116,15 +127,15 @@ public interface PropertiesModel {
      * state of the model.
      *
      * @param context                The execution context.
-     * @param listener               This listener to be notified; does not have to be an active listener of this model.
+     * @param observer               This listener to be notified; does not have to be an active listener of this model.
      * @param includeComputedGetters When false, do not notify computed/synthesized properties
      */
-    void notifyPropertyChangedObserver(ExecutionContext context, PropertyChangeObserver listener, boolean includeComputedGetters);
+    void notifyPropertyChangedObserver(ExecutionContext context, PropertyChangeObserver observer, boolean includeComputedGetters);
 
     /**
      * Removes an observer of property value changes; this listener will not be notified of future changes.
      *
-     * @param listener The property change observer
+     * @param observer The property change observer
      */
-    void removePropertyChangedObserver(PropertyChangeObserver listener);
+    void removePropertyChangedObserver(PropertyChangeObserver observer);
 }

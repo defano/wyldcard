@@ -23,11 +23,22 @@ public class RadioButton extends JRadioButton implements SharedHilite, HyperCard
     public RadioButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
+        super.setBorder(PartBorderFactory.createEmptyBorder());
+        super.setBorderPainted(true);
+    }
+
+    @Override
+    public void onStart() {
         super.addActionListener(this);
         super.addMouseListener(toolEditablePart);
         super.addKeyListener(toolEditablePart);
-        super.setBorder(PartBorderFactory.createEmptyBorder());
-        super.setBorderPainted(true);
+    }
+
+    @Override
+    public void onStop() {
+        super.removeActionListener(this);
+        super.removeMouseListener(toolEditablePart);
+        super.removeKeyListener(toolEditablePart);
     }
 
     @Override

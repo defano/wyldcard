@@ -37,6 +37,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
     public StyleableButton(ButtonStyle style) {
         buttonComponent = getComponentForStyle(style);
+        buttonComponent.onStart();
     }
 
     public JComponent getButtonComponent() {
@@ -69,9 +70,16 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     @RunOnDispatch
     public void setStyle(ExecutionContext context, ButtonStyle style) {
         Component oldComponent = getButtonComponent();
-        buttonComponent = getComponentForStyle(style);
-        replaceViewComponent(context, oldComponent, (JComponent) buttonComponent);
 
+        if (buttonComponent != null) {
+            buttonComponent.onStop();
+            getPartModel().removePropertyChangedObserver(buttonComponent);
+        }
+
+        buttonComponent = getComponentForStyle(style);
+        buttonComponent.onStart();
+
+        replaceViewComponent(context, oldComponent, (JComponent) buttonComponent);
         getPartModel().addPropertyChangedObserver(buttonComponent);
     }
 
@@ -172,8 +180,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     @Override
     @RunOnDispatch
     public void partOpened(ExecutionContext context) {
-        getPartModel().addPropertyChangedObserver(buttonComponent);
-        getPartModel().notifyPropertyChangedObserver(context, buttonComponent, true);
+        getPartModel().addPropertyChangedObserverAndNotify(context, buttonComponent);
         toolModeSubscription = WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolModeObserver);
         WyldCard.getInstance().getKeyboardManager().addGlobalKeyListener(this);
     }

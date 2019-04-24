@@ -23,9 +23,6 @@ public class CheckboxButton extends JCheckBox implements SharedHilite, HyperCard
     public CheckboxButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
-        super.addActionListener(this);
-        super.addMouseListener(toolEditablePart);
-        super.addKeyListener(toolEditablePart);
         super.setBorder(PartBorderFactory.createEmptyBorder());
         super.setBorderPainted(true);
     }
@@ -39,6 +36,20 @@ public class CheckboxButton extends JCheckBox implements SharedHilite, HyperCard
     @Override
     public ToolEditablePart getToolEditablePart() {
         return toolEditablePart;
+    }
+
+    @Override
+    public void onStart() {
+        super.addActionListener(this);
+        super.addMouseListener(toolEditablePart);
+        super.addKeyListener(toolEditablePart);
+    }
+
+    @Override
+    public void onStop() {
+        super.removeActionListener(this);
+        super.removeMouseListener(toolEditablePart);
+        super.addKeyListener(toolEditablePart);
     }
 
     @Override

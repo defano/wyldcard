@@ -27,10 +27,19 @@ public class NativeButton extends JPanel implements ContainerWrappedPart, HyperC
 
         super.setLayout(new BorderLayout());
         super.add(button);
+        super.setBorder(PartBorderFactory.createEmptyBorder());
+    }
 
+    @Override
+    public void onStart() {
         button.addMouseListener(toolEditablePart);
         button.addKeyListener(toolEditablePart);
-        super.setBorder(PartBorderFactory.createEmptyBorder());
+    }
+
+    @Override
+    public void onStop() {
+        button.removeMouseListener(toolEditablePart);
+        button.removeKeyListener(toolEditablePart);
     }
 
     @Override

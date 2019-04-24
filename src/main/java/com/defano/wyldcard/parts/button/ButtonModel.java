@@ -6,6 +6,8 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.model.PropertyChangeObserver;
+import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.annotation.PostConstruct;
@@ -16,7 +18,7 @@ import java.util.Map;
 /**
  * A data model representing a button. See {@link ButtonPart} for the associated controller object.
  */
-public class ButtonModel extends CardLayerPartModel {
+public class ButtonModel extends CardLayerPartModel implements PropertyChangeObserver {
 
     public static final String PROP_FAMILY = "family";
     public static final String PROP_HILITE = "hilite";
@@ -88,12 +90,7 @@ public class ButtonModel extends CardLayerPartModel {
                 .withSetter((context, model, value) -> setHilite(context, value));
 
         // When an icon has been applied to a button, HyperCard automatically forces the button font to 10pt Geneva
-        addPropertyChangedObserver((context, model, property, oldValue, newValue) -> {
-            if (property.equalsIgnoreCase(PROP_ICON) && !newValue.isZero()) {
-                set(context, PROP_TEXTSIZE, new Value(10));
-                set(context, PROP_TEXTFONT, new Value("Geneva"));
-            }
-        });
+        addPropertyChangedObserver(this);
     }
 
     private void setHilite(ExecutionContext context, Value hilite) {
@@ -146,4 +143,11 @@ public class ButtonModel extends CardLayerPartModel {
         }
     }
 
+    @Override
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+        if (property.equalsIgnoreCase(PROP_ICON) && !newValue.isZero()) {
+            set(context, PROP_TEXTSIZE, new Value(10));
+            set(context, PROP_TEXTFONT, new Value("Geneva"));
+        }
+    }
 }

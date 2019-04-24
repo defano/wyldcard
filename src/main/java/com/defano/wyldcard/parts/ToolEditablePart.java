@@ -22,7 +22,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 /**
- * An interface defining actions common to buttons and fields that can be edited using the button tool or field tool.
+ * An object, like buttons and fields, that can be selected, moved, resized, and edited using the button field tool on
+ * the tools palette.
  */
 public interface ToolEditablePart<T extends PartModel> extends MouseListenable, KeyListenable, CardLayerPart<T> {
 

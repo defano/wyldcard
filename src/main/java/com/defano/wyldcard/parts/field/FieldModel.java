@@ -100,7 +100,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         define(PROP_DONTWRAP).asValue(false);
         define(PROP_VISIBLE).asValue(true);
         define(PROP_LOCKTEXT).asValue(false);
-        define(PROP_SHOWLINES).asValue(true);;
+        define(PROP_SHOWLINES).asValue(true);
         define(PROP_STYLE).asValue(FieldStyle.TRANSPARENT.getName());
         define(PROP_CONTENTS).asValue();
         define(PROP_SHAREDTEXT).asValue(false);
@@ -115,7 +115,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         define(PROP_TEXTFONT).asValue("Geneva");
         define(PROP_TEXTSIZE).asValue(12);
-        define(PROP_TEXTSTYLE).asValue("plain");;
+        define(PROP_TEXTSTYLE).asValue("plain");
         define(PROP_TEXTALIGN).asValue("left");
 
         this.postConstructFieldModel();
@@ -192,16 +192,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     }
 
     private StyledDocument getNewDocument(ExecutionContext context) {
-//        SimpleAttributeSet as = new SimpleAttributeSet();
-//        as.addAttribute(StyleConstants.FontFamily, get(context, FieldModel.PROP_TEXTFONT).toString());
-//        as.addAttribute(StyleConstants.FontSize, get(context, FieldModel.PROP_TEXTSIZE).integerValue());
-//        as.addAttribute(StyleConstants.FontFamily, get(context, FieldModel.PROP_TEXTFONT).toString());
-
         Style as = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
         StyleConstants.setFontFamily(as, get(context, FieldModel.PROP_TEXTFONT).toString());
         StyleConstants.setFontSize(as, get(context, FieldModel.PROP_TEXTSIZE).integerValue());
 
-//        doc.setCharacterAttributes(0, doc.getLength() + 1, as, false);
         StyleContext sc = new StyleContext();
         sc.addStyle(StyleContext.DEFAULT_STYLE, as);
 

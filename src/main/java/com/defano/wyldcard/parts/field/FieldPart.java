@@ -69,7 +69,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
             rectangle = new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT);
         }
 
-        newField.initProperties(context, rectangle, parent.getPartModel());
+        newField.initProperties(rectangle, parent.getPartModel());
         newField.partModel.set(context, FieldModel.PROP_TEXTFONT, new Value(WyldCard.getInstance().getFontManager().getFocusedTextStyle().getFontFamily()));
         newField.partModel.set(context, FieldModel.PROP_TEXTSIZE, new Value(WyldCard.getInstance().getFontManager().getFocusedTextStyle().getFontSize()));
         newField.partModel.set(context, FieldModel.PROP_TEXTSTYLE, WyldCard.getInstance().getFontManager().getFocusedTextStyle().getHyperTalkStyle());
@@ -120,7 +120,6 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
 
         partModel.removePropertyChangedObserver(this);
         getHyperCardTextPane().removeFocusListener(this);
-
         WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
     }
 
@@ -129,6 +128,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
     @Override
     public void partOpened(ExecutionContext context) {
         super.partOpened(context);
+
         partModel.addPropertyChangedObserver(this);
         getHyperCardTextPane().addFocusListener(this);
     }
@@ -346,13 +346,12 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
     }
 
-    private void initProperties(ExecutionContext context, Rectangle geometry, PartModel parentPartModel) {
+    private void initProperties(Rectangle geometry, PartModel parentPartModel) {
         CardPart cardPart = parent.get();
 
         if (cardPart != null) {
             int id = cardPart.getPartModel().getStackModel().getNextFieldId(parentPartModel.getId());
             partModel = new FieldModelBuilder(owner, parentPartModel).withId(id).withBounds(geometry).build();
-            partModel.addPropertyChangedObserver(this);
         }
     }
 

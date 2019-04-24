@@ -470,7 +470,6 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     @RunOnDispatch
     private void removeSwingComponent(Component component) {
         remove(component);
-        revalidate(); repaint();
     }
 
     /**

@@ -2,9 +2,9 @@ package com.defano.wyldcard.properties;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtNoSuchPropertyException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
-import com.defano.hypertalk.exception.HtNoSuchPropertyException;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.properties.builder.PropertyBuilder;
 import com.defano.wyldcard.properties.builder.PropertyValueBuilder;
@@ -13,7 +13,8 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
 
@@ -21,11 +22,11 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
     private final PropertyList properties = new PropertyList();
 
     // Observers (not serialized)
-    private transient ArrayList<PropertyChangeObserver> propertyChangeObservers = new ArrayList<>();
+    private transient Set<PropertyChangeObserver> propertyChangeObservers = new HashSet<>();
 
     @PostConstruct
     protected void postConstructAdvancedPropertiesModel() {
-        propertyChangeObservers = new ArrayList<>();
+        propertyChangeObservers = new HashSet<>();
     }
 
     /**
@@ -171,26 +172,29 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
      * {@inheritDoc}
      */
     @Override
-    public void addPropertyChangedObserver(PropertyChangeObserver listener) {
-        propertyChangeObservers.add(listener);
-    }
-
-    @Override
-    public void addPropertyChangedObserverAndNotify(ExecutionContext context, PropertyChangeObserver listener) {
-        propertyChangeObservers.add(listener);
-        notifyPropertyChangedObserver(context, listener, true);
+    public void addPropertyChangedObserver(PropertyChangeObserver observer) {
+        propertyChangeObservers.add(observer);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void notifyPropertyChangedObserver(ExecutionContext context, PropertyChangeObserver listener, boolean includeComputedGetters) {
+    public void addPropertyChangedObserverAndNotify(ExecutionContext context, PropertyChangeObserver observer) {
+        propertyChangeObservers.add(observer);
+        notifyPropertyChangedObserver(context, observer, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void notifyPropertyChangedObserver(ExecutionContext context, PropertyChangeObserver observer, boolean includeComputedGetters) {
         Invoke.onDispatch(() -> {
             for (Property thisProperty : properties) {
                 if (thisProperty.value() instanceof BasicValue || includeComputedGetters) {
                     try {
-                        listener.onPropertyChanged(context, this, thisProperty.name(), thisProperty.value().get(context, this), thisProperty.value().get(context, this));
+                        observer.onPropertyChanged(context, this, thisProperty.name(), thisProperty.value().get(context, this), thisProperty.value().get(context, this));
                     } catch (HtException e) {
                         e.printStackTrace();
                     }
@@ -203,8 +207,8 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
      * {@inheritDoc}
      */
     @Override
-    public void removePropertyChangedObserver(PropertyChangeObserver listener) {
-        propertyChangeObservers.remove(listener);
+    public void removePropertyChangedObserver(PropertyChangeObserver observer) {
+        propertyChangeObservers.remove(observer);
     }
 
     private void fireOnPropertyChanged(ExecutionContext context, String property, Value oldValue, Value value) {

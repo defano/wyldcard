@@ -24,9 +24,10 @@ import java.awt.*;
  * This class provides common functionality for "styleable" field parts; the actual style of the field is provided by
  * a concrete subclass.
  */
-public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTextField>, ToolEditablePart<FieldModel>, MarchingAntsObserver {
+public abstract class StyleableField implements Styleable<FieldStyle, HyperCardTextField>, ToolEditablePart<FieldModel>, MarchingAntsObserver {
 
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
+
     private Disposable toolModeSubscription;
     private HyperCardTextField fieldComponent;
     private boolean isBeingEdited;
@@ -60,7 +61,14 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
     @Override
     public void setStyle(ExecutionContext context, FieldStyle style) {
         Component oldComponent = getFieldComponent();
+
+        if (fieldComponent != null) {
+            fieldComponent.onStop();
+        }
+
         fieldComponent = getComponentForStyle(style);
+        fieldComponent.onStart();
+
         replaceViewComponent(context, oldComponent, fieldComponent);
     }
 
@@ -85,12 +93,17 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
      * Gets the Swing component representing the field as a whole; this is typically a JTextComponent plus some other
      * hierarchy (like a scroll pane).
      *
-     * @return
+     * @return The Swing component or component hierarchy associated with this field.
      */
     public JComponent getFieldComponent() {
         return fieldComponent;
     }
 
+    /**
+     * Gets the {@link HyperCardTextPane} component of the field hierarchy.
+     *
+     * @return The HyperCardTextPane component in the Swing field hierarchy.
+     */
     public HyperCardTextPane getHyperCardTextPane() {
         return fieldComponent.getTextPane();
     }
@@ -105,7 +118,6 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
     public void partOpened(ExecutionContext context) {
         fieldComponent.partOpened(context);
 
-        getPartModel().addPropertyChangedObserver(fieldComponent);
         toolModeSubscription = WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolModeObserver);
         WyldCard.getInstance().getKeyboardManager().addGlobalKeyListener(this);
     }
@@ -114,7 +126,6 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
     public void partClosed(ExecutionContext context) {
         fieldComponent.partClosed(context);
 
-        getPartModel().removePropertyChangedObserver(fieldComponent);
         WyldCard.getInstance().getKeyboardManager().removeGlobalKeyListener(this);
         toolModeSubscription.dispose();
     }

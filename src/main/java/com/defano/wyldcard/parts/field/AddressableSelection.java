@@ -6,6 +6,9 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
 
+/**
+ * An object whose selected text updates the HyperTalk value known as 'the selection'.
+ */
 public interface AddressableSelection {
 
     /**
