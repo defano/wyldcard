@@ -15,6 +15,8 @@ public interface WindowManager extends WindowFinder, Themeable {
 
     void start();
 
+    void showAllToolPalettes();
+
     void restoreDefaultLayout();
 
     StackWindow getFocusedStackWindow();

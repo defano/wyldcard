@@ -111,7 +111,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
 
             deletedCardModel.receiveMessage(new ExecutionContext(deletedCardModel), SystemMessage.DELETE_CARD);
 
-            if (deletedCardModel.getBackgroundModel().getCardModels(context).size() == 1) {
+            if (deletedCardModel.getBackgroundModel().getCardModels().size() == 1) {
                 deletedCardModel.receiveMessage(new ExecutionContext(deletedCardModel), SystemMessage.DELETE_BACKGROUND);
             }
 

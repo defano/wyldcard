@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Pointcut;
 
 import javax.swing.*;
 
+@SuppressWarnings("unused")
 @Aspect
 public class RunOnDispatchAspect {
 

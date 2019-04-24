@@ -161,6 +161,18 @@ public class WyldCardWindowManager implements WindowManager {
 
     @RunOnDispatch
     @Override
+    public void showAllToolPalettes() {
+        paintToolsPalette.setVisible(true);
+        patternsPalette.setVisible(true);
+        magnifierPalette.setVisible(true);
+        brushesPalette.setVisible(true);
+        linesPalette.setVisible(true);
+        intensityPalette.setVisible(true);
+        shapesPalette.setVisible(true);
+    }
+
+    @RunOnDispatch
+    @Override
     public void restoreDefaultLayout() {
 
         StackWindow stackWindow = getFocusedStackWindow();

@@ -83,7 +83,7 @@ public class NumberFunc extends Expression {
         } else {
             BackgroundModel bkgnd = containerExpr.partFactor(context, BackgroundModel.class);
             if (bkgnd != null) {
-                return new Value(bkgnd.getCardModels(context).size());
+                return new Value(bkgnd.getCardModels().size());
             } else {
                 return new Value(containerExpr.partFactor(context, StackModel.class, new HtSemanticException("No such stack or background.")).getCardCount());
             }
@@ -96,7 +96,7 @@ public class NumberFunc extends Expression {
         } else {
             BackgroundModel bkgnd = containerExpr.partFactor(context, BackgroundModel.class);
             if (bkgnd != null) {
-                return new Value(bkgnd.getCardModels(context).stream().filter(p -> p.isMarked(context)).count());
+                return new Value(bkgnd.getCardModels().stream().filter(p -> p.isMarked(context)).count());
             } else {
                 return new Value(containerExpr.partFactor(context, StackModel.class, new HtSemanticException("No such stack or background.")).getMarkedCards(context).size());
             }
@@ -109,7 +109,7 @@ public class NumberFunc extends Expression {
         } else {
             BackgroundModel bkgnd = containerExpr.partFactor(context, BackgroundModel.class);
             if (bkgnd != null) {
-                return new Value(bkgnd.getCardModels(context).size());
+                return new Value(bkgnd.getCardModels().size());
             } else {
                 return new Value(containerExpr.partFactor(context, StackModel.class, new HtSemanticException("No such stack or background.")).getBackgroundCount());
             }

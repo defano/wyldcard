@@ -44,7 +44,7 @@ public interface PropertiesModel {
      *
      * @param context       The execution context
      * @param propertyName  The case insensitive name of the property
-     * @param propertyValue
+     * @param propertyValue The value to set the property to.
      */
     void set(ExecutionContext context, String propertyName, Value propertyValue);
 
@@ -113,7 +113,7 @@ public interface PropertiesModel {
      * {@link PropertyChangeObserver#onPropertyChanged(ExecutionContext, PropertiesModel, String, Value, Value)} method
      * for each property defined in the model.
      * <p>
-     * This is a convenience method to use instead of {@link #addPropertyChangedObserverAndNotify(ExecutionContext, PropertyChangeObserver)}
+     * This is a convenience method to use instead of {@link #addPropertyChangedObserver(PropertyChangeObserver)}
      * followed immediately by {@link #notifyPropertyChangedObserver(ExecutionContext, PropertyChangeObserver, boolean)}.
      *
      * @param context  The execution context

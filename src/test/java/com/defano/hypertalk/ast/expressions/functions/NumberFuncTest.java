@@ -139,7 +139,7 @@ public class NumberFuncTest extends GuiceTest<NumberFunc> {
 
             Mockito.when(mockCountableExp.partFactor(mockExecutionContext, BackgroundModel.class)).thenReturn(mockBackground);
             Mockito.when(mockCountableExp.partFactor(eq(mockExecutionContext), eq(StackModel.class), Mockito.any(HtSemanticException.class))).thenReturn(mockStack);
-            Mockito.when(mockBackground.getCardModels(mockExecutionContext)).thenReturn(listOfMocks(CardModel.class, testValue));
+            Mockito.when(mockBackground.getCardModels()).thenReturn(listOfMocks(CardModel.class, testValue));
 
             assertEquals(expectedValue, uut.onEvaluate(mockExecutionContext));
         }
@@ -163,7 +163,7 @@ public class NumberFuncTest extends GuiceTest<NumberFunc> {
 
         Mockito.when(mockCountableExp.partFactor(mockExecutionContext, BackgroundModel.class)).thenReturn(mockBackground);
         Mockito.when(mockCountableExp.partFactor(eq(mockExecutionContext), eq(StackModel.class), Mockito.any(HtSemanticException.class))).thenReturn(mockStack);
-        Mockito.when(mockBackground.getCardModels(mockExecutionContext)).thenReturn(Lists.newArrayList(
+        Mockito.when(mockBackground.getCardModels()).thenReturn(Lists.newArrayList(
                 card1, card2, card3
         ));
 
@@ -213,7 +213,7 @@ public class NumberFuncTest extends GuiceTest<NumberFunc> {
             BackgroundModel mockBackground = Mockito.mock(BackgroundModel.class);
 
             Mockito.when(mockCountableExp.partFactor(mockExecutionContext, BackgroundModel.class)).thenReturn(mockBackground);
-            Mockito.when(mockBackground.getCardModels(mockExecutionContext)).thenReturn(listOfMocks(CardModel.class, testValue));
+            Mockito.when(mockBackground.getCardModels()).thenReturn(listOfMocks(CardModel.class, testValue));
 
             assertEquals(expectedValue, uut.onEvaluate(mockExecutionContext));
         }

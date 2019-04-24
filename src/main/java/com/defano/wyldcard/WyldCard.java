@@ -33,6 +33,8 @@ import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
 import com.google.inject.*;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * The WyldCard application object.
@@ -135,10 +137,18 @@ public class WyldCard implements PartFinder {
 
             getWindowManager().restoreDefaultLayout();          // Apply default palette layout
             getWindowManager().toggleDockPalettes();            // Dock palettes to stack window
-        });
 
-        Invoke.asynchronouslyOnDispatch(() -> windowManager.getPaintToolsPalette().setVisible(true));
-        Invoke.asynchronouslyOnDispatch(() -> windowManager.getPatternsPalette().setVisible(true));
+            // Show tools and patterns palettes. Tool palette must be fully packed and rendered before showing
+            // patterns, otherwise patterns palette may display in the wrong location.
+            windowManager.getPaintToolsPalette().setVisible(true);
+            windowManager.getPaintToolsPalette().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowOpened(WindowEvent e) {
+                    super.windowOpened(e);
+                    windowManager.getPatternsPalette().setVisible(true);
+                }
+            });
+        });
 
         // Close all open files before we die
         Runtime.getRuntime().addShutdownHook(new Thread(() -> fileManager.closeAll()));

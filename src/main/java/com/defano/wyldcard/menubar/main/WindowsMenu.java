@@ -23,55 +23,59 @@ public class WindowsMenu extends HyperCardMenu {
     }
 
     public void reset() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                WindowsMenu.super.removeAll();
+        SwingUtilities.invokeLater(() -> {
+            WindowsMenu.super.removeAll();
 
-                MenuItemBuilder.ofDefaultType()
-                        .named("Minimize")
-                        .withAction(a -> WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow().setState(Frame.ICONIFIED))
-                        .build(WindowsMenu.this);
+            MenuItemBuilder.ofDefaultType()
+                    .named("Minimize")
+                    .withAction(a -> WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow().setState(Frame.ICONIFIED))
+                    .build(WindowsMenu.this);
 
-                MenuItemBuilder.ofDefaultType()
-                        .named("Zoom")
-                        .withAction(a -> {
-                            JFrame focusedFrame = WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow();
-                            focusedFrame.setExtendedState(focusedFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-                        })
-                        .build(WindowsMenu.this);
+            MenuItemBuilder.ofDefaultType()
+                    .named("Zoom")
+                    .withAction(a -> {
+                        JFrame focusedFrame = WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow();
+                        focusedFrame.setExtendedState(focusedFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+                    })
+                    .build(WindowsMenu.this);
 
-                MenuItemBuilder.ofDefaultType()
-                        .named("Next Window")
-                        .withShiftShortcut('.')
-                        .withAction(a -> WyldCard.getInstance().getWindowManager().nextWindow().getWindow().requestFocus())
-                        .build(WindowsMenu.this);
+            MenuItemBuilder.ofDefaultType()
+                    .named("Next Window")
+                    .withShiftShortcut('.')
+                    .withAction(a -> WyldCard.getInstance().getWindowManager().nextWindow().getWindow().requestFocus())
+                    .build(WindowsMenu.this);
 
-                MenuItemBuilder.ofDefaultType()
-                        .named("Previous Window")
-                        .withShiftShortcut(',')
-                        .withAction(a -> WyldCard.getInstance().getWindowManager().prevWindow().getWindow().requestFocus())
-                        .build(WindowsMenu.this);
+            MenuItemBuilder.ofDefaultType()
+                    .named("Previous Window")
+                    .withShiftShortcut(',')
+                    .withAction(a -> WyldCard.getInstance().getWindowManager().prevWindow().getWindow().requestFocus())
+                    .build(WindowsMenu.this);
 
-                MenuItemBuilder.ofDefaultType()
-                        .named("Restore Default Layout")
-                        .withAction(a -> WyldCard.getInstance().getWindowManager().restoreDefaultLayout())
-                        .build(WindowsMenu.this);
+            addSeparator();
 
-                addSeparator();
+            MenuItemBuilder.ofDefaultType()
+                    .named("Restore Default Layout")
+                    .withAction(a -> WyldCard.getInstance().getWindowManager().restoreDefaultLayout())
+                    .build(WindowsMenu.this);
 
-                addPalettes(MenuItemBuilder.ofHierarchicalType()
-                        .named("Palettes")
-                        .build(WindowsMenu.this));
+            MenuItemBuilder.ofDefaultType()
+                    .named("Show All Tool Palettes")
+                    .withAction(a -> WyldCard.getInstance().getWindowManager().showAllToolPalettes())
+                    .build(WindowsMenu.this);
 
-                addScriptEditors(MenuItemBuilder.ofHierarchicalType()
-                        .named("Script Editors")
-                        .build(WindowsMenu.this));
+            addSeparator();
 
-                addSeparator();
+            addPalettes(MenuItemBuilder.ofHierarchicalType()
+                    .named("Palettes")
+                    .build(WindowsMenu.this));
 
-                addStacks();
-            }
+            addScriptEditors(MenuItemBuilder.ofHierarchicalType()
+                    .named("Script Editors")
+                    .build(WindowsMenu.this));
+
+            addSeparator();
+
+            addStacks();
         });
     }
 

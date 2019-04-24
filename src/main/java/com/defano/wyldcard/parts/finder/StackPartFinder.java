@@ -66,7 +66,7 @@ public interface StackPartFinder extends OrderedPartFinder {
     default CardModel findOwningCard(ExecutionContext context, CompositePartSpecifier ps) throws PartException {
         BackgroundModel bkgndModel = ps.getOwningPartExp().partFactor(context, BackgroundModel.class);
         if (bkgndModel != null) {
-            return bkgndModel.getCardModels(context).get(0);
+            return bkgndModel.getCardModels().get(0);
         }
 
         CardModel cardModel = ps.getOwningPartExp().partFactor(context, CardModel.class);

@@ -115,7 +115,7 @@ public class SortCardsCmd extends Command {
         }
 
         BackgroundModel backgroundModel = background.partFactor(context, BackgroundModel.class, new HtSemanticException("Can't sort that."));
-        for (CardModel thisCard : backgroundModel.getCardModels(context)) {
+        for (CardModel thisCard : backgroundModel.getCardModels()) {
             if (thisCard.getId() == cardModel.getId()) {
                 return true;
             }

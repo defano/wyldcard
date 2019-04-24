@@ -80,7 +80,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder, Par
 
         models.addAll(buttonModels);
         models.addAll(fieldModels);
-        models.addAll(getCardModels(context));
+        models.addAll(getCardModels());
 
         return models;
     }
@@ -120,7 +120,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder, Par
         return getButtonModels().stream().filter(bm -> bm.getId() == id).findFirst().orElse(null);
     }
 
-    public List<CardModel> getCardModels(ExecutionContext context) {
+    public List<CardModel> getCardModels() {
         return ((StackModel) getParentPartModel()).getCardsInBackground(getId());
     }
 
