@@ -9,7 +9,7 @@ import com.defano.wyldcard.awt.keyboard.KeyListenable;
 import com.defano.wyldcard.awt.mouse.MouseListenable;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.button.HyperCardButton;
-import com.defano.wyldcard.parts.card.CardLayer;
+import com.defano.wyldcard.parts.card.CardDisplayLayer;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
@@ -133,7 +133,7 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
         getPartModel().setQuietly(context, PartModel.PROP_VISIBLE, new Value(visibleOnCard));
 
         // Force hide when part is in foreground and foreground is hidden
-        boolean forceHidden = getCardLayer() == CardLayer.CARD_PARTS && getCard().isEditingBackground();
+        boolean forceHidden = getCardLayer() == CardDisplayLayer.CARD_PARTS && getCard().isEditingBackground();
 
         // Force show when part tool is active and part is in the editing part layer
         boolean forceVisible = isPartToolActive() && getCardLayer() == CardLayerPart.getActivePartLayer();

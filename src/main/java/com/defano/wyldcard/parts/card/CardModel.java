@@ -29,7 +29,7 @@ import java.util.Collection;
  * controller object.
  */
 @SuppressWarnings("WeakerAccess")
-public class CardModel extends PartModel implements LayeredPartFinder, NamedPart, PartOwner {
+public class CardModel extends PartModel implements LayeredPartFinder, NamedPart, CardLayer {
 
     public final static String PROP_ID = "id";
     public final static String PROP_MARKED = "marked";

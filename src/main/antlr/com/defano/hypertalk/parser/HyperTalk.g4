@@ -148,8 +148,6 @@ commandStatement
     | 'commandkeydown' expression                                                                                       # commandKeyDownCmd
     | 'controlkey' expression                                                                                           # controlKeyCmd
     | 'optionkey' expression                                                                                            # optionKeyCmd
-    | 'convert' container 'to' convertible                                                                              # convertContainerToCmd
-    | 'convert' container 'from' convertible 'to' convertible                                                           # convertContainerFromToCmd
     | 'convert' expression 'to' convertible                                                                             # convertToCmd
     | 'convert' expression 'from' convertible 'to' convertible                                                          # convertFromToCmd
     | 'create' 'menu' expression                                                                                        # createMenuCmd

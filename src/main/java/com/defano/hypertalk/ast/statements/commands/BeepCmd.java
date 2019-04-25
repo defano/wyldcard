@@ -1,15 +1,15 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.statements.Command;
+import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.awt.*;
 
-public class BeepCmd extends Command {
+public class BeepCmd extends Statement {
 
     private final Expression beepCountExpression;
 
@@ -18,7 +18,7 @@ public class BeepCmd extends Command {
     }
 
     public BeepCmd(ParserRuleContext context, Expression beepCountExpression) {
-        super(context, "beep");
+        super(context);
         this.beepCountExpression = beepCountExpression;
     }
 

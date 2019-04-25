@@ -7,10 +7,12 @@ import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.message.Messagable;
 import com.defano.wyldcard.parts.button.ButtonModel;
-import com.defano.wyldcard.parts.card.CardLayer;
+import com.defano.wyldcard.parts.card.CardDisplayLayer;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.properties.SimplePropertiesModel;
@@ -19,9 +21,7 @@ import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.layouts.ButtonPropertyEditor;
-import com.defano.wyldcard.window.layouts.FieldPropertyEditor;
-import com.defano.wyldcard.window.layouts.ScriptEditor;
+import com.defano.wyldcard.window.layouts.*;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
@@ -179,7 +179,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
      * Gets the "default" adjective associated with the given property. That is, the length adjective that is
      * automatically applied when referring to a property without explicitly specifying an adjective.
      * <p>
-     * For example, 'the name of btn 1' actually refers to 'the abbreviated name' property.
+     * For example, 'the name of btn 1' actually refers to 'the abbreviated name of btn 1'.
      *
      * @param propertyName The name of the property whose default adjective should be returned.
      * @return The default adjective.
@@ -189,7 +189,8 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
     }
 
     /**
-     * Determines if a length adjective may be applied to the given property of this part (i.e., 'the long name').
+     * Determines if a length adjective can be applied to the given property of this part (i.e., 'the long name' is
+     * allowable, but `the abbreviated width` is not).
      *
      * @param propertyName The name of the property
      * @return True if the property supports length adjectives for this part, false otherwise.
@@ -198,6 +199,12 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
         return false;
     }
 
+    /**
+     * Gets the bounding rectangle describing the location and size of this part.
+     *
+     * @param context The execution context.
+     * @return The rectangle representing the size and position of this part.
+     */
     public Rectangle getRect(ExecutionContext context) {
         try {
             Rectangle rect = new Rectangle();
@@ -205,17 +212,27 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
             rect.y = get(context, PROP_TOP).integerValue();
             rect.height = get(context, PROP_HEIGHT).integerValue();
             rect.width = get(context, PROP_WIDTH).integerValue();
-
             return rect;
         } catch (Exception e) {
             throw new RuntimeException("Bug! Can't get geometry for part.", e);
         }
     }
 
+    /**
+     * Gets the {@link PartType} of this part.
+     *
+     * @return The type of this part.
+     */
     public PartType getType() {
         return type;
     }
 
+    /**
+     * Gets the HyperTalk script associated with this part.
+     *
+     * @param context The execution context
+     * @return The script text.
+     */
     public String getScriptText(ExecutionContext context) {
         return get(context, PROP_SCRIPT).toString();
     }
@@ -264,12 +281,12 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
         this.owner = owner;
     }
 
-    public CardLayer getLayer() {
+    public CardDisplayLayer getDisplayLayer() {
         switch (owner) {
             case BACKGROUND:
-                return CardLayer.BACKGROUND_PARTS;
+                return CardDisplayLayer.BACKGROUND_PARTS;
             case CARD:
-                return CardLayer.CARD_PARTS;
+                return CardDisplayLayer.CARD_PARTS;
             default:
                 throw new IllegalStateException("Bug! Not a card layered part: " + owner);
         }
@@ -374,6 +391,11 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
         this.scriptEditorCaretPosition = scriptEditorCaretPosition;
     }
 
+    /**
+     * Gets a list of integers represents the number of each line of the script that should be marked with a breakpoint.
+     *
+     * @return The list of breakpoint-marked lines in the script.
+     */
     public List<Integer> getBreakpoints() {
         ExecutionContext context = new ExecutionContext();
         ArrayList<Integer> breakpoints = new ArrayList<>();
@@ -448,22 +470,53 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
      */
     public void editProperties(ExecutionContext context) {
         Invoke.onDispatch(() -> {
-            if (getType() == PartType.FIELD) {
-                new WindowBuilder<>(new FieldPropertyEditor())
-                        .withModel((FieldModel) this)
-                        .asModal()
-                        .withTitle(getName(context))
-                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
-                        .resizeable(false)
-                        .build();
-            } else {
-                new WindowBuilder<>(new ButtonPropertyEditor())
-                        .withModel((ButtonModel) this)
-                        .asModal()
-                        .withTitle(getName(context))
-                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
-                        .resizeable(false)
-                        .build();
+            switch (getType()) {
+                case FIELD:
+                    new WindowBuilder<>(new FieldPropertyEditor())
+                            .withModel((FieldModel) this)
+                            .asModal()
+                            .withTitle(getLongName(context))
+                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                            .resizeable(false)
+                            .build();
+                    break;
+                case BUTTON:
+                    new WindowBuilder<>(new ButtonPropertyEditor())
+                            .withModel((ButtonModel) this)
+                            .asModal()
+                            .withTitle(getLongName(context))
+                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                            .resizeable(false)
+                            .build();
+                    break;
+                case CARD:
+                    new WindowBuilder<>(new CardPropertyEditor())
+                            .withModel((CardModel) this)
+                            .asModal()
+                            .withTitle("Card Properties")
+                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindowPanel())
+                            .build();
+                    break;
+                case BACKGROUND:
+                    new WindowBuilder<>(new BackgroundPropertyEditor())
+                            .withModel(WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel())
+                            .withTitle("Background Properties")
+                            .asModal()
+                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindowPanel())
+                            .build();
+                    break;
+                case STACK:
+                    new WindowBuilder<>(new StackPropertyEditor())
+                            .withModel((StackModel) this)
+                            .withTitle("Stack Properties")
+                            .asModal()
+                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindowPanel())
+                            .build();
+                    break;
+                case MESSAGE_BOX:
+                case WINDOW:
+                case HYPERCARD:
+                    throw new HtUncheckedSemanticException(new HtSemanticException("Cannot edit the properties of that."));
             }
         });
     }

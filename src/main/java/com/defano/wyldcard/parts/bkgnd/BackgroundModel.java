@@ -5,7 +5,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.card.PartOwner;
+import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
 import com.defano.wyldcard.parts.finder.OrderedPartFinder;
@@ -28,7 +28,7 @@ import java.util.List;
  * A data model representing a card background. There is no view associated with this model; rather this data is
  * incorporated/merged into the {@link CardPart} controller object when rendered.
  */
-public class BackgroundModel extends PartModel implements LayeredPartFinder, PartOwner {
+public class BackgroundModel extends PartModel implements LayeredPartFinder, CardLayer {
 
     public final static String PROP_ID = "id";
     public final static String PROP_NAME = "name";

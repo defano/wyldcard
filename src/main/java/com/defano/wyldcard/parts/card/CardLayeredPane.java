@@ -9,7 +9,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 /**
- * An extension of JLayeredPane that provides routines for addressing card layers. See {@link CardLayer}.
+ * An extension of JLayeredPane that provides routines for addressing card layers. See {@link CardDisplayLayer}.
  */
 public abstract class  CardLayeredPane extends JLayeredPane {
 
@@ -39,13 +39,13 @@ public abstract class  CardLayeredPane extends JLayeredPane {
      * @return The card layer of the given component.
      * @throws IllegalArgumentException if the component does not exist on this pane
      */
-    public CardLayer getCardLayer(Component component) {
+    public CardDisplayLayer getCardLayer(Component component) {
         int layer = getLayer(component);
         if (layer == DEFAULT_LAYER) {
             throw new IllegalArgumentException("Component does not exist on this card.");
         }
 
-        return CardLayer.fromPaneLayer(layer);
+        return CardDisplayLayer.fromPaneLayer(layer);
     }
 
     /**
@@ -54,12 +54,12 @@ public abstract class  CardLayeredPane extends JLayeredPane {
      * @param component The component to be added.
      * @param layer The layer on which the component should be added.
      */
-    public void addToCardLayer(Component component, CardLayer layer) {
-        if (layer == CardLayer.CARD_GRAPHICS || layer == CardLayer.BACKGROUND_GRAPHICS) {
+    public void addToCardLayer(Component component, CardDisplayLayer layer) {
+        if (layer == CardDisplayLayer.CARD_GRAPHICS || layer == CardDisplayLayer.BACKGROUND_GRAPHICS) {
             throw new IllegalArgumentException("Cannot add components to the graphic layer: " + layer);
         }
 
-        setLayer(component, layer.paneLayer);
+        setLayer(component, layer.getPaneLayer());
         add(component);
         revalidate();
     }
@@ -70,7 +70,7 @@ public abstract class  CardLayeredPane extends JLayeredPane {
         }
 
         this.backgroundCanvas = canvas;
-        setLayer(backgroundCanvas, CardLayer.BACKGROUND_GRAPHICS.paneLayer);
+        setLayer(backgroundCanvas, CardDisplayLayer.BACKGROUND_GRAPHICS.getPaneLayer());
         add(backgroundCanvas);
         revalidate();
     }
@@ -87,9 +87,9 @@ public abstract class  CardLayeredPane extends JLayeredPane {
         this.foregroundCanvas = canvas;
 
         // Pass mouse events to parts obscured behind the canvas.
-        mouseEventDispatcher = MouseEventDispatcher.boundTo(this.foregroundCanvas.getCanvas(), () -> getComponentsInCardLayer(CardLayer.BACKGROUND_PARTS));
+        mouseEventDispatcher = MouseEventDispatcher.boundTo(this.foregroundCanvas.getCanvas(), () -> getComponentsInCardLayer(CardDisplayLayer.BACKGROUND_PARTS));
 
-        setLayer(foregroundCanvas, CardLayer.CARD_GRAPHICS.paneLayer);
+        setLayer(foregroundCanvas, CardDisplayLayer.CARD_GRAPHICS.getPaneLayer());
         add(foregroundCanvas);
         revalidate();
         repaint();
@@ -129,8 +129,8 @@ public abstract class  CardLayeredPane extends JLayeredPane {
         return foregroundCanvas == null ? null : foregroundCanvas.getCanvas();
     }
 
-    private Component[] getComponentsInCardLayer(CardLayer layer) {
-        return getComponentsInLayer(layer.paneLayer);
+    private Component[] getComponentsInCardLayer(CardDisplayLayer layer) {
+        return getComponentsInLayer(layer.getPaneLayer());
     }
 
     public void dispose() {

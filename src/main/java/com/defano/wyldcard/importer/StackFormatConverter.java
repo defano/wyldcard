@@ -5,7 +5,7 @@ import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.builder.*;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.wyldcard.parts.card.PartOwner;
+import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -209,7 +209,7 @@ public class StackFormatConverter {
         stackModel.addBackground(backgroundModel);
     }
 
-    private void buildParts(PartRecord[] parts, PartOwner parent, CardLayerBlock block) {
+    private void buildParts(PartRecord[] parts, CardLayer parent, CardLayerBlock block) {
         for (int partNumber = 0; partNumber < parts.length; partNumber++) {
             PartRecord partRecord = parts[partNumber];
             if (partRecord.getPartType() == PartType.BUTTON) {
@@ -220,7 +220,7 @@ public class StackFormatConverter {
         }
     }
 
-    private void buildButton(PartRecord partRecord, int partNumber, PartOwner parent, CardLayerBlock block) {
+    private void buildButton(PartRecord partRecord, int partNumber, CardLayer parent, CardLayerBlock block) {
 
         ButtonModel buttonModel = new ButtonModelBuilder(parent.getType().asOwner(), parent.getParentPartModel())
                 .withPartNumber(partNumber)
@@ -251,7 +251,7 @@ public class StackFormatConverter {
         parent.addPartModel(buttonModel);
     }
 
-    private void buildField(PartRecord partRecord, int partNumber, PartOwner parent, CardLayerBlock block) {
+    private void buildField(PartRecord partRecord, int partNumber, CardLayer parent, CardLayerBlock block) {
 
         FieldModel fieldModel = new FieldModelBuilder(parent.getType().asOwner(), parent.getParentPartModel())
                 .withPartNumber(partNumber)

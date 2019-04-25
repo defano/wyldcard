@@ -3,7 +3,7 @@ package com.defano.wyldcard.parts.finder;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.wyldcard.parts.PartException;
-import com.defano.wyldcard.parts.card.CardLayer;
+import com.defano.wyldcard.parts.card.CardDisplayLayer;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -104,7 +104,7 @@ public interface OrderedPartFinder {
      * parts.
      * <p>
      * A part number is, effectively, its z-order on the card. The number is a value between 1 and the value returned
-     * by {@link ##getPartCount(PartType, CardLayer)}, inclusively.
+     * by {@link ##getPartCount(PartType, CardDisplayLayer)}, inclusively.
      *
      * @param context The execution context.
      * @param part    The part whose number should be returned.

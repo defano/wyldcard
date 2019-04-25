@@ -228,7 +228,7 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
             throw new IllegalStateException("Bug! Not a layered part.");
         }
 
-        return getLayer().hyperTalkName + " " +
+        return getDisplayLayer().getHyperTalkName() + " " +
                 getType().hypertalkName + " " +
                 get(context, PROP_NUMBER);
     }

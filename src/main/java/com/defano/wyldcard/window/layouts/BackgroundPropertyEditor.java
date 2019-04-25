@@ -1,16 +1,16 @@
 package com.defano.wyldcard.window.layouts;
 
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
+import com.defano.wyldcard.parts.card.CardModel;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.properties.value.BasicValue;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.WyldCardDialog;
-import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
-import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.ast.model.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -18,8 +18,8 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 
-public class BackgroundPropertyEditor extends WyldCardDialog<CardPart> {
-    private CardPart cardPart;
+public class BackgroundPropertyEditor extends WyldCardDialog<CardModel> {
+    private CardModel cardModel;
     private BackgroundModel backgroundModel;
 
     private JPanel propertiesPanel;
@@ -63,12 +63,12 @@ public class BackgroundPropertyEditor extends WyldCardDialog<CardPart> {
 
     @Override
     @RunOnDispatch
-    public void bindModel(CardPart cardPart) {
+    public void bindModel(CardModel cardModel) {
         ExecutionContext context = new ExecutionContext();
-        this.cardPart = cardPart;
-        backgroundModel = this.cardPart.getPartModel().getBackgroundModel();
+        this.cardModel = cardModel;
+        this.backgroundModel = cardModel.getBackgroundModel();
 
-        int backgroundId = this.cardPart.getPartModel().getBackgroundId();
+        int backgroundId = this.cardModel.getBackgroundId();
         backgroundIdLabel.setText("Background ID: " + backgroundId);
         cantDeleteBkgndCheckBox.setSelected(backgroundModel.get(context, BackgroundModel.PROP_CANTDELETE).booleanValue());
         dontSearchCheckBox.setSelected(backgroundModel.get(context, BackgroundModel.PROP_DONTSEARCH).booleanValue());
@@ -79,9 +79,9 @@ public class BackgroundPropertyEditor extends WyldCardDialog<CardPart> {
             backgroundName.setText(backgroundModel.get(context, BackgroundModel.PROP_NAME).toString());
         }
 
-        long cardCount = this.cardPart.getPartModel().getStackModel().getCardsInBackground(backgroundId).size();
-        long fieldCount = this.cardPart.getPartModel().getPartCount(context, PartType.FIELD, Owner.BACKGROUND);
-        long buttonCount = this.cardPart.getPartModel().getPartCount(context, PartType.BUTTON, Owner.BACKGROUND);
+        long cardCount = cardModel.getStackModel().getCardsInBackground(backgroundId).size();
+        long fieldCount = cardModel.getPartCount(context, PartType.FIELD, Owner.BACKGROUND);
+        long buttonCount = cardModel.getPartCount(context, PartType.BUTTON, Owner.BACKGROUND);
 
         cardCountLabel.setText(StringUtils.pluralize(cardCount, "Background shared by %d card.", "Background shared by %d cards."));
         buttonCountLabel.setText(StringUtils.pluralize(buttonCount, "Contains %d background button.", "Contains %d background buttons."));
@@ -90,9 +90,9 @@ public class BackgroundPropertyEditor extends WyldCardDialog<CardPart> {
 
     private void updateProperties() {
         ExecutionContext context = new ExecutionContext();
-        cardPart.getPartModel().getBackgroundModel().set(context, BackgroundModel.PROP_NAME, new Value(backgroundName.getText()));
-        cardPart.getPartModel().getBackgroundModel().set(context, BackgroundModel.PROP_CANTDELETE, new Value(cantDeleteBkgndCheckBox.isSelected()));
-        cardPart.getPartModel().getBackgroundModel().set(context, BackgroundModel.PROP_DONTSEARCH, new Value(dontSearchCheckBox.isSelected()));
+        cardModel.getBackgroundModel().set(context, BackgroundModel.PROP_NAME, new Value(backgroundName.getText()));
+        cardModel.getBackgroundModel().set(context, BackgroundModel.PROP_CANTDELETE, new Value(cantDeleteBkgndCheckBox.isSelected()));
+        cardModel.getBackgroundModel().set(context, BackgroundModel.PROP_DONTSEARCH, new Value(dontSearchCheckBox.isSelected()));
     }
 
     private void showContentsEditor() {

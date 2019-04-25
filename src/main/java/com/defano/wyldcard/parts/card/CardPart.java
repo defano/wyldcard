@@ -181,14 +181,14 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         }
 
         // Register the part as a child component of the foreground or background layer
-        if (newPart.getPartModel().getLayer() == CardLayer.CARD_PARTS) {
+        if (newPart.getPartModel().getDisplayLayer() == CardDisplayLayer.CARD_PARTS) {
             cardModel.addPartModel(newPart.getPartModel());
-        } else if (newPart.getPartModel().getLayer() == CardLayer.BACKGROUND_PARTS) {
+        } else if (newPart.getPartModel().getDisplayLayer() == CardDisplayLayer.BACKGROUND_PARTS) {
             cardModel.getBackgroundModel().addPartModel(newPart.getPartModel());
         }
 
         // Add the Swing component (view) to the card
-        addSwingComponent(newPart.getComponent(), newPart.getRect(context), newPart.getPartModel().getLayer());
+        addSwingComponent(newPart.getComponent(), newPart.getRect(context), newPart.getPartModel().getDisplayLayer());
         newPart.partOpened(context);
 
         // Send the 'newButton' or 'newField' message to the part
@@ -329,7 +329,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      */
     @RunOnDispatch
     public void replaceViewComponent(ExecutionContext context, Part forPart, Component oldButtonComponent, Component newButtonComponent) {
-        CardLayer partLayer = getCardLayer(oldButtonComponent);
+        CardDisplayLayer partLayer = getCardLayer(oldButtonComponent);
         removeSwingComponent(oldButtonComponent);
         addSwingComponent(newButtonComponent, forPart.getRect(context), partLayer);
         forPart.partOpened(context);
@@ -451,12 +451,12 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
             case BUTTON:
                 ButtonPart button = ButtonPart.fromModel(context, this, (ButtonModel) thisPart);
                 buttons.add(button);
-                addSwingComponent(button.getComponent(), button.getRect(context), thisPart.getLayer());
+                addSwingComponent(button.getComponent(), button.getRect(context), thisPart.getDisplayLayer());
                 break;
             case FIELD:
                 FieldPart field = FieldPart.fromModel(context, this, (FieldModel) thisPart);
                 fields.add(field);
-                addSwingComponent(field.getComponent(), field.getRect(context), thisPart.getLayer());
+                addSwingComponent(field.getComponent(), field.getRect(context), thisPart.getDisplayLayer());
                 break;
             default:
                 // Intentionally ignored
@@ -470,6 +470,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     @RunOnDispatch
     private void removeSwingComponent(Component component) {
         remove(component);
+        revalidate(); repaint();
     }
 
     /**
@@ -478,7 +479,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * @param bounds The component's desired location and size.
      */
     @RunOnDispatch
-    private void addSwingComponent(Component component, Rectangle bounds, CardLayer layer) {
+    private void addSwingComponent(Component component, Rectangle bounds, CardDisplayLayer layer) {
         component.setBounds(bounds);
         addToCardLayer(component, layer);
         moveToFront(component);

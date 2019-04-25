@@ -3,6 +3,7 @@ package com.defano.wyldcard.parts.clipboard;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.button.ButtonModel;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.parts.stack.StackModel;
@@ -80,7 +81,7 @@ public class CardPartTransferHandler extends TransferHandler {
     private ToolEditablePart duplicatePart(ExecutionContext context, ToolEditablePart original, CardPart parentCard) {
         PartModel copiedPartModel = Serializer.copy(original.getPartModel());
 
-        copiedPartModel.define(PartModel.PROP_ID).asConstant(getNewId(copiedPartModel, parentCard.getOwningStackModel()));
+        copiedPartModel.define(PartModel.PROP_ID).asConstant(getNewId(copiedPartModel, parentCard.getOwningStackModel(), parentCard.getPartModel()));
         copiedPartModel.setOwner(CardLayerPart.getActivePartLayer().asOwner());
 
         if (copiedPartModel instanceof ButtonModel) {
@@ -92,14 +93,14 @@ public class CardPartTransferHandler extends TransferHandler {
         throw new IllegalStateException("Bug! Cannot duplicate this part type: " + original);
     }
 
-    private Value getNewId(PartModel partModel, StackModel owningStack) {
+    private Value getNewId(PartModel partModel, StackModel owningStack, CardModel owningCard) {
         if (partModel instanceof FieldModel) {
-            return new Value(owningStack.getNextFieldId(partModel.getParentPartModel().getId()));
+            return new Value(owningStack.getNextFieldId(owningCard.getId()));
         } else if (partModel instanceof ButtonModel) {
-            return new Value(owningStack.getNextButtonId(partModel.getParentPartModel().getId()));
-        } else {
-            throw new IllegalStateException("Bug! Not a supported type: " + partModel);
+            return new Value(owningStack.getNextButtonId(owningCard.getId()));
         }
+
+        throw new IllegalStateException("Bug! Not a supported type: " + partModel);
     }
 
     private static class TransferablePart implements Transferable {

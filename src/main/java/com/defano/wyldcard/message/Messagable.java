@@ -90,8 +90,10 @@ public interface Messagable {
 
             // Message not trapped, send message to next part in the hierarchy
             else {
-                getNextMessageRecipient(context, getMe(context).getType())
-                        .receiveMessage(context, message, onCompletion);
+                Messagable nextRecipient = getNextMessageRecipient(context, me.getType());
+                if (nextRecipient != null) {
+                    nextRecipient.receiveMessage(context, message, onCompletion);
+                }
             }
         });
     }
@@ -185,8 +187,10 @@ public interface Messagable {
                 }
             case STACK:
                 return WyldCard.getInstance().getWyldCardPart();
-            default:
-                throw new IllegalStateException("Bug! Unhandled message recipient type: " + type);
+            case HYPERCARD:
+                return null;
         }
+
+        throw new IllegalStateException("Bug! Unimplemented part type.");
     }
 }

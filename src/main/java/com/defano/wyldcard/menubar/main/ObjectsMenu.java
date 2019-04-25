@@ -7,10 +7,6 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.layouts.BackgroundPropertyEditor;
-import com.defano.wyldcard.window.layouts.CardPropertyEditor;
-import com.defano.wyldcard.window.layouts.StackPropertyEditor;
 
 import java.util.Optional;
 
@@ -42,32 +38,17 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Card Info...")
-                .withAction(e -> new WindowBuilder<>(new CardPropertyEditor())
-                        .withModel(WyldCard.getInstance().getStackManager().getFocusedCard())
-                        .asModal()
-                        .withTitle("Card Properties")
-                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindowPanel())
-                        .build())
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().editProperties(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Background Info...")
-                .withAction(e -> new WindowBuilder<>(new BackgroundPropertyEditor())
-                        .withModel(WyldCard.getInstance().getStackManager().getFocusedCard())
-                        .withTitle("Background Properties")
-                        .asModal()
-                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindowPanel())
-                        .build())
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().getBackgroundModel().editProperties(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Stack Info...")
-                .withAction(e -> new WindowBuilder<>(new StackPropertyEditor())
-                        .withModel(WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel())
-                        .withTitle("Stack Properties")
-                        .asModal()
-                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindowPanel())
-                        .build())
+                .withAction(e -> WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel().editProperties(new ExecutionContext()))
                 .build(this);
 
         this.addSeparator();

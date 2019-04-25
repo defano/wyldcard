@@ -38,11 +38,21 @@ public abstract class ArgListFunction extends Expression {
      * @throws HtSemanticException If an error occurs evaluating the expressions.
      */
     public List<Value> evaluateArgumentList(ExecutionContext context) throws HtException {
-        List<Value> evaluated = arguments.evaluateAsList(context);
-        if (evaluated.size() == 1 && evaluated.get(0).isQuotedLiteral()) {
-            return evaluated.get(0).getListItems();
+        if (arguments instanceof ListExp) {
+            if (((ListExp) arguments).cdr() == null) {
+                return ((ListExp) arguments).evaluateCarAsList(context);
+            } else {
+                return arguments.evaluateAsList(context);
+            }
         }
-        return evaluated;
+
+        else {
+            List<Value> evaluated = arguments.evaluateAsList(context);
+            if (evaluated.size() == 1 && evaluated.get(0).isQuotedLiteral()) {
+                return evaluated.get(0).getListItems();
+            }
+            return evaluated;
+        }
     }
 
     /**

@@ -265,16 +265,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitConvertContainerFromToCmd(HyperTalkParser.ConvertContainerFromToCmdContext ctx) {
-        return new ConvertCmd(ctx, (ContainerExp) visit(ctx.container()), (Convertible) visit(ctx.convertible(0)), (Convertible) visit(ctx.convertible(1)));
-    }
-
-    @Override
-    public Object visitConvertContainerToCmd(HyperTalkParser.ConvertContainerToCmdContext ctx) {
-        return new ConvertCmd(ctx, (ContainerExp) visit(ctx.container()), (Convertible) visit(ctx.convertible()));
-    }
-
-    @Override
     public Object visitConvertToCmd(HyperTalkParser.ConvertToCmdContext ctx) {
         return new ConvertCmd(ctx, (Expression) visit(ctx.expression()), (Convertible) visit(ctx.convertible()));
     }

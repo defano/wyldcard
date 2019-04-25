@@ -15,23 +15,9 @@ import java.util.Date;
 
 public class ConvertCmd extends Command {
 
-    private final ContainerExp container;
     private final Expression expression;
     private final Convertible from;
     private final Convertible to;
-
-    public ConvertCmd (ParserRuleContext context, ContainerExp container, Convertible to) {
-        this(context, container, null, to);
-    }
-
-    public ConvertCmd(ParserRuleContext context, ContainerExp container, Convertible from, Convertible to) {
-        super(context, "convert");
-
-        this.container = container;
-        this.expression = null;
-        this.from = from;
-        this.to = to;
-    }
 
     public ConvertCmd(ParserRuleContext context, Expression expression, Convertible to) {
         this(context, expression, null, to);
@@ -40,7 +26,6 @@ public class ConvertCmd extends Command {
     public ConvertCmd(ParserRuleContext context, Expression expression, Convertible from, Convertible to) {
         super(context, "convert");
 
-        this.container = null;
         this.expression = expression;
         this.from = from;
         this.to = to;
@@ -48,14 +33,13 @@ public class ConvertCmd extends Command {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
-        Date timestamp = container == null ?
-                DateUtils.dateOf(expression.evaluate(context), from) :
-                DateUtils.dateOf(container.evaluate(context), from);
+        Date timestamp = DateUtils.dateOf(expression.evaluate(context), from);
 
         if (timestamp == null) {
             throw new HtSemanticException("Invalid date.");
         }
 
+        ContainerExp container = expression.factor(context, ContainerExp.class);
         if (container == null) {
             context.setIt(DateUtils.valueOf(timestamp, to));
         } else {

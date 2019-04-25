@@ -20,7 +20,7 @@ import java.awt.event.MouseEvent;
 public class WyldCardPartEditManager implements PartEditManager {
 
     // Initial size of new part when user command-drags
-    private final static Dimension NEW_PART_DIM = new Dimension(10,10);
+    private final static Dimension INITIAL_DIMENSION = new Dimension(10,10);
     private Point clickLoc;
     private boolean isScriptEditMode = false;
 
@@ -58,7 +58,7 @@ public class WyldCardPartEditManager implements PartEditManager {
 
     private void doNewField() {
         CardPart theCard = WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getDisplayedCard();
-        FieldPart theField = theCard.newField(new ExecutionContext(), new Rectangle(clickLoc, NEW_PART_DIM));
+        FieldPart theField = theCard.newField(new ExecutionContext(), new Rectangle(clickLoc, INITIAL_DIMENSION));
         WyldCard.getInstance().getPartToolManager().setSelectedPart(theField);
 
         new PartResizer(theField, theCard);
@@ -66,7 +66,7 @@ public class WyldCardPartEditManager implements PartEditManager {
 
     private void doNewButton() {
         CardPart theCard = WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getDisplayedCard();
-        ButtonPart theButton = theCard.newButton(new ExecutionContext(), new Rectangle(clickLoc, NEW_PART_DIM));
+        ButtonPart theButton = theCard.newButton(new ExecutionContext(), new Rectangle(clickLoc, INITIAL_DIMENSION));
         theButton.getPartModel().set(new ExecutionContext(), ButtonModel.PROP_STYLE, new Value("transparent"));
         theButton.getPartModel().set(new ExecutionContext(), ButtonModel.PROP_SHOWNAME, new Value("false"));
 

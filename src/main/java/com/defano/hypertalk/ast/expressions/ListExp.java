@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.expressions;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.google.common.collect.Lists;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class ListExp extends Expression {
 
     /**
      * Constructs an empty list expression.
+     *
      * @param ctx The Antlr context where this expression was encountered, or null
      */
     public ListExp(ParserRuleContext ctx) {
@@ -26,6 +28,7 @@ public class ListExp extends Expression {
 
     /**
      * Constructs a singleton list expression.
+     *
      * @param ctx The Antlr context where this expression was encountered, or null
      * @param car The single expression making up this list
      */
@@ -35,6 +38,7 @@ public class ListExp extends Expression {
 
     /**
      * Constructs a list expression containing multiple expressions.
+     *
      * @param ctx The Antlr context where this expression was encountered, or null
      * @param car The first expression in the list
      * @param cdr A list of subsequent expressions
@@ -54,15 +58,69 @@ public class ListExp extends Expression {
         }
     }
 
+    /**
+     * Gets the non-null first expression in this list.
+     *
+     * @return The first expression in the list.
+     */
+    @SuppressWarnings("unused")
+    public Expression car() {
+        return car;
+    }
+
+    /**
+     * Gets a {@link ListExp} representing all but the first expression in the list.
+     *
+     * @return Null if there is only only expression in the list, otherwise, all but the first element in the list.
+     */
+    public ListExp cdr() {
+        return cdr;
+    }
+
+    /**
+     * Evaluates the cdr as a flattened list of evaluated values.
+     *
+     * @param context The execution context
+     * @return The evaluated list of values contained in the cdr, or an empty list if this ListExp contains only a
+     * single expression.
+     * @throws HtException Thrown if an error occurs while evaluating the list.
+     */
+    public List<Value> evaluateCdrAsList(ExecutionContext context) throws HtException {
+        return cdr == null ? new ArrayList<>() : cdr.evaluateAsList(context);
+    }
+
+    /**
+     * Evaluates the car as a list expression by evaluating the expression then interpreting it as a comma-delimited,
+     * HyperTalk list.
+     *
+     * @param context The execution context
+     * @return A list of comma-seperated values produced by evaluating this list expression's car
+     * @throws HtException Thrown if an error occurs while evaluating the list.
+     */
+    public List<Value> evaluateCarAsList(ExecutionContext context) throws HtException {
+        return car.evaluateAsList(context);
+    }
+
+    /**
+     * Evaluates this expression as a list of values. The size of the list of values returned is equal to the number
+     * of expressions contained within this object.
+     * <p>
+     * If this {@link ListExp} is a singleton list (has a car, but no cdr), then a single value equal to evaluating the
+     * car is returned. If this {@link ListExp} has a non-null cdr, then the car is evaluated and the cdr is recursively
+     * evaluated.
+     *
+     * @param context The execution context
+     * @return A list of values created by recursively evaluating the car and cdr portions of this list expression.
+     * @throws HtException Thrown if an error occurs while evaluating the expression.
+     */
     @Override
     public List<Value> evaluateAsList(ExecutionContext context) throws HtException {
         if (cdr != null) {
-            ArrayList<Value> values = new ArrayList<>();
-            values.add(car.evaluate(context));
-            values.addAll(cdr.evaluateAsList(context));
+            List<Value> values = Lists.newArrayList(car.evaluate(context));
+            values.addAll(evaluateCdrAsList(context));
             return values;
         } else {
-            return car.evaluateAsList(context);
+            return Lists.newArrayList(car.evaluate(context));
         }
     }
 

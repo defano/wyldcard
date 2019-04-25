@@ -33,13 +33,13 @@ public class ScreenCurtain extends JLabel {
      */
     @RunOnDispatch
     public void setCurtainImage(BufferedImage curtainImage) {
-        setVisible(curtainImage != null);
-
         if (curtainImage != null) {
             this.setIcon(new ImageIcon(curtainImage));
             this.setPreferredSize(new Dimension(curtainImage.getWidth(), curtainImage.getHeight()));
             this.setSize(curtainImage.getWidth(), curtainImage.getHeight());
             this.invalidate();
         }
+
+        setVisible(curtainImage != null);
     }
 }

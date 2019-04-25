@@ -5,7 +5,6 @@ import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.properties.value.BasicValue;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -18,7 +17,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 
-public class CardPropertyEditor extends WyldCardDialog<CardPart> {
+public class CardPropertyEditor extends WyldCardDialog<CardModel> {
     private CardModel cardModel;
 
     private JTextField cardName;
@@ -71,10 +70,10 @@ public class CardPropertyEditor extends WyldCardDialog<CardPart> {
     }
 
     @Override
-    public void bindModel(CardPart card) {
+    public void bindModel(CardModel cardModel) {
         ExecutionContext context = new ExecutionContext();
 
-        cardModel = card.getPartModel();
+        this.cardModel = cardModel;
 
         // Don't display "default" name ('card id xxx')
         Value cardNameValue = ((BasicValue) cardModel.findProperty(CardModel.PROP_NAME).value()).rawValue();
@@ -87,8 +86,8 @@ public class CardPropertyEditor extends WyldCardDialog<CardPart> {
         dontSearchCheckBox.setSelected(cardModel.get(context, CardModel.PROP_DONTSEARCH).booleanValue());
         cardIdLabel.setText(String.valueOf(cardModel.get(context, CardModel.PROP_ID).toString()));
 
-        long fieldCount = card.getPartModel().getPartCount(context, PartType.FIELD, Owner.CARD);
-        long buttonCount = card.getPartModel().getPartCount(context, PartType.BUTTON, Owner.CARD);
+        long fieldCount = cardModel.getPartCount(context, PartType.FIELD, Owner.CARD);
+        long buttonCount = cardModel.getPartCount(context, PartType.BUTTON, Owner.CARD);
 
         int cardNumber = WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().getCardIndexInStack() + 1;
         int cardCount = WyldCard.getInstance().getStackManager().getFocusedStack().getCardCountProvider().blockingFirst();

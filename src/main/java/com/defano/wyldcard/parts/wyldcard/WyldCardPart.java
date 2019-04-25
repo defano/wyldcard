@@ -199,11 +199,6 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
         throw new HtUncheckedSemanticException(new HtSemanticException("Cannot edit the script of WyldCard."));
     }
 
-    @Override
-    public void editProperties(ExecutionContext context) {
-        throw new HtUncheckedSemanticException(new HtSemanticException("Cannot edit the properties of WyldCard."));
-    }
-
     private void processMessage(ExecutionContext context, Message message) throws HtException {
         // TODO: This would be a good place to hook XCMD-like functionality
 

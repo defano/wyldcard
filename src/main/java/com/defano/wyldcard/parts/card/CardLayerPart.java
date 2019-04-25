@@ -31,19 +31,19 @@ public interface CardLayerPart<T extends PartModel> extends Part<T> {
      * Determines the layer of the card on which this part exists.
      * @return The layer of the card the part is on or null if indeterminate
      */
-    default CardLayer getCardLayer() {
+    default CardDisplayLayer getCardLayer() {
         CardPart card = getCard();
         return card == null ? null : card.getCardLayer(getComponent());
     }
 
     /**
-     * Determines the currently active part layer, either {@link CardLayer#BACKGROUND_PARTS} or
-     * {@link CardLayer#CARD_PARTS} depending on whether the user is presently editing the background.
+     * Determines the currently active part layer, either {@link CardDisplayLayer#BACKGROUND_PARTS} or
+     * {@link CardDisplayLayer#CARD_PARTS} depending on whether the user is presently editing the background.
      *
      * @return The part layer currently being edited.
      */
-    static CardLayer getActivePartLayer() {
-        return WyldCard.getInstance().getToolsManager().isEditingBackground() ? CardLayer.BACKGROUND_PARTS : CardLayer.CARD_PARTS;
+    static CardDisplayLayer getActivePartLayer() {
+        return WyldCard.getInstance().getToolsManager().isEditingBackground() ? CardDisplayLayer.BACKGROUND_PARTS : CardDisplayLayer.CARD_PARTS;
     }
 
     /**
@@ -54,12 +54,11 @@ public interface CardLayerPart<T extends PartModel> extends Part<T> {
     default void setDisplayOrder(ExecutionContext context, int newPosition) {
         CardPart card = getCard();
 
-        PartModel owner = getCardLayer() == CardLayer.BACKGROUND_PARTS ?
+        PartModel owner = getCardLayer() == CardDisplayLayer.BACKGROUND_PARTS ?
                 getCard().getPartModel().getBackgroundModel() :
                 getCard().getPartModel();
 
         List<PartModel> parts = ((LayeredPartFinder) owner).getPartsInDisplayOrder(context);
-                // = card.getPartModel().getPartsInDisplayOrder(context, getCardLayer() == CardLayer.BACKGROUND_PARTS ? Owner.BACKGROUND : Owner.CARD);
 
         if (newPosition < 0) {
             newPosition = 0;

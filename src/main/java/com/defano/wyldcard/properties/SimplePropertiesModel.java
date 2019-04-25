@@ -211,6 +211,14 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
         propertyChangeObservers.remove(observer);
     }
 
+    /**
+     * Notify all the observers that the given property has changed value.
+     *
+     * @param context  The execution context
+     * @param property The name (or alias) of the property that changed
+     * @param oldValue The previous value assigned to this property
+     * @param value    The new value of the property
+     */
     private void fireOnPropertyChanged(ExecutionContext context, String property, Value oldValue, Value value) {
         Invoke.onDispatch(() -> {
             for (PropertyChangeObserver observer : propertyChangeObservers.toArray(new PropertyChangeObserver[0])) {
