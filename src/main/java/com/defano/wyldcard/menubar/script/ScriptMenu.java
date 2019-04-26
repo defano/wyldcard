@@ -4,8 +4,6 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
-import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.layouts.FindWindow;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
 
 public class ScriptMenu extends HyperCardMenu {

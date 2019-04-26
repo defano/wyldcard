@@ -3,7 +3,7 @@ package com.defano.wyldcard.menubar.main;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.menubar.DeferredMenuAction;
+import com.defano.wyldcard.menubar.DoMenuAction;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
@@ -80,8 +80,8 @@ public class MainWyldCardMenuBar extends JMenuBar implements WyldCardMenuBar {
         if (foundMenuItem != null) {
             ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "doMenu");
             for (ActionListener thisAction : foundMenuItem.getActionListeners()) {
-                if (thisAction instanceof DeferredMenuAction) {
-                    ((DeferredMenuAction) thisAction).blockingInvokeActionPerformed(context, event);
+                if (thisAction instanceof DoMenuAction) {
+                    ((DoMenuAction) thisAction).blockingInvokeActionPerformed(context, event);
                 } else {
                     thisAction.actionPerformed(event);
                 }

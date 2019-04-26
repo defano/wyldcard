@@ -23,6 +23,7 @@ import com.google.common.util.concurrent.*;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -36,10 +37,12 @@ public class Compiler {
     private final static int MAX_COMPILE_THREADS = 6;          // Simultaneous background parse tasks
     private final static int MAX_EXECUTOR_THREADS = 1;         // Simultaneous scripts executing
 
-    private static final ThreadPoolExecutor bestEffortCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, new ThreadFactoryBuilder().setNameFormat("beasync-compiler-%d").build());
+    private static final ThreadPoolExecutor bestEffortCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, new ThreadFactoryBuilder().setNameFormat("be-async-compiler-%d").build());
     private static final ThreadPoolExecutor asyncCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("async-compiler-%d").build());
+    private static final ExecutorService staticExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("expression-evaluator").build());
     private static final ThreadPoolExecutor scriptExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_EXECUTOR_THREADS, new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
     private static final ListeningExecutorService listeningScriptExecutor = MoreExecutors.listeningDecorator(scriptExecutor);
+    private static final ListeningExecutorService listeningStaticExecutor = MoreExecutors.listeningDecorator(staticExecutor);
 
     /**
      * Attempts to compile the given script text on a background thread and invoke the CompileCompletionObserver
@@ -249,7 +252,7 @@ public class Compiler {
      */
     public static void asyncStaticContextEvaluate(ExecutionContext staticContext, String message, MessageEvaluationObserver evaluationObserver) {
 
-        Futures.addCallback(Futures.makeChecked(listeningScriptExecutor.submit(new StaticContextEvaluationTask(staticContext, message)), new CheckedFutureExceptionMapper()), new FutureCallback<String>() {
+        Futures.addCallback(Futures.makeChecked(listeningStaticExecutor.submit(new StaticContextEvaluationTask(staticContext, message)), new CheckedFutureExceptionMapper()), new FutureCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 SwingUtilities.invokeLater(() -> evaluationObserver.onMessageEvaluated(result));

@@ -21,19 +21,19 @@ public class ToolsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Tools")
-                .withAction(e -> WyldCard.getInstance().getWindowManager().getPaintToolsPalette().toggleVisible())
+                .withDoMenuAction(e -> WyldCard.getInstance().getWindowManager().getPaintToolsPalette().toggleVisible())
                 .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getPaintToolsPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Patterns")
-                .withAction(e -> WyldCard.getInstance().getWindowManager().getPatternsPalette().toggleVisible())
+                .withDoMenuAction(e -> WyldCard.getInstance().getWindowManager().getPatternsPalette().toggleVisible())
                 .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getPatternsPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Colors")
-                .withAction(e -> WyldCard.getInstance().getWindowManager().getColorPalette().toggleVisible())
+                .withDoMenuAction(e -> WyldCard.getInstance().getWindowManager().getColorPalette().toggleVisible())
                 .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getColorPalette().getWindowVisibleProvider())
                 .build(this);
 
@@ -41,19 +41,19 @@ public class ToolsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Shapes")
-                .withAction(e -> WyldCard.getInstance().getWindowManager().getShapesPalette().toggleVisible())
+                .withDoMenuAction(e -> WyldCard.getInstance().getWindowManager().getShapesPalette().toggleVisible())
                 .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getShapesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Brushes")
-                .withAction(e -> WyldCard.getInstance().getWindowManager().getBrushesPalette().toggleVisible())
+                .withDoMenuAction(e -> WyldCard.getInstance().getWindowManager().getBrushesPalette().toggleVisible())
                 .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getBrushesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Lines")
-                .withAction(e -> WyldCard.getInstance().getWindowManager().getLinesPalette().toggleVisible())
+                .withDoMenuAction(e -> WyldCard.getInstance().getWindowManager().getLinesPalette().toggleVisible())
                 .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getLinesPalette().getWindowVisibleProvider())
                 .build(this);
 
@@ -63,125 +63,125 @@ public class ToolsMenu extends HyperCardMenu {
                 .named("Browse")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/finger.png")))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value == ToolMode.BROWSE))
-                .withAction(a -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.BROWSE))
+                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Button")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/button.png")))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value == ToolMode.BUTTON))
-                .withAction(a -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.BUTTON))
+                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.BUTTON))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Field")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/field.png")))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value == ToolMode.FIELD))
-                .withAction(a -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.FIELD))
+                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.FIELD))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Select")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/selection.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.SELECT))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.SELECT))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.SELECTION))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Lasso")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/lasso.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.LASSO))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.LASSO))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.LASSO))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Bucket")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/fill.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.BUCKET))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.BUCKET))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.FILL))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Pencil")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/pencil.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.PENCIL))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.PENCIL))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.PENCIL))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Rectangle")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/rectangle.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.RECTANGLE))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.RECTANGLE))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.RECTANGLE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Round Rectangle")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/roundrect.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.ROUNDRECT))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.ROUNDRECT))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.ROUND_RECTANGLE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Oval")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/oval.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.OVAL))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.OVAL))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.OVAL))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Brush")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/paintbrush.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.BRUSH))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.BRUSH))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.PAINTBRUSH))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Spray Can")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/spraypaint.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.SPRAY))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.SPRAY))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.AIRBRUSH))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Eraser")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/eraser.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.ERASER))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.ERASER))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.ERASER))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Line")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/line.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.LINE))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.LINE))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.LINE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Curve")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/curve.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.CURVE))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.CURVE))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.CURVE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Polygon")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/polygon.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.POLYGON))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.POLYGON))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.POLYGON))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Shape")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/shape.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.SHAPE))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.SHAPE))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.SHAPE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Text")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/text.png")))
-                .withAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.TEXT))
+                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().chooseTool(ToolType.TEXT))
                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.TEXT))
                 .build(this);
     }

@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.button.styles;
 
 import com.defano.wyldcard.awt.DisplayInverter;
+import com.defano.wyldcard.border.PartBorderFactory;
 import com.defano.wyldcard.parts.ToolEditablePart;
 
 import java.awt.*;
@@ -19,6 +20,17 @@ public class OvalButton extends AbstractLabelButton implements DisplayInverter {
             Rectangle bounds = getBounds();
             Shape oval = new Ellipse2D.Double(bounds.x, bounds.y, bounds.width, bounds.height);
             g.drawImage(invertDisplayedPixels(oval, this), 0, 0, null);
+        }
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        if (enabled) {
+            setBorder(PartBorderFactory.createEmptyBorder());
+        } else {
+            setBorder(PartBorderFactory.createOvalBorder(Color.LIGHT_GRAY));
         }
     }
 }

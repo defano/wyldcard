@@ -2,17 +2,16 @@ package com.defano.wyldcard.border;
 
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
 
 /**
- * Draws an oval/circular border on a Swing component.
+ * Draws a round rectangle border on a Swing component.
  */
-public class OvalBorder implements Border, ColorStateBorder {
+public class RectangleBorder implements Border, ColorStateBorder {
 
-    private final int strokeWidth;
+    private final int stokeWidth;
 
-    OvalBorder(int strokeWidth) {
-        this.strokeWidth = strokeWidth;
+    RectangleBorder(int strokeWidth) {
+        this.stokeWidth = strokeWidth;
     }
 
     @Override
@@ -21,13 +20,11 @@ public class OvalBorder implements Border, ColorStateBorder {
         Color oldColor = g2d.getColor();
         g2d.translate(x, y);
 
-        double halfStroke = strokeWidth / 2.0;
-
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         g2d.setPaint(getBorderColor(c));
-        g2d.setStroke(new BasicStroke(strokeWidth));
-        g2d.draw(new Ellipse2D.Double(halfStroke, halfStroke, width - strokeWidth, height - strokeWidth));
+        g2d.setStroke(new BasicStroke(stokeWidth));
+        g2d.drawRect(0, 0, width - stokeWidth, height - stokeWidth);
 
         g2d.setColor(oldColor);
         g2d.translate(-x, -y);
@@ -35,11 +32,13 @@ public class OvalBorder implements Border, ColorStateBorder {
 
     @Override
     public Insets getBorderInsets(Component c) {
-        return new Insets(strokeWidth, strokeWidth, strokeWidth, strokeWidth);
+        int floor = (int) Math.floor(stokeWidth / 2.0);
+        int ceil = (int) Math.ceil(stokeWidth / 2.0);
+        return new Insets(floor, floor, ceil, ceil);
     }
 
     @Override
     public boolean isBorderOpaque() {
-        return true;
+        return false;
     }
 }

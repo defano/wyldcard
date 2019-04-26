@@ -31,13 +31,13 @@ public class PaintMenu extends HyperCardMenu {
                 .named("Select")
                 .withShortcut('S')
                 .withEnabledProvider(WyldCard.getInstance().getStackManager().getIsSelectableProvider())
-                .withAction(a -> WyldCard.getInstance().getToolsManager().select())
+                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().select())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Select All")
                 .withShortcut('A')
-                .withAction(a -> WyldCard.getInstance().getToolsManager().selectAll())
+                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().selectAll())
                 .build(this);
 
         this.addSeparator();
@@ -45,30 +45,30 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Fill")
                 .withEnabledProvider(WyldCard.getInstance().getToolsManager().hasTransformableImageSelectionProvider())
-                .withAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).fill(WyldCardPatternFactory.getInstance().getPattern(WyldCard.getInstance().getToolsManager().getFillPattern()), new FillFunction() {}))
+                .withDoMenuAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).fill(WyldCardPatternFactory.getInstance().getPattern(WyldCard.getInstance().getToolsManager().getFillPattern()), new FillFunction() {}))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Invert")
-                .withAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).invert())
+                .withDoMenuAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).invert())
                 .withEnabledProvider(WyldCard.getInstance().getToolsManager().hasTransformableImageSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Pickup")
-                .withAction(e -> ((TransformableCanvasSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).pickupSelection())
+                .withDoMenuAction(e -> ((TransformableCanvasSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).pickupSelection())
                 .withEnabledProvider(WyldCard.getInstance().getToolsManager().hasTransformableCanvasSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Darken")
-                .withAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).adjustBrightness(-20))
+                .withDoMenuAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).adjustBrightness(-20))
                 .withEnabledProvider(WyldCard.getInstance().getToolsManager().hasTransformableSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Lighten")
-                .withAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).adjustBrightness(20))
+                .withDoMenuAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).adjustBrightness(20))
                 .withEnabledProvider(WyldCard.getInstance().getToolsManager().hasTransformableSelectionProvider())
                 .build(this);
 
@@ -79,25 +79,25 @@ public class PaintMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Rotate Left")
-                .withAction(e -> ((TransformableSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).rotateLeft())
+                .withDoMenuAction(e -> ((TransformableSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).rotateLeft())
                 .withEnabledProvider(WyldCard.getInstance().getToolsManager().hasTransformableSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Rotate Right")
-                .withAction(e -> ((TransformableSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).rotateRight())
+                .withDoMenuAction(e -> ((TransformableSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).rotateRight())
                 .withEnabledProvider(WyldCard.getInstance().getToolsManager().hasTransformableSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Flip Vertical")
-                .withAction(e -> ((TransformableSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).flipVertical())
+                .withDoMenuAction(e -> ((TransformableSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).flipVertical())
                 .withEnabledProvider(WyldCard.getInstance().getToolsManager().hasTransformableSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Flip Horizontal")
-                .withAction(e -> ((TransformableSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).flipHorizontal())
+                .withDoMenuAction(e -> ((TransformableSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).flipHorizontal())
                 .withEnabledProvider(WyldCard.getInstance().getToolsManager().hasTransformableSelectionProvider())
                 .build(this);
 
@@ -105,13 +105,13 @@ public class PaintMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("More Opaque")
-                .withAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).adjustTransparency(20))
+                .withDoMenuAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).adjustTransparency(20))
                 .withEnabledProvider(WyldCard.getInstance().getToolsManager().hasTransformableSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("More Transparent")
-                .withAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).adjustTransparency(-20))
+                .withDoMenuAction(e -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).adjustTransparency(-20))
                 .withEnabledProvider(WyldCard.getInstance().getToolsManager().hasTransformableSelectionProvider())
                 .build(this);
 
@@ -136,7 +136,7 @@ public class PaintMenu extends HyperCardMenu {
 
                 MenuItemBuilder.ofCheckType()
                         .named("None")
-                        .withAction(a -> WyldCard.getInstance().getToolsManager().setAntiAliasingMode(Interpolation.NONE))
+                        .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setAntiAliasingMode(Interpolation.NONE))
                         .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getAntiAliasingProvider().map(m -> m == Interpolation.NONE))
                         .build(antialiasingMenu);
 
@@ -144,25 +144,25 @@ public class PaintMenu extends HyperCardMenu {
 
                 MenuItemBuilder.ofCheckType()
                         .named("Default")
-                        .withAction(a -> WyldCard.getInstance().getToolsManager().setAntiAliasingMode(Interpolation.DEFAULT))
+                        .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setAntiAliasingMode(Interpolation.DEFAULT))
                         .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getAntiAliasingProvider().map(m -> m == Interpolation.DEFAULT))
                         .build(antialiasingMenu);
 
                 MenuItemBuilder.ofCheckType()
                         .named("Nearest Neighbor")
-                        .withAction(a -> WyldCard.getInstance().getToolsManager().setAntiAliasingMode(Interpolation.NEAREST_NEIGHBOR))
+                        .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setAntiAliasingMode(Interpolation.NEAREST_NEIGHBOR))
                         .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getAntiAliasingProvider().map(m -> m == Interpolation.NEAREST_NEIGHBOR))
                         .build(antialiasingMenu);
 
                 MenuItemBuilder.ofCheckType()
                         .named("Bilinear")
-                        .withAction(a -> WyldCard.getInstance().getToolsManager().setAntiAliasingMode(Interpolation.BILINEAR))
+                        .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setAntiAliasingMode(Interpolation.BILINEAR))
                         .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getAntiAliasingProvider().map(m -> m == Interpolation.BILINEAR))
                         .build(antialiasingMenu);
 
                 MenuItemBuilder.ofCheckType()
                         .named("Bicubic")
-                        .withAction(a -> WyldCard.getInstance().getToolsManager().setAntiAliasingMode(Interpolation.BICUBIC))
+                        .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setAntiAliasingMode(Interpolation.BICUBIC))
                         .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getAntiAliasingProvider().map(m -> m == Interpolation.BICUBIC))
                         .build(antialiasingMenu);
 
@@ -173,63 +173,63 @@ public class PaintMenu extends HyperCardMenu {
 
                 MenuItemBuilder.ofDefaultType()
                         .named("Make Translucent Opaque")
-                        .withAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).removeTranslucency(false))
+                        .withDoMenuAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).removeTranslucency(false))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("Make Translucent Transparent")
-                        .withAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).removeTranslucency(true))
+                        .withDoMenuAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).removeTranslucency(true))
                         .build(reduceColorMenu);
 
                 reduceColorMenu.add(new JSeparator());
 
                 MenuItemBuilder.ofDefaultType()
                         .named("Black & White")
-                        .withAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceGreyscale(0, WyldCard.getInstance().getToolsManager().getDitherer()))
+                        .withDoMenuAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceGreyscale(0, WyldCard.getInstance().getToolsManager().getDitherer()))
                         .build(reduceColorMenu);
 
                 reduceColorMenu.add(new JSeparator());
 
                 MenuItemBuilder.ofDefaultType()
                         .named("8 Grays")
-                        .withAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceGreyscale(8, WyldCard.getInstance().getToolsManager().getDitherer()))
+                        .withDoMenuAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceGreyscale(8, WyldCard.getInstance().getToolsManager().getDitherer()))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("32 Grays")
-                        .withAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceGreyscale(32, WyldCard.getInstance().getToolsManager().getDitherer()))
+                        .withDoMenuAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceGreyscale(32, WyldCard.getInstance().getToolsManager().getDitherer()))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("64 Grays")
-                        .withAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceGreyscale(64, WyldCard.getInstance().getToolsManager().getDitherer()))
+                        .withDoMenuAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceGreyscale(64, WyldCard.getInstance().getToolsManager().getDitherer()))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("256 Grays")
-                        .withAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceGreyscale(256, WyldCard.getInstance().getToolsManager().getDitherer()))
+                        .withDoMenuAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceGreyscale(256, WyldCard.getInstance().getToolsManager().getDitherer()))
                         .build(reduceColorMenu);
 
                 reduceColorMenu.add(new JSeparator());
 
                 MenuItemBuilder.ofDefaultType()
                         .named("8 Colors")
-                        .withAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceColor(8, WyldCard.getInstance().getToolsManager().getDitherer()))
+                        .withDoMenuAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceColor(8, WyldCard.getInstance().getToolsManager().getDitherer()))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("32 Colors")
-                        .withAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceColor(32, WyldCard.getInstance().getToolsManager().getDitherer()))
+                        .withDoMenuAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceColor(32, WyldCard.getInstance().getToolsManager().getDitherer()))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("64 Colors")
-                        .withAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceColor(64, WyldCard.getInstance().getToolsManager().getDitherer()))
+                        .withDoMenuAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceColor(64, WyldCard.getInstance().getToolsManager().getDitherer()))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("256 Colors")
-                        .withAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceColor(256, WyldCard.getInstance().getToolsManager().getDitherer()))
+                        .withDoMenuAction(p -> ((TransformableImageSelection) WyldCard.getInstance().getToolsManager().getPaintTool()).reduceColor(256, WyldCard.getInstance().getToolsManager().getDitherer()))
                         .build(reduceColorMenu);
 
                 reduceColorMenu.add(new JSeparator());
@@ -241,7 +241,7 @@ public class PaintMenu extends HyperCardMenu {
 
                         MenuItemBuilder.ofCheckType()
                                 .named("None")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.NullDitherer()))
+                                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.NullDitherer()))
                                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof NullDitherer))
                                 .build(ditherMenu);
 
@@ -249,49 +249,49 @@ public class PaintMenu extends HyperCardMenu {
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Atkinson")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.AtkinsonDitherer()))
+                                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.AtkinsonDitherer()))
                                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.AtkinsonDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Burkes")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.BurkesDitherer()))
+                                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.BurkesDitherer()))
                                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.BurkesDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Floyd Steinberg")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.FloydSteinbergDitherer()))
+                                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.FloydSteinbergDitherer()))
                                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.FloydSteinbergDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Jarvis Judice Ninke")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.JarvisJudiceNinkeDitherer()))
+                                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.JarvisJudiceNinkeDitherer()))
                                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.JarvisJudiceNinkeDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Sierra")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.SierraDitherer()))
+                                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.SierraDitherer()))
                                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.SierraDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Sierra Two")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.SierraTwoDitherer()))
+                                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.SierraTwoDitherer()))
                                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.SierraTwoDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Sierra Lite")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.SierraLiteDitherer()))
+                                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.SierraLiteDitherer()))
                                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.SierraLiteDitherer))
                                 .build(ditherMenu);
 
                         MenuItemBuilder.ofCheckType()
                                 .named("Stucki")
-                                .withAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.StuckiDitherer()))
+                                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setDitherer(new com.defano.jmonet.transform.dither.StuckiDitherer()))
                                 .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDithererProvider().map(d -> d instanceof com.defano.jmonet.transform.dither.StuckiDitherer))
                                 .build(ditherMenu);
 

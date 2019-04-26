@@ -20,7 +20,7 @@ public class FontMenu extends HyperCardMenu {
         for (String thisFamily : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
             MenuItemBuilder.ofCheckType()
                     .named(thisFamily)
-                    .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontFamily(thisFamily))
+                    .withDoMenuAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontFamily(thisFamily))
                     .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedFontFamilyProvider().map(f -> f.contains(new Value(thisFamily))))
                     .fontFamily(thisFamily)
                     .build(this);

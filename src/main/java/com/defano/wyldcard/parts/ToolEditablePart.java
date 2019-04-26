@@ -62,7 +62,7 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
      * @return The drag handle bounds.
      */
     default Rectangle getResizeDragHandle() {
-        final int dragHandleSize = 8;
+        final int dragHandleSize = 10;
         return new Rectangle(getComponent().getWidth() - dragHandleSize, getComponent().getHeight() - dragHandleSize, dragHandleSize, dragHandleSize);
     }
 
@@ -77,15 +77,16 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
         Graphics2D g2d = (Graphics2D) g;
 
         if (isSelectedForEditing()) {
-            g2d.setPaint(Color.BLACK);
-
-            g2d.fill(getResizeDragHandle());
-
+            // Draw marching ants
             g2d.setPaint(Color.WHITE);
             g2d.drawRect(0,0, getComponent().getWidth() - 1, getComponent().getHeight() - 1);
             g2d.setPaint(Color.BLACK);
             g2d.setStroke(MarchingAnts.getInstance().getMarchingAnts());
             g2d.drawRect(0, 0, getComponent().getWidth() -1 , getComponent().getHeight() - 1);
+
+            // Draw drag handle
+            g2d.setPaint(Color.BLACK);
+            g2d.fill(getResizeDragHandle());
         }
     }
 

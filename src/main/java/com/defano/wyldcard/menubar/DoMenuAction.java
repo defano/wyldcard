@@ -17,7 +17,7 @@ import java.util.concurrent.CountDownLatch;
  * This class represents an ActionListener that sends the "DoMenu" message to the current card before performing the
  * desired action. This allows the card, background or stack script to trap this behavior and override it as desired.
  */
-public class DeferredMenuAction implements ActionListener {
+public class DoMenuAction implements ActionListener {
 
     private final List<ActionListener> actionListeners;
     private final JMenuItem theMenu;
@@ -25,7 +25,7 @@ public class DeferredMenuAction implements ActionListener {
 
     private CountDownLatch blocker;
 
-    public DeferredMenuAction(JMenuItem menu, JMenuItem menuItem, List<ActionListener> actionListeners) {
+    public DoMenuAction(JMenuItem menu, JMenuItem menuItem, List<ActionListener> actionListeners) {
         this.actionListeners = actionListeners;
         this.theMenu = menu;
         this.theMenuItem = menuItem;

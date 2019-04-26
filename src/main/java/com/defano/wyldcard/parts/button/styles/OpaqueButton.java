@@ -22,4 +22,14 @@ public class OpaqueButton extends AbstractLabelButton {
         }
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        if (enabled) {
+            setBorder(PartBorderFactory.createEmptyBorder());
+        } else {
+            setBorder(PartBorderFactory.createLineBorder());
+        }
+    }
 }

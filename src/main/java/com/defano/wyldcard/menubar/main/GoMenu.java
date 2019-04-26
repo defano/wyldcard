@@ -17,24 +17,24 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goBack(new ExecutionContext()))
+                .withDoMenuAction(e -> WyldCard.getInstance().getNavigationManager().goBack(new ExecutionContext()))
                 .withShortcut('\\')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Home")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goStack(new ExecutionContext(), "Home", false, false))
+                .withDoMenuAction(e -> WyldCard.getInstance().getNavigationManager().goStack(new ExecutionContext(), "Home", false, false))
                 .withShortcut('H')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Help")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goStack(new ExecutionContext(), "Help", false, false))
+                .withDoMenuAction(e -> WyldCard.getInstance().getNavigationManager().goStack(new ExecutionContext(), "Help", false, false))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Recent")
-                .withAction(e -> WyldCard.getInstance().getWindowManager().showRecentCardsWindow())
+                .withDoMenuAction(e -> WyldCard.getInstance().getWindowManager().showRecentCardsWindow())
                 .withShortcut('R')
                 .build(this);
 
@@ -42,25 +42,25 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("First")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goFirstCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
+                .withDoMenuAction(e -> WyldCard.getInstance().getNavigationManager().goFirstCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
                 .withShortcut('1')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Prev")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goPrevCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
+                .withDoMenuAction(e -> WyldCard.getInstance().getNavigationManager().goPrevCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
                 .withShortcut('2')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goNextCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
+                .withDoMenuAction(e -> WyldCard.getInstance().getNavigationManager().goNextCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
                 .withShortcut('3')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Last")
-                .withAction(e -> WyldCard.getInstance().getNavigationManager().goLastCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
+                .withDoMenuAction(e -> WyldCard.getInstance().getNavigationManager().goLastCard(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack()))
                 .withShortcut('4')
                 .build(this);
 
@@ -68,13 +68,13 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Find...")
-                .withAction(e -> WyldCard.getInstance().getWindowManager().getMessageWindow().doFind())
+                .withDoMenuAction(e -> WyldCard.getInstance().getWindowManager().getMessageWindow().doFind())
                 .withShortcut('F')
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Message")
-                .withAction(e -> WyldCard.getInstance().getWindowManager().getMessageWindow().toggleVisible())
+                .withDoMenuAction(e -> WyldCard.getInstance().getWindowManager().getMessageWindow().toggleVisible())
                 .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getMessageWindow().getWindowVisibleProvider())
                 .withShortcut('M')
                 .build(this);
@@ -87,7 +87,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next Window")
-                .withAction(a -> WyldCard.getInstance().getWindowManager().nextWindow().getWindow().requestFocus())
+                .withDoMenuAction(a -> WyldCard.getInstance().getWindowManager().nextWindow().getWindow().requestFocus())
                 .withShortcut('L')
                 .build(this);
     }

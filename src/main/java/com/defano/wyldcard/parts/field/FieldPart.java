@@ -379,7 +379,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
 
     @Override
     public void focusGained(FocusEvent e) {
-        if (getHyperCardTextPane().isEditable()) {
+        if (getHyperCardTextPane().isEditable() && e.getOppositeComponent() != null) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_FIELD);
         }
     }

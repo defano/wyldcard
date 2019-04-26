@@ -19,7 +19,8 @@ public class MenuItemBuilder {
     private Observable<Boolean> checkmarkProvider;
     private Observable<Boolean> disabledProvider;
     private Observable<Boolean> enabledProvider;
-    private List<ActionListener> actionListeners = new ArrayList<>();
+    private List<ActionListener> doMenuActionListeners = new ArrayList<>();
+    private ActionListener actionListener;
     private Integer atIndex;
 
     private MenuItemBuilder(JMenuItem item) {
@@ -42,8 +43,13 @@ public class MenuItemBuilder {
         return new MenuItemBuilder(new JMenu());
     }
 
-    public MenuItemBuilder withAction (ActionListener action) {
-        this.actionListeners.add(action);
+    public MenuItemBuilder withDoMenuAction(ActionListener action) {
+        this.doMenuActionListeners.add(action);
+        return this;
+    }
+
+    public MenuItemBuilder withAction(ActionListener action) {
+        this.actionListener = action;
         return this;
     }
 
@@ -117,8 +123,12 @@ public class MenuItemBuilder {
 
     public JMenuItem build (JMenuItem intoMenu) {
 
-        if (actionListeners.size() > 0) {
-            this.item.addActionListener(new DeferredMenuAction(intoMenu, item, actionListeners));
+        if (actionListener != null) {
+            this.item.addActionListener(actionListener);
+        }
+
+        if (doMenuActionListeners.size() > 0) {
+            this.item.addActionListener(new DoMenuAction(intoMenu, item, doMenuActionListeners));
         }
 
         if (checkmarkProvider != null) {

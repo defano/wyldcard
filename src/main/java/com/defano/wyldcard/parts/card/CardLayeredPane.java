@@ -11,7 +11,7 @@ import java.awt.event.ComponentEvent;
 /**
  * An extension of JLayeredPane that provides routines for addressing card layers. See {@link CardDisplayLayer}.
  */
-public abstract class  CardLayeredPane extends JLayeredPane {
+public abstract class CardLayeredPane extends JLayeredPane {
 
     private JMonetScrollPane foregroundCanvas;
     private JMonetScrollPane backgroundCanvas;

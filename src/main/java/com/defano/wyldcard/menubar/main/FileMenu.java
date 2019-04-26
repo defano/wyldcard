@@ -24,37 +24,37 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Stack")
-                .withAction(e -> WyldCard.getInstance().getStackManager().newStack(new ExecutionContext()))
+                .withDoMenuAction(e -> WyldCard.getInstance().getStackManager().newStack(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Open Stack...")
-                .withAction(e -> WyldCard.getInstance().getStackManager().findAndOpenStack(new ExecutionContext(), false, "Open Stack"))
+                .withDoMenuAction(e -> WyldCard.getInstance().getStackManager().findAndOpenStack(new ExecutionContext(), false, "Open Stack"))
                 .withShortcut('O')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Open New Window...")
-                .withAction(e -> WyldCard.getInstance().getStackManager().findAndOpenStack(new ExecutionContext(), true, "Open Stack in New Window"))
+                .withDoMenuAction(e -> WyldCard.getInstance().getStackManager().findAndOpenStack(new ExecutionContext(), true, "Open Stack in New Window"))
                 .withShiftShortcut('O')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Close Stack")
                 .withShortcut('W')
-                .withAction(e -> WyldCard.getInstance().getStackManager().closeStack(new ExecutionContext(), null))
+                .withDoMenuAction(e -> WyldCard.getInstance().getStackManager().closeStack(new ExecutionContext(), null))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Save Stack")
-                .withAction(e -> WyldCard.getInstance().getStackManager().saveStack(new ExecutionContext(), null))
+                .withDoMenuAction(e -> WyldCard.getInstance().getStackManager().saveStack(new ExecutionContext(), null))
                 .withEnabledProvider(WyldCard.getInstance().getStackManager().getSavedStackFileProvider().map(Optional::isPresent))
                 .withShortcut('S')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Save Stack As...")
-                .withAction(e -> WyldCard.getInstance().getStackManager().saveStackAs(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel()))
+                .withDoMenuAction(e -> WyldCard.getInstance().getStackManager().saveStackAs(new ExecutionContext(), WyldCard.getInstance().getStackManager().getFocusedStack().getStackModel()))
                 .withShiftShortcut('S')
                 .build(this);
 
@@ -63,20 +63,20 @@ public class FileMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Import HyperCard Stack...")
                 .withShiftShortcut('I')
-                .withAction(e -> StackImporter.importStack(new ExecutionContext()))
+                .withDoMenuAction(e -> StackImporter.importStack(new ExecutionContext()))
                 .build(this);
 
         this.addSeparator();
 
         MenuItemBuilder.ofDefaultType()
                 .named("Import Paint...")
-                .withAction(e -> ArtVandelay.importPaint())
+                .withDoMenuAction(e -> ArtVandelay.importPaint())
                 .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(m -> m != ToolMode.PAINT))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Export Paint...")
-                .withAction(e -> ArtVandelay.exportPaint())
+                .withDoMenuAction(e -> ArtVandelay.exportPaint())
                 .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(m -> m != ToolMode.PAINT))
                 .build(this);
 
@@ -112,13 +112,13 @@ public class FileMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Print Card...")
                 .withShortcut('P')
-                .withAction(new PrintCardAction())
+                .withDoMenuAction(new PrintCardAction())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Print Stack...")
                 .withShiftShortcut('P')
-                .withAction(new PrintStackAction())
+                .withDoMenuAction(new PrintStackAction())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -132,7 +132,7 @@ public class FileMenu extends HyperCardMenu {
 
             MenuItemBuilder.ofDefaultType()
                     .named("Quit HyperCard")
-                    .withAction(e -> WyldCard.getInstance().getStackManager().closeAllStacks(new ExecutionContext()))
+                    .withDoMenuAction(e -> WyldCard.getInstance().getStackManager().closeAllStacks(new ExecutionContext()))
                     .withShortcut('Q')
                     .build(this);
         }
