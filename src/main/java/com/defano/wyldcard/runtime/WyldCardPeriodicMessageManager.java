@@ -77,7 +77,7 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
     }
 
     @Override
-    public void onCardClosed(CardPart oldCard, CardModel newCard) {
+    public void onDisplayedCardChanged(CardModel prevCard, CardPart nextCard) {
         withinParts.clear();
     }
 

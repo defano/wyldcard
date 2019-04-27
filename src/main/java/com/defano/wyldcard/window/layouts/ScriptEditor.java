@@ -33,10 +33,7 @@ import org.fife.ui.rtextarea.SearchResult;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -89,6 +86,15 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
             public void windowActivated(WindowEvent e) {
                 WyldCard.getInstance().getWindowManager().getFindWindow().bindModel(ScriptEditor.this);
                 WyldCard.getInstance().getWindowManager().getReplaceWindow().bindModel(ScriptEditor.this);
+            }
+        });
+
+        getWindow().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                if (model != null) {
+                    model.setScriptEditorLocation(new Value(getWindow().getLocation()));
+                }
             }
         });
 

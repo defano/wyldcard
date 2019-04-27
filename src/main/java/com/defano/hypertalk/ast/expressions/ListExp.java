@@ -124,4 +124,12 @@ public class ListExp extends Expression {
         }
     }
 
+    public List<Value> divingSingletonEvaluation(ExecutionContext context) throws HtException {
+        if (cdr != null) {
+            return evaluateAsList(context);
+        } else {
+            return car.evaluate(context).getListItems();
+        }
+    }
+
 }

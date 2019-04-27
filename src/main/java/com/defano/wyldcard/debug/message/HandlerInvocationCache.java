@@ -37,8 +37,12 @@ public class HandlerInvocationCache {
         handlerInvocationObservers.remove(observer);
 
         if (handlerInvocationObservers.isEmpty()) {
-            invocationMap.clear();
+            clear();
         }
+    }
+
+    public void clear() {
+        invocationMap.clear();
     }
 
     @RunOnDispatch

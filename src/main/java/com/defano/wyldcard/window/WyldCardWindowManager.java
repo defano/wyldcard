@@ -344,8 +344,9 @@ public class WyldCardWindowManager implements WindowManager {
         } else {
             return (StackWindow) new WindowBuilder<>(new StackWindow())
                     .withModel(stackPart)
-                    .withActionOnClose(window -> WyldCard.getInstance().getStackManager().closeStack(context, ((StackWindow) window).getStack()))
+                    .withActionOnClose(window -> WyldCard.getInstance().getStackManager().closeStack(context, ((StackWindow) window).getDisplayedStack()))
                     .ownsMenubar()
+                    .withLocationCenteredOnScreen()
                     .build();
         }
     }

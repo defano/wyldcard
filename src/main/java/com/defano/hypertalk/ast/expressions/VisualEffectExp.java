@@ -1,13 +1,12 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.effect.VisualEffectDirection;
 import com.defano.hypertalk.ast.model.effect.VisualEffectImage;
 import com.defano.hypertalk.ast.model.effect.VisualEffectName;
 import com.defano.hypertalk.ast.model.effect.VisualEffectSpeed;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.jsegue.SegueName;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -28,9 +27,10 @@ public class VisualEffectExp extends Expression {
     }
 
     @Override
-    protected Value onEvaluate(ExecutionContext context) throws HtSemanticException {
-        // Cannot be evaluated
-        throw new HtSemanticException("Can't understand that.");
+    protected Value onEvaluate(ExecutionContext context) throws HtException {
+        context.getCurrentStack().getCurtainManager().lockScreen(context);
+        context.setVisualEffect(evaluateAsSpecifier(context));
+        return new Value();
     }
 
     public VisualEffectSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException {

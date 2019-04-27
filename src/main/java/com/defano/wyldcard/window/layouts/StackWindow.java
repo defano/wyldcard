@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.layouts;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fx.CurtainObserver;
@@ -11,25 +12,32 @@ import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.parts.stack.StackObserver;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.FileDrop;
 import com.defano.wyldcard.thread.Throttle;
+import com.defano.wyldcard.util.FileDrop;
 import com.defano.wyldcard.window.WyldCardWindow;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.awt.image.BufferedImage;
 
-public class StackWindow extends WyldCardWindow<StackPart> implements StackObserver, StackNavigationObserver, CurtainObserver, WindowFocusListener {
+public class StackWindow extends WyldCardWindow<StackPart> implements StackObserver, StackNavigationObserver, CurtainObserver {
 
     private final static int CARD_LAYER = 0;
     private final static int CURTAIN_LAYER = 1;
+
     private final JLayeredPane cardPanel = new JLayeredPane();
     private final ScreenCurtain screenCurtain = new ScreenCurtain();
     private final CardResizeObserver cardResizeObserver = new CardResizeObserver();
     private final FrameResizeObserver frameResizeObserver = new FrameResizeObserver();
-    private StackPart stack;
-    private CardPart card;
+    private final WindowMovementObserver windowMovementObserver = new WindowMovementObserver();
+    private final StackFocusObserver stackFocusObserver = new StackFocusObserver();
+
+    private StackPart displayedStack;       // Stack displayed in window
+    private CardPart displayedCard;         // Card of stack displayed in window
 
     public StackWindow() {
         cardPanel.setLayout(new BorderLayout(0, 0));
@@ -38,11 +46,11 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
     }
 
     public CardPart getDisplayedCard() {
-        return card;
+        return displayedCard;
     }
 
-    public StackPart getStack() {
-        return stack;
+    public StackPart getDisplayedStack() {
+        return displayedStack;
     }
 
     @RunOnDispatch
@@ -53,11 +61,11 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
             return;
         }
 
-        String stackName = card.getPartModel().getStackModel().getStackName(new ExecutionContext());
-        int cardNumber = card.getPartModel().getCardIndexInStack() + 1;
-        int cardCount = stack.getCardCountProvider().blockingFirst();
+        String stackName = displayedCard.getPartModel().getStackModel().getStackName(new ExecutionContext());
+        int cardNumber = displayedCard.getPartModel().getCardIndexInStack() + 1;
+        int cardCount = displayedStack.getCardCountProvider().blockingFirst();
 
-        if (card.isEditingBackground()) {
+        if (displayedCard.isEditingBackground()) {
             getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount + " (Background)");
         } else {
             getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount);
@@ -84,20 +92,20 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
     public void bindModel(StackPart data) {
         ExecutionContext context = new ExecutionContext();
 
-        if (this.stack != null) {
-            stack.removeObserver(this);
-            stack.removeNavigationObserver(this);
-            stack.getCurtainManager().removeScreenCurtainObserver(this);
+        if (this.displayedStack != null) {
+            displayedStack.removeObserver(this);
+            displayedStack.removeNavigationObserver(this);
+            displayedStack.getCurtainManager().removeScreenCurtainObserver(this);
         }
 
-        this.stack = data;
-        this.card = stack.getDisplayedCard();
+        this.displayedStack = data;
+        this.displayedCard = displayedStack.getDisplayedCard();
 
-        getWindowPanel().setPreferredSize(stack.getStackModel().getSize(context));
+        getWindowPanel().setPreferredSize(displayedStack.getStackModel().getSize(context));
 
-        stack.addObserver(this);
-        stack.addNavigationObserver(this);
-        stack.getCurtainManager().addScreenCurtainObserver(this);
+        displayedStack.addObserver(this);
+        displayedStack.addNavigationObserver(this);
+        displayedStack.getCurtainManager().addScreenCurtainObserver(this);
     }
 
     /**
@@ -105,18 +113,24 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
      */
     @Override
     @RunOnDispatch
-    public void onStackOpened(StackPart newStack) {
+    public void onStackOpened(StackPart openedStack) {
         ExecutionContext context = new ExecutionContext();
 
-        stack = newStack;
-        card = stack.getDisplayedCard();
+        displayedStack = openedStack;
+        displayedCard = displayedStack.getDisplayedCard();
 
-        cardPanel.setPreferredSize(stack.getStackModel().getSize(context));
-        setAllowResizing(stack.getStackModel().isResizable(context));
+        cardPanel.setPreferredSize(displayedStack.getStackModel().getSize(context));
+        setAllowResizing(displayedStack.getStackModel().isResizable(context));
+
+        Point position = openedStack.getPartModel().getWindowPosition();
+        if (position != null) {
+            positionWindow(position.x, position.y);
+        }
 
         cardPanel.addComponentListener(cardResizeObserver);
         getWindow().addComponentListener(frameResizeObserver);
-        getWindow().addWindowFocusListener(this);
+        getWindow().addComponentListener(windowMovementObserver);
+        getWindow().addWindowFocusListener(stackFocusObserver);
     }
 
     /**
@@ -124,31 +138,33 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
      */
     @Override
     @RunOnDispatch
-    public void onCardOpened(CardModel oldCard, CardPart newCard) {
+    public void onStackClosed(StackPart closedStack) {
+        cardPanel.removeComponentListener(cardResizeObserver);
+        getWindow().removeComponentListener(frameResizeObserver);
+        getWindow().removeComponentListener(windowMovementObserver);
+        getWindow().removeWindowFocusListener(stackFocusObserver);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @RunOnDispatch
+    public void onDisplayedCardChanged(CardModel prevCard, CardPart nextCard) {
 
         // Remove the current card from the window
-        cardPanel.remove(card);
+        cardPanel.remove(displayedCard);
 
-        this.card = newCard;
+        this.displayedCard = nextCard;
 
         // Listen for image files that are dropped onto the card
-        new FileDrop(card, ArtVandelay::importPaint);
+        new FileDrop(displayedCard, ArtVandelay::importPaint);
 
-        cardPanel.setLayer(card, CARD_LAYER);
-        cardPanel.add(card);
-        cardPanel.revalidate();
+        cardPanel.setLayer(displayedCard, CARD_LAYER);
+        cardPanel.add(displayedCard);
+        cardPanel.revalidate(); cardPanel.repaint();
 
         invalidateWindowTitle();
-    }
-
-    @Override
-    public void windowGainedFocus(WindowEvent e) {
-        WyldCard.getInstance().getStackManager().focusStack(stack);
-    }
-
-    @Override
-    public void windowLostFocus(WindowEvent e) {
-        // Nothing to do
     }
 
     /**
@@ -193,9 +209,29 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
         invalidateWindowTitle();
     }
 
+    private class StackFocusObserver implements WindowFocusListener {
+        @Override
+        public void windowGainedFocus(WindowEvent e) {
+            WyldCard.getInstance().getStackManager().focusStack(displayedStack);
+        }
+
+        @Override
+        public void windowLostFocus(WindowEvent e) {
+            // Nothing to do
+        }
+    }
+
+    private class WindowMovementObserver extends ComponentAdapter {
+        @Override
+        public void componentMoved(ComponentEvent e) {
+            if (displayedStack != null) {
+                displayedStack.getPartModel().setWindowPosition(new Value(getLocation()));
+            }
+        }
+    }
+
     private class CardResizeObserver extends ComponentAdapter {
         @Override
-        @RunOnDispatch
         public void componentResized(ComponentEvent e) {
             screenCurtain.setSize(e.getComponent().getSize());
         }
@@ -212,8 +248,8 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
                 int newCardHeight = getWindow().getHeight() - windowInsets.top - windowInsets.bottom;
                 int newCardWidth = getWindow().getWidth() - windowInsets.left - windowInsets.right;
 
-                if (stack.getStackModel().isResizable(new ExecutionContext())) {
-                    stack.getStackModel().setDimension(new ExecutionContext(), new Dimension(newCardWidth, newCardHeight));
+                if (displayedStack.getStackModel().isResizable(new ExecutionContext())) {
+                    displayedStack.getStackModel().setDimension(new ExecutionContext(), new Dimension(newCardWidth, newCardHeight));
                 }
             });
         }

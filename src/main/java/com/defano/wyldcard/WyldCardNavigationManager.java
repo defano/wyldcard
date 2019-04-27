@@ -187,13 +187,13 @@ public class WyldCardNavigationManager implements NavigationManager {
     public CardPart goDestination(ExecutionContext context, Destination destination, boolean push) throws HtSemanticException {
         return Invoke.onDispatch(() -> {
             StackWindow stackWindow = WyldCard.getInstance().getWindowManager().findWindowForStack(destination.getStack());
-            context.bindStack(stackWindow.getStack());
+            context.bindStack(stackWindow.getDisplayedStack());
             stackWindow.setVisible(true);
             stackWindow.requestFocus();
 
             Integer cardIndex = destination.getStack().getIndexOfCardId(destination.getCardIndex());
             if (cardIndex != null) {
-                return goCard(context, stackWindow.getStack(), cardIndex, push);
+                return goCard(context, stackWindow.getDisplayedStack(), cardIndex, push);
             }
 
             throw new HtSemanticException("Can't find that card.");

@@ -611,7 +611,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     }
 
     /**
-     * Returns the CardLayerPart represented by the given PartModel.
+     * Returns the button or field represented by the given PartModel.
      *
      * @param partModel The PartModel associated with the desired Part.
      * @throws IllegalArgumentException Thrown if no such part exists on this card

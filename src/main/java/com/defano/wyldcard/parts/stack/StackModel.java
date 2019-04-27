@@ -42,6 +42,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     public static final String PROP_ABBREVNAME = "abbreviated name";
     public static final String PROP_LONGNAME = "long name";
 
+    private Value windowPosition;
     private Map<Integer, BackgroundModel> backgroundModels = new HashMap<>();
     private Map<String, BufferedImage> userIcons;
     private Map<Integer, BufferedImage> userPatterns;
@@ -121,6 +122,14 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         this.setParentPartModel(parentPartModel);
         cardModels.forEach(model -> model.relinkParentPartModel(this));
         backgroundModels.values().forEach(model -> model.relinkParentPartModel(this));
+    }
+
+    public Point getWindowPosition() {
+        return windowPosition == null || !windowPosition.isPoint() ? null : windowPosition.pointValue();
+    }
+
+    public void setWindowPosition(Value windowPosition) {
+        this.windowPosition = windowPosition;
     }
 
     public Observable<Optional<File>> getSavedStackFileProvider() {

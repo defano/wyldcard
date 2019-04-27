@@ -77,7 +77,7 @@ public class WyldCardCursorManager implements CursorManager {
     }
 
     @Override
-    public void onCardOpened(CardModel oldCard, CardPart newCard) {
+    public void onDisplayedCardChanged(CardModel prevCard, CardPart nextCard) {
         updateCursor();
     }
 }

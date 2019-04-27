@@ -58,6 +58,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
     private final PartType type;
     private Owner owner;
     private int scriptEditorCaretPosition;
+    private Value scriptEditorLocation;
     private Value checkpoints = new Value();
 
     private transient PartModel parentPartModel;
@@ -391,6 +392,15 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
         this.scriptEditorCaretPosition = scriptEditorCaretPosition;
     }
 
+    public Point getScriptEditorLocation() {
+        return scriptEditorLocation == null || !scriptEditorLocation.isPoint() ? null :
+                scriptEditorLocation.pointValue();
+    }
+
+    public void setScriptEditorLocation(Value scriptEditorLocation) {
+        this.scriptEditorLocation = scriptEditorLocation;
+    }
+
     /**
      * Gets a list of integers represents the number of each line of the script that should be marked with a breakpoint.
      *
@@ -451,6 +461,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
                         .ownsMenubar()
                         .resizeable(true)
                         .withLocationStaggeredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                        .withLocation(getScriptEditorLocation())
                         .build();
 
                 editor.requestFocus();

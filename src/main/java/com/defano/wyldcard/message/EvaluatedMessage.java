@@ -2,6 +2,8 @@ package com.defano.wyldcard.message;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.util.List;
 
@@ -23,5 +25,10 @@ public class EvaluatedMessage implements Message {
     @Override
     public List<Value> getArguments(ExecutionContext context) {
         return arguments;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
     }
 }

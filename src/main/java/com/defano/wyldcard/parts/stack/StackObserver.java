@@ -8,9 +8,15 @@ import java.awt.*;
 public interface StackObserver {
     /**
      * Fired to indicate the given stack has been opened in HyperCard.
-     * @param newStack The newly opened stack.
+     * @param openedStack The newly opened stack.
      */
-    default void onStackOpened(StackPart newStack) {}
+    default void onStackOpened(StackPart openedStack) {}
+
+    /**
+     * Fired to indicate the given stack has been closed.
+     * @param closedStack The stack that has been closed
+     */
+    default void onStackClosed(StackPart closedStack) {}
 
     /**
      * Fired to indicate the stack's card size has changed.

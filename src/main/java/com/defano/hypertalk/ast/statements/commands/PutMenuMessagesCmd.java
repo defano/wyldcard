@@ -1,6 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.containers.MenuExp;
 import com.defano.hypertalk.ast.expressions.containers.MenuItemExp;
 import com.defano.hypertalk.ast.expressions.factor.FactorAssociation;
@@ -17,12 +18,12 @@ import java.util.List;
 
 public class PutMenuMessagesCmd extends Command {
 
-    private final Expression valueExpr;
+    private final ListExp valueExpr;
     private final Preposition preposition;
     private final Expression menuExpr;
-    private final Expression menuMessagesExpr;
+    private final ListExp menuMessagesExpr;
 
-    public PutMenuMessagesCmd(ParserRuleContext context, Expression valueExpr, Preposition preposition, Expression menuExpr, Expression messagesExpr) {
+    public PutMenuMessagesCmd(ParserRuleContext context, ListExp valueExpr, Preposition preposition, Expression menuExpr, ListExp messagesExpr) {
         super(context, "put");
 
         this.valueExpr = valueExpr;
@@ -33,7 +34,7 @@ public class PutMenuMessagesCmd extends Command {
 
     @Override
     protected void onExecute(ExecutionContext context) throws HtException, Preemption {
-        List<Value> menuMessages = menuMessagesExpr.evaluateAsList(context);
+        List<Value> menuMessages = menuMessagesExpr.divingSingletonEvaluation(context);
         boolean success = menuExpr.factor(context,
                 new FactorAssociation<>(MenuItemExp.class, o -> o.putValue(context, valueExpr.evaluate(context), preposition, menuMessages)),
                 new FactorAssociation<>(MenuExp.class, o -> o.putValue(context, valueExpr.evaluate(context), preposition, menuMessages))

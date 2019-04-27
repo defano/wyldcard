@@ -362,8 +362,7 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
             // Stop editing background when card changes
             WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
-            // Notify observers that current card is going away
-            fireOnCardClosing(displayedCard, newCard);
+            // Close the currently displayed card
             displayedCard.partClosed(context);
 
             // Send 'closeBackground' message as needed
@@ -420,6 +419,14 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
                 (cardCountInBackground > 1 || !getDisplayedCard().getPartModel().getBackgroundModel().get(context, BackgroundModel.PROP_CANTDELETE).booleanValue());
     }
 
+    private void fireOnStackClosed() {
+        Invoke.onDispatch(() -> {
+            for (StackObserver observer : stackObservers) {
+                observer.onStackClosed(StackPart.this);
+            }
+        });
+    }
+
     private void fireOnStackOpened() {
         Invoke.onDispatch(() -> {
             for (StackObserver observer : stackObservers) {
@@ -428,18 +435,10 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
         });
     }
 
-    private void fireOnCardClosing(CardPart closingCard, CardModel newCard) {
-        Invoke.onDispatch(() -> {
-            for (StackNavigationObserver observer : stackNavigationObservers) {
-                observer.onCardClosed(closingCard, newCard);
-            }
-        });
-    }
-
     private void fireOnCardOpened(CardModel lastCard, CardPart openedCard) {
         Invoke.onDispatch(() -> {
             for (StackNavigationObserver observer : stackNavigationObservers) {
-                observer.onCardOpened(lastCard, openedCard);
+                observer.onDisplayedCardChanged(lastCard, openedCard);
             }
         });
     }
@@ -490,5 +489,6 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     @Override
     public void partClosed(ExecutionContext context) {
         closeCard(context, null);
+        fireOnStackClosed();
     }
 }

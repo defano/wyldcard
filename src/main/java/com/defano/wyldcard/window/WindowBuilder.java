@@ -12,9 +12,8 @@ import java.awt.event.WindowEvent;
 public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelType>> {
 
     private final WindowType window;
-    private Point location = null;
-    private boolean centeredOnScreen = true;
     private boolean initiallyVisible = true;
+    private boolean centeredOnScreen = false;
     private boolean resizable = false;
     private boolean isPalette = false;
     private boolean isFocusable = true;
@@ -46,11 +45,6 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
         frame.setVisible(false);
 
         return frame;
-    }
-
-    public WindowBuilder notCenteredOnScreen() {
-        this.centeredOnScreen = false;
-        return this;
     }
 
     @RunOnDispatch
@@ -94,6 +88,19 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
     @RunOnDispatch
     public WindowBuilder focusable(boolean focusable) {
         this.isFocusable = focusable;
+        return this;
+    }
+
+    public WindowBuilder withLocation(Point location) {
+        if (location != null) {
+            this.window.positionWindow(location.x, location.y);
+        }
+        return this;
+    }
+
+    @RunOnDispatch
+    public WindowBuilder withLocationCenteredOnScreen() {
+        this.centeredOnScreen = true;
         return this;
     }
 
@@ -142,9 +149,7 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
     public WindowType build() {
         this.window.getWindow().pack();
 
-        if (location != null) {
-            this.window.positionWindow(location.x, location.y);
-        } else if (centeredOnScreen) {
+        if (centeredOnScreen) {
             this.window.getWindow().setLocationRelativeTo(null);
         }
 

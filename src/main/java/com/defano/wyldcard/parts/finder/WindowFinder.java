@@ -64,8 +64,8 @@ public interface WindowFinder {
     default StackWindow findWindowForStack(StackModel stackModel) {
         return (StackWindow) getFrames(false).stream()
                 .filter(p -> p instanceof StackWindow &&
-                        ((StackWindow) p).getStack() != null &&
-                        ((StackWindow) p).getStack().getStackModel().equals(stackModel))
+                        ((StackWindow) p).getDisplayedStack() != null &&
+                        ((StackWindow) p).getDisplayedStack().getStackModel().equals(stackModel))
                 .findFirst()
                 .orElse(null);
     }

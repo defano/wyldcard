@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.exception.HtSyntaxException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.util.Collection;
 
@@ -58,5 +59,10 @@ public class NamedBlock {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

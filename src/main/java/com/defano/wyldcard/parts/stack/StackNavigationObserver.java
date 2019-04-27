@@ -3,21 +3,16 @@ package com.defano.wyldcard.parts.stack;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 
+/**
+ * An observer of card-to-card stack navigation events.
+ */
 public interface StackNavigationObserver {
 
     /**
-     * Fired to indicate the given card has closed (i.e., been navigated away from and no longer visible in the
-     * stack window).
-     * @param oldCard The card that has closed.
-     * @param newCard
+     * Indicates that the actively displayed card in a stack has changed (as the result of a navigation action).
+     *
+     * @param prevCard The previously displayed card that has been removed from the stack window.
+     * @param nextCard The new card now displayed in the stack window.
      */
-    default void onCardClosed(CardPart oldCard, CardModel newCard) {}
-
-    /**
-     * Fired to indicate the given card has opened (i.e., has been navigated to and now visible in the stack window).
-     * @param oldCard
-     * @param newCard The card has been opened.
-     */
-    default void onCardOpened(CardModel oldCard, CardPart newCard) {}
-
+    default void onDisplayedCardChanged(CardModel prevCard, CardPart nextCard) {}
 }

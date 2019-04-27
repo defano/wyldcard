@@ -37,9 +37,8 @@ public class Compiler {
     private final static int MAX_COMPILE_THREADS = 6;          // Simultaneous background parse tasks
     private final static int MAX_EXECUTOR_THREADS = 1;         // Simultaneous scripts executing
 
-    private static final ThreadPoolExecutor bestEffortCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, new ThreadFactoryBuilder().setNameFormat("be-async-compiler-%d").build());
-    private static final ThreadPoolExecutor asyncCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("async-compiler-%d").build());
-    private static final ExecutorService staticExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("expression-evaluator").build());
+    private static final ThreadPoolExecutor bestEffortCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("be-async-compiler-%d").build());
+    private static final ExecutorService staticExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("script-executor-msg").build());
     private static final ThreadPoolExecutor scriptExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_EXECUTOR_THREADS, new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
     private static final ListeningExecutorService listeningScriptExecutor = MoreExecutors.listeningDecorator(scriptExecutor);
     private static final ListeningExecutorService listeningStaticExecutor = MoreExecutors.listeningDecorator(staticExecutor);
@@ -63,18 +62,6 @@ public class Compiler {
         // Preempt any previously enqueued parse jobs
         bestEffortCompileExecutor.getQueue().clear();
         bestEffortCompileExecutor.submit(createCompileTask(compilationUnit, scriptText, observer));
-    }
-
-    /**
-     * Compiles the given script on a background thread and invokes the CompileCompletionObserver (on the background
-     * thread) when complete.
-     *
-     * @param compilationUnit The type of script/scriptlet to compile
-     * @param scriptText      The script to parse.
-     * @param observer        A non-null callback to fire when compilation is complete.
-     */
-    public static void asyncCompile(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
-        asyncCompileExecutor.submit(createCompileTask(compilationUnit, scriptText, observer));
     }
 
     /**

@@ -388,10 +388,10 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
      * {@inheritDoc}
      */
     @Override
-    public void onCardOpened(CardModel oldCard, CardPart newCard) {
-        isUndoable.setSource(newCard.getActiveCanvas().isUndoableObservable());
-        isRedoable.setSource(newCard.getActiveCanvas().isRedoableObservable());
-        canvasScale.setSource(newCard.getActiveCanvas().getScaleObservable());
+    public void onDisplayedCardChanged(CardModel prevCard, CardPart nextCard) {
+        isUndoable.setSource(nextCard.getActiveCanvas().isUndoableObservable());
+        isRedoable.setSource(nextCard.getActiveCanvas().isRedoableObservable());
+        canvasScale.setSource(nextCard.getActiveCanvas().getScaleObservable());
     }
 
     /**

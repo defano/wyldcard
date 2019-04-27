@@ -4,16 +4,14 @@ import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.editor.HyperTalkTextEditor;
 import com.defano.wyldcard.editor.SyntaxParserDelegate;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.MessageEvaluationObserver;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WyldCardDialog;
-import com.defano.wyldcard.window.WyldCardWindow;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import io.reactivex.functions.Consumer;
 import org.fife.ui.rsyntaxtextarea.parser.Parser;
 
 import javax.swing.*;
@@ -39,20 +37,19 @@ public class ExpressionEvaluator extends WyldCardDialog<Object> implements Synta
         editorArea.setLayout(new BorderLayout());
         editorArea.add(editor);
 
-        evaluateButton.addActionListener(a -> {
-            Compiler.asyncStaticContextEvaluate(context, editor.getScriptField().getText(), new MessageEvaluationObserver() {
-                @Override
-                public void onMessageEvaluated(String result) {
-                    SwingUtilities.invokeLater(() -> resultField.setText(result));
-                }
+        evaluateButton.addActionListener(a -> Compiler.asyncStaticContextEvaluate(context, editor.getScriptField().getText(), new MessageEvaluationObserver() {
+            @Override
+            public void onMessageEvaluated(String result) {
+                SwingUtilities.invokeLater(() -> resultField.setText(result));
+            }
 
-                @Override
-                public void onEvaluationError(HtException exception) {
-                    SwingUtilities.invokeLater(() -> resultField.setText("Error: " + exception.getMessage()));
-                }
-            });
-        });
+            @Override
+            public void onEvaluationError(HtException exception) {
+                SwingUtilities.invokeLater(() -> resultField.setText("Error: " + exception.getMessage()));
+            }
+        }));
 
+        //noinspection ResultOfMethodCallIgnored
         getWindowVisibleProvider().subscribe(isVisible -> {
             if (!isVisible) {
                 setContext(ExecutionContext.unboundInstance());
@@ -64,6 +61,15 @@ public class ExpressionEvaluator extends WyldCardDialog<Object> implements Synta
         return instance;
     }
 
+    public ExecutionContext getContext() {
+        return context;
+    }
+
+    public void setContext(ExecutionContext context) {
+        this.context = context;
+        contextField.setText(context.toString());
+    }
+
     @Override
     public JComponent getWindowPanel() {
         return windowPanel;
@@ -72,15 +78,6 @@ public class ExpressionEvaluator extends WyldCardDialog<Object> implements Synta
     @Override
     public void bindModel(Object data) {
         // Nothing to do
-    }
-
-    public ExecutionContext getContext() {
-        return context;
-    }
-
-    public void setContext(ExecutionContext context) {
-        this.context = context;
-        contextField.setText(context.toString());
     }
 
     @Override

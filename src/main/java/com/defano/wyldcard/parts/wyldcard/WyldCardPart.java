@@ -23,8 +23,6 @@ import com.defano.wyldcard.window.layouts.ScriptEditor;
 import com.google.inject.Singleton;
 
 import java.awt.event.KeyEvent;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 
 /**
  * This object represents the part known as 'HyperCard' (also addressable as 'WyldCard'); it provides a set of system-
@@ -44,17 +42,10 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
         define(PROP_LOCKMESSAGES).asValue(false);
         define(PROP_TEXTARROWS).asValue(true);
 
-        define(PROP_USERLEVEL).asValue(5);       // TODO: Not implemented
-        define(PROP_BLINDTYPING).asValue(true);  // TODO: Not implemented
-        define(PROP_POWERKEYS).asValue(true);    // TODO: Not implemented
-
-        define(PROP_ADDRESS).asComputedReadOnlyValue((context, model) -> {
-            try {
-                return new Value(Inet4Address.getLocalHost().getHostAddress());
-            } catch (UnknownHostException e) {
-                return new Value();
-            }
-        });
+        define(PROP_USERLEVEL).asValue(5);              // TODO: Not implemented
+        define(PROP_BLINDTYPING).asValue(true);         // TODO: Not implemented
+        define(PROP_POWERKEYS).asValue(true);           // TODO: Not implemented
+        define(PROP_ADDRESS).asConstant("127.0.0.1");   // Not supported: Inet4Address can take many seconds to return on some systems
 
         define(PROP_THEMS).asComputedReadOnlyValue((context, model) -> Value.ofItems(WyldCard.getInstance().getWindowManager().getThemeNames()));
 

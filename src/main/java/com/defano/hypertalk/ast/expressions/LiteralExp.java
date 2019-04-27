@@ -16,7 +16,7 @@ public class LiteralExp extends Expression {
             if (literals[0] instanceof Value) {
                 this.literal = (Value) literals[0];
             } else {
-                this.literal = new Value(literals[0]);
+                this.literal = new Value(stringValue(literals[0]));
             }
         }
 

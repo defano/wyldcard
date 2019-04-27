@@ -64,4 +64,12 @@ public abstract class ASTNode {
         throw e;
     }
 
+    @Override
+    public String toString() {
+        if (context != null) {
+            return context.getText();
+        } else {
+            return super.toString();
+        }
+    }
 }

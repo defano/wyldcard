@@ -18,6 +18,7 @@ public class StackImporter {
         StackImportProgress progressWindow = new StackImportProgress();
         new WindowBuilder<>(progressWindow)
                 .withTitle("Import")
+                .withLocationCenteredOnScreen()
                 .build();
 
         StackFormatConverter.startConversion(stackFile, new ConversionStatusObserver() {

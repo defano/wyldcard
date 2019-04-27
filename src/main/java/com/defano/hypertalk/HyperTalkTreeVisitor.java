@@ -1291,7 +1291,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPutWithMenuMessagesCmd(HyperTalkParser.PutWithMenuMessagesCmdContext ctx) {
-        return new PutMenuMessagesCmd(ctx, (Expression) visit(ctx.listExpression(0)), (Preposition) visit(ctx.preposition()), (Expression) visit(ctx.expression()), (Expression) visit(ctx.listExpression(1)));
+        return new PutMenuMessagesCmd(ctx, (ListExp) visit(ctx.listExpression(0)), (Preposition) visit(ctx.preposition()), (Expression) visit(ctx.expression()), (ListExp) visit(ctx.listExpression(1)));
     }
 
     @Override
