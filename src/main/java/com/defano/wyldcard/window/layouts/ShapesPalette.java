@@ -101,6 +101,8 @@ public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<In
     private void $$$setupUI$$$() {
         shapesPanel = new JPanel();
         shapesPanel.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), 0, 0));
+        shapesPanel.setMaximumSize(new Dimension(246, 2147483647));
+        shapesPanel.setMinimumSize(new Dimension(246, 35));
         triangle = new JButton();
         triangle.setAlignmentY(0.0f);
         triangle.setIcon(new ImageIcon(getClass().getResource("/shapes/triangle.png")));

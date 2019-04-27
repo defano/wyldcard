@@ -1,6 +1,5 @@
 package com.defano.wyldcard.window;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
@@ -9,7 +8,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelType>> {
+public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?, ModelType>> {
 
     private final WindowType window;
     private boolean initiallyVisible = true;
@@ -29,7 +28,7 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
     /**
      * Creates a JFrame intended to be used when creating card screenshots (for use in visual effects processing and
      * displaying card thumbnails).
-     *
+     * <p>
      * Swing has some seemingly odd requirements here. Components can only be printed if they're attached to a JFrame
      * and that frame has been made visible at some point. If these conditions are not met, calls to
      * {@link Component#printAll(Graphics)} produce empty or partially populated renderings. Ostensibly, this is a side
@@ -171,11 +170,6 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
             });
         }
 
-        // Push palettes to back when WyldCard is not in foreground
-        if (!isPalette) {
-            this.window.getWindow().addWindowListener(new PaletteActivationManager());
-        }
-
         this.window.getWindow().setFocusableWindowState(isFocusable);
         this.window.getWindow().setAlwaysOnTop(isPalette);
 
@@ -196,17 +190,10 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
         this.window.setAllowResizing(resizable);
 
         // Notify the DefaultWindowManager when a new window is opened or closed
-        this.window.getWindow().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
-            }
+        this.window.getWindow().addWindowListener(new WindowActivationManager());
 
-            @Override
-            public void windowOpened(WindowEvent e) {
-                WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
-            }
-        });
+        // Push palettes to back when WyldCard is not in foreground
+        this.window.getWindow().addWindowListener(new PaletteActivationManager());
 
         return window;
     }

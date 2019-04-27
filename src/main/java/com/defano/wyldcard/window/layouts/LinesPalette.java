@@ -107,6 +107,8 @@ public class LinesPalette extends WyldCardDialog<Object> implements Consumer<Str
     private void $$$setupUI$$$() {
         linesPanel = new JPanel();
         linesPanel.setLayout(new GridLayoutManager(1, 6, new Insets(0, 0, 0, 0), 0, 0));
+        linesPanel.setMaximumSize(new Dimension(246, 2147483647));
+        linesPanel.setMinimumSize(new Dimension(246, 45));
         px1 = new JButton();
         px1.setIcon(new ImageIcon(getClass().getResource("/lines/1.png")));
         px1.setText("");

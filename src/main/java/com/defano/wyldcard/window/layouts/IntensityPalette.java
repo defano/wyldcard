@@ -58,24 +58,25 @@ public class IntensityPalette extends WyldCardDialog<Object> {
     private void $$$setupUI$$$() {
         intensityPanel = new JPanel();
         intensityPanel.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
+        intensityPanel.setMaximumSize(new Dimension(246, 2147483647));
+        intensityPanel.setMinimumSize(new Dimension(246, 96));
         intensitySlider = new JSlider();
         intensitySlider.setInverted(false);
-        intensitySlider.setMajorTickSpacing(5);
-        intensitySlider.setMaximum(30);
+        intensitySlider.setMajorTickSpacing(8);
+        intensitySlider.setMaximum(32);
         intensitySlider.setMinimum(0);
-        intensitySlider.setMinorTickSpacing(0);
+        intensitySlider.setMinorTickSpacing(2);
         intensitySlider.setPaintLabels(false);
         intensitySlider.setPaintTicks(true);
         intensitySlider.setValueIsAdjusting(false);
-        intensityPanel.add(intensitySlider, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
+        intensityPanel.add(intensitySlider, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         intensityPanel.add(spacer1, new GridConstraints(1, 1, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         smooth = new JCheckBox();
         smooth.setText("Smooth spray");
-        intensityPanel.add(smooth, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
-        final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        intensityPanel.add(panel1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        intensityPanel.add(smooth, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        intensityPanel.add(spacer2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**

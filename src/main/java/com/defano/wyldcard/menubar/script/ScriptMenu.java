@@ -15,7 +15,7 @@ public class ScriptMenu extends HyperCardMenu {
                 .named("Find...")
                 .withShortcut('F')
                 .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
-                .withAction(e -> WyldCard.getInstance().getWindowManager().getFindWindow().setVisible(true))
+                .withAction(e -> WyldCard.getInstance().getWindowManager().getFindWindow().setVisibleOverFocusedWindow(true))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -49,7 +49,7 @@ public class ScriptMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Replace...")
                 .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
-                .withAction(e -> WyldCard.getInstance().getWindowManager().getReplaceWindow().setVisible(true))
+                .withAction(e -> WyldCard.getInstance().getWindowManager().getReplaceWindow().setVisibleOverFocusedWindow(true))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

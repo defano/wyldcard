@@ -89,11 +89,15 @@ public class MagnificationPalette extends WyldCardDialog<Object> {
      */
     private void $$$setupUI$$$() {
         windowPanel = new JPanel();
-        windowPanel.setLayout(new GridLayoutManager(2, 2, new Insets(0, 10, 0, 10), -1, -1));
+        windowPanel.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        windowPanel.setMaximumSize(new Dimension(246, 32767));
+        windowPanel.setMinimumSize(new Dimension(246, 10));
         slider1 = new JSlider();
+        slider1.setMajorTickSpacing(8);
         slider1.setMaximum(32);
         slider1.setMinimum(1);
-        slider1.setPaintLabels(true);
+        slider1.setMinorTickSpacing(2);
+        slider1.setPaintLabels(false);
         slider1.setPaintTicks(true);
         slider1.setValueIsAdjusting(false);
         windowPanel.add(slider1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -108,7 +112,7 @@ public class MagnificationPalette extends WyldCardDialog<Object> {
         magnifierButton.setOpaque(true);
         magnifierButton.setText("");
         magnifierButton.setVisible(true);
-        windowPanel.add(magnifierButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        windowPanel.add(magnifierButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
     }
 
     /**

@@ -107,6 +107,7 @@ public class WyldCardWindowManager implements WindowManager {
                 .asPalette()
                 .focusable(true)
                 .withTitle("Colors")
+                .withLocationCenteredOnScreen()
                 .notInitiallyVisible()
                 .build();
 
@@ -114,6 +115,7 @@ public class WyldCardWindowManager implements WindowManager {
                 .asPalette()
                 .focusable(false)
                 .withTitle("Message Watcher")
+                .withLocationCenteredOnScreen()
                 .notInitiallyVisible()
                 .resizeable(true)
                 .build();
@@ -122,6 +124,7 @@ public class WyldCardWindowManager implements WindowManager {
                 .asPalette()
                 .withTitle("Variable Watcher")
                 .focusable(true)
+                .withLocationCenteredOnScreen()
                 .notInitiallyVisible()
                 .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
                 .resizeable(true)
@@ -133,6 +136,7 @@ public class WyldCardWindowManager implements WindowManager {
                 .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
                 .focusable(true)
                 .notInitiallyVisible()
+                .withLocationCenteredOnScreen()
                 .resizeable(true)
                 .build();
 

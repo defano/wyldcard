@@ -5,7 +5,10 @@
     <constraints>
       <xy x="20" y="20" width="524" height="400"/>
     </constraints>
-    <properties/>
+    <properties>
+      <maximumSize width="246" height="2147483647"/>
+      <minimumSize width="246" height="35"/>
+    </properties>
     <border type="none"/>
     <children>
       <component id="ab773" class="javax.swing.JButton" binding="triangle">

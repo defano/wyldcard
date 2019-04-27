@@ -109,6 +109,14 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
         return Invoke.onDispatch(() -> getWindow().getType() == Window.Type.UTILITY);
     }
 
+    default void setVisibleOverFocusedWindow(boolean isVisible) {
+        // Don't position the window if it's already visible
+        if (!getWindow().isVisible()) {
+            setLocationCenteredOver(FocusManager.getCurrentManager().getActiveWindow());
+        }
+        getWindow().setVisible(isVisible);
+    }
+
     default void setContentPane(Container contentPane) {
         Invoke.onDispatch(() -> {
             if (getWindow() instanceof JDialog) {

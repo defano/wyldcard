@@ -236,6 +236,8 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
     private void $$$setupUI$$$() {
         palettePanel = new JPanel();
         palettePanel.setLayout(new GridLayoutManager(7, 3, new Insets(0, 0, 0, 0), 0, 0));
+        palettePanel.setMaximumSize(new Dimension(120, 2147483647));
+        palettePanel.setMinimumSize(new Dimension(120, 204));
         selection = new JButton();
         selection.setEnabled(true);
         selection.setIcon(new ImageIcon(getClass().getResource("/icons/selection.png")));
