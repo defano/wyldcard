@@ -3,7 +3,6 @@ package com.defano.wyldcard.stackreader.block;
 import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.record.PageBlockIndexRecord;
 import com.defano.wyldcard.stackreader.record.PageEntryRecord;
 
@@ -16,35 +15,82 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class ListBlock extends Block {
 
-    private int pageCount;          // number of PAGE blocks
-    private int pageSize;           // size of a PAGE block; usually 2048 bytes
-    private int pageEntryTotal;     // total number of entries in all PAGE blocks; should equal number of cards
-    private short pageEntrySize;    // length of an entry in a PAGE block
-    private int pageEntryTotal2;    // total number of entries in all PAGE blocks; should equal number of cards
+    private int pageCount;
+    private int pageSize;
+    private int pageEntryTotal;
+    private short pageEntrySize;
+    private int cardsInStackCount;
     private PageBlockIndexRecord[] pageIndices;
+    private short hashIntegerCount;
+    private short searchHashValueCount;
+    private int checksum;
 
     public ListBlock(HyperCardStack root, BlockType blockType, int blockSize, int blockId, byte[] blockData) {
         super(root, blockType, blockSize, blockId, blockData);
     }
 
+    /**
+     * Number of PAGE blocks referenced in the LIST.
+     *
+     * @return The number of PAGE blocks.
+     */
     public int getPageCount() {
         return pageCount;
     }
 
+    /**
+     * The size, in bytes, of a PAGE block (typically 2048 bytes)
+     *
+     * @return The size of the a PAGE block.
+     */
     public int getPageSize() {
         return pageSize;
     }
 
+    /**
+     * The total number of entries in all PAGE blocks, should equal the number of cards in the stack.
+     *
+     * @return The number of entries in all PAGE blocks.
+     */
     public int getPageEntryTotal() {
         return pageEntryTotal;
     }
 
+    /**
+     * The size of a card entry, in bytes.
+     *
+     * @return The size of a card entry.
+     */
     public short getPageEntrySize() {
         return pageEntrySize;
     }
 
-    public int getPageEntryTotal2() {
-        return pageEntryTotal2;
+    /**
+     * Gets the total number of cards in the stack.
+     * @return Number of cards in the stack.
+     */
+    public int getCardsInStackCount() {
+        return cardsInStackCount;
+    }
+
+    public short getHashIntegerCount() {
+        return hashIntegerCount;
+    }
+
+    public short getSearchHashValueCount() {
+        return searchHashValueCount;
+    }
+
+    public int getChecksum() {
+        return checksum;
+    }
+
+    public boolean isChecksumValid() {
+        int checksum = 0x00;
+        for (PageBlockIndexRecord pi : getPageIndices()) {
+            checksum = rightRotate(pi.getPageId() + checksum, 3) + pi.getPageEntryCount();
+        }
+        return checksum == this.checksum;
     }
 
     public PageBlockIndexRecord[] getPageIndices() {
@@ -78,7 +124,7 @@ public class ListBlock extends Block {
     }
 
     @Override
-    public void unpack(ImportResult results) throws ImportException {
+    public void unpack() throws ImportException {
 
         StackInputStream sis = new StackInputStream(getBlockData());
 
@@ -87,12 +133,12 @@ public class ListBlock extends Block {
             this.pageSize = sis.readInt();
             this.pageEntryTotal = sis.readInt();
             this.pageEntrySize = sis.readShort();
-
-            sis.readShort(5); // Unknown fields; skip
-
-            this.pageEntryTotal2 = sis.readInt();
-
-            sis.readInt(); // Unknown field; skip
+            sis.readShort(); // Unknown field
+            this.hashIntegerCount = sis.readShort();
+            this.searchHashValueCount = sis.readShort();
+            this.checksum = sis.readInt();
+            this.cardsInStackCount = sis.readInt();
+            sis.readInt(); // Unknown field
 
             pageIndices = new PageBlockIndexRecord[pageCount];
             for (int idx = 0; idx < pageCount; idx++) {
@@ -102,7 +148,7 @@ public class ListBlock extends Block {
             }
 
         } catch (IOException e) {
-            results.throwError(this, "Malformed list block; stack is corrupt.", e);
+            throw new ImportException(this, "Malformed list block; stack is corrupt.", e);
         }
     }
 }

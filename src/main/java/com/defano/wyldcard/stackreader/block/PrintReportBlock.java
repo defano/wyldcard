@@ -4,7 +4,6 @@ import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.enums.PrintMeasurementUnit;
 import com.defano.wyldcard.stackreader.enums.ReportFlag;
 import com.defano.wyldcard.stackreader.misc.ImportException;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import com.defano.wyldcard.stackreader.record.ReportRecord;
 
@@ -89,7 +88,7 @@ public class PrintReportBlock extends Block {
     }
 
     @Override
-    public void unpack(ImportResult report) throws ImportException {
+    public void unpack() throws ImportException {
         StackInputStream sis = new StackInputStream(getBlockData());
 
         try {
@@ -115,11 +114,11 @@ public class PrintReportBlock extends Block {
                 int recordSize = sis.readShort();
                 byte[] recordData = sis.readBytes(recordSize - 2);
 
-                reportRecords[idx] = ReportRecord.deserialize(this, recordSize, recordData, report);
+                reportRecords[idx] = ReportRecord.deserialize(this, recordSize, recordData);
             }
 
         } catch (IOException e) {
-            report.throwError(this, "Malformed PRFT block.");
+            throw new ImportException(this, "Malformed PRFT block.", e);
         }
     }
 }

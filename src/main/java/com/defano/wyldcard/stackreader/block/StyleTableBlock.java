@@ -3,7 +3,6 @@ package com.defano.wyldcard.stackreader.block;
 import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.record.StyleRecord;
 
 import java.io.IOException;
@@ -40,7 +39,7 @@ public class StyleTableBlock extends Block {
     }
 
     @Override
-    public void unpack(ImportResult report) throws ImportException {
+    public void unpack() throws ImportException {
         StackInputStream sis = new StackInputStream(getBlockData());
 
         try {
@@ -51,11 +50,11 @@ public class StyleTableBlock extends Block {
 
             for (int styleIdx = 0; styleIdx < styleCount; styleIdx++) {
                 byte[] styleRecord = sis.readBytes(24);
-                styles[styleIdx] = StyleRecord.deserialize(this, styleRecord, report);
+                styles[styleIdx] = StyleRecord.deserialize(this, styleRecord);
             }
 
         } catch (IOException e) {
-
+            throw new ImportException("Malformed style table block.", e);
         }
     }
 }

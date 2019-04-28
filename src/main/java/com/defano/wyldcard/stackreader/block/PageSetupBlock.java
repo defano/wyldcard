@@ -3,7 +3,6 @@ package com.defano.wyldcard.stackreader.block;
 import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.enums.PrintMethod;
 import com.defano.wyldcard.stackreader.misc.ImportException;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 
 import java.io.IOException;
@@ -162,7 +161,7 @@ public class PageSetupBlock extends Block {
     }
 
     @Override
-    public void unpack(ImportResult report) throws ImportException {
+    public void unpack() throws ImportException {
         StackInputStream sis = new StackInputStream(getBlockData());
 
         try {
@@ -200,7 +199,7 @@ public class PageSetupBlock extends Block {
             spoolVolume = sis.readShort();
             spoolVersion = sis.readByte();
         } catch (IOException e) {
-            report.throwError(this, "Malformed PRST report.");
+            throw new ImportException(this, "Malformed PRST report.", e);
         }
     }
 }

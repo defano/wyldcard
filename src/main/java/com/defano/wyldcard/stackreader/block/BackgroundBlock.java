@@ -1,10 +1,9 @@
 package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
+import com.defano.wyldcard.stackreader.enums.LayerFlag;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
-import com.defano.wyldcard.stackreader.enums.LayerFlag;
 import com.defano.wyldcard.stackreader.record.PartContentRecord;
 
 import java.io.IOException;
@@ -62,7 +61,7 @@ public class BackgroundBlock extends CardLayerBlock {
     }
 
     @Override
-    public void unpack(ImportResult report) throws ImportException {
+    public void unpack() throws ImportException {
         StackInputStream sis = new StackInputStream(getBlockData());
 
         try {
@@ -75,10 +74,10 @@ public class BackgroundBlock extends CardLayerBlock {
             partCount = sis.readShort();
 
             // Unpack fields common to both cards and backgrounds
-            super.unpack(sis, report);
+            super.unpack(sis);
 
         } catch (IOException e) {
-            report.throwError(this, "Malformed BKGD block.");
+            throw new ImportException(this, "Malformed BKGD block.");
         }
 
     }

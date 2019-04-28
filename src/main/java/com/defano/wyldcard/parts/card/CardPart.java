@@ -572,7 +572,8 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     @RunOnDispatch
     public void partClosed(ExecutionContext context) {
         if (!isOpened.get()) {
-            throw new IllegalStateException("Bug! Card is not open for closing.");
+            new IllegalStateException("Bug! Card is not open for closing.").printStackTrace();
+            return;
         }
 
         getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.CLOSE_CARD);

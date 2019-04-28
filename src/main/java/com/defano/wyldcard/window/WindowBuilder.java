@@ -14,7 +14,7 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?, ModelT
     private boolean initiallyVisible = true;
     private boolean centeredOnScreen = false;
     private boolean resizable = false;
-    private boolean isPalette = false;
+    private boolean isAlwaysOnTop = false;
     private boolean isFocusable = true;
     private WindowClosingAction actionOnClose = null;
 
@@ -78,9 +78,15 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?, ModelT
 
     @RunOnDispatch
     public WindowBuilder asPalette() {
-        this.isPalette = true;
+        this.isAlwaysOnTop = true;
         this.isFocusable = false;
         this.window.getWindow().setType(Window.Type.UTILITY);
+        return this;
+    }
+
+    @RunOnDispatch
+    public WindowBuilder alwaysOnTop() {
+        this.isAlwaysOnTop = true;
         return this;
     }
 
@@ -171,7 +177,7 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?, ModelT
         }
 
         this.window.getWindow().setFocusableWindowState(isFocusable);
-        this.window.getWindow().setAlwaysOnTop(isPalette);
+        this.window.getWindow().setAlwaysOnTop(isAlwaysOnTop);
 
         // Calculate and set minimum allowable frame size
         int minWidth = window.getWindowPanel().getMinimumSize().width;

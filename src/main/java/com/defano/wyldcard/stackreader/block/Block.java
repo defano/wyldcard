@@ -1,12 +1,11 @@
 package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
-import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.decoder.MacRomanDecoder;
 import com.defano.wyldcard.stackreader.decoder.PatternDecoder;
 import com.defano.wyldcard.stackreader.decoder.VersionDecoder;
 import com.defano.wyldcard.stackreader.decoder.WOBAImageDecoder;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
+import com.defano.wyldcard.stackreader.misc.ImportException;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -36,10 +35,9 @@ public abstract class Block implements PatternDecoder, VersionDecoder, WOBAImage
     /**
      * Unpacks (de-serializes) the block data stored in {@link #getBlockData()} into block-specific Java field.
      *
-     * @param report An ImportResult object to be modified with any encountered issues that occur while unpacking.
      * @throws ImportException Thrown if a fatal error occurs unpacking the data, typically caused by malformed or unexpected values in the data.
      */
-    public abstract void unpack(ImportResult report) throws ImportException;
+    public abstract void unpack() throws ImportException;
 
     /**
      * Gets the HyperCard stack object to which this block belongs.
@@ -78,13 +76,27 @@ public abstract class Block implements PatternDecoder, VersionDecoder, WOBAImage
     }
 
     /**
-     * The data associated with the block; all of the bytes directly following the block header. Size of the block
-     * data is equal to {@link #getBlockSize()} - 16 bytes (accounting for the enums, size and id fields)
+     * Gets the data associated with the block, consisting of all of the bytes directly following the block header (the
+     * block type, length and id). The size of the block data is equal to {@link #getBlockSize()} - 16 bytes (accounting
+     * for the type, size and id fields).
      *
      * @return The block data
      */
     public byte[] getBlockData() {
         return blockData;
+    }
+
+    /**
+     * Rotates the unsigned value of n, d bits to the right (bits shifted off the left of the value are appended on the
+     * right).
+     *
+     * @param n The 32-bit, unsigned value to rotate
+     * @param d The number of bits to rotate the value (should be between 1 and 32).
+     * @return The rotated value.
+     */
+    protected int rightRotate(int n, int d) {
+        long val = n & 0xffffffffL;
+        return (int) ((val >> d) | (val << (32 - d)) & 0xffffffffL);
     }
 
     /**

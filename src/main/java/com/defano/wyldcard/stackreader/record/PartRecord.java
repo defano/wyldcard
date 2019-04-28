@@ -4,7 +4,6 @@ import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.block.Block;
 import com.defano.wyldcard.stackreader.enums.*;
 import com.defano.wyldcard.stackreader.misc.ImportException;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -38,7 +37,7 @@ public class PartRecord {
     private String name;
     private String script; // the button or field script
 
-    public static PartRecord deserialize(Block parent, short entrySize, byte[] data, ImportResult report) throws ImportException {
+    public static PartRecord deserialize(Block parent, short entrySize, byte[] data) throws ImportException {
         PartRecord part = new PartRecord();
         StackInputStream sis = new StackInputStream(data);
 
@@ -72,7 +71,7 @@ public class PartRecord {
             part.script = sis.readString();
 
         } catch (IOException e) {
-            report.throwError(parent, "Malformed part record; stack is corrupt.");
+            throw new ImportException(parent, "Malformed part record.", e);
         }
 
         return part;

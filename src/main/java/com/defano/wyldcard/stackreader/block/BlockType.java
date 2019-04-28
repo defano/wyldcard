@@ -6,18 +6,20 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 public enum BlockType {
+
     /**
-     * Stack header
+     * Stack header. Always the first block in the file and never appears more than once.
      */
     STAK(StackBlock.class),
 
     /**
-     * Master reference object
+     * Master reference object; an index of all the blocks present in a stack file, excluding STAK, MAST, FREE and TAIL
+     * blocks.
      */
     MAST(MasterBlock.class),
 
     /**
-     * Card index list
+     * Card index list.
      */
     LIST(ListBlock.class),
 

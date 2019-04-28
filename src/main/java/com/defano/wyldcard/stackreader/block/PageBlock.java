@@ -4,7 +4,6 @@ import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.enums.PageFlag;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.record.PageEntryRecord;
 
 import java.io.IOException;
@@ -33,27 +32,35 @@ public class PageBlock extends Block {
         return checksum;
     }
 
+    public boolean isChecksumValid() {
+        int checksum = 0x00;
+        for (PageEntryRecord pe : getPageEntries()) {
+            checksum = rightRotate(checksum + pe.getCardId(), 3);
+        }
+        return checksum == this.checksum;
+    }
+
     @Override
-    public void unpack(ImportResult report) throws ImportException {
+    public void unpack() throws ImportException {
         StackInputStream sis = new StackInputStream(getBlockData());
 
         if (getStack().getBlocks(BlockType.LIST).size() != 1) {
-            report.throwError(this, "Unable to cross-reference LIST block from PAGE; stack is corrupt.");
+            throw new ImportException(this, "Unable to cross-reference LIST block from PAGE; stack is corrupt.");
         }
 
-        ListBlock listBlock = getListBlock(report);
+        ListBlock listBlock = getListBlock();
         Short pageEntryCount = listBlock.getPageEntryCountForPage(getBlockId());
         short pageEntrySize = listBlock.getPageEntrySize();
 
         if (pageEntryCount == null) {
-            report.throwError(this, "Unable to find page entry in list index for block id " + getBlockId() + "; stack is corrupted.");
+            throw new ImportException(this, "Unable to find page entry in list index for block id " + getBlockId() + "; stack is corrupted.");
         }
 
         try {
             listId = sis.readInt();
             checksum = sis.readInt();
-            pageEntries = new PageEntryRecord[pageEntryCount];
 
+            pageEntries = new PageEntryRecord[pageEntryCount];
             for (int idx = 0; idx < pageEntryCount; idx++) {
                 int cardId = sis.readInt();
                 PageFlag[] flags = PageFlag.fromBitmask(sis.readByte());
@@ -63,19 +70,19 @@ public class PageBlock extends Block {
             }
 
         } catch (IOException e) {
-            report.throwError(this, "Malformed page block; stack is corrupt.");
+            throw new ImportException(this, "Malformed page block; stack is corrupt.");
         }
     }
 
-    private ListBlock getListBlock(ImportResult report) throws ImportException {
+    private ListBlock getListBlock() throws ImportException {
         List<Block> listBlocks = getStack().getBlocks(BlockType.LIST);
 
         if (listBlocks.isEmpty()) {
-            report.throwError(this, "Encountered page block before list block; stack is corrupted.");
+            throw new ImportException(this, "Encountered page block before list block; stack is corrupted.");
         }
 
         if (listBlocks.size() > 1) {
-            report.throwError(this, "Found multiple list blocks when only one was expected; stack is corrupted.");
+            throw new ImportException(this, "Found multiple list blocks when only one was expected; stack is corrupted.");
         }
 
         return (ListBlock) listBlocks.get(0);

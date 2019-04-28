@@ -16,7 +16,7 @@ public class PageEntryRecord {
         this.searchHash = searchHash;
     }
 
-    public int getCardId() {
+    public Integer getCardId() {
         return cardId;
     }
 

@@ -2,7 +2,6 @@ package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.misc.ImportException;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import com.defano.wyldcard.stackreader.record.BlockOffsetRecord;
 
@@ -23,7 +22,7 @@ public class MasterBlock extends Block {
     }
 
     @Override
-    public void unpack(ImportResult report) throws ImportException {
+    public void unpack() throws ImportException {
         StackInputStream sis = new StackInputStream(getBlockData());
         ArrayList<BlockOffsetRecord> records = new ArrayList<>();
 
@@ -44,7 +43,7 @@ public class MasterBlock extends Block {
             blockOffsets = records.toArray(new BlockOffsetRecord[0]);
 
         } catch (IOException e) {
-            report.throwError(this, "Malformed MAST block.");
+            throw new ImportException(this, "Malformed MAST block.", e);
         }
     }
 }

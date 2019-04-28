@@ -5,7 +5,6 @@ import com.defano.wyldcard.stackreader.enums.FontStyle;
 import com.defano.wyldcard.stackreader.enums.ReportRecordFlag;
 import com.defano.wyldcard.stackreader.enums.TextAlignment;
 import com.defano.wyldcard.stackreader.misc.ImportException;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -81,7 +80,7 @@ public class ReportRecord {
         return textFont;
     }
 
-    public static ReportRecord deserialize(Block block, int recordSize, byte[] recordData, ImportResult result) throws ImportException {
+    public static ReportRecord deserialize(Block block, int recordSize, byte[] recordData) throws ImportException {
         StackInputStream sis = new StackInputStream(recordData);
         ReportRecord reportRecord = new ReportRecord();
 
@@ -102,7 +101,7 @@ public class ReportRecord {
             reportRecord.textFont = sis.readString();
 
         } catch (IOException e) {
-            result.throwError(block, "Malformed report record.");
+            throw new ImportException(block, "Malformed report record.");
         }
 
         return reportRecord;

@@ -3,7 +3,6 @@ package com.defano.wyldcard.stackreader.record;
 import com.defano.wyldcard.stackreader.block.Block;
 import com.defano.wyldcard.stackreader.enums.FontStyle;
 import com.defano.wyldcard.stackreader.misc.ImportException;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -58,7 +57,7 @@ public class StyleRecord {
         return blue;
     }
 
-    public static StyleRecord deserialize(Block parent, byte[] data, ImportResult report) throws ImportException {
+    public static StyleRecord deserialize(Block parent, byte[] data) throws ImportException {
         StyleRecord style = new StyleRecord();
         StackInputStream sis = new StackInputStream(data);
 
@@ -74,7 +73,7 @@ public class StyleRecord {
             style.green = sis.readShort();
             style.blue = sis.readShort();
         } catch (IOException e) {
-            report.throwError(parent, "Malformed style record; stack is corrupt.");
+            throw new ImportException(parent, "Malformed style record.");
         }
 
         return style;

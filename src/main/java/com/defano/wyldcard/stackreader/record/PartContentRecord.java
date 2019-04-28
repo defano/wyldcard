@@ -1,9 +1,8 @@
 package com.defano.wyldcard.stackreader.record;
 
+import com.defano.wyldcard.stackreader.block.Block;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
-import com.defano.wyldcard.stackreader.block.Block;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -17,7 +16,7 @@ public class PartContentRecord {
     private StyleSpanRecord[] styleSpans = new StyleSpanRecord[0];
     private String text;
 
-    public static PartContentRecord deserialize(Block parent, short partId, byte[] data, ImportResult report) throws ImportException {
+    public static PartContentRecord deserialize(Block parent, short partId, byte[] data) throws ImportException {
         PartContentRecord partContent = new PartContentRecord();
         StackInputStream sis = new StackInputStream(data);
 
@@ -51,7 +50,7 @@ public class PartContentRecord {
             partContent.text = sis.readString(length - styleLength);
 
         } catch (IOException e) {
-            report.throwError(parent, "Malformed part content record; stack is corrupt.");
+            throw new ImportException(parent, "Malformed part content record; stack is corrupt.", e);
         }
 
         return partContent;

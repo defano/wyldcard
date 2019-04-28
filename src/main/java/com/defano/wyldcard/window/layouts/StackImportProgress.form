@@ -10,7 +10,7 @@
     </properties>
     <border type="none"/>
     <children>
-      <component id="de85c" class="javax.swing.JLabel" binding="importingHyperCardStackLabel" default-binding="true">
+      <component id="de85c" class="javax.swing.JLabel" binding="progressTitle">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -48,7 +48,7 @@
         </constraints>
         <properties>
           <opaque value="false"/>
-          <text value=""/>
+          <text value="Reading stack file."/>
         </properties>
       </component>
       <vspacer id="18499">

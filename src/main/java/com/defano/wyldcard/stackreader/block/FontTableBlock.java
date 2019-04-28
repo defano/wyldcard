@@ -3,7 +3,6 @@ package com.defano.wyldcard.stackreader.block;
 import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.record.FontRecord;
 
 import java.io.IOException;
@@ -34,7 +33,7 @@ public class FontTableBlock extends Block {
     }
 
     @Override
-    public void unpack(ImportResult report) throws ImportException {
+    public void unpack() throws ImportException {
         StackInputStream sis = new StackInputStream(getBlockData());
 
         try {
@@ -55,7 +54,7 @@ public class FontTableBlock extends Block {
             }
 
         } catch (IOException e) {
-            report.throwError(this, "Malformed FTBL (font table) block; stack is corrupted.");
+            throw new ImportException(this, "Malformed FTBL (font table) block; stack is corrupted.");
         }
     }
 }

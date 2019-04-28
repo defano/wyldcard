@@ -17,8 +17,9 @@ public class StackImporter {
 
         StackImportProgress progressWindow = new StackImportProgress();
         new WindowBuilder<>(progressWindow)
-                .withTitle("Import")
+                .withTitle("Importing HyperCard Stack")
                 .withLocationCenteredOnScreen()
+                .alwaysOnTop()
                 .build();
 
         StackFormatConverter.startConversion(stackFile, new ConversionStatusObserver() {
@@ -34,11 +35,13 @@ public class StackImporter {
             }
             @Override
             public void onConversionSucceeded(StackModel importedStack) {
+                progressWindow.setWaitingForStackToOpen();
+
                 Invoke.onDispatch(() -> {
-                    progressWindow.dispose();
                     if (!progressWindow.isCancelled()) {
                         WyldCard.getInstance().getStackManager().openStack(context, importedStack, true);
                     }
+                    progressWindow.dispose();
                 });
             }
         }, progressWindow);

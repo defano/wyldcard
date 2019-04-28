@@ -1,14 +1,28 @@
 package com.defano.wyldcard.stackreader.misc;
 
+import com.defano.wyldcard.stackreader.block.Block;
+
 public class ImportException extends Exception {
 
-    private final ImportResult report;
+    private final Block block;
 
-    public ImportException(ImportResult report) {
-        this.report = report;
+    public ImportException(Block source, String message) {
+        super(message);
+        this.block = source;
     }
 
-    public ImportResult getReport() {
-        return report;
+    public ImportException(String message, Throwable cause) {
+        super(message, cause);
+        this.block = null;
+    }
+
+    public ImportException(String message) {
+        super(message);
+        this.block = null;
+    }
+
+    public ImportException(Block source, String message, Throwable cause) {
+        super(message, cause);
+        this.block = source;
     }
 }

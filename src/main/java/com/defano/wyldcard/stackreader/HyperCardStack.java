@@ -3,7 +3,6 @@ package com.defano.wyldcard.stackreader;
 import com.defano.wyldcard.stackreader.block.*;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.ImportOrderComparator;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -19,13 +18,13 @@ public class HyperCardStack {
 
     private final List<Block> blocks = new ArrayList<>();
 
-    public static HyperCardStack fromFile(File f, ImportResult result) throws FileNotFoundException, ImportException {
-        return fromInputStream(new FileInputStream(f), result);
+    public static HyperCardStack fromFile(File f) throws FileNotFoundException, ImportException {
+        return fromInputStream(new FileInputStream(f));
     }
 
-    public static HyperCardStack fromInputStream(InputStream sis, ImportResult result) throws ImportException {
+    public static HyperCardStack fromInputStream(InputStream sis) throws ImportException {
         HyperCardStack stack = new HyperCardStack();
-        stack.deserialize(new StackInputStream(sis), result == null ? new ImportResult() : result);
+        stack.deserialize(new StackInputStream(sis));
         return stack;
     }
 
@@ -121,7 +120,7 @@ public class HyperCardStack {
                 .orElse(null);
     }
 
-    private void deserialize(StackInputStream fis, ImportResult report) throws ImportException {
+    private void deserialize(StackInputStream fis) throws ImportException {
         BlockType blockType;
 
         try {
@@ -137,7 +136,7 @@ public class HyperCardStack {
                 blockType = BlockType.fromBlockId(blockTypeId);
 
                 if (blockType == null) {
-                    report.throwError(null, "Encountered block with unknown enums: " + blockTypeId + ".");
+                    throw new ImportException("Encountered block with unknown enums: " + blockTypeId + ".");
                 } else {
                     Block block = blockType.instantiateBlock(this, blockId, blockSize, blockData);
                     if (block != null) {
@@ -152,11 +151,11 @@ public class HyperCardStack {
             importOrder.sort(new ImportOrderComparator());
 
             for (Block thisBlock : importOrder) {
-                thisBlock.unpack(report);
+                thisBlock.unpack();
             }
 
         } catch (IOException e) {
-            report.throwError(null, "Malformed block array; stack structure is corrupt.", e);
+            throw new ImportException("Malformed block array; stack structure is corrupt.", e);
         }
     }
 

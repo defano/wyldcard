@@ -3,9 +3,8 @@ package com.defano.wyldcard.stackreader.block;
 import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
-import com.defano.wyldcard.stackreader.record.PartRecord;
 import com.defano.wyldcard.stackreader.record.PartContentRecord;
+import com.defano.wyldcard.stackreader.record.PartRecord;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -132,7 +131,7 @@ public abstract class CardLayerBlock extends Block {
         return partContentSize;
     }
 
-    public void unpack(StackInputStream sis, ImportResult report) throws ImportException {
+    public void unpack(StackInputStream sis) throws ImportException {
 
         int partCount = getPartCount();
 
@@ -148,7 +147,7 @@ public abstract class CardLayerBlock extends Block {
                 short entrySize = sis.readShort();
                 byte[] entryData = sis.readBytes(entrySize - 2);
 
-                parts[partIdx] = PartRecord.deserialize(this, entrySize, entryData, report);
+                parts[partIdx] = PartRecord.deserialize(this, entrySize, entryData);
             }
 
             // Deserialize text formatting
@@ -158,7 +157,7 @@ public abstract class CardLayerBlock extends Block {
                 short length = sis.readShort();
                 byte[] partContentsData = sis.readBytes(length);
 
-                contents[partContentsIdx] = PartContentRecord.deserialize(this, partId, partContentsData, report);
+                contents[partContentsIdx] = PartContentRecord.deserialize(this, partId, partContentsData);
 
                 if (length % 2 != 0) {
                     sis.readByte();
@@ -169,7 +168,7 @@ public abstract class CardLayerBlock extends Block {
             script = sis.readString();
 
         } catch (IOException e) {
-            report.throwError(this, "Malformed CARD or BGND block.");
+            throw new ImportException(this, "Malformed CARD or BGND block.");
         }
     }
 }

@@ -1,11 +1,10 @@
 package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
-import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.enums.StackFlag;
 import com.defano.wyldcard.stackreader.enums.StackFormat;
+import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
-import com.defano.wyldcard.stackreader.misc.ImportResult;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -210,7 +209,7 @@ public class StackBlock extends Block {
     }
 
     @Override
-    public void unpack(ImportResult report) throws ImportException {
+    public void unpack() throws ImportException {
 
         StackInputStream sis = new StackInputStream(getBlockData());
 
@@ -273,7 +272,7 @@ public class StackBlock extends Block {
             }
 
         } catch (IOException e) {
-            report.throwError(this, "Malformed stack block; stack is corrupt.", e);
+            throw new ImportException(this, "Malformed stack block; stack is corrupt.", e);
         }
     }
 }

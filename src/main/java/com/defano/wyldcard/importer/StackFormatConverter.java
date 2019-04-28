@@ -37,14 +37,13 @@ public class StackFormatConverter {
         }
 
         StackFormatConverter importer = new StackFormatConverter(status, progress);
-//        importer.convert(stackFile);
         Invoke.asynchronouslyOnWorkerThread(() -> importer.convert(stackFile));
     }
 
     private void convert(File stackFile) {
 
         try {
-            HyperCardStack hcStack = HyperCardStack.fromFile(stackFile, null);
+            HyperCardStack hcStack = HyperCardStack.fromFile(stackFile);
             StackModel model = buildStack(new ExecutionContext(), stackFile.getName(), hcStack);
             status.onConversionSucceeded(model);
 
@@ -71,7 +70,7 @@ public class StackFormatConverter {
 
         for (int cardIdx = 0; cardIdx < cardBlocks.size(); cardIdx++) {
             buildCard(context, cardBlocks.get(cardIdx), stackModel);
-            progress.onConversionProgressUpdate(cardIdx + 1, cardBlocks.size(), "Imported card " + (cardIdx + 1) + " of " + cardBlocks.size());
+            progress.onConversionProgressUpdate(cardIdx + 1, cardBlocks.size(), "Importing card " + (cardIdx + 1) + " of " + cardBlocks.size() + ".");
         }
 
         return stackModel;
