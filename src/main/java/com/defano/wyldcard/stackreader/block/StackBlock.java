@@ -128,16 +128,32 @@ public class StackBlock extends Block {
         return createVersion;
     }
 
+    public String getCreateVersionString() {
+        return getVersionString(createVersion);
+    }
+
     public int getCompactVersion() {
         return compactVersion;
+    }
+
+    public String getCompactVersionString() {
+        return getVersionString(compactVersion);
     }
 
     public int getModifyVersion() {
         return modifyVersion;
     }
 
+    public String getModifyVersionString() {
+        return getVersionString(modifyVersion);
+    }
+
     public int getOpenVersion() {
         return openVersion;
+    }
+
+    public String getOpenVersionString() {
+        return getVersionString(openVersion);
     }
 
     public int getChecksum() {

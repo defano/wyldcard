@@ -6,14 +6,16 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a WyldCard property; binds a {@link PropertyValue} to one or more names.
  */
 public class Property {
 
-    private final transient ArrayList<String> aliases;      // All names that this property is known by
+    private final transient ArrayList<String> aliases;      // All names that this property is known by, alphabetized
     private final PropertyValue value;                      // The value of this property
 
     /**
@@ -31,8 +33,9 @@ public class Property {
             throw new IllegalArgumentException("Property must have a value.");
         }
 
-        this.aliases = Lists.newArrayList(aliases);
         this.value = value;
+        this.aliases = Lists.newArrayList(aliases);
+        Collections.sort(this.aliases);
     }
 
     /**
@@ -60,6 +63,7 @@ public class Property {
      */
     public void addAliases(String... aliases) {
         this.aliases.addAll(Lists.newArrayList(aliases));
+        Collections.sort(this.aliases);
     }
 
     /**
@@ -77,5 +81,18 @@ public class Property {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE, true);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Property property = (Property) o;
+        return Objects.equals(aliases, property.aliases);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(aliases);
     }
 }

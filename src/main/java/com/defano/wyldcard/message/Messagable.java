@@ -180,11 +180,7 @@ public interface Messagable {
                 return context.getCurrentCard().getPartModel().getBackgroundModel();
             case FIELD:
             case BUTTON:
-                if (getMe(context).getOwner() == Owner.BACKGROUND) {
-                    return context.getCurrentCard().getPartModel().getBackgroundModel();
-                } else {
-                    return context.getCurrentCard().getPartModel();
-                }
+                return context.getCurrentCard().getPartModel();
             case STACK:
                 return WyldCard.getInstance().getWyldCardPart();
             case HYPERCARD:

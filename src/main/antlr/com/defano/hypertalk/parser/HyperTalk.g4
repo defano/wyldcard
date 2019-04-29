@@ -480,13 +480,13 @@ term
     ;
 
 container
-    : symbol                                                                                                            # variableContainer
-    | 'the'? 'selection'                                                                                                # selectionContainer
+    : 'the'? 'selection'                                                                                                # selectionContainer
     | 'target'                                                                                                          # targetContainer
     | part                                                                                                              # partContainer
-    | property                                                                                                          # propertyContainer
     | menu                                                                                                              # menuContainer
     | menuItem                                                                                                          # menuItemContainer
+    | symbol                                                                                                            # variableContainer
+    | property                                                                                                          # propertyContainer
     ;
 
 musicExpression
@@ -972,7 +972,7 @@ STRING_LITERAL
     ;
 
 ALPHA
-    : ('a' .. 'z' | 'A' .. 'Z')+
+    : ('a' .. 'z' | 'A' .. 'Z' | '_' )+
     ;
 
 DIGIT
