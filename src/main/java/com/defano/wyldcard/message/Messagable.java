@@ -1,6 +1,9 @@
 package com.defano.wyldcard.message;
 
-import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.NamedBlock;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.Script;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
@@ -12,6 +15,7 @@ import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
+import javax.swing.*;
 import java.awt.event.KeyEvent;
 
 /**
@@ -66,36 +70,42 @@ public interface Messagable {
      */
     default void receiveMessage(ExecutionContext context, Message message, MessageCompletionObserver onCompletion) {
 
-        // No messages are sent when cmd-option is down; some messages not sent when 'lockMessages' is true
-        if (WyldCard.getInstance().getKeyboardManager().isPeeking(context) ||
-                (message instanceof SystemMessage &&
-                        ((SystemMessage) message).isLockable() &&
-                        WyldCard.getInstance().getWyldCardPart().isLockMessages())) {
-            onCompletion.onMessagePassed(message, false, null);
-            return;
-        }
-
-        // Attempt to invoke command handler in this part and listen for completion
-        Compiler.asyncExecuteHandler(context, getMe(context), getScript(context), message, (me, script, handler, trappedMessage, exception) -> {
-
-            // Did message generate an error
-            if (exception != null) {
-                onCompletion.onMessagePassed(message, true, exception);
+        try {
+            // No messages are sent when cmd-option is down; some messages not sent when 'lockMessages' is true
+            if (WyldCard.getInstance().getKeyboardManager().isPeeking(context) ||
+                    (message instanceof SystemMessage &&
+                            ((SystemMessage) message).isLockable() &&
+                            WyldCard.getInstance().getWyldCardPart().isLockMessages())) {
+                onCompletion.onMessagePassed(message, false, null);
+                return;
             }
 
-            // Did this part trap this command?
-            else if (trappedMessage) {
-                onCompletion.onMessagePassed(message, true, null);
-            }
+            // Attempt to invoke command handler in this part and listen for completion
+            Compiler.asyncExecuteHandler(context, getMe(context), getScript(context), message, (me, script, handler, trappedMessage, exception) -> {
 
-            // Message not trapped, send message to next part in the hierarchy
-            else {
-                Messagable nextRecipient = getNextMessageRecipient(context, me.getType());
-                if (nextRecipient != null) {
-                    nextRecipient.receiveMessage(context, message, onCompletion);
+                // Did message generate an error
+                if (exception != null) {
+                    onCompletion.onMessagePassed(message, true, exception);
                 }
+
+                // Did this part trap this command?
+                else if (trappedMessage) {
+                    onCompletion.onMessagePassed(message, true, null);
+                }
+
+                // Message not trapped, send message to next part in the hierarchy
+                else {
+                    Messagable nextRecipient = getNextMessageRecipient(context, me.getType());
+                    if (nextRecipient != null) {
+                        nextRecipient.receiveMessage(context, message, onCompletion);
+                    }
+                }
+            });
+        } catch (ExitToHyperCardPreemption e) {
+            if (!SwingUtilities.isEventDispatchThread()) {
+                throw e;
             }
-        });
+        }
     }
 
     /**

@@ -765,6 +765,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitCloseWindowCmd(HyperTalkParser.CloseWindowCmdContext ctx) {
+        return new CloseWindowCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitCommandKeyDownCmd(HyperTalkParser.CommandKeyDownCmdContext ctx) {
         return new CommandKeyDownCmd(ctx, (Expression) visit(ctx.expression()));
     }

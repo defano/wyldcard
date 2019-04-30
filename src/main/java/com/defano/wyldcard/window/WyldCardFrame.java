@@ -202,9 +202,11 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
     }
 
     default void toggleVisible() {
-        Invoke.onDispatch(() -> {
-            getWindow().setVisible(!getWindow().isVisible());
-        });
+        Invoke.onDispatch(() -> getWindow().setVisible(!getWindow().isVisible()));
+    }
+
+    default void setVisible(boolean visible) {
+        Invoke.onDispatch(() -> getWindow().setVisible(visible));
     }
 
     default void setIsModal() {

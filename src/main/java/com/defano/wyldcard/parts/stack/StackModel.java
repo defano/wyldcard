@@ -311,6 +311,10 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         return this;
     }
 
+    public PartSpecifier getPartSpecifier(ExecutionContext context) {
+        return new StackPartSpecifier(getLongName(context));
+    }
+
     public void createIcon(String name, BufferedImage image) {
         userIcons.put(name, image);
     }

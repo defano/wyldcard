@@ -145,6 +145,7 @@ commandStatement
     | 'click' 'at' listExpression 'with' listExpression                                                                 # clickWithKeyCmd
     | 'close' 'file' expression                                                                                         # closeFileCmd
     | 'close' card 'window'                                                                                             # closeCardWindowCmd
+    | 'close' 'window' expression                                                                                       # closeWindowCmd
     | 'commandkeydown' expression                                                                                       # commandKeyDownCmd
     | 'controlkey' expression                                                                                           # controlKeyCmd
     | 'optionkey' expression                                                                                            # optionKeyCmd
@@ -384,9 +385,9 @@ part
     | buttonPart                                                                                                        # buttonPartPart
     | fieldPart                                                                                                         # fieldPartPart
     | bkgndPart                                                                                                         # bkgndPartPart
+    | windowPart                                                                                                        # windowPartPart
     | cardPart                                                                                                          # cardPartPart
     | stackPart                                                                                                         # stackPartPart
-    | windowPart                                                                                                        # windowPartPart
     | hypercard                                                                                                         # hypercardPart
     ;
 
