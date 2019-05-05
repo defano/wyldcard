@@ -1,17 +1,19 @@
 package com.defano.wyldcard.runtime;
 
-import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.DebugContext;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.compiler.Compiler;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Singleton;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,6 +31,7 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
     private int deferCycles = 0;
     private final ScheduledExecutorService idleTimeExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("periodic-executor-%d").build());
     private final Vector<PartModel> withinParts = new Vector<>();
+    private final Set<IdleObserver> idleObservers = new HashSet<>();
 
     @Override
     public void start() {
@@ -46,6 +49,11 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
     }
 
     @Override
+    public void addIdleObserver(IdleObserver observer) {
+        idleObservers.add(observer);
+    }
+
+    @Override
     public void addWithin(PartModel part) {
         withinParts.add(part);
     }
@@ -60,7 +68,13 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
         try {
             // Send 'idle' message to card if no other scripts are pending
             if (Compiler.getPendingScriptCount() == 0) {
+                // Notify debugger that system is idle
                 DebugContext.getInstance().resume();
+
+                // Notify other listeners
+                fireIdleListeners();
+
+                // Notify card that system is idle
                 send(SystemMessage.IDLE, new ExecutionContext().getCurrentCard().getPartModel());
             }
 
@@ -81,12 +95,18 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
         withinParts.clear();
     }
 
+    private void fireIdleListeners() {
+        for (IdleObserver thisObserver : idleObservers.toArray(new IdleObserver[0])) {
+            thisObserver.onIdle();
+        }
+    }
+
     private void send(SystemMessage message, PartModel... models) {
         for (PartModel model : models) {
             if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BROWSE && deferCycles < 1) {
-                model.receiveMessage(new ExecutionContext(model), message, (command, wasTrapped, error) -> {
+                model.receiveMessage(new ExecutionContext(model), null, message, (command, wasTrapped, error) -> {
                     if (error != null) {
-                        error.printStackTrace();
+                        error.getStackTrace();
                         deferCycles = IDLE_DEFERRAL_CYCLES;
                     }
                 });

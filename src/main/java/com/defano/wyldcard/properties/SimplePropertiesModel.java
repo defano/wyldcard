@@ -93,7 +93,7 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
             p.value().set(context, propertyValue, this);
 
             if (notifyObservers) {
-                fireOnPropertyChanged(context, propertyName, get(context, propertyName), propertyValue);
+                fireOnPropertyChanged(context, p.name(), get(context, propertyName), propertyValue);
             }
 
         } catch (Throwable t) {
@@ -109,11 +109,11 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
         Property p = findProperty(propertyName);
 
         if (p == null) {
-            throw new HtNoSuchPropertyException("No such property named '" + propertyName + "'.");
+            throw new HtNoSuchPropertyException("No such property '" + propertyName + "'.");
         }
 
         p.value().set(context, propertyValue, this);
-        fireOnPropertyChanged(context, propertyName, get(context, propertyName), propertyValue);
+        fireOnPropertyChanged(context, p.name(), get(context, propertyName), propertyValue);
     }
 
     /**
@@ -124,7 +124,7 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
         Property p = findProperty(propertyName);
 
         if (p == null) {
-            throw new IllegalArgumentException("No such property named '" + propertyName + "'.");
+            throw new IllegalArgumentException("No such property '" + propertyName + "'.");
         }
 
         try {
@@ -196,7 +196,7 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
                     try {
                         observer.onPropertyChanged(context, this, thisProperty.name(), thisProperty.value().get(context, this), thisProperty.value().get(context, this));
                     } catch (HtException e) {
-                        e.printStackTrace();
+                        e.getStackTrace();
                     }
                 }
             }

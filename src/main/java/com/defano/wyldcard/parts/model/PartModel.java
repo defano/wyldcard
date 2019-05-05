@@ -191,7 +191,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
 
     /**
      * Determines if a length adjective can be applied to the given property of this part (i.e., 'the long name' is
-     * allowable, but `the abbreviated width` is not).
+     * accepted in HyperTalk, but `the long width` is not).
      *
      * @param propertyName The name of the property
      * @return True if the property supports length adjectives for this part, false otherwise.
@@ -255,7 +255,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
                 deferCompilation = System.currentTimeMillis() + 5000;
                 e.getBreadcrumb().setContext(context);
                 e.getBreadcrumb().setPart(getPartSpecifier(context));
-                WyldCard.getInstance().showErrorDialogAndAbort(e);
+                WyldCard.getInstance().showErrorDialog(e);
             }
         }
 
@@ -527,7 +527,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
                 case MESSAGE_BOX:
                 case WINDOW:
                 case HYPERCARD:
-                    throw new HtUncheckedSemanticException(new HtSemanticException("Cannot edit the properties of that."));
+                    throw new IllegalArgumentException("Bug! Cannot edit the properties of " + getType());
             }
         });
     }

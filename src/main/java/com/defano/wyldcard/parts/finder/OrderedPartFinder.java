@@ -2,7 +2,7 @@ package com.defano.wyldcard.parts.finder;
 
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.card.CardDisplayLayer;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -31,9 +31,9 @@ public interface OrderedPartFinder {
      * @param context The execution context.
      * @param ps      A part specifier indicating the part to find.
      * @return The model of the found part.
-     * @throws PartException Thrown if the requested part cannot be located.
+     * @throws HtNoSuchPartException Thrown if the requested part cannot be located.
      */
-    default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws PartException {
+    default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws HtNoSuchPartException {
         return findPart(context, ps, getPartsInDisplayOrder(context));
     }
 
@@ -45,15 +45,15 @@ public interface OrderedPartFinder {
      *                {@link FindInCollectionSpecifier} for success.
      * @param parts   The list of parts to search
      * @return The specified part
-     * @throws PartException Thrown if no such part exists, or if the specifier refers to a non-ordered part type.
+     * @throws HtNoSuchPartException Thrown if no such part exists, or if the specifier refers to a non-ordered part type.
      */
-    default PartModel findPart(ExecutionContext context, PartSpecifier ps, List<PartModel> parts) throws PartException {
+    default PartModel findPart(ExecutionContext context, PartSpecifier ps, List<PartModel> parts) throws HtNoSuchPartException {
         PartModel foundPart;
 
         if (ps instanceof FindInCollectionSpecifier) {
             foundPart = ((FindInCollectionSpecifier) ps).findInCollection(context, parts);
         } else {
-            throw new PartException("Can't find that.");
+            throw new HtNoSuchPartException("Can't find that.");
         }
 
         // Special case: Field needs to be evaluated in the context of the current card

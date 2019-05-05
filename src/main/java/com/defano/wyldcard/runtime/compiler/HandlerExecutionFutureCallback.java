@@ -2,10 +2,9 @@ package com.defano.wyldcard.runtime.compiler;
 
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
+import com.defano.hypertalk.ast.preemptions.ExitToHyperCard;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.runtime.compiler.HandlerCompletionObserver;
 import com.google.common.util.concurrent.FutureCallback;
 
 public class HandlerExecutionFutureCallback implements FutureCallback<Boolean> {
@@ -31,7 +30,7 @@ public class HandlerExecutionFutureCallback implements FutureCallback<Boolean> {
     public void onFailure(Throwable t) {
 
         // Script requested termination of thread
-        if (t instanceof ExitToHyperCardPreemption) {
+        if (t instanceof ExitToHyperCard) {
             completionObserver.onHandlerRan(me, script, message, true, null);
         }
 

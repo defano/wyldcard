@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -25,7 +25,7 @@ public class StackPartSpecifier implements PartSpecifier {
         return stackName == null;
     }
 
-    public PartModel find(ExecutionContext context, List<StackPart> parts) throws PartException {
+    public PartModel find(ExecutionContext context, List<StackPart> parts) throws HtNoSuchPartException {
         if (isThisStack()) {
             return context.getCurrentStack().getStackModel();
         } else {
@@ -42,7 +42,7 @@ public class StackPartSpecifier implements PartSpecifier {
             }
         }
 
-        throw new PartException("No such stack.");
+        throw new HtNoSuchPartException("No such stack.");
     }
 
     @Override

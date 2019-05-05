@@ -1,6 +1,6 @@
 package com.defano.wyldcard.runtime;
 
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -79,7 +79,7 @@ public class Breadcrumb {
         if (getPart() != null) {
             try {
                 partModel = context.getPart(getPart());
-            } catch (PartException e) {
+            } catch (HtNoSuchPartException e) {
                 // Nothing to do
             }
         }

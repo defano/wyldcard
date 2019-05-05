@@ -39,4 +39,12 @@ public class HtException extends Exception {
     public void setBreadcrumb(Breadcrumb breadcrumb) {
         this.breadcrumb = breadcrumb;
     }
+
+    public String getStackTraceString() {
+        if (getBreadcrumb() != null && getBreadcrumb().getContext() != null) {
+            return getMessage() + "\n" + getBreadcrumb().getContext().getStackTrace();
+        } else {
+            return getMessage();
+        }
+    }
 }

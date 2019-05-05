@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WyldCardFrame;
 
@@ -15,9 +15,9 @@ public class WindowNumberSpecifier extends WindowSpecifier {
     }
 
     @Override
-    public WyldCardFrame find(ExecutionContext context, List<WyldCardFrame> windows) throws PartException {
+    public WyldCardFrame find(ExecutionContext context, List<WyldCardFrame> windows) throws HtNoSuchPartException {
         if (windowNumber < 1 || windowNumber >= windows.size()) {
-            throw new PartException("No such window.");
+            throw new HtNoSuchPartException("No such window.");
         } else {
             return windows.get(windowNumber - 1);
         }

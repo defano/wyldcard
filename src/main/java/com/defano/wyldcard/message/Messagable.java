@@ -1,11 +1,11 @@
 package com.defano.wyldcard.message;
 
+import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
@@ -14,9 +14,10 @@ import com.defano.wyldcard.parts.DeferredKeyEventListener;
 import com.defano.wyldcard.runtime.compiler.Compiler;
 import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.thread.ThreadChecker;
 
-import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Represents an object that can receive HyperTalk messages. See {@link Message} for message structure.
@@ -41,22 +42,73 @@ public interface Messagable {
     PartSpecifier getMe(ExecutionContext context);
 
     /**
-     * Asynchronously sends a message to this part's message passing hierarchy.
+     * Asynchronously handles a message sent to this part's message passing hierarchy.
      * <p>
      * If an error occurs while executing the script handler associated with the message, the syntax error dialog will
-     * be displayed and {@link ExitToHyperCardPreemption} (a {@link RuntimeException}) will be thrown to prevent any
-     * further script execution.
+     * be displayed. Note that an error received during the handling of this message does not prevent further script
+     * execution.
      *
-     * @param context The execution context
-     * @param message The message to be passed
-     * @throws ExitToHyperCardPreemption Thrown if execution of the message handler produces an error.
+     * @param context   The execution context
+     * @param initiator The statement or expression in the abstract syntax tree that caused this message to be sent, null
+     *                  indicates that WyldCard generated this message.
+     * @param message   The message to be passed
      */
-    default void receiveMessage(ExecutionContext context, Message message) {
-        receiveMessage(context, message, (command, trapped, err) -> {
+    default void receiveMessage(ExecutionContext context, ASTNode initiator, Message message) {
+        receiveMessage(context, initiator, message, (command, trapped, err) -> {
             if (err != null) {
-                WyldCard.getInstance().showErrorDialogAndAbort(err);
+                WyldCard.getInstance().showErrorDialog(err);
             }
         });
+    }
+
+    /**
+     * Asynchronously handles a message sent by WyldCard to this part's message passing hierarchy.
+     * <p>
+     * This is a convenience form of {@link #receiveMessage(ExecutionContext, ASTNode, Message)} that provides a null
+     * initiator (indicating that this message is the root of the call stack). Any message sent as the result
+     * of executing a statement or function in a script (i.e., a function call, send command, etc.) should use
+     * {@link #receiveMessage(ExecutionContext, ASTNode, Message)} and pass the statement or expression that
+     * initiated the message.
+     *
+     * @param context The execution context
+     * @param message The message to be received
+     */
+    default void receiveMessage(ExecutionContext context, Message message) {
+        receiveMessage(context, null, message);
+    }
+
+    /**
+     * Synchronously handles a message sent to this part's message passing hierarchy. This method may not be invoked on
+     * the Swing dispatch thread.
+     *
+     * @param context   The execution context.
+     * @param initiator The statement or expression in the abstract syntax tree that caused this message to be sent,
+     *                  null indicates that WyldCard generated this message.
+     * @param message   The message to be received
+     * @throws HtException Thrown if an error occurs while handling this message.
+     */
+    default void blockingReceiveMessage(ExecutionContext context, ASTNode initiator, Message message) throws HtException {
+        ThreadChecker.assertWorkerThread();
+
+        CountDownLatch cdl = new CountDownLatch(1);
+        final HtException[] exception = new HtException[1];
+
+        receiveMessage(context, initiator, message, (msg, wasTrapped, error) -> {
+            if (error != null) {
+                exception[0] = error;
+            }
+            cdl.countDown();
+        });
+
+        try {
+            cdl.await();
+        } catch (InterruptedException e) {
+            throw new HtException("Script execution interrupted.");
+        }
+
+        if (exception[0] != null) {
+            throw exception[0];
+        }
     }
 
     /**
@@ -64,48 +116,44 @@ public interface Messagable {
      * hierarchy, notifying an observer with completion status when complete.
      *
      * @param context      The execution context
+     * @param initiator    The statement or expression in the abstract syntax tree that caused this message to be sent,
+     *                     null indicates that WyldCard generated this message.
      * @param message      The message to be received by this part
      * @param onCompletion A callback that will fire as soon as the command has been executed in script; cannot be null.
      *                     Note that this callback will not fire if the script terminates as a result of an error.
      */
-    default void receiveMessage(ExecutionContext context, Message message, MessageCompletionObserver onCompletion) {
+    default void receiveMessage(ExecutionContext context, ASTNode initiator, Message message, MessageCompletionObserver onCompletion) {
 
-        try {
-            // No messages are sent when cmd-option is down; some messages not sent when 'lockMessages' is true
-            if (WyldCard.getInstance().getKeyboardManager().isPeeking(context) ||
-                    (message instanceof SystemMessage &&
-                            ((SystemMessage) message).isLockable() &&
-                            WyldCard.getInstance().getWyldCardPart().isLockMessages())) {
-                onCompletion.onMessagePassed(message, false, null);
-                return;
-            }
-
-            // Attempt to invoke command handler in this part and listen for completion
-            Compiler.asyncExecuteHandler(context, getMe(context), getScript(context), message, (me, script, handler, trappedMessage, exception) -> {
-
-                // Did message generate an error
-                if (exception != null) {
-                    onCompletion.onMessagePassed(message, true, exception);
-                }
-
-                // Did this part trap this command?
-                else if (trappedMessage) {
-                    onCompletion.onMessagePassed(message, true, null);
-                }
-
-                // Message not trapped, send message to next part in the hierarchy
-                else {
-                    Messagable nextRecipient = getNextMessageRecipient(context, me.getType());
-                    if (nextRecipient != null) {
-                        nextRecipient.receiveMessage(context, message, onCompletion);
-                    }
-                }
-            });
-        } catch (ExitToHyperCardPreemption e) {
-            if (!SwingUtilities.isEventDispatchThread()) {
-                throw e;
-            }
+        // No messages are sent when cmd-option is down; some messages not sent when 'lockMessages' is true
+        if (WyldCard.getInstance().getKeyboardManager().isPeeking(context) ||
+                (message instanceof SystemMessage &&
+                        ((SystemMessage) message).isLockable() &&
+                        WyldCard.getInstance().getWyldCardPart().isLockMessages())) {
+            onCompletion.onMessagePassed(message, false, null);
+            return;
         }
+
+        // Attempt to invoke command handler in this part and listen for completion
+        Compiler.asyncExecuteHandler(context, initiator, getMe(context), getScript(context), message, (me, script, handler, trappedMessage, exception) -> {
+
+            // Did message generate an error
+            if (exception != null) {
+                onCompletion.onMessagePassed(message, true, exception);
+            }
+
+            // Did this part trap this command?
+            else if (trappedMessage) {
+                onCompletion.onMessagePassed(message, true, null);
+            }
+
+            // Message not trapped, send message to next part in the hierarchy
+            else {
+                Messagable nextRecipient = getNextMessageRecipient(context, me.getType());
+                if (nextRecipient != null) {
+                    nextRecipient.receiveMessage(context, initiator, message, onCompletion);
+                }
+            }
+        });
     }
 
     /**
@@ -136,7 +184,7 @@ public interface Messagable {
                 e.getKeyChar(),
                 e.getKeyLocation());
 
-        receiveMessage(context, message, (command1, wasTrapped, error) -> {
+        receiveMessage(context, null, message, (command1, wasTrapped, error) -> {
             if (!wasTrapped) {
                 c.dispatchEvent(deferredCopy);
             }
@@ -146,12 +194,14 @@ public interface Messagable {
     /**
      * Invokes a function defined in the part's script, blocking until the function completes.
      *
-     * @param context The execution context
-     * @param message The function to execute.
+     * @param context   The execution context
+     * @param initiator The statement or expression in the abstract syntax tree that caused this message to be sent, null
+     *                  indicates that WyldCard generated this message.
+     * @param message   The function to execute.
      * @return The value returned by the function upon completion.
      * @throws HtSemanticException Thrown if a syntax or semantic error occurs attempting to execute the function.
      */
-    default Value invokeFunction(ExecutionContext context, Message message) throws HtException {
+    default Value invokeFunction(ExecutionContext context, ASTNode initiator, Message message) throws HtException {
         NamedBlock function = getScript(context).getNamedBlock(message.getMessageName());
         Messagable target = this;
 
@@ -168,7 +218,7 @@ public interface Messagable {
             function = target.getScript(context).getNamedBlock(message.getMessageName());
         }
 
-        return Compiler.blockingExecuteFunction(context, target.getMe(context), function, message.getArguments(context));
+        return Compiler.blockingExecuteFunction(context, initiator, target.getMe(context), function, message.getArguments(context));
     }
 
     /**
@@ -183,11 +233,10 @@ public interface Messagable {
         switch (type) {
             case BACKGROUND:
                 return context.getCurrentStack().getStackModel();
-            case WINDOW:
-            case MESSAGE_BOX:
-                return context.getCurrentCard().getPartModel();
             case CARD:
                 return context.getCurrentCard().getPartModel().getBackgroundModel();
+            case WINDOW:
+            case MESSAGE_BOX:
             case FIELD:
             case BUTTON:
                 return context.getCurrentCard().getPartModel();

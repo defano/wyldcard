@@ -6,7 +6,7 @@ import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -110,9 +110,9 @@ public interface PartSpecifier {
      * @param context    The execution context
      * @param stackModel The model of the stack to look within
      * @return The found stack model
-     * @throws PartException Thrown if the part cannot be found.
+     * @throws HtNoSuchPartException Thrown if the part cannot be found.
      */
-    default PartModel findInStack(ExecutionContext context, StackModel stackModel) throws PartException {
+    default PartModel findInStack(ExecutionContext context, StackModel stackModel) throws HtNoSuchPartException {
         if (isSpecifyingCardPart()) {
             return context.getCurrentCard().getPartModel().findPart(context, this);
         } else if (isSpecifyingBackgroundPart()) {

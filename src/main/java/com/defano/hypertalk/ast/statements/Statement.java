@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.ASTNode;
-import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
+import com.defano.hypertalk.ast.preemptions.ExitToHyperCard;
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -79,13 +79,13 @@ public abstract class Statement extends ASTNode {
      * Checks to see if the flow of execution should be stopped and the debugger invoked
      * @param context The execution context.
      */
-    protected void handleBreakpoints(ExecutionContext context) {
+    protected void handleBreakpoints(ExecutionContext context) throws ExitToHyperCard {
         if (DebugContext.getInstance().isBreakpoint(context, this)) {
             DebugContext.getInstance().debug(context, this);
 
             if (abortFlag) {
                 abortFlag = false;
-                throw new ExitToHyperCardPreemption();
+                throw new ExitToHyperCard();
             }
         }
     }

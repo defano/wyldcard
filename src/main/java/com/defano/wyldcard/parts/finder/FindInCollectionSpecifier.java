@@ -1,7 +1,7 @@
 package com.defano.wyldcard.parts.finder;
 
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
@@ -18,7 +18,7 @@ public interface FindInCollectionSpecifier extends PartSpecifier {
      * @param context    The execution context
      * @param collection The collection of parts to look within
      * @return The specified part within the given collection
-     * @throws PartException Thrown if the specified part cannot be found
+     * @throws HtNoSuchPartException Thrown if the specified part cannot be found
      */
-    PartModel findInCollection(ExecutionContext context, List<PartModel> collection) throws PartException;
+    PartModel findInCollection(ExecutionContext context, List<PartModel> collection) throws HtNoSuchPartException;
 }

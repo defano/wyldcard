@@ -1,5 +1,6 @@
 package com.defano.wyldcard.runtime.compiler.task;
 
+import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -8,7 +9,6 @@ import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.preemptions.TerminateHandlerPreemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.message.HandlerInvocation;
 import com.defano.wyldcard.debug.message.HandlerInvocationCache;
 import com.defano.wyldcard.message.Message;
@@ -19,12 +19,14 @@ import java.util.List;
 public class MessageHandlerExecutionTask implements HandlerExecutionTask {
 
     private final ExecutionContext context;
+    private final ASTNode callingNode;
     private final NamedBlock handler;
     private final PartSpecifier me;
     private final Message message;
 
-    public MessageHandlerExecutionTask(ExecutionContext context, PartSpecifier me, NamedBlock handler, Message message) {
+    public MessageHandlerExecutionTask(ExecutionContext context, ASTNode callingNode, PartSpecifier me, NamedBlock handler, Message message) {
         this.context = context;
+        this.callingNode = callingNode;
         this.handler = handler;
         this.me = me;
         this.message = message;
@@ -39,7 +41,7 @@ public class MessageHandlerExecutionTask implements HandlerExecutionTask {
         HandlerInvocationCache.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, arguments, me, context.getTarget() == null, context.getStackDepth(), true));
 
         // Push a new context
-        context.pushStackFrame(handler.getLineNumber(), handler.name, me, arguments);
+        context.pushStackFrame(callingNode, handler.name, me, arguments);
 
         // Target refers to the part first receiving the message
         if (context.getTarget() == null) {
@@ -58,25 +60,23 @@ public class MessageHandlerExecutionTask implements HandlerExecutionTask {
         // Execute handler
         try {
             handler.statements.execute(context);
+            context.popStackFrame();
         }
 
         // Script invoked 'pass {handlerName}' command; check semantics
         catch (PassPreemption e) {
             trapped = false;
+            context.popStackFrame();
         }
 
         // Script invoked 'exit {handlerName}' command; check semantics
         catch (TerminateHandlerPreemption e) {
-            // Nothing to do
+            context.popStackFrame();
         }
 
         // Script invoked some other (illegal) form of exit (like 'exit repeat')
         catch (Preemption e) {
-            WyldCard.getInstance().showErrorDialogAndAbort(new HtSemanticException("Cannot exit from here."));
-        }
-
-        finally {
-            context.popStackFrame();
+            throw new HtSemanticException("Cannot exit from here.");
         }
 
         return trapped;

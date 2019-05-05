@@ -1,16 +1,15 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
-import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.hypertalk.ast.model.SortDirection;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.model.SortDirection;
+import com.defano.hypertalk.ast.model.SortStyle;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.comparator.CardExpressionComparator;
-import com.defano.hypertalk.ast.model.SortStyle;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
+import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -64,7 +63,7 @@ public class SortCardsCmd extends Command {
         } catch (HtUncheckedSemanticException e) {
             // Error occurred sorting; revert all changes
             context.getCurrentStack().getStackModel().setCardModels(allCards);
-            WyldCard.getInstance().showErrorDialogAndAbort(e.getHtCause());
+            throw e.getHtCause();
         } finally {
             // Because card order may have changed, lets navigate back to where we started
             int thisCardIdx = indexOfCardId(context, context.getCurrentStack().getStackModel().getCardModels(), thisCardId);

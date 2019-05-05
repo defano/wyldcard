@@ -1,8 +1,8 @@
 package com.defano.wyldcard.parts.model;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.properties.SimplePropertiesModel;
 import com.defano.wyldcard.properties.PropertiesModel;
+import com.defano.wyldcard.properties.SimplePropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
@@ -10,13 +10,13 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
  */
 public interface PropertyChangeObserver {
     /**
-     * Fired to indicate the value of an attribute was recently changed. Note that this method will always be invoked on
-     * the dispatch thread, and, therefore, is not guaranteed to fire synchronously with the attribute change.
-     * Note that this method will fire even when oldValue is equal to newValue.
+     * Fired to indicate the value of an attribute was recently set, even when the new value is the same as the old.
+     * <p>
+     * This method will always be invoked on the dispatch thread, and, therefore, is not guaranteed to fire
+     * synchronously with the attribute change.
      *
-     * Use {@link PropertyWillChangeObserver} for a synchronous notification of a property change.
-     * @param context The execution context.
-     * @param model
+     * @param context  The execution context.
+     * @param model    The property model that owns the property that is changing
      * @param property The name of the property (attribute) that changed.
      * @param oldValue The attribute's previous value
      * @param newValue The attribute's new value

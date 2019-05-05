@@ -4,12 +4,11 @@ import java.util.Stack;
 
 public class CallStack extends Stack<StackFrame> {
 
-    @Override
-    public String toString() {
+    public String getStackTraceString() {
         StringBuilder builder = new StringBuilder();
 
-        for (StackFrame stackFrame : this) {
-            builder.append(stackFrame.toString()).append("\n");
+        for (int idx = this.size() - 1; idx >= 0; idx--) {
+            builder.append("\t").append("at ").append(this.get(idx).getStackTraceEntryString()).append("\n");
         }
 
         return builder.toString();

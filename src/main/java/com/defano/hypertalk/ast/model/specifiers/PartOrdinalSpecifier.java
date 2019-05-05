@@ -3,7 +3,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 import com.defano.hypertalk.ast.model.Ordinal;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.FindInCollectionSpecifier;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -35,7 +35,7 @@ public class PartOrdinalSpecifier implements FindInCollectionSpecifier {
         }
     }
 
-    public PartModel findInCollection(ExecutionContext context, List<PartModel> parts) throws PartException {
+    public PartModel findInCollection(ExecutionContext context, List<PartModel> parts) throws HtNoSuchPartException {
         List<PartModel> foundParts = parts.stream()
                 .filter(p -> getType() == null || p.getType() == getType())
                 .filter(p -> getOwner() == null || p.getOwner() == getOwner())
@@ -53,7 +53,7 @@ public class PartOrdinalSpecifier implements FindInCollectionSpecifier {
         }
 
         if (index < 0 || index >= foundParts.size()) {
-            throw new PartException("No such " + getHyperTalkIdentifier(context) + ".");
+            throw new HtNoSuchPartException("No such " + getHyperTalkIdentifier(context) + ".");
         } else {
             return foundParts.get(index);
         }

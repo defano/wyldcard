@@ -3,7 +3,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Position;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.FindInCollectionSpecifier;
@@ -40,7 +40,7 @@ public class CardPositionSpecifier implements FindInCollectionSpecifier, PartSpe
      * {@inheritDoc}
      */
     @Override
-    public PartModel findInCollection(ExecutionContext context, List<PartModel> collection) throws PartException {
+    public PartModel findInCollection(ExecutionContext context, List<PartModel> collection) throws HtNoSuchPartException {
         CardModel currentCard = context.getCurrentCard().getPartModel();
         BackgroundModel currentBkgnd = context.getCurrentCard().getPartModel().getBackgroundModel();
 
@@ -73,14 +73,14 @@ public class CardPositionSpecifier implements FindInCollectionSpecifier, PartSpe
             }
         }
 
-        throw new PartException("No such card.");
+        throw new HtNoSuchPartException("No such card.");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PartModel findInStack(ExecutionContext context, StackModel stackModel) throws PartException {
+    public PartModel findInStack(ExecutionContext context, StackModel stackModel) throws HtNoSuchPartException {
         return findInCollection(context, stackModel.getCardModels().stream().map(m -> (PartModel) m).collect(Collectors.toList()));
     }
 

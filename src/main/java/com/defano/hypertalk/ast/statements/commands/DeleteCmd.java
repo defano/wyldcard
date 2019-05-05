@@ -15,7 +15,7 @@ import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -62,7 +62,7 @@ public class DeleteCmd extends Command {
                 }
 
                 owner.removePartModel(context, p);
-            } catch (PartException e) {
+            } catch (HtNoSuchPartException e) {
                 throw new HtSemanticException("No such " + part.toString() + " to delete", e);
             }
         }

@@ -1,17 +1,20 @@
 package com.defano.wyldcard.parts.button;
 
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.ToolType;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.mouse.MouseStillDown;
 import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.parts.builder.ButtonModelBuilder;
 import com.defano.wyldcard.parts.card.CardLayerPart;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +24,7 @@ import java.lang.ref.WeakReference;
 
 /**
  * The controller object associated with a button on a card.
- *
+ * <p>
  * See {@link ButtonModel} for the model associated with this controller.
  * See {@link StyleableButton} for the view associated with this controller.
  */
@@ -30,25 +33,23 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
     private static final int DEFAULT_WIDTH = 120;
     private static final int DEFAULT_HEIGHT = 30;
 
-    private final Owner owner;
-    private ButtonModel partModel;
     private final WeakReference<CardPart> parent;
+    private ButtonModel partModel;
 
-    private ButtonPart(ButtonStyle style, CardPart parent, Owner owner) {
+    private ButtonPart(ButtonStyle style, CardPart parent) {
         super(style);
-
-        this.owner = owner;
         this.parent = new WeakReference<>(parent);
     }
 
     /**
      * Creates a new button on the given card with a given geometry.
      *
-     * @param parent The card that this button will belong to.
+     * @param parent    The card that this button will belong to.
      * @param rectangle The location and size of this button; when null, the default size and location will be assumed.
      * @return The new button.
      */
     public static ButtonPart newButton(CardPart parent, Owner owner, Rectangle rectangle) {
+
         if (rectangle == null) {
             rectangle = new Rectangle(
                     parent.getWidth() / 2 - (DEFAULT_WIDTH / 2),
@@ -57,29 +58,36 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
                     DEFAULT_HEIGHT);
         }
 
-        ButtonPart button = new ButtonPart(ButtonStyle.ROUND_RECT, parent, owner);
-        button.initProperties(rectangle, parent.getPartModel());
+        ButtonPart button = new ButtonPart(ButtonStyle.ROUND_RECT, parent);
+
+        // Assign new ID
+        CardModel parentPartModel = parent.getPartModel();
+        int id = parentPartModel.getStackModel().getNextButtonId(parentPartModel.getId());
+        button.partModel = new ButtonModelBuilder(owner, parentPartModel).withId(id).withBounds(rectangle).build();
+
         return button;
     }
 
     /**
      * Creates a new button view from an existing button data model.
      *
-     *
-     * @param context The execution context.
-     * @param parent The card that this button will belong to.
+     * @param context   The execution context.
+     * @param parent    The card that this button will belong to.
      * @param partModel The data model representing this button.
      * @return The new button.
      */
     public static ButtonPart fromModel(ExecutionContext context, CardPart parent, ButtonModel partModel) {
         ButtonStyle style = ButtonStyle.fromName(partModel.get(context, ButtonModel.PROP_STYLE).toString());
-        ButtonPart button = new ButtonPart(style, parent, partModel.getOwner());
+        ButtonPart button = new ButtonPart(style, parent);
 
         button.partModel = partModel;
         button.partModel.setCurrentCardId(parent.getId(context));
         return button;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void partOpened(ExecutionContext context) {
@@ -87,6 +95,9 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         partModel.addPropertyChangedObserver(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void partClosed(ExecutionContext context) {
@@ -95,21 +106,33 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CardPart getCard() {
         return parent.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CardLayerPart getPart() {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ToolType getEditTool() {
         return ToolType.BUTTON;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void replaceViewComponent(ExecutionContext context, Component oldButtonComponent, Component newButtonComponent) {
@@ -119,21 +142,33 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PartType getType() {
         return PartType.BUTTON;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public JComponent getComponent() {
         return this.getButtonComponent();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ButtonModel getPartModel() {
         return partModel;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void mousePressed(MouseEvent e) {
@@ -144,6 +179,9 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void mouseReleased(MouseEvent e) {
@@ -156,6 +194,9 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void mouseEntered(MouseEvent e) {
@@ -166,6 +207,9 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void mouseExited(MouseEvent e) {
@@ -176,6 +220,9 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void mouseClicked(MouseEvent e) {
@@ -185,6 +232,9 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
@@ -212,11 +262,4 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         }
     }
 
-    private void initProperties(Rectangle geometry, PartModel parentPartModel) {
-        CardPart cardPart = parent.get();
-        if (cardPart != null) {
-            int id = cardPart.getPartModel().getStackModel().getNextButtonId(parentPartModel.getId());
-            partModel = new ButtonModelBuilder(owner, parentPartModel).withId(id).withBounds(geometry).build();
-        }
-    }
 }

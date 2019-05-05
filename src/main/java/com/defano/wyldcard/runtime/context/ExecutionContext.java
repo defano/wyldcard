@@ -1,17 +1,18 @@
 package com.defano.wyldcard.runtime.context;
 
+import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.chunk.Chunk;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtNoSuchPropertyException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.StackManager;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.Part;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -229,14 +230,15 @@ public class ExecutionContext {
      * @param me        The part which the 'me' keyword refers to in this context.
      * @param arguments Evaluated arguments passed to this handler or function.
      */
-    public void pushStackFrame(Integer lineNumber, String message, PartSpecifier me, List<Value> arguments) throws HtException {
+    public void pushStackFrame(ASTNode callingNode, String message, PartSpecifier me, List<Value> arguments) throws HtException {
 
         // Kill script execution before we overflow JVM call stack
         if (callStack.size() == MAX_CALL_STACK_DEPTH) {
             throw new HtSemanticException("Too much recursion.");
         }
 
-        callStack.push(new StackFrame(lineNumber, me, message, arguments));
+        getStackFrame().setAstNode(callingNode);
+        callStack.push(new StackFrame(me, message, arguments));
     }
 
     /**
@@ -416,9 +418,9 @@ public class ExecutionContext {
      *
      * @param ps The part specifier
      * @return The part's model
-     * @throws PartException Thrown if no such part exists
+     * @throws HtNoSuchPartException Thrown if no such part exists
      */
-    public PartModel getPart(PartSpecifier ps) throws PartException {
+    public PartModel getPart(PartSpecifier ps) throws HtNoSuchPartException {
         return WyldCard.getInstance().findPart(this, ps);
     }
 
@@ -430,7 +432,7 @@ public class ExecutionContext {
      * @param ps       A part's specifier, or null to indicate a HyperCard property
      * @return The value of the requested property
      * @throws HtNoSuchPropertyException Thrown if the property does not exist on the given part
-     * @throws PartException           Thrown if the part does not exist
+     * @throws HtNoSuchPartException           Thrown if the part does not exist
      */
     public Value getProperty(String property, PartSpecifier ps) throws HtException {
         if (ps == null) {
@@ -611,6 +613,10 @@ public class ExecutionContext {
      */
     private void expire() {
         WyldCard.getInstance().getWyldCardPart().resetProperties(this);
+    }
+
+    public String getStackTrace() {
+        return callStack.getStackTraceString();
     }
 
     @Override

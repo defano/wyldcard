@@ -38,7 +38,7 @@ public class ButtonModel extends CardLayerPartModel implements PropertyChangeObs
     public static final String PROP_SELECTEDITEM = "--selectedindex--";
 
     private final Map<Integer, Boolean> unsharedHilite = new HashMap<>();
-    private boolean sharedHilite = false;
+    private boolean sharedHiliteState = false;
 
     public ButtonModel(Owner owner, PartModel parentPartModel) {
         super(PartType.BUTTON, owner, parentPartModel);
@@ -55,7 +55,7 @@ public class ButtonModel extends CardLayerPartModel implements PropertyChangeObs
         define(PROP_SHOWNAME).asValue(true);
         define(PROP_STYLE).asValue(ButtonStyle.ROUND_RECT.toString());
         define(PROP_FAMILY).asValue();
-        define(PROP_AUTOHILITE).asValue(true);
+        define(PROP_AUTOHIGHLIGHT).asValue(true);
         define(PROP_CONTENTS).asValue();
         define(PROP_ICON).asValue();
         define(PROP_ICONALIGN).asValue("default");
@@ -83,7 +83,7 @@ public class ButtonModel extends CardLayerPartModel implements PropertyChangeObs
             return lines.get(selectedLineIdx);
         });
 
-        define(PROP_AUTOHIGHLITE, PROP_AUTOHILIGHT, PROP_AUTOHIGHLIGHT).asAliasOf(PROP_AUTOHILITE);
+        define(PROP_AUTOHIGHLITE, PROP_AUTOHILIGHT, PROP_AUTOHIGHLITE, PROP_AUTOHILITE).asAliasOf(PROP_AUTOHIGHLIGHT);
 
         define(PROP_HILITE, PROP_HIGHLITE, PROP_HILIGHT, PROP_HIGHLIGHT).asComputedValue()
                 .withGetter((context, model) -> getHilite(context))
@@ -99,7 +99,7 @@ public class ButtonModel extends CardLayerPartModel implements PropertyChangeObs
 
     private void setHilite(ExecutionContext context, int forCardId, Value hilite) {
         if (isSharedHilite(context)) {
-            sharedHilite = hilite.booleanValue();
+            sharedHiliteState = hilite.booleanValue();
         } else {
             unsharedHilite.put(forCardId, hilite.booleanValue());
         }
@@ -111,7 +111,7 @@ public class ButtonModel extends CardLayerPartModel implements PropertyChangeObs
 
     private Value getHilite(ExecutionContext context, int forCardId) {
         if (isSharedHilite(context)) {
-            return new Value(sharedHilite);
+            return new Value(sharedHiliteState);
         } else {
             return new Value(unsharedHilite.getOrDefault(forCardId, false));
         }

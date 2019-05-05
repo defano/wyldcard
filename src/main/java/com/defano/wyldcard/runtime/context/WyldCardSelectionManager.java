@@ -1,5 +1,6 @@
 package com.defano.wyldcard.runtime.context;
 
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.field.AddressableSelection;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.PartType;
@@ -38,7 +39,7 @@ public class WyldCardSelectionManager implements SelectionManager {
     }
 
     @Override
-    public PartModel getSelectedPart(ExecutionContext context) throws HtSemanticException {
+    public PartModel getSelectedPart(ExecutionContext context) throws HtException {
 
         // No selection exists
         if (theSelectionPart == null || getSelectionRange() == null || getSelectionRange().length() == 0) {
@@ -50,7 +51,7 @@ public class WyldCardSelectionManager implements SelectionManager {
     }
 
     @Override
-    public AddressableSelection getManagedSelection(ExecutionContext context) throws HtSemanticException {
+    public AddressableSelection getManagedSelection(ExecutionContext context) throws HtException {
         PartModel partModel = getSelectedPart(context);
 
         if (partModel instanceof AddressableSelection) {
@@ -61,7 +62,7 @@ public class WyldCardSelectionManager implements SelectionManager {
     }
 
     @Override
-    public Value getSelection(ExecutionContext context) throws HtSemanticException {
+    public Value getSelection(ExecutionContext context) throws HtException {
         return getManagedSelection(context).getSelectedText(context);
     }
 

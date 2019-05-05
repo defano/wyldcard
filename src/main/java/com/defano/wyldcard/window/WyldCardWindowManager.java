@@ -197,6 +197,10 @@ public class WyldCardWindowManager implements WindowManager {
                 .setLocationRightOf(stackWindow)
                 .alignTopTo(stackWindow);
 
+        messageWatcher
+                .setLocationRightOf(magnifierPalette)
+                .alignTopTo(stackWindow);
+
         brushesPalette
                 .setLocationRightOf(stackWindow)
                 .setLocationBelow(magnifierPalette);

@@ -1,10 +1,10 @@
 package com.defano.wyldcard;
 
-import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import com.defano.wyldcard.awt.keyboard.KeyboardManager;
-import com.defano.wyldcard.awt.mouse.MouseManager;
 import com.defano.wyldcard.awt.keyboard.WyldCardKeyboardManager;
+import com.defano.wyldcard.awt.mouse.MouseManager;
 import com.defano.wyldcard.awt.mouse.WyldCardMouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.cursor.WyldCardCursorManager;
@@ -14,11 +14,11 @@ import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.parts.editor.WyldCardPartEditManager;
 import com.defano.wyldcard.parts.finder.PartFinder;
 import com.defano.wyldcard.parts.wyldcard.WyldCardPart;
+import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
 import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.patterns.WyldCardPatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.WyldCardPeriodicMessageManager;
-import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
 import com.defano.wyldcard.runtime.context.*;
 import com.defano.wyldcard.search.SearchManager;
 import com.defano.wyldcard.search.WyldCardSearchManager;
@@ -128,6 +128,7 @@ public class WyldCard implements PartFinder {
             periodicMessageManager.start();                     // Idle and mouseWithin periodic message generation
             cursorManager.start();                              // Mouse cursor assignment
             partToolManager.start();                            // Button and field tool selection state
+            stackManager.start();                               // Stack opening, closing and disposal
 
             // Create and open a default stack
             stackManager.newStack(new ExecutionContext());
@@ -160,11 +161,9 @@ public class WyldCard implements PartFinder {
      *
      * @param e The syntax error to display
      */
-    public void showErrorDialogAndAbort(HtException e) {
-        showErrorDialog(e);
-
-        // Abort further script execution
-        throw new ExitToHyperCardPreemption();
+    public void showErrorDialogAndAbort(HtUncheckedSemanticException e) throws HtException {
+        showErrorDialog(e.getHtCause());
+        throw e.getHtCause();
     }
 
     public void showErrorDialog(HtException e) {

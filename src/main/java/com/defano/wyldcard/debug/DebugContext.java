@@ -3,7 +3,7 @@ package com.defano.wyldcard.debug;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
@@ -332,7 +332,7 @@ public class DebugContext {
     private ScriptEditor showDebugEditor(ExecutionContext context, PartSpecifier partSpecifier) {
         try {
             return context.getPart(partSpecifier).editScript(context);
-        } catch (PartException e) {
+        } catch (HtNoSuchPartException e) {
             throw new IllegalStateException("Bug! Attempt to debug a bogus part.");
         }
     }

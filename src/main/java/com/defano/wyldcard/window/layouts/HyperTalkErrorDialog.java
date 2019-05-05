@@ -27,8 +27,6 @@ public class HyperTalkErrorDialog {
 
     public void showError(HtException e) {
         Invoke.onDispatch(() -> {
-            e.printStackTrace();
-
             if (!errorDialogVisible) {
                 errorDialogVisible = true;
 

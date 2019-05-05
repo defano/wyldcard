@@ -26,6 +26,6 @@ public class UserFunctionExp extends Expression {
         PartModel part = context.getPart(ps);
         Message msg = MessageBuilder.named(function).withArgumentExpression(context, arguments).build();
 
-        return part.invokeFunction(context, msg);
+        return part.invokeFunction(context, this, msg);
     }
 }

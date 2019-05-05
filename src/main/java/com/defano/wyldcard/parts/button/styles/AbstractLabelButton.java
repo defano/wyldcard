@@ -1,14 +1,14 @@
 package com.defano.wyldcard.parts.button.styles;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.icons.IconDatabase;
 import com.defano.wyldcard.parts.ContainerWrappedPart;
-import com.defano.wyldcard.parts.button.HyperCardButton;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.ButtonModel;
+import com.defano.wyldcard.parts.button.HyperCardButton;
 import com.defano.wyldcard.parts.button.IconAlignable;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
@@ -19,6 +19,8 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
 
     protected final ToolEditablePart toolEditablePart;
     private boolean isHilited = false;
+    private boolean showName = false;
+    private String assignedName;
     private JLabel label;
     private ButtonIcon icon;
 
@@ -49,12 +51,10 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (icon == null) {
+        // Do not invert button when an icon is present; only invert the icon
+        if (!hasIcon()) {
             paintHilite(paintHilited(), (Graphics2D) g);
-            label.setForeground(getLabelColor());
         }
-
-        label.paintComponents(g);
     }
 
     @Override
@@ -72,19 +72,19 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
     public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_NAME:
-            case ButtonModel.PROP_SHOWNAME:
-                boolean showName = toolEditablePart.getPartModel().get(context, ButtonModel.PROP_SHOWNAME).booleanValue();
-                label.setText(showName ? toolEditablePart.getPartModel().get(context, ButtonModel.PROP_NAME).toString() : "");
+                assignedName = newValue.toString();
                 break;
 
-            case ButtonModel.PROP_HILITE:
+            case ButtonModel.PROP_SHOWNAME:
+                showName = newValue.booleanValue();
+                break;
+
+            case ButtonModel.PROP_HIGHLIGHT:
                 isHilited = newValue.booleanValue();
-                updateIconHiliteState();
                 break;
 
             case ButtonModel.PROP_ENABLED:
                 setEnabled(newValue.booleanValue());
-                updateIconHiliteState();
                 break;
 
             case ButtonModel.PROP_TEXTSIZE:
@@ -100,6 +100,7 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:
+                //noinspection MagicConstant
                 label.setHorizontalAlignment(FontUtils.getAlignmentForValue(newValue));
                 break;
 
@@ -113,8 +114,8 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
                 break;
         }
 
-        revalidate();
-        repaint();
+        updateDrawState();
+        revalidate(); repaint();
     }
 
     @Override
@@ -127,9 +128,20 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
         return this;
     }
 
-    private void updateIconHiliteState() {
-        if (icon != null) {
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        updateDrawState();
+    }
+
+    private void updateDrawState() {
+        label.setForeground(getLabelColor());
+        label.setText(showName ? assignedName : "");
+
+        if (hasIcon()) {
             label.setIcon(paintHilited() ? icon.getInvertedIcon() : icon.getIcon());
+        } else {
+            label.setIcon(null);
         }
     }
 
@@ -140,5 +152,9 @@ public abstract class AbstractLabelButton extends JPanel implements ContainerWra
 
     private boolean paintHilited() {
         return isHilited && isEnabled();
+    }
+
+    private boolean hasIcon() {
+        return icon != null;
     }
 }

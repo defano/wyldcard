@@ -9,7 +9,7 @@ import com.defano.hypertalk.ast.expressions.factor.FactorAssociation;
 import com.defano.hypertalk.ast.expressions.operators.UnaryOperatorExp;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -46,7 +46,7 @@ public class ThereIsAOp extends UnaryOperatorExp {
                         try {
                             context.getPart(factor.evaluateAsSpecifier(context));
                             found.set(true);
-                        } catch (PartException e) {
+                        } catch (HtNoSuchPartException e) {
                             // Not found
                         }
                     })

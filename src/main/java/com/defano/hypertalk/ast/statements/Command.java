@@ -41,7 +41,7 @@ public abstract class Command extends Statement implements MessageCompletionObse
 
             // Send command message to current card
             Message message = MessageBuilder.named(messageName).withArguments(getEvaluatedMessageArguments(context)).build();
-            context.getCurrentCard().getPartModel().receiveMessage(context, message, this);
+            context.getCurrentCard().getPartModel().receiveMessage(context, this, message, this);
 
             // Wait for command handler to finish executing
             try {

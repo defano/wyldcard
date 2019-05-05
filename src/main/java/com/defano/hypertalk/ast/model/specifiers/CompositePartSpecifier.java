@@ -4,7 +4,7 @@ import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.card.CardModel;
@@ -30,7 +30,7 @@ public class CompositePartSpecifier implements PartSpecifier {
     }
 
     @Override
-    public PartModel findInStack(ExecutionContext context, StackModel stack) throws PartException {
+    public PartModel findInStack(ExecutionContext context, StackModel stack) throws HtNoSuchPartException {
         try {
             PartModel foundPart;
             PartSpecifier owningPartSpecifier = getOwningPartExp().evaluateAsSpecifier(context);
@@ -71,7 +71,7 @@ public class CompositePartSpecifier implements PartSpecifier {
             return foundPart;
 
         } catch (HtException e) {
-            throw new PartException(e);
+            throw new HtNoSuchPartException(e);
         }
     }
 

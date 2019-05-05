@@ -416,7 +416,7 @@ public class WyldCardToolsManager implements ToolsManager {
                 .withArgument(toolType.getToolNumber())
                 .build();
 
-        WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().receiveMessage(ExecutionContext.unboundInstance(), message, (command, wasTrapped, err) -> {
+        WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().receiveMessage(ExecutionContext.unboundInstance(), null, message, (command, wasTrapped, err) -> {
             if (!wasTrapped) {
                 SwingUtilities.invokeLater(() -> forceToolSelection(toolType, false));
             }

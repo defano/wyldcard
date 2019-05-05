@@ -46,7 +46,7 @@ public class ArtVandelay {
             try {
                 exportPaint(fd.getFiles()[0]);
             } catch (HtException e) {
-                WyldCard.getInstance().showErrorDialogAndAbort(e);
+                WyldCard.getInstance().showErrorDialog(e);
             }
         }
     }

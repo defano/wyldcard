@@ -2,6 +2,7 @@ package com.defano.wyldcard.runtime.context;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.parts.field.AddressableSelection;
@@ -27,7 +28,7 @@ public interface SelectionManager {
      * @throws HtSemanticException Thrown if there is no selection.
      * @param context The execution context.
      */
-    PartModel getSelectedPart(ExecutionContext context) throws HtSemanticException;
+    PartModel getSelectedPart(ExecutionContext context) throws HtException;
 
     /**
      * Gets the AddressableSelection object associated with the active selection.
@@ -35,7 +36,7 @@ public interface SelectionManager {
      * @throws HtSemanticException Thrown if there is no selection.
      * @param context The execution context.
      */
-    AddressableSelection getManagedSelection(ExecutionContext context) throws HtSemanticException;
+    AddressableSelection getManagedSelection(ExecutionContext context) throws HtException;
 
     /**
      * Gets the currently selected text.
@@ -43,7 +44,7 @@ public interface SelectionManager {
      * @throws HtSemanticException Thrown if there is no selection.
      * @param context The execution context.
      */
-    Value getSelection(ExecutionContext context) throws HtSemanticException;
+    Value getSelection(ExecutionContext context) throws HtException;
 
     Value getSelectedLoc();
 

@@ -6,7 +6,7 @@ import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.WindowSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.WindowProxyPartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
@@ -26,9 +26,9 @@ public interface PartFinder {
      * @param context The execution context in which to find the part (identifies the current stack)
      * @param ps      The PartSpecifier identifying the part to find.
      * @return The model associated with the specified part.
-     * @throws PartException Thrown if the requested part does not exist or if the specification is otherwise invalid.
+     * @throws HtNoSuchPartException Thrown if the requested part does not exist or if the specification is otherwise invalid.
      */
-    default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws PartException {
+    default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws HtNoSuchPartException {
 
         // Looking for HyperCard itself (i.e., 'send "greeting" to hypercard')
         if (ps.isSpecifyingHyperCard()) {
@@ -62,9 +62,9 @@ public interface PartFinder {
      * @param context The execution context in which the specifier is being evaluated
      * @param ps      The part specifier
      * @return The referred stack model
-     * @throws PartException Thrown if the stack does not exist or if the specification is otherwise invalid.
+     * @throws HtNoSuchPartException Thrown if the stack does not exist or if the specification is otherwise invalid.
      */
-    default StackModel findReferredStack(ExecutionContext context, PartSpecifier ps) throws PartException {
+    default StackModel findReferredStack(ExecutionContext context, PartSpecifier ps) throws HtNoSuchPartException {
         if (ps instanceof CompositePartSpecifier) {
             try {
                 PartSpecifier root = ps.getRootOwningPartSpecifier(context);
@@ -72,7 +72,7 @@ public interface PartFinder {
                     return findStack(context, (StackPartSpecifier) ps.getRootOwningPartSpecifier(context));
                 }
             } catch (HtException e) {
-                throw new PartException(e);
+                throw new HtNoSuchPartException(e);
             }
         }
 
@@ -86,9 +86,9 @@ public interface PartFinder {
      * @param context The execution context
      * @param ps      A stack specifier
      * @return The found stack model
-     * @throws PartException Thrown if the requested part does not exist or if the specification is otherwise invalid.
+     * @throws HtNoSuchPartException Thrown if the requested part does not exist or if the specification is otherwise invalid.
      */
-    default StackModel findStack(ExecutionContext context, StackPartSpecifier ps) throws PartException {
+    default StackModel findStack(ExecutionContext context, StackPartSpecifier ps) throws HtNoSuchPartException {
         if (ps.isThisStack()) {
             return context.getCurrentStack().getStackModel();
         } else {
@@ -105,7 +105,7 @@ public interface PartFinder {
             }
         }
 
-        throw new PartException("No such stack.");
+        throw new HtNoSuchPartException("No such stack.");
     }
 
 }

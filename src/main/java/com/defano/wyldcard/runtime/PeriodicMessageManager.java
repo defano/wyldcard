@@ -21,4 +21,6 @@ public interface PeriodicMessageManager extends Runnable, StackNavigationObserve
      * @param part The part that the mouse is not within.
      */
     void removeWithin(PartModel part);
+
+    void addIdleObserver(IdleObserver observer);
 }

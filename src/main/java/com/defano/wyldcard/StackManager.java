@@ -13,6 +13,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StackManager {
+
+    /**
+     * Start the stack manager. The behavior of the manager is n
+     */
+    void start();
+
     /**
      * Creates and opens a new stack in a new stack window.
      *

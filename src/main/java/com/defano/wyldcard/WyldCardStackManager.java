@@ -6,18 +6,19 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.message.SystemMessage;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
+import com.defano.wyldcard.runtime.IdleObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.serializer.Serializer;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.util.ImageLayerUtils;
 import com.defano.wyldcard.util.ProxyObservable;
-import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WindowDock;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import com.google.inject.Singleton;
@@ -31,14 +32,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Manages opening, closing, saving and focusing stacks.
  */
 @Singleton
-public class WyldCardStackManager implements StackNavigationObserver, StackManager {
+public class WyldCardStackManager implements StackNavigationObserver, StackManager, IdleObserver {
 
     private final ArrayList<StackPart> openedStacks = new ArrayList<>();
+    private final ConcurrentLinkedQueue<Runnable> disposeQueue = new ConcurrentLinkedQueue<>();
 
     private final BehaviorSubject<StackPart> focusedStack = BehaviorSubject.create();
     private final ProxyObservable<Integer> cardCount = new ProxyObservable<>(BehaviorSubject.createDefault(1));
@@ -48,6 +51,10 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     private final ProxyObservable<Boolean> isRedoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
     private final ProxyObservable<Boolean> isSelectable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
     private final ProxyObservable<Double> canvasScale = new ProxyObservable<>(BehaviorSubject.createDefault(1.0));
+
+    public void start() {
+        WyldCard.getInstance().getPeriodicMessageManager().addIdleObserver(this);
+    }
 
     /**
      * {@inheritDoc}
@@ -78,7 +85,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         try {
             // Try to find the requested stack among those already opened...
             return WyldCard.getInstance().findStack(context, specifier);
-        } catch (PartException e) {
+        } catch (HtNoSuchPartException e) {
 
             // ... if that fails, interpret the specifier as a file name
             StackPart foundStack = openStack(context, new File(String.valueOf(specifier.getValue())), options.inNewWindow);
@@ -444,30 +451,36 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     }
 
     /**
-     * Disposes resources associated with the given stack (including its bound window, when requested). Causes WyldCard
-     * to quit when the last stack window is disposed.
+     * Enqueues a request to dispose resources associated with the given stack (including its bound window, when
+     * requested).
+     * <p>
+     * The disposal queue is processed whenever WyldCard is idle; this allows us to dispose stack resources only after
+     * the closeCard, closeBackground and closeStack handlers have had a chance to execute.
+     * <p>
+     * WyldCard will quit when the last stack window is disposed.
      *
      * @param context       The execution context
      * @param stack         The stack to dispose
      * @param disposeWindow When true, dispose the stack's window
      */
-    @RunOnDispatch
     private void disposeStack(ExecutionContext context, StackPart stack, boolean disposeWindow) {
-        // Clean up stack resources
-        stack.partClosed(context);
+        disposeQueue.add(() -> {
+            // Clean up stack resources
+            stack.partClosed(context);
 
-        // Dispose the stack's frame when requested
-        if (disposeWindow && stack.getOwningStackWindow() != null) {
-            stack.getOwningStackWindow().dispose();
-        }
+            // Dispose the stack's frame when requested
+            if (disposeWindow && stack.getOwningStackWindow() != null) {
+                stack.getOwningStackWindow().dispose();
+            }
 
-        // Forget about it...
-        openedStacks.remove(stack);
+            // Forget about it...
+            openedStacks.remove(stack);
 
-        // Finally, quit application when last stack window has closed
-        if (openedStacks.size() == 0) {
-            System.exit(0);
-        }
+            // Finally, quit application when last stack window has closed
+            if (openedStacks.size() == 0) {
+                System.exit(0);
+            }
+        });
     }
 
     /**
@@ -520,4 +533,16 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         }
     }
 
+    @Override
+    public void onIdle() {
+        Runnable workItem;
+
+        do {
+            workItem = disposeQueue.poll();
+            if (workItem != null) {
+                workItem.run();
+            }
+
+        } while (workItem != null);
+    }
 }

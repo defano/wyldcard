@@ -4,7 +4,6 @@ import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
@@ -556,11 +555,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         getPartModel().getBackgroundModel().notifyPropertyChangedObserver(context, this, false);
 
         // Send openCard message after UI elements are ready
-        try {
-            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD);
-        } catch (ExitToHyperCardPreemption e) {
-            // Nothing to do; don't interrupt part-open sequence because of HyperTalk error
-        }
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD);
 
         Invoke.asynchronouslyOnDispatch(this::revalidate);
 
@@ -690,7 +685,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     public void keyPressed(KeyEvent e) {
         Message msg = SystemMessage.fromKeyEvent(e, false);
         if (msg != null) {
-            getPartModel().receiveMessage(new ExecutionContext(this), msg, new TextArrowsMessageCompletionObserver(this, e));
+            getPartModel().receiveMessage(new ExecutionContext(this), null, msg, new TextArrowsMessageCompletionObserver(this, e));
         }
     }
 

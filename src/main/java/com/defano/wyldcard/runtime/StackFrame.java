@@ -1,5 +1,6 @@
 package com.defano.wyldcard.runtime;
 
+import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -23,7 +24,7 @@ public class StackFrame {
     private String message = "";                                        // The name of this function/handler
     private Value returnValue = new Value();                            // Value returned from this function
     private PartSpecifier me;                                           // The part that 'me' refers to
-    private Integer lineNumber;
+    private ASTNode astNode;
 
     /**
      * Create a stack frame representing the invocation of unbound script text (i.e., text entered into the message
@@ -41,11 +42,10 @@ public class StackFrame {
      * @param arguments A list of evaluated arguments to be bound the handler's parameter list. May not be null; provide
      *                  an empty list for invocations not passing arguments.
      */
-    public StackFrame(Integer lineNumber, PartSpecifier me, String message, List<Value> arguments) {
+    public StackFrame(PartSpecifier me, String message, List<Value> arguments) {
         this.message = message;
         this.me = me;
         this.params = arguments;
-        this.lineNumber = lineNumber;
     }
 
     /**
@@ -64,6 +64,10 @@ public class StackFrame {
      */
     public void resetCreationTimeMs() {
         this.creationTime = System.currentTimeMillis();
+    }
+
+    public void setAstNode(ASTNode astNode) {
+        this.astNode = astNode;
     }
 
     /**
@@ -92,14 +96,6 @@ public class StackFrame {
      */
     public SymbolTable getVariables() {
         return new CompositeSymbolTable(getScopedGlobalVariables(), getLocalVariables());
-    }
-
-    /**
-     * Gets the starting line number of the handler that generated this stack frame, or null, if not defined.
-     * @return The line number of the associated handler.
-     */
-    public Integer getLineNumber() {
-        return lineNumber;
     }
 
     /**
@@ -204,8 +200,22 @@ public class StackFrame {
         this.me = me;
     }
 
-    @Override
-    public String toString() {
-        return getMessage() + " in " + getMe().getHyperTalkIdentifier(new ExecutionContext()) + " (line " + getLineNumber() + ")";
+    public String getStackTraceEntryString() {
+        StringBuilder builder = new StringBuilder();
+
+        if (astNode != null && astNode.getToken() != null) {
+            builder.append("line ")
+                    .append(astNode.getToken().getLine())
+                    .append(" of ");
+        }
+
+        if (!getMessage().isEmpty()) {
+            builder.append("handler '")
+                    .append(getMessage())
+                    .append("' in ");
+        }
+
+        builder.append(getMe().getHyperTalkIdentifier(new ExecutionContext()));
+        return builder.toString();
     }
 }

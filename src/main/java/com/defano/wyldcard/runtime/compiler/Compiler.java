@@ -1,5 +1,6 @@
 package com.defano.wyldcard.runtime.compiler;
 
+import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Script;
@@ -156,9 +157,9 @@ public class Compiler {
      * @return The value returned by the function (an empty string if the function does not invoke 'return')
      * @throws HtSemanticException Thrown if an error occurs executing the function.
      */
-    public static Value blockingExecuteFunction(ExecutionContext context, PartSpecifier me, NamedBlock function, List<Value> arguments) throws HtException {
+    public static Value blockingExecuteFunction(ExecutionContext context, ASTNode callingNode, PartSpecifier me, NamedBlock function, List<Value> arguments) throws HtException {
         ThreadChecker.assertWorkerThread();
-        return new FunctionHandlerExecutionTask(context, me, function, arguments).call();
+        return new FunctionHandlerExecutionTask(context, callingNode, me, function, arguments).call();
     }
 
     /**
@@ -177,7 +178,7 @@ public class Compiler {
      * @param message            The message whose handler should be executed.
      * @param completionObserver Invoked after the handler has executed on the same thread on which the handler ran.
      */
-    public static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, Message message, HandlerCompletionObserver completionObserver) {
+    public static void asyncExecuteHandler(ExecutionContext context, ASTNode callingNode, PartSpecifier me, Script script, Message message, HandlerCompletionObserver completionObserver) {
 
         // Find handler for message in the script
         NamedBlock handler = script == null ? null : script.getHandler(message.getMessageName());
@@ -185,7 +186,7 @@ public class Compiler {
 
         // Script implements handler for message; execute it
         if (handler != null) {
-            future = getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, me, handler, message));
+            future = getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, callingNode, me, handler, message));
         }
 
         // Special case: No handler in the script for this message; produce a "no-op" execution
@@ -265,7 +266,7 @@ public class Compiler {
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
     public static CheckedFuture<Boolean, HtException> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
-        return getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, me, NamedBlock.anonymousBlock(((Script) blockingCompile(CompilationUnit.SCRIPTLET, statementList)).getStatements()), MessageBuilder.emptyMessage()));
+        return getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, null, me, NamedBlock.anonymousBlock(((Script) blockingCompile(CompilationUnit.SCRIPTLET, statementList)).getStatements()), MessageBuilder.emptyMessage()));
     }
 
     /**

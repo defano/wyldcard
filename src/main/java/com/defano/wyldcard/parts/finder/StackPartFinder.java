@@ -3,7 +3,7 @@ package com.defano.wyldcard.parts.finder;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.WindowSpecifier;
-import com.defano.wyldcard.parts.PartException;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -35,10 +35,10 @@ public interface StackPartFinder extends OrderedPartFinder {
      * @param context The execution context.
      * @param ps      A {@link PartSpecifier} object describing the part to find.
      * @return The model of the requested part.
-     * @throws PartException Thrown if the part cannot be located.
+     * @throws HtNoSuchPartException Thrown if the part cannot be located.
      */
     @Override
-    default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws PartException {
+    default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws HtNoSuchPartException {
         return ps.findInStack(context, getStackModel());
     }
 
@@ -48,9 +48,9 @@ public interface StackPartFinder extends OrderedPartFinder {
      * @param context The execution context
      * @param ps      The specifier indicating the part to find
      * @return The found part
-     * @throws PartException Thrown if the part does not exist
+     * @throws HtNoSuchPartException Thrown if the part does not exist
      */
-    default PartModel findPartInDisplayedOrder(ExecutionContext context, PartSpecifier ps) throws PartException {
+    default PartModel findPartInDisplayedOrder(ExecutionContext context, PartSpecifier ps) throws HtNoSuchPartException {
         return OrderedPartFinder.super.findPart(context, ps);
     }
 
@@ -61,9 +61,9 @@ public interface StackPartFinder extends OrderedPartFinder {
      * @param context The execution context.
      * @param ps      A composite part specifier, the owning card of which should be returned.
      * @return The owning card
-     * @throws PartException Thrown if no such part can be found.
+     * @throws HtNoSuchPartException Thrown if no such part can be found.
      */
-    default CardModel findOwningCard(ExecutionContext context, CompositePartSpecifier ps) throws PartException {
+    default CardModel findOwningCard(ExecutionContext context, CompositePartSpecifier ps) throws HtNoSuchPartException {
         BackgroundModel bkgndModel = ps.getOwningPartExp().partFactor(context, BackgroundModel.class);
         if (bkgndModel != null) {
             return bkgndModel.getCardModels().get(0);
@@ -74,7 +74,7 @@ public interface StackPartFinder extends OrderedPartFinder {
             return cardModel;
         }
 
-        throw new PartException("Expected a card or background.");
+        throw new HtNoSuchPartException("Expected a card or background.");
     }
 
 }

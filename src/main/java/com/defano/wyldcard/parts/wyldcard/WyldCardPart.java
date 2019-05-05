@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.wyldcard;
 
+import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -132,12 +133,7 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
     }
 
     @Override
-    public void receiveMessage(ExecutionContext context, Message message) {
-        receiveMessage(context, message, null);
-    }
-
-    @Override
-    public void receiveMessage(ExecutionContext context, Message message, MessageCompletionObserver onCompletion) {
+    public void receiveMessage(ExecutionContext context, ASTNode initiator, Message message, MessageCompletionObserver onCompletion) {
         try {
             processMessage(context, message);
         } catch (HtException e) {
@@ -155,7 +151,7 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
     }
 
     @Override
-    public Value invokeFunction(ExecutionContext context, Message message) throws HtException {
+    public Value invokeFunction(ExecutionContext context, ASTNode initiator, Message message) throws HtException {
         // TODO: This would be a good place to hook XFCN-like functionality
 
         throw new HtException("No such function " + message.getMessageName() + ".");

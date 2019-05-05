@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.SelectionManager;
@@ -18,7 +19,7 @@ public class SelectedChunkFunc extends Expression {
     }
 
     @Override
-    protected Value onEvaluate(ExecutionContext context) {
+    protected Value onEvaluate(ExecutionContext context) throws HtException {
         try {
             return selectionManager.getManagedSelection(context).getSelectedChunkExpression(context);
         } catch (HtSemanticException e) {

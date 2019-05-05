@@ -69,7 +69,7 @@ public class DoMenuAction implements ActionListener {
                     .withArgument(menuItemName[0])
                     .build();
 
-            context.getCurrentStack().getDisplayedCard().getPartModel().receiveMessage(context, doMenuMessage, (command, wasTrapped, err) -> {
+            context.getCurrentStack().getDisplayedCard().getPartModel().receiveMessage(context, null, doMenuMessage, (command, wasTrapped, err) -> {
                 trapped[0] = wasTrapped;
                 cdl.countDown();
             });
