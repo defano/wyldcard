@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.exception.HtNoSuchPartException;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.window.WyldCardFrame;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;

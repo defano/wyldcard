@@ -12,7 +12,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.debug.message.HandlerInvocation;
 import com.defano.wyldcard.debug.message.HandlerInvocationCache;
 import com.defano.wyldcard.message.Message;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.util.List;
 

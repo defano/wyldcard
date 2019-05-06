@@ -1,6 +1,6 @@
 package com.defano.hypertalk.comparator;
 
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.hypertalk.ast.model.SortDirection;
 import com.defano.hypertalk.ast.model.SortStyle;
 import com.defano.hypertalk.ast.model.Value;

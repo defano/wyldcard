@@ -6,7 +6,7 @@ import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.StackManager;
 import com.defano.wyldcard.parts.stack.StackModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 

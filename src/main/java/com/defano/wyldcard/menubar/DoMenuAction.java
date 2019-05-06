@@ -3,7 +3,7 @@ package com.defano.wyldcard.menubar;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.message.SystemMessage;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.thread.ThreadChecker;
 

@@ -7,7 +7,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.commands.MessageCmd;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ExpressionStatement extends Statement {

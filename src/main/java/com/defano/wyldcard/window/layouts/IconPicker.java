@@ -5,7 +5,7 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.icons.IconDatabase;
 import com.defano.wyldcard.parts.button.ButtonModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.awt.WrapLayout;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;

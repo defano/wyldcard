@@ -14,7 +14,7 @@ import com.defano.wyldcard.parts.finder.LayeredPartFinder;
 import com.defano.wyldcard.parts.model.LogicalLinkObserver;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.util.FieldUtilities;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
 import javax.annotation.PostConstruct;

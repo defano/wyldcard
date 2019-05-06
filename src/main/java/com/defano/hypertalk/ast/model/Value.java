@@ -8,7 +8,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.ChunkUtils;
 import com.defano.hypertalk.utils.DateUtils;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.awt.*;
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.util.ArrayList;
 import java.util.Collection;

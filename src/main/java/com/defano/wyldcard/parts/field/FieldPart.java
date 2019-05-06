@@ -19,7 +19,7 @@ import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.wyldcard.parts.util.TextArrowsMessageCompletionObserver;
 import com.defano.wyldcard.properties.PropertiesModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;

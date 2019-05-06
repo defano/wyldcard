@@ -4,7 +4,7 @@ import com.defano.hypertalk.ast.model.PartType;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.util.Collection;
 

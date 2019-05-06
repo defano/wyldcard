@@ -9,7 +9,7 @@ import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.properties.builder.PropertyBuilder;
 import com.defano.wyldcard.properties.builder.PropertyValueBuilder;
 import com.defano.wyldcard.properties.value.BasicValue;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 
 import javax.annotation.PostConstruct;

@@ -10,7 +10,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;

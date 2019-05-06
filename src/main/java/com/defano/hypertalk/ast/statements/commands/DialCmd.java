@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.sound.SoundManager;
 import com.defano.wyldcard.sound.SoundSample;
 import com.defano.hypertalk.ast.expressions.Expression;

@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime;
+package com.defano.wyldcard.runtime.manager;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.DebugContext;
@@ -7,8 +7,8 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.runtime.executor.ScriptExecutor;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Singleton;
 

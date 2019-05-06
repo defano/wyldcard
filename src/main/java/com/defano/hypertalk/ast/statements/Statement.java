@@ -6,7 +6,7 @@ import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.debug.DebugContext;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.google.common.collect.Lists;
 import org.antlr.v4.runtime.ParserRuleContext;
 

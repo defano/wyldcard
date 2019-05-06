@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.wyldcard.window.WindowManager;
 import com.google.inject.Inject;

@@ -6,7 +6,7 @@ import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.runtime.compiler.ScriptCompiler;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.executor.ScriptExecutor;
 import com.defano.wyldcard.runtime.executor.observer.MessageEvaluationObserver;

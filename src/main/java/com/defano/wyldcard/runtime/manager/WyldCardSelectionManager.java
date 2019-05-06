@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.context;
+package com.defano.wyldcard.runtime.manager;
 
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.field.AddressableSelection;
@@ -8,6 +8,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.Range;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.google.inject.Singleton;
 
 /**

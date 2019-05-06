@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.context;
+package com.defano.wyldcard.runtime;
 
 import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.model.Preposition;
@@ -18,8 +18,8 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
-import com.defano.wyldcard.runtime.CallStack;
-import com.defano.wyldcard.runtime.StackFrame;
+import com.defano.wyldcard.runtime.callstack.CallStack;
+import com.defano.wyldcard.runtime.callstack.StackFrame;
 import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
 
@@ -211,8 +211,8 @@ public class ExecutionContext {
      * This method does not affect stack binding and assumes that the given card is a card in the currently bound stack,
      * but does not validate that this constraint is met.
      *
-     * @param cardBinding
-     * @return
+     * @param cardBinding The card to which this context should be bound
+     * @return This execution context
      */
     public ExecutionContext bindCard(CardPart cardBinding) {
         if (cardBinding != null) {
@@ -432,7 +432,7 @@ public class ExecutionContext {
      * @param ps       A part's specifier, or null to indicate a HyperCard property
      * @return The value of the requested property
      * @throws HtNoSuchPropertyException Thrown if the property does not exist on the given part
-     * @throws HtNoSuchPartException           Thrown if the part does not exist
+     * @throws HtNoSuchPartException     Thrown if the part does not exist
      */
     public Value getProperty(String property, PartSpecifier ps) throws HtException {
         if (ps == null) {

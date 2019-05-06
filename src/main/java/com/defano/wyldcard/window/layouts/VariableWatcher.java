@@ -2,8 +2,8 @@ package com.defano.wyldcard.window.layouts;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.runtime.StackFrame;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.callstack.StackFrame;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.runtime.symbol.SymbolObserver;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
 import com.defano.wyldcard.window.WyldCardWindow;

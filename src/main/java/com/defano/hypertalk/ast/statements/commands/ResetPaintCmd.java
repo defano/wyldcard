@@ -5,7 +5,7 @@ import com.defano.hypertalk.ast.statements.Command;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.PaintBrush;
 import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ResetPaintCmd extends Command {

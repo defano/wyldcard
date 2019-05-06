@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.model;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.window.WyldCardFrame;
 
 public enum SingletonWindowType {

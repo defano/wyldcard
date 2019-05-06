@@ -4,7 +4,7 @@ import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackPart;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.util.CircleStack;
 
 import java.util.Set;

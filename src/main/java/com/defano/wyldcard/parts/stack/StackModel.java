@@ -16,7 +16,7 @@ import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.StackPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.serializer.Serializer;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;

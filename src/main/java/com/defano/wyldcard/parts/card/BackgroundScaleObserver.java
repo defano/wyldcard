@@ -1,7 +1,7 @@
 package com.defano.wyldcard.parts.card;
 
 import com.defano.hypertalk.ast.model.Owner;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import io.reactivex.functions.Consumer;
 
 import javax.swing.*;

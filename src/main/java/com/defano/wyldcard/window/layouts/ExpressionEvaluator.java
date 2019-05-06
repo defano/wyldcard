@@ -7,7 +7,7 @@ import com.defano.wyldcard.editor.SyntaxParserDelegate;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.executor.ScriptExecutor;
 import com.defano.wyldcard.runtime.executor.observer.MessageEvaluationObserver;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;

@@ -8,7 +8,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import org.antlr.v4.runtime.ParserRuleContext;
 

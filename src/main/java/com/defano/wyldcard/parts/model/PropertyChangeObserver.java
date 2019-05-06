@@ -3,7 +3,7 @@ package com.defano.wyldcard.parts.model;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.properties.SimplePropertiesModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 /**
  * An observer of changes to attributes in a {@link SimplePropertiesModel}.

@@ -3,7 +3,7 @@ package com.defano.wyldcard.importer;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.stack.StackModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layouts.StackImportProgress;

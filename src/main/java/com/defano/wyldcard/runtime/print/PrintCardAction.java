@@ -1,7 +1,7 @@
 package com.defano.wyldcard.runtime.print;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.awt.*;
 import java.awt.print.PageFormat;

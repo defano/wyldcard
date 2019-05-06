@@ -6,7 +6,7 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.msg.MsgBoxModel;
 import com.defano.wyldcard.properties.PropertiesModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.wyldcard.editor.MessageBoxTextField;

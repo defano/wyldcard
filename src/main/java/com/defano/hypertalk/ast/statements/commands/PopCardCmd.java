@@ -4,7 +4,7 @@ import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.NavigationManager;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 

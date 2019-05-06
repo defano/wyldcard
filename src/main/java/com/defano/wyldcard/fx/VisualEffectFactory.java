@@ -5,7 +5,7 @@ import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.jsegue.AnimatedSegue;
 import com.defano.jsegue.SegueName;
 import com.defano.jsegue.renderers.*;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

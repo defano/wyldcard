@@ -2,7 +2,7 @@ package com.defano.wyldcard.search;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.google.inject.Singleton;
 
 import java.awt.*;

@@ -8,7 +8,7 @@ import com.defano.hypertalk.ast.model.effect.VisualEffectSpeed;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.jsegue.SegueName;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class VisualEffectExp extends Expression {

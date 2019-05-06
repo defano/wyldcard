@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 /**
  * Specifies the one-and-only message box (aka message, aka message window).

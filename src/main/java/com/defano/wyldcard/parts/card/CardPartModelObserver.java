@@ -3,7 +3,7 @@ package com.defano.wyldcard.parts.card;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 class CardPartModelObserver implements CardModelObserver {
     private CardPart cardPart;

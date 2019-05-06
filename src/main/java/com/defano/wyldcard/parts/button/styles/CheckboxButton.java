@@ -9,7 +9,7 @@ import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.button.HyperCardButton;
 import com.defano.wyldcard.parts.button.SharedHilite;
 import com.defano.wyldcard.properties.PropertiesModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import javax.swing.*;
 import java.awt.*;

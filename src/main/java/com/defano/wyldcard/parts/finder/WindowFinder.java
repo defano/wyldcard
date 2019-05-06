@@ -6,7 +6,7 @@ import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.WyldCardWindow;

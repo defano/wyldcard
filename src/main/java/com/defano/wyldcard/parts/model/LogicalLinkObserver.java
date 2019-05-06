@@ -2,7 +2,7 @@ package com.defano.wyldcard.parts.model;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.properties.PropertiesModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 /**
  * Logically links two logical (boolean-valued) properties together. That is, when one property changes state, the other

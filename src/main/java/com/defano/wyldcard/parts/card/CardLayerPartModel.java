@@ -9,7 +9,7 @@ import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;

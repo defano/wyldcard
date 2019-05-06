@@ -1,7 +1,7 @@
 package com.defano.wyldcard.parts.wyldcard;
 
 import com.defano.wyldcard.properties.PropertiesModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 public interface WyldCardProperties extends PropertiesModel {
 

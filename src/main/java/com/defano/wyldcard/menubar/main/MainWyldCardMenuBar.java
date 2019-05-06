@@ -5,7 +5,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.menubar.DoMenuAction;
 import com.defano.wyldcard.menubar.HyperCardMenu;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.thread.ThreadChecker;
 import com.google.inject.Singleton;

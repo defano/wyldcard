@@ -13,7 +13,7 @@ import com.defano.wyldcard.awt.keyboard.DeferredKeyEvent;
 import com.defano.wyldcard.parts.DeferredKeyEventListener;
 import com.defano.wyldcard.runtime.executor.ScriptExecutor;
 import com.defano.wyldcard.runtime.executor.observer.MessageCompletionObserver;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.ThreadChecker;
 
 import java.awt.event.KeyEvent;

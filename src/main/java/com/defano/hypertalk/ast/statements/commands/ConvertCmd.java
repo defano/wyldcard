@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.hypertalk.ast.model.Convertible;
 import com.defano.hypertalk.ast.expressions.containers.ContainerExp;
 import com.defano.hypertalk.ast.model.Preposition;

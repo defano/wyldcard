@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime;
+package com.defano.wyldcard.runtime.manager;
 
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;

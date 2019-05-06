@@ -1,7 +1,7 @@
 package com.defano.wyldcard.properties.builder;
 
 import com.defano.wyldcard.properties.PropertiesModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 /**
  * An object that is capable of supplying a {@link PropertiesModel}.

@@ -6,7 +6,7 @@ import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.button.ButtonStyle;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.window.ActionBindable;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.defano.wyldcard.window.WindowBuilder;

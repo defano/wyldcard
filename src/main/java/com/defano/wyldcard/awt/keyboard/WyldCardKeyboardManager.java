@@ -3,7 +3,7 @@ package com.defano.wyldcard.awt.keyboard;
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.stack.StackModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.google.inject.Singleton;
 
 import javax.swing.FocusManager;

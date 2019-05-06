@@ -22,7 +22,7 @@ import com.defano.wyldcard.runtime.executor.task.FunctionHandlerExecutionTask;
 import com.defano.wyldcard.runtime.executor.task.HandlerExecutionTask;
 import com.defano.wyldcard.runtime.executor.task.MessageHandlerExecutionTask;
 import com.defano.wyldcard.runtime.executor.task.StaticContextEvaluationTask;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.ThreadChecker;
 import com.google.common.util.concurrent.*;
 

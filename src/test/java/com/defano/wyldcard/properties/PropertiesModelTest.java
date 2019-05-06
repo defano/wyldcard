@@ -2,7 +2,7 @@ package com.defano.wyldcard.properties;
 
 import com.defano.hypertalk.GuiceTest;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 

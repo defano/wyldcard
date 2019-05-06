@@ -1,6 +1,6 @@
 package com.defano.wyldcard.awt.keyboard;
 
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.awt.event.KeyListener;
 

@@ -4,7 +4,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.properties.PropertiesModel;
 import com.defano.wyldcard.properties.builder.PropertiesModelProvider;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 /**
  * A value that delegates get/set operations to a property of the same name in a different {@link PropertiesModel}. The

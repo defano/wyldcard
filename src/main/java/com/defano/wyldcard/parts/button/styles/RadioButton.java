@@ -9,7 +9,7 @@ import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.properties.PropertiesModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import javax.swing.*;
 import java.awt.*;

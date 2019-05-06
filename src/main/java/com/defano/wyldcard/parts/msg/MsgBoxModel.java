@@ -8,7 +8,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.field.AddressableSelection;
 import com.defano.wyldcard.parts.field.SelectableTextModel;
 import com.defano.wyldcard.parts.model.WindowProxyPartModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.text.JTextComponent;

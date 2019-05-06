@@ -10,7 +10,7 @@ import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.button.HyperCardButton;
 import com.defano.wyldcard.parts.button.IconAlignable;
 import com.defano.wyldcard.properties.PropertiesModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import javax.swing.*;
 import java.awt.*;

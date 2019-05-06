@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class LiteralExp extends Expression {

@@ -4,7 +4,7 @@ import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 public class SearchResult {
 

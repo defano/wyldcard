@@ -1,7 +1,7 @@
 package com.defano.wyldcard.message;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 

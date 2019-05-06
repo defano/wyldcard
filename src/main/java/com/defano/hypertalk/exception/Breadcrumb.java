@@ -1,8 +1,7 @@
-package com.defano.wyldcard.runtime;
+package com.defano.hypertalk.exception;
 
-import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
 import org.antlr.v4.runtime.Token;

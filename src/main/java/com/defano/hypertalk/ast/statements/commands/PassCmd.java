@@ -3,7 +3,7 @@ package com.defano.hypertalk.ast.statements.commands;
 import com.defano.hypertalk.ast.preemptions.PassPreemption;
 import com.defano.hypertalk.ast.preemptions.TerminateHandlerPreemption;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;

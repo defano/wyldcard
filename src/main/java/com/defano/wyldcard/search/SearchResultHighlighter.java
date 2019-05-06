@@ -4,7 +4,7 @@ import com.defano.hypertalk.ast.model.Owner;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldPart;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;

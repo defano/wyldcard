@@ -12,7 +12,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.compiler.ScriptCompiler;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.util.concurrent.Callable;
 

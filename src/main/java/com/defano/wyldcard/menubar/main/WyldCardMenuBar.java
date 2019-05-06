@@ -2,7 +2,7 @@ package com.defano.wyldcard.menubar.main;
 
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import javax.swing.*;
 import java.util.List;

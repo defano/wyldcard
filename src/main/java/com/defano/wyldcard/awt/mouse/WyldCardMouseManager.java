@@ -2,7 +2,7 @@ package com.defano.wyldcard.awt.mouse;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.inject.Singleton;
 

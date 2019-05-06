@@ -16,7 +16,7 @@ import com.defano.wyldcard.parts.field.FieldModelObserver;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.util.LifecycleObserver;
 import com.defano.wyldcard.properties.PropertiesModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.thread.Throttle;
 import com.defano.hypertalk.ast.model.Value;

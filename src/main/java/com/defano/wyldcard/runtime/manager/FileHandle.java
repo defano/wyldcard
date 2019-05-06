@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.context;
+package com.defano.wyldcard.runtime.manager;
 
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;

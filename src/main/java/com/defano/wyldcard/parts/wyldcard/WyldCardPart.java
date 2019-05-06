@@ -19,7 +19,7 @@ import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.compiler.ScriptCompiler;
 import com.defano.wyldcard.runtime.executor.observer.MessageCompletionObserver;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
 import com.google.inject.Singleton;
 

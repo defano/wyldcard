@@ -1,7 +1,7 @@
 package com.defano.wyldcard.parts.field;
 
 import com.defano.hypertalk.utils.Range;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 public interface Searchable {
 

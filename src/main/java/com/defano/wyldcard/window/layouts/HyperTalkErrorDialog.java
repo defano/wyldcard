@@ -6,8 +6,8 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
-import com.defano.wyldcard.runtime.Breadcrumb;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.hypertalk.exception.Breadcrumb;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import org.antlr.v4.runtime.Token;
 

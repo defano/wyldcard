@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.hypertalk.ast.model.ParameterList;
 import org.antlr.v4.runtime.ParserRuleContext;
 

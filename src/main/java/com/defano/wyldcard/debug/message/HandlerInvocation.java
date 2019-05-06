@@ -6,7 +6,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.message.SystemMessage;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;

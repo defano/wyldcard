@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.preemptions.TerminateLoopPreemption;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ExitRepeatStatement extends Statement {

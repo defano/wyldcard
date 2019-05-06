@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime;
+package com.defano.wyldcard.runtime.manager;
 
 public interface IdleObserver {
 

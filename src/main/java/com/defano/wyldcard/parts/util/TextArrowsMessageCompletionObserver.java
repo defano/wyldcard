@@ -4,7 +4,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.runtime.executor.observer.MessageCompletionObserver;
 import com.defano.wyldcard.thread.Invoke;
 
