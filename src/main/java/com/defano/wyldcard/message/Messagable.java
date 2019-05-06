@@ -10,7 +10,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.keyboard.DeferredKeyEvent;
-import com.defano.wyldcard.parts.DeferredKeyEventListener;
+import com.defano.wyldcard.parts.field.DeferredKeyEventListener;
 import com.defano.wyldcard.runtime.executor.ScriptExecutor;
 import com.defano.wyldcard.runtime.executor.observer.MessageCompletionObserver;
 import com.defano.wyldcard.runtime.ExecutionContext;

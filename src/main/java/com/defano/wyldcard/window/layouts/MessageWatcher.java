@@ -159,6 +159,7 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
     private void $$$setupUI$$$() {
         windowPanel = new JPanel();
         windowPanel.setLayout(new GridLayoutManager(3, 5, new Insets(10, 10, 10, 10), -1, -1));
+        windowPanel.setPreferredSize(new Dimension(482, 275));
         scrollPane = new JScrollPane();
         windowPanel.add(scrollPane, new GridConstraints(1, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         messagesTable = new JTable();

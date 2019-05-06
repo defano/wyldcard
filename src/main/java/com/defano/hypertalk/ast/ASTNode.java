@@ -38,7 +38,7 @@ public abstract class ASTNode {
      * Gets the Antlr parse rule context that was provided when this node was instantiated. May be null if this node
      * was generated outside of parsing a script.
      *
-     * @return The ParserRuleContext associated with this node.
+     * @return The ParserRuleContext associated with this node, or null if this node was generated programmatically.
      */
     protected ParserRuleContext getParserContext() {
         return context;

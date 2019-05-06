@@ -39,7 +39,11 @@ public interface SearchResultHighlighter {
                     FieldPart foundField = (FieldPart) context.getCurrentCard().getPart(foundFieldModel);
 
                     foundField.applySearchHilite(result.getRange());
-                    foundField.getHyperCardTextPane().setCaretPosition(result.getRange().start);
+
+                    // Lock-text fields have no caret
+                    if (!foundField.getPartModel().get(context, FieldModel.PROP_LOCKTEXT).booleanValue()) {
+                        foundField.getHyperCardTextPane().setCaretPosition(result.getRange().start);
+                    }
                 } catch (Exception e) {
                     throw new IllegalStateException("Bug! Search result refers to a bogus part.", e);
                 }

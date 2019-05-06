@@ -1,4 +1,4 @@
-package com.defano.wyldcard.parts;
+package com.defano.wyldcard.parts.util;
 
 import javax.swing.*;
 

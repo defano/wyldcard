@@ -1,6 +1,5 @@
 package com.defano.wyldcard.parts.util;
 
-import com.defano.wyldcard.parts.ContainerWrappedPart;
 import com.defano.jmonet.canvas.JMonetCanvas;
 
 import javax.swing.*;

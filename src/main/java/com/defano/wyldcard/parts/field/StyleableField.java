@@ -2,7 +2,7 @@ package com.defano.wyldcard.parts.field;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.parts.Styleable;
+import com.defano.wyldcard.parts.StyleablePart;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.*;
@@ -24,7 +24,7 @@ import java.awt.*;
  * This class provides common functionality for "styleable" field parts; the actual style of the field is provided by
  * a concrete subclass.
  */
-public abstract class StyleableField implements Styleable<FieldStyle, HyperCardTextField>, ToolEditablePart<FieldModel>, MarchingAntsObserver {
+public abstract class StyleableField implements StyleablePart<FieldStyle, HyperCardTextField>, ToolEditablePart<FieldModel>, MarchingAntsObserver {
 
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
 

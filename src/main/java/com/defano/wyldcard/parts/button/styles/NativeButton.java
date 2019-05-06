@@ -4,7 +4,7 @@ import com.defano.wyldcard.border.PartBorderFactory;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.icons.IconDatabase;
-import com.defano.wyldcard.parts.ContainerWrappedPart;
+import com.defano.wyldcard.parts.util.ContainerWrappedPart;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.HyperCardButton;
 import com.defano.wyldcard.parts.button.ButtonModel;

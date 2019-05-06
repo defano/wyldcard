@@ -3,7 +3,7 @@ package com.defano.wyldcard.parts.button;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.parts.Styleable;
+import com.defano.wyldcard.parts.StyleablePart;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.styles.*;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
@@ -27,7 +27,7 @@ import java.awt.event.MouseEvent;
  * This class provides common functionality for "styleable" buttons; the actual look-and-feel of the button is provided
  * by a subclass of {@link HyperCardButton}.
  */
-public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCardButton>, ToolEditablePart<ButtonModel>, PropertyChangeObserver, MarchingAntsObserver {
+public abstract class StyleableButton implements StyleablePart<ButtonStyle,HyperCardButton>, ToolEditablePart<ButtonModel>, PropertyChangeObserver, MarchingAntsObserver {
 
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private Disposable toolModeSubscription;

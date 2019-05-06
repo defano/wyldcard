@@ -9,7 +9,6 @@ import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.parts.DeferredKeyEventListener;
 import com.defano.wyldcard.parts.builder.FieldModelBuilder;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
