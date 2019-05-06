@@ -179,7 +179,7 @@ public class StackFormatConverter {
 
             if (bm != null) {
                 bm.setCurrentCardId(cardModel.getId());
-                bm.set(context, ButtonModel.PROP_HILITE, new Value(pcr.isBkgndButtonHilited()));
+                bm.set(context, ButtonModel.ALIAS_HILITE, new Value(pcr.isBkgndButtonHilited()));
             }
         }
     }

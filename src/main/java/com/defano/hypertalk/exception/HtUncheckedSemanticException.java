@@ -8,10 +8,6 @@ public class HtUncheckedSemanticException extends RuntimeException {
 
     private final HtException cause;
 
-    public HtUncheckedSemanticException(String message) {
-        this(new HtException(message));
-    }
-
     public HtUncheckedSemanticException(HtException cause) {
         super(HtException.getRootCause(cause).getMessage(), cause);
         this.cause = cause;

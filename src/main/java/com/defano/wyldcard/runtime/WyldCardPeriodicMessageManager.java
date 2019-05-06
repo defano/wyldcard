@@ -7,7 +7,7 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.runtime.compiler.Compiler;
+import com.defano.wyldcard.runtime.executor.ScriptExecutor;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Singleton;
@@ -67,7 +67,7 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
     public void run() {
         try {
             // Send 'idle' message to card if no other scripts are pending
-            if (Compiler.getPendingScriptCount() == 0) {
+            if (ScriptExecutor.getPendingScriptCount() == 0) {
                 // Notify debugger that system is idle
                 DebugContext.getInstance().resume();
 

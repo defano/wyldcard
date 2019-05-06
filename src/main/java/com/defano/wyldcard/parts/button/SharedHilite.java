@@ -20,7 +20,7 @@ public interface SharedHilite {
             hilite = true;
         }
 
-        button.getPartModel().set(context, ButtonModel.PROP_HILITE, new Value(hilite));
+        button.getPartModel().set(context, ButtonModel.ALIAS_HILITE, new Value(hilite));
 
         if (isSharingHilite(context, button)) {
 
@@ -30,7 +30,7 @@ public interface SharedHilite {
                 }
 
                 if (isSharingHilite(context, thisButton) && getSharedHiliteFamily(context, thisButton) == getSharedHiliteFamily(context, button)) {
-                    thisButton.getPartModel().set(context, ButtonModel.PROP_HILITE, new Value(false));
+                    thisButton.getPartModel().set(context, ButtonModel.ALIAS_HILITE, new Value(false));
                 }
             }
         }

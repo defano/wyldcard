@@ -7,7 +7,6 @@ import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.message.Messagable;
 import com.defano.wyldcard.parts.button.ButtonModel;
@@ -17,7 +16,7 @@ import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.properties.SimplePropertiesModel;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
-import com.defano.wyldcard.runtime.compiler.Compiler;
+import com.defano.wyldcard.runtime.compiler.ScriptCompiler;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WindowBuilder;
@@ -45,15 +44,16 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
     public static final String PROP_WIDTH = "width";
     public static final String PROP_HEIGHT = "height";
     public static final String PROP_RECT = "rect";
-    public static final String PROP_RECTANGLE = "rectangle";
     public static final String PROP_TOPLEFT = "topleft";
-    public static final String PROP_BOTTOMRIGHT = "bottomright";
     public static final String PROP_BOTRIGHT = "botright";
     public static final String PROP_VISIBLE = "visible";
     public static final String PROP_LOC = "loc";
-    public static final String PROP_LOCATION = "location";
     public static final String PROP_CONTENTS = "contents";
     public static final String PROP_CHECKPOINTS = "checkpoints";
+
+    protected static final String ALIAS_RECTANGLE = "rectangle";
+    protected static final String ALIAS_BOTTOMRIGHT = "bottomright";
+    protected static final String ALIAS_LOCATION = "location";
 
     private final PartType type;
     private Owner owner;
@@ -99,7 +99,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
     protected void postConstructPartModel() {
         super.postConstructAdvancedPropertiesModel();
 
-        define(PROP_RECT, PROP_RECTANGLE).asComputedValue()
+        define(PROP_RECT, ALIAS_RECTANGLE).asComputedValue()
                 .withSetter((context, model, value) -> {
                     if (value.isRect()) {
                         model.set(context, PROP_LEFT, value.getItemAt(context, 0));
@@ -138,7 +138,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
                 })
                 .withGetter((context, model) -> new Value(model.get(context, PROP_LEFT).integerValue(), model.get(context, PROP_TOP).integerValue()));
 
-        define(PROP_BOTTOMRIGHT, PROP_BOTRIGHT).asComputedValue()
+        define(ALIAS_BOTTOMRIGHT, PROP_BOTRIGHT).asComputedValue()
                 .withSetter((context, model, value) -> {
                     if (value.isPoint()) {
                         model.set(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.get(context, PROP_WIDTH).longValue()));
@@ -152,7 +152,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
                         model.get(context, PROP_TOP).integerValue() + model.get(context, PROP_HEIGHT).integerValue()
                 ));
 
-        define(PROP_LOCATION, PROP_LOC).asComputedValue()
+        define(ALIAS_LOCATION, PROP_LOC).asComputedValue()
                 .withGetter((context, model) -> new Value(
                         model.get(context, PROP_LEFT).integerValue() + model.get(context, PROP_WIDTH).integerValue() / 2,
                         model.get(context, PROP_TOP).integerValue() + model.get(context, PROP_HEIGHT).integerValue() / 2
@@ -246,7 +246,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
         if (isScriptDirty(context) && System.currentTimeMillis() > deferCompilation) {
             try {
                 String scriptText = getScriptText(context);
-                Script script = (Script) Compiler.blockingCompile(CompilationUnit.SCRIPT, scriptText);
+                Script script = (Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPT, scriptText);
 
                 if (script != null) {
                     return setScript(script, scriptText.hashCode());

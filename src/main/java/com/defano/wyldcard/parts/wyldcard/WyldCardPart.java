@@ -17,8 +17,8 @@ import com.defano.wyldcard.parts.DeferredKeyEventListener;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
-import com.defano.wyldcard.runtime.compiler.Compiler;
-import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
+import com.defano.wyldcard.runtime.compiler.ScriptCompiler;
+import com.defano.wyldcard.runtime.executor.observer.MessageCompletionObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
 import com.google.inject.Singleton;
@@ -191,7 +191,7 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
 
         String messageString = message.toMessageString(context);
         try {
-            Script script = (Script) Compiler.blockingCompile(CompilationUnit.SCRIPTLET, messageString);
+            Script script = (Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, messageString);
             Statement s = script.getStatements().list.get(0);
 
             if (s instanceof Command) {

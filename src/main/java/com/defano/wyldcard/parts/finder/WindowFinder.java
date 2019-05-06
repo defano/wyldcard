@@ -2,6 +2,7 @@ package com.defano.wyldcard.parts.finder;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.WindowSpecifier;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
@@ -31,8 +32,8 @@ public interface WindowFinder {
      * @param specifier The window specifier identifying the desired window.
      * @return The specified window
      */
-    default WyldCardFrame findWindow(ExecutionContext context, WindowSpecifier specifier) {
-        return Invoke.onDispatch(() -> specifier.find(context, getFrames(false)));
+    default WyldCardFrame findWindow(ExecutionContext context, WindowSpecifier specifier) throws HtNoSuchPartException {
+        return Invoke.onDispatch(() -> specifier.find(context, getFrames(false)), HtNoSuchPartException.class);
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.compiler.task;
+package com.defano.wyldcard.runtime.executor.task;
 
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.Value;
@@ -11,7 +11,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
-import com.defano.wyldcard.runtime.compiler.Compiler;
+import com.defano.wyldcard.runtime.compiler.ScriptCompiler;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.concurrent.Callable;
@@ -29,7 +29,7 @@ public class StaticContextEvaluationTask implements Callable<String> {
 
     @Override
     public String call() throws HtException {
-        StatementList statements = ((Script) Compiler.blockingCompile(CompilationUnit.SCRIPTLET, messageText)).getStatements();
+        StatementList statements = ((Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, messageText)).getStatements();
 
         if (context.getStackDepth() == 0) {
             context.pushStackFrame();

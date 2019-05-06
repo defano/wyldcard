@@ -123,7 +123,7 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         isVisible.setSelected(model.get(context, ButtonModel.PROP_VISIBLE).booleanValue());
         style.setSelectedItem(ButtonStyle.fromName(model.get(context, ButtonModel.PROP_STYLE).toString()));
         family.setSelectedItem(model.get(context, ButtonModel.PROP_FAMILY).toString());
-        autoHilite.setSelected(model.get(context, ButtonModel.PROP_AUTOHILIGHT).booleanValue());
+        autoHilite.setSelected(model.get(context, ButtonModel.ALIAS_AUTOHILIGHT).booleanValue());
         sharedHilite.setSelected(model.get(context, ButtonModel.PROP_SHAREDHILITE).booleanValue());
 
         // Shared hilite option only available on background buttons
@@ -155,7 +155,7 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         model.set(context, ButtonModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
         model.set(context, ButtonModel.PROP_STYLE, new Value(String.valueOf(style.getSelectedItem())));
         model.set(context, ButtonModel.PROP_FAMILY, new Value(String.valueOf(family.getSelectedItem())));
-        model.set(context, ButtonModel.PROP_AUTOHILIGHT, new Value(autoHilite.isSelected()));
+        model.set(context, ButtonModel.ALIAS_AUTOHILIGHT, new Value(autoHilite.isSelected()));
         model.set(context, ButtonModel.PROP_SHAREDHILITE, new Value(sharedHilite.isSelected()));
     }
 

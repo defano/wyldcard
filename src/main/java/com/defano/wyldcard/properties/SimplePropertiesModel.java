@@ -155,7 +155,7 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
     public Property findProperty(String propertyName) {
         String canonicalName = propertyName.toLowerCase();
         return properties.stream()
-                .filter(p -> p.aliases().contains(canonicalName))
+                .filter(p -> p.matches(canonicalName))
                 .findFirst()
                 .orElse(null);
     }

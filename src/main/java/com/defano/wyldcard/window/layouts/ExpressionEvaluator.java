@@ -5,8 +5,8 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.editor.HyperTalkTextEditor;
 import com.defano.wyldcard.editor.SyntaxParserDelegate;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
-import com.defano.wyldcard.runtime.compiler.Compiler;
-import com.defano.wyldcard.runtime.compiler.MessageEvaluationObserver;
+import com.defano.wyldcard.runtime.executor.ScriptExecutor;
+import com.defano.wyldcard.runtime.executor.observer.MessageEvaluationObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -37,7 +37,7 @@ public class ExpressionEvaluator extends WyldCardDialog<Object> implements Synta
         editorArea.setLayout(new BorderLayout());
         editorArea.add(editor);
 
-        evaluateButton.addActionListener(a -> Compiler.asyncStaticContextEvaluate(context, editor.getScriptField().getText(), new MessageEvaluationObserver() {
+        evaluateButton.addActionListener(a -> ScriptExecutor.asyncStaticContextEvaluate(context, editor.getScriptField().getText(), new MessageEvaluationObserver() {
             @Override
             public void onMessageEvaluated(String result) {
                 SwingUtilities.invokeLater(() -> resultField.setText(result));

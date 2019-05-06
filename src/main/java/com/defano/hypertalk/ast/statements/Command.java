@@ -5,7 +5,7 @@ import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
+import com.defano.wyldcard.runtime.executor.observer.MessageCompletionObserver;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;

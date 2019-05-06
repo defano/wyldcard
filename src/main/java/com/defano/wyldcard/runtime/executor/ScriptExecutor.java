@@ -1,4 +1,4 @@
-package com.defano.wyldcard.runtime.compiler;
+package com.defano.wyldcard.runtime.executor;
 
 import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -14,10 +14,14 @@ import com.defano.wyldcard.debug.message.HandlerInvocation;
 import com.defano.wyldcard.debug.message.HandlerInvocationCache;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
-import com.defano.wyldcard.runtime.compiler.task.FunctionHandlerExecutionTask;
-import com.defano.wyldcard.runtime.compiler.task.HandlerExecutionTask;
-import com.defano.wyldcard.runtime.compiler.task.MessageHandlerExecutionTask;
-import com.defano.wyldcard.runtime.compiler.task.StaticContextEvaluationTask;
+import com.defano.wyldcard.runtime.compiler.*;
+import com.defano.wyldcard.runtime.executor.observer.HandlerCompletionObserver;
+import com.defano.wyldcard.runtime.executor.observer.HandlerExecutionFutureCallback;
+import com.defano.wyldcard.runtime.executor.observer.MessageEvaluationObserver;
+import com.defano.wyldcard.runtime.executor.task.FunctionHandlerExecutionTask;
+import com.defano.wyldcard.runtime.executor.task.HandlerExecutionTask;
+import com.defano.wyldcard.runtime.executor.task.MessageHandlerExecutionTask;
+import com.defano.wyldcard.runtime.executor.task.StaticContextEvaluationTask;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.ThreadChecker;
 import com.google.common.util.concurrent.*;
@@ -33,49 +37,14 @@ import java.util.concurrent.ThreadPoolExecutor;
  * this class to assure proper threading.
  */
 @SuppressWarnings("UnstableApiUsage")
-public class Compiler {
+public class ScriptExecutor {
 
-    private final static int MAX_COMPILE_THREADS = 6;          // Simultaneous background parse tasks
-    private final static int MAX_EXECUTOR_THREADS = 1;         // Simultaneous scripts executing
+    private final static int MAX_EXECUTOR_THREADS = 8;         // Simultaneous scripts executing
 
-    private static final ThreadPoolExecutor bestEffortCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("be-async-compiler-%d").build());
     private static final ExecutorService staticExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("script-executor-msg").build());
     private static final ThreadPoolExecutor scriptExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_EXECUTOR_THREADS, new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
     private static final ListeningExecutorService listeningScriptExecutor = MoreExecutors.listeningDecorator(scriptExecutor);
     private static final ListeningExecutorService listeningStaticExecutor = MoreExecutors.listeningDecorator(staticExecutor);
-
-    /**
-     * Attempts to compile the given script text on a background thread and invoke the CompileCompletionObserver
-     * (on the background thread) when complete.
-     * <p>
-     * This method cancels any previously requested compilation tasks except those that may already be executing. Thus,
-     * invocation of the completion observer is not guaranteed; some jobs will be canceled before they run and thus
-     * never complete.
-     * <p>
-     * This method is primarily useful for parse-as-you-type syntax checking.
-     *
-     * @param compilationUnit The type of script/scriptlet to compile
-     * @param scriptText      The script to parse.
-     * @param observer        A non-null callback to fire when compilation is complete.
-     */
-    public static void asyncBestEffortCompile(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
-
-        // Preempt any previously enqueued parse jobs
-        bestEffortCompileExecutor.getQueue().clear();
-        bestEffortCompileExecutor.submit(createCompileTask(compilationUnit, scriptText, observer));
-    }
-
-    /**
-     * Compiles the given script on the current thread.
-     *
-     * @param compilationUnit The type of script/scriptlet to compile
-     * @param scriptText      The script text to parse.
-     * @return The compiled Script object (the root of the abstract syntax tree)
-     * @throws HtException Thrown if an error (i.e., syntax error) occurs when compiling.
-     */
-    public static Object blockingCompile(CompilationUnit compilationUnit, String scriptText) throws HtException {
-        return TwoPhaseParser.parseScript(compilationUnit, scriptText);
-    }
 
     /**
      * Returns the result of evaluating a string as a HyperTalk expression on the current thread. An expression that
@@ -92,7 +61,7 @@ public class Compiler {
         ThreadChecker.assertWorkerThread();
 
         try {
-            Statement statement = ((Script)blockingCompile(CompilationUnit.SCRIPTLET, expression)).getStatements().list.get(0);
+            Statement statement = ((Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, expression)).getStatements().list.get(0);
             if (statement instanceof ExpressionStatement) {
                 return ((ExpressionStatement) statement).expression.evaluate(context);
             }
@@ -127,7 +96,7 @@ public class Compiler {
         ThreadChecker.assertWorkerThread();
 
         try {
-            Statement statement = ((Script) Compiler.blockingCompile(CompilationUnit.SCRIPTLET, value.toString())).getStatements().list.get(0);
+            Statement statement = ((Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, value.toString())).getStatements().list.get(0);
 
             // Simple case; statement matches requested type
             if (statement.getClass().isAssignableFrom(klass)) {
@@ -266,7 +235,7 @@ public class Compiler {
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
     public static CheckedFuture<Boolean, HtException> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
-        return getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, null, me, NamedBlock.anonymousBlock(((Script) blockingCompile(CompilationUnit.SCRIPTLET, statementList)).getStatements()), MessageBuilder.emptyMessage()));
+        return getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, null, me, NamedBlock.anonymousBlock(((Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, statementList)).getStatements()), MessageBuilder.emptyMessage()));
     }
 
     /**
@@ -280,8 +249,7 @@ public class Compiler {
     }
 
     /**
-     * Determines if the current thread is a known script execution thread. That is, one of the eight threads used for
-     * normal script execution.
+     * Determines if the current thread is a known script execution thread.
      *
      * @return True if the current thread is a script-executor thread.
      */
@@ -316,30 +284,4 @@ public class Compiler {
         }
     }
 
-    /**
-     * Gets a {@link Runnable} that, when executed, compiles the given script and notifies a
-     * {@link CompileCompletionObserver}.
-     *
-     * @param compilationUnit The type of script/scriptlet to compile
-     * @param scriptText      The script to parse.
-     * @param observer        A non-null callback to fire when compilation is complete.
-     * @return A runnable that compiles the script
-     */
-    private static Runnable createCompileTask(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
-        return () -> {
-            HtException generatedError = null;
-            Object compiledScript = null;
-
-            try {
-                compiledScript = TwoPhaseParser.parseScript(compilationUnit, scriptText);
-            } catch (HtException e) {
-                generatedError = e;
-            } catch (Throwable t) {
-                t.printStackTrace();
-                generatedError = new HtException("An unexpected error occurred: " + t.getMessage());
-            }
-
-            observer.onCompileCompleted(scriptText, compiledScript, generatedError);
-        };
-    }
 }

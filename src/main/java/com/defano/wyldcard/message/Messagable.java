@@ -11,8 +11,8 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.keyboard.DeferredKeyEvent;
 import com.defano.wyldcard.parts.DeferredKeyEventListener;
-import com.defano.wyldcard.runtime.compiler.Compiler;
-import com.defano.wyldcard.runtime.compiler.MessageCompletionObserver;
+import com.defano.wyldcard.runtime.executor.ScriptExecutor;
+import com.defano.wyldcard.runtime.executor.observer.MessageCompletionObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.thread.ThreadChecker;
 
@@ -134,7 +134,7 @@ public interface Messagable {
         }
 
         // Attempt to invoke command handler in this part and listen for completion
-        Compiler.asyncExecuteHandler(context, initiator, getMe(context), getScript(context), message, (me, script, handler, trappedMessage, exception) -> {
+        ScriptExecutor.asyncExecuteHandler(context, initiator, getMe(context), getScript(context), message, (me, script, handler, trappedMessage, exception) -> {
 
             // Did message generate an error
             if (exception != null) {
@@ -218,7 +218,7 @@ public interface Messagable {
             function = target.getScript(context).getNamedBlock(message.getMessageName());
         }
 
-        return Compiler.blockingExecuteFunction(context, initiator, target.getMe(context), function, message.getArguments(context));
+        return ScriptExecutor.blockingExecuteFunction(context, initiator, target.getMe(context), function, message.getArguments(context));
     }
 
     /**

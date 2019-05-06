@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.compiler.Compiler;
+import com.defano.wyldcard.runtime.executor.ScriptExecutor;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
@@ -19,6 +19,6 @@ public class DoCmd extends Command {
     
     public void onExecute(ExecutionContext context) throws HtException {
         PartSpecifier target = context.getCurrentStack().getDisplayedCard().getPartModel().getPartSpecifier(context);
-        Compiler.asyncExecuteString(context, target, script.evaluate(context).toString()).checkedGet();
+        ScriptExecutor.asyncExecuteString(context, target, script.evaluate(context).toString()).checkedGet();
     }
 }

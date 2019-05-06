@@ -3,7 +3,7 @@ package com.defano.wyldcard.editor;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.compiler.CompileCompletionObserver;
-import com.defano.wyldcard.runtime.compiler.Compiler;
+import com.defano.wyldcard.runtime.compiler.ScriptCompiler;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.parser.*;
 
@@ -25,7 +25,7 @@ public class HyperTalkSyntaxParser extends AbstractParser implements CompileComp
             delegate.onCompileStarted();
 
             String scriptText = doc.getText(0, doc.getLength());
-            Compiler.asyncBestEffortCompile(delegate.getParseCompilationUnit(), scriptText, this);
+            ScriptCompiler.asyncBestEffortCompile(delegate.getParseCompilationUnit(), scriptText, this);
         } catch (BadLocationException e) {
             // Impossible
         }

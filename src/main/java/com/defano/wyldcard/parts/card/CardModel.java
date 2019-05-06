@@ -99,11 +99,11 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
 
         define(PROP_BOTTOM).asComputedReadOnlyValue((context, model) -> model.get(context, PROP_HEIGHT));
         define(PROP_RIGHT).asComputedReadOnlyValue((context, model) -> model.get(context, PROP_WIDTH));
-        define(PROP_BOTTOMRIGHT).asComputedReadOnlyValue((context, model) -> new Value(new Point(
+        define(ALIAS_BOTTOMRIGHT).asComputedReadOnlyValue((context, model) -> new Value(new Point(
                 get(context, PROP_WIDTH).integerValue(),
                 get(context, PROP_HEIGHT).integerValue()
         )));
-        define(PROP_RECT, PROP_RECTANGLE).asComputedReadOnlyValue((context, model) -> new Value(new Rectangle(
+        define(PROP_RECT, ALIAS_RECTANGLE).asComputedReadOnlyValue((context, model) -> new Value(new Rectangle(
                 0,
                 0,
                 get(context, PROP_WIDTH).integerValue(),

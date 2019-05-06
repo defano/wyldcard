@@ -34,7 +34,7 @@ public class ButtonModelBuilder extends PartModelBuilder<ButtonModel, ButtonMode
     }
 
     public ButtonModelBuilder withAutoHilite(Object v) {
-        this.model.set(context, ButtonModel.PROP_AUTOHILIGHT, new Value(v));
+        this.model.set(context, ButtonModel.ALIAS_AUTOHILIGHT, new Value(v));
         return this;
     }
 

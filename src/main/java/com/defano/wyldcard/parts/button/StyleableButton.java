@@ -131,7 +131,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
         if (isAutoHilited()) {
             if (!(buttonComponent instanceof SharedHilite)) {
-                getPartModel().set(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(true));
+                getPartModel().set(new ExecutionContext(), ButtonModel.ALIAS_HILITE, new Value(true));
             }
         }
     }
@@ -147,7 +147,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
         if (isAutoHilited() && isFocused) {
             if (!(buttonComponent instanceof SharedHilite)) {
-                getPartModel().set(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(true));
+                getPartModel().set(new ExecutionContext(), ButtonModel.ALIAS_HILITE, new Value(true));
             }
         }
     }
@@ -159,7 +159,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
         if (isAutoHilited()) {
             if (!(buttonComponent instanceof SharedHilite)) {
-                getPartModel().set(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(false));
+                getPartModel().set(new ExecutionContext(), ButtonModel.ALIAS_HILITE, new Value(false));
             }
         }
     }
@@ -172,7 +172,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
         if (!isSelectedForEditing() && isAutoHilited()) {
             if (!(buttonComponent instanceof SharedHilite)) {
-                getPartModel().set(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(false));
+                getPartModel().set(new ExecutionContext(), ButtonModel.ALIAS_HILITE, new Value(false));
             }
         }
     }
@@ -199,7 +199,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     }
 
     private boolean isAutoHilited() {
-        return getPartModel().get(new ExecutionContext(), ButtonModel.PROP_AUTOHILIGHT).booleanValue();
+        return getPartModel().get(new ExecutionContext(), ButtonModel.ALIAS_AUTOHILIGHT).booleanValue();
     }
 
     private class ToolModeObserver implements Consumer<ToolMode> {

@@ -147,6 +147,7 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?, ModelT
     @RunOnDispatch
     public WindowType buildReplacing(WyldCardFrame window) {
         window.getWindow().dispose();
+        this.window.getWindow().setLocationRelativeTo(window.getWindow());
         return build();
     }
 

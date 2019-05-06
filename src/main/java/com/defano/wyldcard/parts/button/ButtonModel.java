@@ -21,14 +21,14 @@ import java.util.Map;
 public class ButtonModel extends CardLayerPartModel implements PropertyChangeObserver {
 
     public static final String PROP_FAMILY = "family";
-    public static final String PROP_HILITE = "hilite";
-    public static final String PROP_HIGHLITE = "highlite";
-    public static final String PROP_HILIGHT = "hilight";
+    public static final String ALIAS_HILITE = "hilite";
+    public static final String ALIAS_HIGHLITE = "highlite";
+    public static final String ALIAS_HILIGHT = "hilight";
     public static final String PROP_SHAREDHILITE = "sharedhilite";
     public static final String PROP_HIGHLIGHT = "highlight";
-    public static final String PROP_AUTOHILITE = "autohilite";
-    public static final String PROP_AUTOHIGHLITE = "autohighlite";
-    public static final String PROP_AUTOHILIGHT = "autohilight";
+    public static final String ALIAS_AUTOHILITE = "autohilite";
+    public static final String ALIAS_AUTOHIGHLITE = "autohighlite";
+    public static final String ALIAS_AUTOHILIGHT = "autohilight";
     public static final String PROP_AUTOHIGHLIGHT = "autohighlight";
     public static final String PROP_SHOWNAME = "showname";
     public static final String PROP_ICON = "icon";
@@ -83,9 +83,9 @@ public class ButtonModel extends CardLayerPartModel implements PropertyChangeObs
             return lines.get(selectedLineIdx);
         });
 
-        define(PROP_AUTOHIGHLITE, PROP_AUTOHILIGHT, PROP_AUTOHIGHLITE, PROP_AUTOHILITE).asAliasOf(PROP_AUTOHIGHLIGHT);
+        define(ALIAS_AUTOHIGHLITE, ALIAS_AUTOHILIGHT, ALIAS_AUTOHILITE).asAliasOf(PROP_AUTOHIGHLIGHT);
 
-        define(PROP_HILITE, PROP_HIGHLITE, PROP_HILIGHT, PROP_HIGHLIGHT).asComputedValue()
+        define(PROP_HIGHLIGHT, ALIAS_HILITE, ALIAS_HIGHLITE, ALIAS_HILIGHT).asComputedValue()
                 .withGetter((context, model) -> getHilite(context))
                 .withSetter((context, model, value) -> setHilite(context, value));
 

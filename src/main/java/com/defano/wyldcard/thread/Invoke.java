@@ -1,9 +1,5 @@
 package com.defano.wyldcard.thread;
 
-import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtUncheckedSemanticException;
-import com.defano.wyldcard.WyldCard;
-
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
@@ -26,24 +22,14 @@ public class Invoke {
      * @param <V>      The type of object returned by the callable
      * @return The value returned by the callable
      */
-    public static <V> V onDispatch(Callable<V> callable) {
+    public static <V> V onDispatch(CallableNoException<V> callable) {
         if (SwingUtilities.isEventDispatchThread()) {
-            try {
-                return callable.call();
-            } catch (HtException e) {
-                WyldCard.getInstance().showErrorDialog(e);
-                throw new HtUncheckedSemanticException(e);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            return callable.call();
         } else {
             try {
                 return onDispatch(callable, Exception.class);
-            } catch (HtException e) {
-                WyldCard.getInstance().showErrorDialog(e);
-                throw new HtUncheckedSemanticException(e);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException("Bug! Should not be possible.");
             }
         }
     }

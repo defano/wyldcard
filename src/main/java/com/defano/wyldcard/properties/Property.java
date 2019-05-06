@@ -5,10 +5,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Represents a WyldCard property; binds a {@link PropertyValue} to one or more names.
@@ -48,12 +45,14 @@ public class Property {
     }
 
     /**
-     * Gets a list of all names associated with this property, including the primary name.
+     * Determines if the property is known by the given name. That is, whether the provided name matches the property's
+     * name or one of its aliases (case sensitive).
      *
-     * @return A list of all names associated with this property.
+     * @param name The name to match
+     * @return True if the given argument matches the name of this property or one of its aliases.
      */
-    public List<String> aliases() {
-        return aliases;
+    public boolean matches(String name) {
+        return aliases.contains(name);
     }
 
     /**
@@ -83,6 +82,12 @@ public class Property {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE, true);
     }
 
+    /**
+     * Two properties are considered equal if their set of aliases are equal (irrespective of their value).
+     *
+     * @param o The object to compare for equality with this.
+     * @return True if their names/aliases are identical, false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -93,6 +98,6 @@ public class Property {
 
     @Override
     public int hashCode() {
-        return Objects.hash(aliases);
+        return Objects.hash(aliases.toArray());
     }
 }
