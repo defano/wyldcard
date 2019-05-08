@@ -62,7 +62,7 @@ public class RadioButton extends JRadioButton implements SharedHilite, HyperCard
                 setText(showName ? buttonName : "");
                 break;
 
-            case ButtonModel.ALIAS_HILITE:
+            case ButtonModel.PROP_HIGHLIGHT:
                 RadioButton.super.setSelected(newValue.booleanValue());
                 break;
 
@@ -83,6 +83,7 @@ public class RadioButton extends JRadioButton implements SharedHilite, HyperCard
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:
+                //noinspection MagicConstant
                 setHorizontalAlignment(FontUtils.getAlignmentForValue(newValue));
                 break;
         }

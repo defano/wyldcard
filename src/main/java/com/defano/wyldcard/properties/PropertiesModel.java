@@ -2,6 +2,7 @@ package com.defano.wyldcard.properties;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
@@ -35,6 +36,7 @@ public interface PropertiesModel {
      * @param context       The execution context
      * @param propertyName  The case insensitive name of the property
      * @param propertyValue The value to set the property to.
+     * @throws HtUncheckedSemanticException Thrown if no such property exists.
      */
     void setQuietly(ExecutionContext context, String propertyName, Value propertyValue);
 
@@ -45,6 +47,7 @@ public interface PropertiesModel {
      * @param context       The execution context
      * @param propertyName  The case insensitive name of the property
      * @param propertyValue The value to set the property to.
+     * @throws HtUncheckedSemanticException Thrown if no such property exists.
      */
     void set(ExecutionContext context, String propertyName, Value propertyValue);
 

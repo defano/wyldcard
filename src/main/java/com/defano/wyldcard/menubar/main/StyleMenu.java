@@ -23,21 +23,21 @@ public class StyleMenu extends HyperCardMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Align Left")
                 .withDoMenuAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontAlign(new Value("left")))
-                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
+                .withDisabledProvider(WyldCard.getInstance().getPaintManager().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
                 .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedLeftAlignProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Align Center")
                 .withDoMenuAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontAlign(new Value("center")))
-                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
+                .withDisabledProvider(WyldCard.getInstance().getPaintManager().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
                 .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedCenterAlignProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Align Right")
                 .withDoMenuAction(e -> WyldCard.getInstance().getFontManager().setSelectedFontAlign(new Value("right")))
-                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
+                .withDisabledProvider(WyldCard.getInstance().getPaintManager().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
                 .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedRightAlignProvider())
                 .build(this);
 
@@ -68,28 +68,28 @@ public class StyleMenu extends HyperCardMenu {
                 .named("Underline")
                 .withDoMenuAction(e -> WyldCard.getInstance().getFontManager().toggleSelectedFontStyle(new Value("underline")))
                 .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedUnderlineProvider())
-                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withDisabledProvider(WyldCard.getInstance().getPaintManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Strikethrough")
                 .withDoMenuAction(e -> WyldCard.getInstance().getFontManager().toggleSelectedFontStyle(new Value("strikethrough")))
                 .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedStrikethroughProvider())
-                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withDisabledProvider(WyldCard.getInstance().getPaintManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Superscript")
                 .withDoMenuAction(e -> WyldCard.getInstance().getFontManager().toggleSelectedFontStyle(new Value("superscript")))
                 .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedSuperscriptProvider())
-                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withDisabledProvider(WyldCard.getInstance().getPaintManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Subscript")
                 .withDoMenuAction(e -> WyldCard.getInstance().getFontManager().toggleSelectedFontStyle(new Value("subscript")))
                 .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedSubscriptProvider())
-                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withDisabledProvider(WyldCard.getInstance().getPaintManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

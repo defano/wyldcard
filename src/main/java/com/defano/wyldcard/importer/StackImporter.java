@@ -13,7 +13,16 @@ import java.io.File;
 
 public class StackImporter {
 
-    public static void importStack(ExecutionContext context, File stackFile) {
+    public static void importStack(ExecutionContext context) {
+        importStack(context, findFile(context));
+    }
+
+    private static void importStack(ExecutionContext context, File stackFile) {
+
+        // Nothing to do when file isn't specified (user cancelled file selection, for example)
+        if (stackFile == null) {
+            return;
+        }
 
         StackImportProgress progressWindow = new StackImportProgress();
         new WindowBuilder<>(progressWindow)
@@ -22,7 +31,7 @@ public class StackImporter {
                 .alwaysOnTop()
                 .build();
 
-        StackFormatConverter.startConversion(stackFile, new ConversionStatusObserver() {
+        StackFormatConverter.convert(stackFile, new ConversionStatusObserver() {
             @Override
             public void onConversionFailed(String message, Exception cause) {
                 Invoke.onDispatch(() -> {
@@ -45,10 +54,6 @@ public class StackImporter {
                 });
             }
         }, progressWindow);
-    }
-
-    public static void importStack(ExecutionContext context) {
-        importStack(context, findFile(context));
     }
 
     private static File findFile(ExecutionContext context) {

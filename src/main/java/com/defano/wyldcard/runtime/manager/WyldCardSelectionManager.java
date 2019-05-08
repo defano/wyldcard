@@ -40,7 +40,7 @@ public class WyldCardSelectionManager implements SelectionManager {
     }
 
     @Override
-    public PartModel getSelectedPart(ExecutionContext context) throws HtException {
+    public PartModel getSelectionOwningPart(ExecutionContext context) throws HtException {
 
         // No selection exists
         if (theSelectionPart == null || getSelectionRange() == null || getSelectionRange().length() == 0) {
@@ -53,7 +53,7 @@ public class WyldCardSelectionManager implements SelectionManager {
 
     @Override
     public AddressableSelection getManagedSelection(ExecutionContext context) throws HtException {
-        PartModel partModel = getSelectedPart(context);
+        PartModel partModel = getSelectionOwningPart(context);
 
         if (partModel instanceof AddressableSelection) {
             return (AddressableSelection) partModel;

@@ -67,44 +67,44 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
                 .withGetter((context, model) -> new Value(WyldCard.getInstance().getFontManager().getSelectedFontSize()));
 
         define(PROP_BRUSH).asComputedValue()
-                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setSelectedBrush(BasicBrushResolver.basicBrushOfValue(value)))
-                .withGetter((context, model) -> BasicBrushResolver.valueOfBasicBrush(WyldCard.getInstance().getToolsManager().getSelectedBrush()));
+                .withSetter((context, model, value) -> WyldCard.getInstance().getPaintManager().setSelectedBrush(BasicBrushResolver.basicBrushOfValue(value)))
+                .withGetter((context, model) -> BasicBrushResolver.valueOfBasicBrush(WyldCard.getInstance().getPaintManager().getSelectedBrush()));
 
         define(PROP_LINESIZE).asComputedValue()
-                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setLineWidth(value.integerValue()))
-                .withGetter((context, model) -> new Value(WyldCard.getInstance().getToolsManager().getLineWidth()));
+                .withSetter((context, model, value) -> WyldCard.getInstance().getPaintManager().setLineWidth(value.integerValue()))
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getPaintManager().getLineWidth()));
 
         define(PROP_FILLED).asComputedValue()
-                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setShapesFilled(value.booleanValue()))
-                .withGetter((context, model) -> new Value(WyldCard.getInstance().getToolsManager().isShapesFilled()));
+                .withSetter((context, model, value) -> WyldCard.getInstance().getPaintManager().setShapesFilled(value.booleanValue()))
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getPaintManager().isShapesFilled()));
 
         define(PROP_CENTERED).asComputedValue()
-                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setDrawCentered(value.booleanValue()))
-                .withGetter((context, model) -> new Value(WyldCard.getInstance().getToolsManager().isDrawCentered()));
+                .withSetter((context, model, value) -> WyldCard.getInstance().getPaintManager().setDrawCentered(value.booleanValue()))
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getPaintManager().isDrawCentered()));
 
         define(PROP_MULTIPLE).asComputedValue()
-                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setDrawMultiple(value.booleanValue()))
-                .withGetter((context, model) -> new Value(WyldCard.getInstance().getToolsManager().isDrawMultiple()));
+                .withSetter((context, model, value) -> WyldCard.getInstance().getPaintManager().setDrawMultiple(value.booleanValue()))
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getPaintManager().isDrawMultiple()));
 
         define(PROP_CURSOR).asComputedValue()
                 .withSetter((context, model, value) -> WyldCard.getInstance().getCursorManager().setActiveCursor(value))
                 .withGetter((context, model) -> new Value (WyldCard.getInstance().getCursorManager().getActiveCursor().hyperTalkName));
 
         define(PROP_GRID).asComputedValue()
-                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setGridSpacing(value.booleanValue() ? 8 : 1))
-                .withGetter((context, model) -> new Value (WyldCard.getInstance().getToolsManager().getGridSpacing() > 1));
+                .withSetter((context, model, value) -> WyldCard.getInstance().getPaintManager().setGridSpacing(value.booleanValue() ? 8 : 1))
+                .withGetter((context, model) -> new Value (WyldCard.getInstance().getPaintManager().getGridSpacing() > 1));
 
         define(PROP_POLYSIDES).asComputedValue()
-                .withSetter((context, model, value) -> WyldCard.getInstance().getToolsManager().setShapeSides(value.integerValue()))
-                .withGetter((context, model) -> new Value (WyldCard.getInstance().getToolsManager().getShapeSides()));
+                .withSetter((context, model, value) -> WyldCard.getInstance().getPaintManager().setShapeSides(value.integerValue()))
+                .withGetter((context, model) -> new Value (WyldCard.getInstance().getPaintManager().getShapeSides()));
 
         define(PROP_PATTERN).asComputedValue()
                 .withSetter((context, model, value) -> {
                     if (value.integerValue() >= 1 && value.integerValue() <= 40) {
-                        WyldCard.getInstance().getToolsManager().setFillPattern(value.integerValue() - 1);
+                        WyldCard.getInstance().getPaintManager().setFillPattern(value.integerValue() - 1);
                     }
                 })
-                .withGetter((context, model) -> new Value (WyldCard.getInstance().getToolsManager().getFillPattern() + 1));
+                .withGetter((context, model) -> new Value (WyldCard.getInstance().getPaintManager().getFillPattern() + 1));
 
         define(PROP_LOCKSCREEN).asComputedValue()
                 .withGetter((context, model) -> new Value(WyldCard.getInstance().getStackManager().getFocusedStack().getCurtainManager().isScreenLocked()))

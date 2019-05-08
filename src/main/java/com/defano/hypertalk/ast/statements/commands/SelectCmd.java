@@ -126,7 +126,7 @@ public class SelectCmd extends Command {
         Invoke.onDispatch(() -> {
             windowManager.getWindowForStack(context, context.getCurrentStack()).requestFocus();
 
-            WyldCard.getInstance().getToolsManager().forceToolSelection(specifier.getType().getEditTool(), false);
+            WyldCard.getInstance().getPaintManager().forceToolSelection(specifier.getType().getEditTool(), false);
             WyldCard.getInstance().getPartToolManager().setSelectedPart((ToolEditablePart) part);
         });
     }

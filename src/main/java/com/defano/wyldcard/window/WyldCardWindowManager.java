@@ -296,7 +296,7 @@ public class WyldCardWindowManager implements WindowManager {
     @Override
     public void showPatternEditor() {
         new WindowBuilder<>(new PatternEditor())
-                .withModel(WyldCard.getInstance().getToolsManager().getFillPattern())
+                .withModel(WyldCard.getInstance().getPaintManager().getFillPattern())
                 .withTitle("Edit Pattern")
                 .resizeable(false)
                 .asModal()

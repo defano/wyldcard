@@ -112,7 +112,7 @@ public interface Part<T extends PartModel> {
      * @return True if a part tool is active; false otherwise.
      */
     default boolean isPartToolActive() {
-        return WyldCard.getInstance().getToolsManager().getToolMode().isPartTool();
+        return WyldCard.getInstance().getPaintManager().getToolMode().isPartTool();
     }
 
     /**

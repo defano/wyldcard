@@ -71,7 +71,7 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
      */
     @Override
     public void setQuietly(ExecutionContext context, String propertyName, Value propertyValue) {
-        set(context, propertyName, propertyValue, false);
+        doSet(context, propertyName, propertyValue, false);
     }
 
     /**
@@ -79,26 +79,7 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
      */
     @Override
     public void set(ExecutionContext context, String propertyName, Value propertyValue) {
-        set(context, propertyName, propertyValue, true);
-    }
-
-    private void set(ExecutionContext context, String propertyName, Value propertyValue, boolean notifyObservers) {
-        Property p = findProperty(propertyName);
-
-        if (p == null) {
-            throw new HtUncheckedSemanticException(new HtSemanticException("No property named '" + propertyName + "'."));
-        }
-
-        try {
-            p.value().set(context, propertyValue, this);
-
-            if (notifyObservers) {
-                fireOnPropertyChanged(context, p.name(), get(context, propertyName), propertyValue);
-            }
-
-        } catch (Throwable t) {
-            throw new IllegalStateException("Error setting value for property '" + propertyName + "'.", t);
-        }
+        doSet(context, propertyName, propertyValue, true);
     }
 
     /**
@@ -209,6 +190,25 @@ public class SimplePropertiesModel implements PropertiesModel, PropertyBuilder {
     @Override
     public void removePropertyChangedObserver(PropertyChangeObserver observer) {
         propertyChangeObservers.remove(observer);
+    }
+
+    private void doSet(ExecutionContext context, String propertyName, Value propertyValue, boolean notifyObservers) {
+        Property p = findProperty(propertyName);
+
+        if (p == null) {
+            throw new HtUncheckedSemanticException(new HtSemanticException("No property named '" + propertyName + "'."));
+        }
+
+        try {
+            p.value().set(context, propertyValue, this);
+
+            if (notifyObservers) {
+                fireOnPropertyChanged(context, p.name(), get(context, propertyName), propertyValue);
+            }
+
+        } catch (Throwable t) {
+            throw new IllegalStateException("Error setting value for property '" + propertyName + "'.", t);
+        }
     }
 
     /**

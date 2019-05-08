@@ -174,7 +174,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
     /** {@inheritDoc} */
     @Override
     public boolean isPartToolActive() {
-        return WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD;
+        return WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.FIELD;
     }
 
     /** {@inheritDoc} */

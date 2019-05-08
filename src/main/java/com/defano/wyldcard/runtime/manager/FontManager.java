@@ -9,6 +9,9 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * Responsible for managing text style selections (like font, style, size, etc.)
+ */
 public interface FontManager {
 
     /**
@@ -19,12 +22,15 @@ public interface FontManager {
     void setSelectedFont(Font font);
 
     /**
-     * Toggle the given style from the current style selection, that is, add the style if it's not already part of the
-     * selection or remove it, if it is.
+     * Toggle the given style from the current style selection. that is, add the style if it's not already part of the
+     * selection, or remove it if the style is already being applied.
+     * <p>
+     * The given style value is interpreted as the HyperTalk name identifying the style (i.e., 'plain', 'italic', etc).
      *
      * @param style The (single) style to toggle.
      */
     void toggleSelectedFontStyle(Value style);
+
 
     void setSelectedFontAlign(Value align);
 

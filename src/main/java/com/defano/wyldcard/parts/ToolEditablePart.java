@@ -189,9 +189,9 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
     @Override
     @RunOnDispatch
     default void mousePressed(MouseEvent e) {
-        if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) {
+        if (WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) {
             WyldCard.getInstance().getPartToolManager().setSelectedPart(this);
-        } else if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField) {
+        } else if (WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField) {
             WyldCard.getInstance().getPartToolManager().setSelectedPart(this);
         }
     }
@@ -212,8 +212,8 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
         }
 
         // Single click to select part
-        else if ((WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) ||
-                (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField))
+        else if ((WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) ||
+                (WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField))
         {
             WyldCard.getInstance().getPartToolManager().setSelectedPart(this);
         }

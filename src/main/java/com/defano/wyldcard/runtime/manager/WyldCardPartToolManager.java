@@ -32,7 +32,7 @@ public class WyldCardPartToolManager implements PartToolManager {
     @Override
     public void start() {
         // Deselect all parts when user changes tool mode
-        WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> deselectAllParts());
+        WyldCard.getInstance().getPaintManager().getToolModeProvider().subscribe(toolMode -> deselectAllParts());
 
         // Change part font when user chooses a font/style from the menubar
         WyldCard.getInstance().getFontManager().getSelectedFontFamilyProvider().subscribe(fontObserver);
@@ -44,7 +44,7 @@ public class WyldCardPartToolManager implements PartToolManager {
     @Override
     public void setSelectedPart(ToolEditablePart part) {
         Invoke.onDispatch(() -> {
-            WyldCard.getInstance().getToolsManager().forceToolSelection(part.getEditTool(), false);
+            WyldCard.getInstance().getPaintManager().forceToolSelection(part.getEditTool(), false);
 
             deselectAllParts();
             part.setSelectedForEditing(new ExecutionContext(), true);

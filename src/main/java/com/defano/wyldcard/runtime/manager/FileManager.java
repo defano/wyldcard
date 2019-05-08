@@ -3,7 +3,11 @@ package com.defano.wyldcard.runtime.manager;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
+/**
+ * Responsible for managing files that are being read or written via HyperTalk scripts.
+ */
 public interface FileManager {
+
     /**
      * Opens the file identified by filename and returns a FileHandle object referring to it.
      *

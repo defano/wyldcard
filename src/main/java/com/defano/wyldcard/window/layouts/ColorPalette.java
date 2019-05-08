@@ -49,13 +49,13 @@ public class ColorPalette extends WyldCardWindow<Object> {
         backgroundChooserPanel.add(backgroundChooser);
         lineChooserPanel.add(lineChooser);
 
-        WyldCard.getInstance().getToolsManager().getForegroundColorProvider().subscribe(foregroundChooser::setColor);
-        WyldCard.getInstance().getToolsManager().getBackgroundColorProvider().subscribe(backgroundChooser::setColor);
-        WyldCard.getInstance().getToolsManager().getLinePaintProvider().subscribe(paint -> lineChooser.setColor((Color) paint));
+        WyldCard.getInstance().getPaintManager().getForegroundColorProvider().subscribe(foregroundChooser::setColor);
+        WyldCard.getInstance().getPaintManager().getBackgroundColorProvider().subscribe(backgroundChooser::setColor);
+        WyldCard.getInstance().getPaintManager().getLinePaintProvider().subscribe(paint -> lineChooser.setColor((Color) paint));
 
-        foregroundChooser.getSelectionModel().addChangeListener(e -> WyldCard.getInstance().getToolsManager().setForegroundColor(foregroundChooser.getColor()));
-        backgroundChooser.getSelectionModel().addChangeListener(e -> WyldCard.getInstance().getToolsManager().setBackgroundColor(backgroundChooser.getColor()));
-        lineChooser.getSelectionModel().addChangeListener(e -> WyldCard.getInstance().getToolsManager().setLinePaint(lineChooser.getColor()));
+        foregroundChooser.getSelectionModel().addChangeListener(e -> WyldCard.getInstance().getPaintManager().setForegroundColor(foregroundChooser.getColor()));
+        backgroundChooser.getSelectionModel().addChangeListener(e -> WyldCard.getInstance().getPaintManager().setBackgroundColor(backgroundChooser.getColor()));
+        lineChooser.getSelectionModel().addChangeListener(e -> WyldCard.getInstance().getPaintManager().setLinePaint(lineChooser.getColor()));
     }
 
     public static ColorPalette getInstance() {

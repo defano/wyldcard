@@ -1,5 +1,8 @@
 package com.defano.wyldcard.runtime.manager;
 
+/**
+ * An observer of script execution idle events.
+ */
 public interface IdleObserver {
 
     /**

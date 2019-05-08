@@ -181,7 +181,7 @@ public abstract class StyleableButton implements StyleablePart<ButtonStyle,Hyper
     @RunOnDispatch
     public void partOpened(ExecutionContext context) {
         getPartModel().addPropertyChangedObserverAndNotify(context, buttonComponent);
-        toolModeSubscription = WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolModeObserver);
+        toolModeSubscription = WyldCard.getInstance().getPaintManager().getToolModeProvider().subscribe(toolModeObserver);
         WyldCard.getInstance().getKeyboardManager().addGlobalKeyListener(this);
     }
 

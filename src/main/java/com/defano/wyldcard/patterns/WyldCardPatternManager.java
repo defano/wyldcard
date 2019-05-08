@@ -13,7 +13,7 @@ public class WyldCardPatternManager implements PatternManager {
     @Override
     @SuppressWarnings({"ResultOfMethodCallIgnored", "DuplicateExpressions"})
     public void start() {
-        WyldCard.getInstance().getToolsManager().getForegroundColorProvider().subscribe(color -> WyldCardPatternFactory.getInstance().invalidatePatternCache());
-        WyldCard.getInstance().getToolsManager().getBackgroundColorProvider().subscribe(color -> WyldCardPatternFactory.getInstance().invalidatePatternCache());
+        WyldCard.getInstance().getPaintManager().getForegroundColorProvider().subscribe(color -> WyldCardPatternFactory.getInstance().invalidatePatternCache());
+        WyldCard.getInstance().getPaintManager().getBackgroundColorProvider().subscribe(color -> WyldCardPatternFactory.getInstance().invalidatePatternCache());
     }
 }

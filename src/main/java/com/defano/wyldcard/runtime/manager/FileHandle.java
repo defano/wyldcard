@@ -14,6 +14,7 @@ import java.util.Scanner;
  * A reference to a file that is logically opened for reading and writing by scripts.
  */
 public class FileHandle {
+
     private final File file;            // The file associated with this handle
     private StringBuilder contents;     // The in-memory buffer of file contents
     private FileWriter writer;          // The writer used to mutate file contents

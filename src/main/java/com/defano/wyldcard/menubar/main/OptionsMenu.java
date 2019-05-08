@@ -17,12 +17,12 @@ public class OptionsMenu extends HyperCardMenu {
         super("Options");
 
         // Show this menu only when a paint tool is active
-        WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> OptionsMenu.this.setVisible(ToolMode.PAINT == toolMode));
+        WyldCard.getInstance().getPaintManager().getToolModeProvider().subscribe(toolMode -> OptionsMenu.this.setVisible(ToolMode.PAINT == toolMode));
 
         MenuItemBuilder.ofCheckType()
                 .named("Grid")
-                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().setGridSpacing(WyldCard.getInstance().getToolsManager().getGridSpacing() == 8 ? 1 : 8))
-                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getGridSpacingProvider().map(t -> t == 8))
+                .withDoMenuAction(a -> WyldCard.getInstance().getPaintManager().setGridSpacing(WyldCard.getInstance().getPaintManager().getGridSpacing() == 8 ? 1 : 8))
+                .withCheckmarkProvider(WyldCard.getInstance().getPaintManager().getGridSpacingProvider().map(t -> t == 8))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
@@ -71,57 +71,57 @@ public class OptionsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Draw Filled")
-                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().toggleShapesFilled())
-                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getShapesFilledProvider())
+                .withDoMenuAction(a -> WyldCard.getInstance().getPaintManager().toggleShapesFilled())
+                .withCheckmarkProvider(WyldCard.getInstance().getPaintManager().getShapesFilledProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Draw Centered")
-                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().toggleDrawCentered())
-                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDrawCenteredProvider())
+                .withDoMenuAction(a -> WyldCard.getInstance().getPaintManager().toggleDrawCentered())
+                .withCheckmarkProvider(WyldCard.getInstance().getPaintManager().getDrawCenteredProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Draw Multiple")
-                .withDoMenuAction(a -> WyldCard.getInstance().getToolsManager().toggleDrawMultiple())
-                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getDrawMultipleProvider())
+                .withDoMenuAction(a -> WyldCard.getInstance().getPaintManager().toggleDrawMultiple())
+                .withCheckmarkProvider(WyldCard.getInstance().getPaintManager().getDrawMultipleProvider())
                 .build(this);
 
         this.addSeparator();
 
         MenuItemBuilder.ofCheckType()
                 .named("Scale")
-                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.SCALE, true))
-                .withEnabledProvider(WyldCard.getInstance().getToolsManager().getSelectedImageProvider().map(Optional::isPresent))
-                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.SCALE))
+                .withDoMenuAction(e -> WyldCard.getInstance().getPaintManager().forceToolSelection(ToolType.SCALE, true))
+                .withEnabledProvider(WyldCard.getInstance().getPaintManager().getSelectedImageProvider().map(Optional::isPresent))
+                .withCheckmarkProvider(WyldCard.getInstance().getPaintManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.SCALE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Rotate")
-                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.ROTATE, true))
-                .withEnabledProvider(WyldCard.getInstance().getToolsManager().getSelectedImageProvider().map(Optional::isPresent))
-                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.ROTATE))
+                .withDoMenuAction(e -> WyldCard.getInstance().getPaintManager().forceToolSelection(ToolType.ROTATE, true))
+                .withEnabledProvider(WyldCard.getInstance().getPaintManager().getSelectedImageProvider().map(Optional::isPresent))
+                .withCheckmarkProvider(WyldCard.getInstance().getPaintManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.ROTATE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Slant")
-                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.SLANT, true))
-                .withEnabledProvider(WyldCard.getInstance().getToolsManager().getSelectedImageProvider().map(Optional::isPresent))
-                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.SLANT))
+                .withDoMenuAction(e -> WyldCard.getInstance().getPaintManager().forceToolSelection(ToolType.SLANT, true))
+                .withEnabledProvider(WyldCard.getInstance().getPaintManager().getSelectedImageProvider().map(Optional::isPresent))
+                .withCheckmarkProvider(WyldCard.getInstance().getPaintManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.SLANT))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Distort")
-                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.PROJECTION, true))
-                .withEnabledProvider(WyldCard.getInstance().getToolsManager().getSelectedImageProvider().map(Optional::isPresent))
-                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.PROJECTION))
+                .withDoMenuAction(e -> WyldCard.getInstance().getPaintManager().forceToolSelection(ToolType.PROJECTION, true))
+                .withEnabledProvider(WyldCard.getInstance().getPaintManager().getSelectedImageProvider().map(Optional::isPresent))
+                .withCheckmarkProvider(WyldCard.getInstance().getPaintManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.PROJECTION))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Perspective")
-                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.PERSPECTIVE, true))
-                .withEnabledProvider(WyldCard.getInstance().getToolsManager().getSelectedImageProvider().map(Optional::isPresent))
-                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.PERSPECTIVE))
+                .withDoMenuAction(e -> WyldCard.getInstance().getPaintManager().forceToolSelection(ToolType.PERSPECTIVE, true))
+                .withEnabledProvider(WyldCard.getInstance().getPaintManager().getSelectedImageProvider().map(Optional::isPresent))
+                .withCheckmarkProvider(WyldCard.getInstance().getPaintManager().getPaintToolProvider().map(t -> t.getPaintToolType() == PaintToolType.PERSPECTIVE))
                 .build(this);
     }
 

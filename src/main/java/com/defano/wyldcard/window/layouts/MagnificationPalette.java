@@ -34,8 +34,8 @@ public class MagnificationPalette extends WyldCardDialog<Object> {
         map.put(32, new JLabel("32x"));
         slider1.setLabelTable(map);
 
-        magnifierButton.addActionListener(e -> WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.MAGNIFIER, false));
-        WyldCard.getInstance().getToolsManager().getPaintToolProvider().subscribe(tool -> magnifierButton.setEnabled(tool.getPaintToolType() != PaintToolType.MAGNIFIER));
+        magnifierButton.addActionListener(e -> WyldCard.getInstance().getPaintManager().forceToolSelection(ToolType.MAGNIFIER, false));
+        WyldCard.getInstance().getPaintManager().getPaintToolProvider().subscribe(tool -> magnifierButton.setEnabled(tool.getPaintToolType() != PaintToolType.MAGNIFIER));
 
         WyldCard.getInstance().getKeyboardManager().addGlobalKeyListener(new KeyAdapter() {
             @Override

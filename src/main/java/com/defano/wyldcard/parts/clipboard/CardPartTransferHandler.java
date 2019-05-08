@@ -66,7 +66,7 @@ public class CardPartTransferHandler extends TransferHandler {
 
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected
-                WyldCard.getInstance().getToolsManager().forceToolSelection(importedPart.getEditTool(), false);
+                WyldCard.getInstance().getPaintManager().forceToolSelection(importedPart.getEditTool(), false);
                 WyldCard.getInstance().getPartToolManager().setSelectedPart(importedPart);
             });
 

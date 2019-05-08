@@ -73,8 +73,8 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Clear")
-                .withDoMenuAction(e -> ((SelectionTool) WyldCard.getInstance().getToolsManager().getPaintTool()).deleteSelection())
-                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getSelectedImageProvider().map(Objects::isNull))
+                .withDoMenuAction(e -> ((SelectionTool) WyldCard.getInstance().getPaintManager().getPaintTool()).deleteSelection())
+                .withDisabledProvider(WyldCard.getInstance().getPaintManager().getSelectedImageProvider().map(Objects::isNull))
                 .build(this);
 
         this.addSeparator();
@@ -119,16 +119,16 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Background")
-                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().isEditingBackgroundProvider())
-                .withDoMenuAction(e -> WyldCard.getInstance().getToolsManager().toggleIsEditingBackground())
+                .withCheckmarkProvider(WyldCard.getInstance().getPaintManager().isEditingBackgroundProvider())
+                .withDoMenuAction(e -> WyldCard.getInstance().getPaintManager().toggleIsEditingBackground())
                 .withShortcut('B')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Create Icon...")
-                .withEnabledProvider(WyldCard.getInstance().getToolsManager().getSelectedImageProvider().map(Optional::isPresent))
+                .withEnabledProvider(WyldCard.getInstance().getPaintManager().getSelectedImageProvider().map(Optional::isPresent))
                 .withDoMenuAction(e -> new WindowBuilder<>(new IconCreator())
-                        .withModel(WyldCard.getInstance().getToolsManager().getSelectedImage())
+                        .withModel(WyldCard.getInstance().getPaintManager().getSelectedImage())
                         .resizeable(false)
                         .withTitle("Create Icon")
                         .asModal()

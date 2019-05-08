@@ -22,7 +22,7 @@ public class ObjectsMenu extends HyperCardMenu {
 
         // Show this menu only when an object tool is active
         // Show this menu only when a paint tool is active
-        WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> ObjectsMenu.this.setVisible(ToolMode.PAINT != toolMode));
+        WyldCard.getInstance().getPaintManager().getToolModeProvider().subscribe(toolMode -> ObjectsMenu.this.setVisible(ToolMode.PAINT != toolMode));
 
         MenuItemBuilder.ofDefaultType()
                 .named("Button Info...")

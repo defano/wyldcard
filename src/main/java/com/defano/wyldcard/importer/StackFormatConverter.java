@@ -4,8 +4,8 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.builder.*;
 import com.defano.wyldcard.parts.button.ButtonModel;
-import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardLayer;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
@@ -23,24 +23,40 @@ import java.util.List;
 
 public class StackFormatConverter {
 
-    private ConversionStatusObserver status;
-    private ConversionProgressObserver progress;
+    private final ConversionStatusObserver status;
+    private final ConversionProgressObserver progress;
 
     private StackFormatConverter(ConversionStatusObserver status, ConversionProgressObserver progress) {
         this.status = status;
         this.progress = progress;
     }
 
-    public static void startConversion(File stackFile, ConversionStatusObserver status, ConversionProgressObserver progress) {
+    /**
+     * Asynchronously converts a HyperCard stack file to a WyldCard document in the form of a {@link StackModel} object.
+     * <p>
+     * This method can take a while depending on the size of the stack being converted. It therefore provides two
+     * callbacks, one for indicating that the process has completed, the other for reporting progress (measured in terms
+     * of number of cards imported).
+     *
+     * @param stackFile The HyperCard stack file as produced by HyperCard in Mac Classic
+     * @param status    An observer of import status, indicating completion of the process with either a success or
+     *                  failure disposition.
+     * @param progress  An observer of import progress; useful when displaying a progress bar or similar indication of
+     *                  progress.
+     */
+    public static void convert(File stackFile, ConversionStatusObserver status, ConversionProgressObserver progress) {
         if (progress == null || status == null) {
             throw new IllegalArgumentException("Conversion observer cannot be null.");
         }
 
-        StackFormatConverter importer = new StackFormatConverter(status, progress);
-        Invoke.asynchronouslyOnWorkerThread(() -> importer.convert(stackFile));
+        // Nothing to do when file isn't specified
+        if (stackFile != null) {
+            StackFormatConverter importer = new StackFormatConverter(status, progress);
+            Invoke.asynchronouslyOnWorkerThread(() -> importer.doConversion(stackFile));
+        }
     }
 
-    private void convert(File stackFile) {
+    private void doConversion(File stackFile) {
 
         try {
             HyperCardStack hcStack = HyperCardStack.fromFile(stackFile);
@@ -48,9 +64,9 @@ public class StackFormatConverter {
             status.onConversionSucceeded(model);
 
         } catch (FileNotFoundException e) {
-            status.onConversionFailed("Cannot find or open file " + stackFile.getAbsolutePath(), e);
+            status.onConversionFailed("Cannot find or open the stack file " + stackFile.getAbsolutePath(), e);
         } catch (ImportException e) {
-            status.onConversionFailed("File is not a HyperCard stack or the stack file is corrupted.", e);
+            status.onConversionFailed("File is not a HyperCard stack or the stack is corrupted.", e);
         } catch (Exception t) {
             status.onConversionFailed("An unexpected error occurred while reading the stack file.", t);
         }
@@ -116,10 +132,10 @@ public class StackFormatConverter {
     /**
      * Apply text style data from a given {@link PartContentRecord} to a field on a given card (or its background).
      *
-     * @param context The execution context
-     * @param pcr The part content record providing style data
-     * @param cardModel The model of the card that contains the field (or the background field)
-     * @param cardBlock The HyperCard stack's {@link CardBlock} or {@link BackgroundBlock}
+     * @param context    The execution context
+     * @param pcr        The part content record providing style data
+     * @param cardModel  The model of the card that contains the field (or the background field)
+     * @param cardBlock  The HyperCard stack's {@link CardBlock} or {@link BackgroundBlock}
      * @param sharedText When true, style applies to shared text, when false, style applies to unshared text.
      */
     private void applyTextStyles(ExecutionContext context, PartContentRecord pcr, CardModel cardModel, CardLayerBlock cardBlock, boolean sharedText) {

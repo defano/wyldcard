@@ -71,13 +71,13 @@ public class FileMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Import Paint...")
                 .withDoMenuAction(e -> ArtVandelay.importPaint())
-                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(m -> m != ToolMode.PAINT))
+                .withDisabledProvider(WyldCard.getInstance().getPaintManager().getToolModeProvider().map(m -> m != ToolMode.PAINT))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Export Paint...")
                 .withDoMenuAction(e -> ArtVandelay.exportPaint())
-                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(m -> m != ToolMode.PAINT))
+                .withDisabledProvider(WyldCard.getInstance().getPaintManager().getToolModeProvider().map(m -> m != ToolMode.PAINT))
                 .build(this);
 
         this.addSeparator();

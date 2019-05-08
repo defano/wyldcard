@@ -37,7 +37,7 @@ public class GuiceTest<T> implements TestDataGenerator {
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected MouseManager mockMouseManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected KeyboardManager mockKeyboardManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected WindowManager mockWindowManager;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected ToolsManager mockToolsManager;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected PaintManager mockPaintManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected FileManager mockFileManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected FontManager mockFontManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected SelectionManager mockSelectionManager;
@@ -102,7 +102,7 @@ public class GuiceTest<T> implements TestDataGenerator {
             bind(MouseManager.class).toInstance(mockMouseManager);
             bind(KeyboardManager.class).toInstance(mockKeyboardManager);
             bind(WindowManager.class).toInstance(mockWindowManager);
-            bind(ToolsManager.class).toInstance(mockToolsManager);
+            bind(PaintManager.class).toInstance(mockPaintManager);
             bind(FileManager.class).toInstance(mockFileManager);
             bind(FontManager.class).toInstance(mockFontManager);
             bind(SelectionManager.class).toInstance(mockSelectionManager);

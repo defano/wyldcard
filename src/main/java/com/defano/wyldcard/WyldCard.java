@@ -59,7 +59,7 @@ public class WyldCard implements PartFinder {
     @Inject private MouseManager mouseManager;                          // AWT mouse state handler (mouseLoc, etc.)
     @Inject private KeyboardManager keyboardManager;                    // AWT keyboard state handler (keyDown, etc.)
     @Inject private WindowManager windowManager;                        // Window and palette management
-    @Inject private ToolsManager toolsManager;                          // Paint and part tools state management
+    @Inject private PaintManager paintManager;                          // Paint and part tools state management
     @Inject private FileManager fileManager;                            // Manages files for reading/writing in scripts
     @Inject private FontManager fontManager;                            // Font style selection state management
     @Inject private SelectionManager selectionManager;                  // Management of "the selection" text
@@ -202,13 +202,13 @@ public class WyldCard implements PartFinder {
     }
 
     /**
-     * Returns the {@link ToolsManager} object (singleton). The {@link ToolsManager} maintains state for all the paint
+     * Returns the {@link PaintManager} object (singleton). The {@link PaintManager} maintains state for all the paint
      * tools (i.e., line size, selected pattern, etc.)
      *
      * @return The manager object.
      */
-    public ToolsManager getToolsManager() {
-        return toolsManager;
+    public PaintManager getPaintManager() {
+        return paintManager;
     }
 
     /**
@@ -397,7 +397,7 @@ public class WyldCard implements PartFinder {
             bind(MouseManager.class).to(WyldCardMouseManager.class);
             bind(KeyboardManager.class).to(WyldCardKeyboardManager.class);
             bind(WindowManager.class).to(WyldCardWindowManager.class);
-            bind(ToolsManager.class).to(WyldCardToolsManager.class);
+            bind(PaintManager.class).to(WyldCardPaintManager.class);
             bind(FileManager.class).to(WyldCardFileManager.class);
             bind(FontManager.class).to(WyldCardFontManager.class);
             bind(SelectionManager.class).to(WyldCardSelectionManager.class);

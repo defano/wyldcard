@@ -4,17 +4,17 @@ import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.message.SystemMessage;
-import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
-import com.defano.wyldcard.runtime.manager.IdleObserver;
 import com.defano.wyldcard.runtime.ExecutionContext;
+import com.defano.wyldcard.runtime.manager.IdleObserver;
 import com.defano.wyldcard.serializer.Serializer;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.util.ImageLayerUtils;
@@ -275,7 +275,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         WyldCardPatternFactory.getInstance().invalidatePatternCache();
 
         // Make the selected tool active on the focused card
-        WyldCard.getInstance().getToolsManager().reactivateTool(stackPart.getDisplayedCard().getActiveCanvas());
+        WyldCard.getInstance().getPaintManager().reactivateTool(stackPart.getDisplayedCard().getActiveCanvas());
 
         // Update proxied observables (so that they reference newly focused stack)
         cardCount.setSource(stackPart.getCardCountProvider());
@@ -286,7 +286,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         canvasScale.setSource(stackPart.getDisplayedCard().getActiveCanvas().getScaleObservable());
         isSelectable.setSource(Observable.combineLatest(
                 isUndoable.getObservable(),
-                WyldCard.getInstance().getToolsManager().getSelectedImageProvider(),
+                WyldCard.getInstance().getPaintManager().getSelectedImageProvider(),
 
                 // Select command is available when an undoable change is present; the user does not have an active
                 // graphic selection; there are no re-doable changes; and the last graphic change in the undo buffer
@@ -522,15 +522,19 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
      * @return The opened StackPart or null if the stack could not be opened for any reason.
      */
     private StackPart openStack(ExecutionContext context, File stackFile, boolean inNewWindow) {
+        if (stackFile == null) {
+            return null;
+        }
+
         try {
             StackModel model = Serializer.deserialize(stackFile, StackModel.class);
             model.setSavedStackFile(context, stackFile);
-
             return openStack(context, model, inNewWindow);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+
+        return null;
     }
 
     @Override

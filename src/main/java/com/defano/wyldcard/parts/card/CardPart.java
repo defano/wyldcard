@@ -218,7 +218,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * @return The active paint canvas for this card.
      */
     public JMonetCanvas getActiveCanvas() {
-        return WyldCard.getInstance().getToolsManager().isEditingBackground() ? getBackgroundCanvas() : getForegroundCanvas();
+        return WyldCard.getInstance().getPaintManager().isEditingBackground() ? getBackgroundCanvas() : getForegroundCanvas();
     }
 
     /**
@@ -383,7 +383,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     public void onCommit(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
 
         // Save the modified canvas image to the card or background model
-        if (WyldCard.getInstance().getToolsManager().isEditingBackground()) {
+        if (WyldCard.getInstance().getPaintManager().isEditingBackground()) {
             cardModel.getBackgroundModel().setBackgroundImage(canvasImage);
         } else {
             cardModel.setCardImage(canvasImage);
@@ -393,7 +393,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     /** {@inheritDoc} */
     @Override
     public BufferedImage copySelection() {
-        Tool activeTool = WyldCard.getInstance().getToolsManager().getPaintTool();
+        Tool activeTool = WyldCard.getInstance().getPaintManager().getPaintTool();
         if (activeTool instanceof SelectionTool) {
             return ((SelectionTool) activeTool).getSelectedImage();
         }
@@ -404,7 +404,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     /** {@inheritDoc} */
     @Override
     public void deleteSelection() {
-        Tool activeTool = WyldCard.getInstance().getToolsManager().getPaintTool();
+        Tool activeTool = WyldCard.getInstance().getPaintManager().getPaintTool();
         if (activeTool instanceof SelectionTool) {
             ((SelectionTool) activeTool).deleteSelection();
         }
@@ -416,7 +416,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         int cardCenterX = getWidth() / 2;
         int cardCenterY = getHeight() / 2;
 
-        MarqueeTool tool = (MarqueeTool) WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.SELECT, false);
+        MarqueeTool tool = (MarqueeTool) WyldCard.getInstance().getPaintManager().forceToolSelection(ToolType.SELECT, false);
         tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
     }
 
@@ -538,7 +538,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
             thisField.getPartModel().notifyPropertyChangedObserver(context, thisField, true);
         }
 
-        editingBackgroundSubscription = WyldCard.getInstance().getToolsManager().isEditingBackgroundProvider().subscribe(editingBackgroundObserver);
+        editingBackgroundSubscription = WyldCard.getInstance().getPaintManager().isEditingBackgroundProvider().subscribe(editingBackgroundObserver);
         foregroundScaleSubscription = getForegroundCanvas().getScaleObservable().subscribe(foregroundScaleObserver);
         backgroundScaleSubscription = getBackgroundCanvas().getScaleObservable().subscribe(backgroundScaleObserver);
 

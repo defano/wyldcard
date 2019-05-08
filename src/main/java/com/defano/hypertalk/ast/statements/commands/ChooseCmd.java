@@ -22,7 +22,7 @@ public class ChooseCmd extends Command {
     }
 
     public void onExecute(ExecutionContext context) throws HtException {
-        WyldCard.getInstance().getToolsManager().forceToolSelection(getChosenTool(context), false);
+        WyldCard.getInstance().getPaintManager().forceToolSelection(getChosenTool(context), false);
     }
 
     @Override

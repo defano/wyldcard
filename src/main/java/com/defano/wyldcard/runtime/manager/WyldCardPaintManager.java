@@ -41,7 +41,7 @@ import static io.reactivex.subjects.BehaviorSubject.createDefault;
  * including line width, brush selection, pattern, poly sides, draw multiple, draw centered, grid spacing, etc.
  */
 @Singleton
-public class WyldCardToolsManager implements ToolsManager {
+public class WyldCardPaintManager implements PaintManager {
 
     // Tool mode properties
     private final Subject<ToolMode> toolModeProvider = createDefault(ToolMode.BROWSE);
@@ -81,6 +81,10 @@ public class WyldCardToolsManager implements ToolsManager {
 
     @Override
     public void setGridSpacing(int spacing) {
+        if (spacing < 1) {
+            throw new IllegalArgumentException("Grid spacing cannot be less than 1.");
+        }
+
         if (this.gridSpacingSubscription == null) {
             this.gridSpacingSubscription = this.gridSpacingProvider.subscribe(integer -> WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().setGridSpacing(integer));
         }
@@ -88,17 +92,17 @@ public class WyldCardToolsManager implements ToolsManager {
     }
 
     @Override
-    public Subject<Integer> getGridSpacingProvider() {
+    public Observable<Integer> getGridSpacingProvider() {
         return gridSpacingProvider;
     }
 
     @Override
-    public Subject<Stroke> getLineStrokeProvider() {
+    public Observable<Stroke> getLineStrokeProvider() {
         return lineStrokeProvider;
     }
 
     @Override
-    public Subject<Paint> getLinePaintProvider() {
+    public Observable<Paint> getLinePaintProvider() {
         return linePaintProvider;
     }
 
@@ -116,12 +120,12 @@ public class WyldCardToolsManager implements ToolsManager {
     }
 
     @Override
-    public Subject<Tool> getPaintToolProvider() {
+    public Observable<Tool> getPaintToolProvider() {
         return paintToolProvider;
     }
 
     @Override
-    public Subject<ToolMode> getToolModeProvider() {
+    public Observable<ToolMode> getToolModeProvider() {
         return toolModeProvider;
     }
 
@@ -180,12 +184,12 @@ public class WyldCardToolsManager implements ToolsManager {
     }
 
     @Override
-    public Subject<Color> getBackgroundColorProvider() {
+    public Observable<Color> getBackgroundColorProvider() {
         return backgroundColorProvider;
     }
 
     @Override
-    public Subject<Color> getForegroundColorProvider() {
+    public Observable<Color> getForegroundColorProvider() {
         return foregroundColorProvider;
     }
 
@@ -200,7 +204,7 @@ public class WyldCardToolsManager implements ToolsManager {
     }
 
     @Override
-    public Subject<PaintBrush> getSelectedBrushProvider() {
+    public Observable<PaintBrush> getSelectedBrushProvider() {
         return brushStrokeProvider;
     }
 
@@ -220,7 +224,7 @@ public class WyldCardToolsManager implements ToolsManager {
     }
 
     @Override
-    public Subject<Boolean> getDrawCenteredProvider() {
+    public Observable<Boolean> getDrawCenteredProvider() {
         return drawCenteredProvider;
     }
 
@@ -240,12 +244,12 @@ public class WyldCardToolsManager implements ToolsManager {
     }
 
     @Override
-    public Subject<Boolean> getDrawMultipleProvider() {
+    public Observable<Boolean> getDrawMultipleProvider() {
         return drawMultipleProvider;
     }
 
     @Override
-    public Subject<Optional<BufferedImage>> getSelectedImageProvider() {
+    public Observable<Optional<BufferedImage>> getSelectedImageProvider() {
         return selectedImageProvider;
     }
 
@@ -272,12 +276,12 @@ public class WyldCardToolsManager implements ToolsManager {
     }
 
     @Override
-    public Subject<Integer> getShapeSidesProvider() {
+    public Observable<Integer> getShapeSidesProvider() {
         return shapeSidesProvider;
     }
 
     @Override
-    public Subject<Integer> getFillPatternProvider() {
+    public Observable<Integer> getFillPatternProvider() {
         return fillPatternProvider;
     }
 
@@ -302,12 +306,12 @@ public class WyldCardToolsManager implements ToolsManager {
     }
 
     @Override
-    public boolean getPathInterpolation() {
+    public boolean isSmoothSpray() {
         return pathInterpolationProvider.blockingFirst();
     }
 
     @Override
-    public void setPathInterpolation(boolean enabled) {
+    public void setSmoothSpray(boolean enabled) {
         pathInterpolationProvider.onNext(enabled);
     }
 
@@ -322,7 +326,7 @@ public class WyldCardToolsManager implements ToolsManager {
     }
 
     @Override
-    public Subject<Interpolation> getAntiAliasingProvider() {
+    public Observable<Interpolation> getAntiAliasingProvider() {
         return antiAliasingProvider;
     }
 
@@ -334,18 +338,6 @@ public class WyldCardToolsManager implements ToolsManager {
     @Override
     public Observable<Ditherer> getDithererProvider() {
         return dithererProvider;
-    }
-
-    @Override
-    public void toggleMagnifier() {
-        if (getPaintTool().getPaintToolType() == PaintToolType.MAGNIFIER) {
-            WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().setScale(1.0);
-            forceToolSelection(ToolType.fromPaintTool(lastToolType), false);
-        } else if (WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().getScale() != 1.0) {
-            WyldCard.getInstance().getStackManager().getFocusedCard().getActiveCanvas().setScale(1.0);
-        } else {
-            forceToolSelection(ToolType.MAGNIFIER, false);
-        }
     }
 
     @Override
@@ -369,7 +361,7 @@ public class WyldCardToolsManager implements ToolsManager {
     }
 
     @Override
-    public Subject<Boolean> isEditingBackgroundProvider() {
+    public Observable<Boolean> isEditingBackgroundProvider() {
         return isEditingBackground;
     }
 
@@ -405,7 +397,7 @@ public class WyldCardToolsManager implements ToolsManager {
     }
 
     @Override
-    public Subject<Boolean> getShapesFilledProvider() {
+    public Observable<Boolean> getShapesFilledProvider() {
         return shapesFilledProvider;
     }
 
@@ -455,8 +447,8 @@ public class WyldCardToolsManager implements ToolsManager {
     @Override
     public Observable<Boolean> hasTransformableImageSelectionProvider() {
         return Observable.combineLatest(
-                WyldCardToolsManager.this.getPaintToolProvider(),
-                WyldCardToolsManager.this.getSelectedImageProvider(),
+                WyldCardPaintManager.this.getPaintToolProvider(),
+                WyldCardPaintManager.this.getSelectedImageProvider(),
                 (paintTool, bufferedImage) -> paintTool instanceof TransformableImageSelection && bufferedImage.isPresent()
         );
     }
@@ -464,8 +456,8 @@ public class WyldCardToolsManager implements ToolsManager {
     @Override
     public Observable<Boolean> hasTransformableSelectionProvider() {
         return Observable.combineLatest(
-                WyldCardToolsManager.this.getPaintToolProvider(),
-                WyldCardToolsManager.this.getSelectedImageProvider(),
+                WyldCardPaintManager.this.getPaintToolProvider(),
+                WyldCardPaintManager.this.getSelectedImageProvider(),
                 (paintTool, bufferedImage) -> paintTool instanceof TransformableSelection && bufferedImage.isPresent()
         );
     }
@@ -473,8 +465,8 @@ public class WyldCardToolsManager implements ToolsManager {
     @Override
     public Observable<Boolean> hasTransformableCanvasSelectionProvider() {
         return Observable.combineLatest(
-                WyldCardToolsManager.this.getPaintToolProvider(),
-                WyldCardToolsManager.this.getSelectedImageProvider(),
+                WyldCardPaintManager.this.getPaintToolProvider(),
+                WyldCardPaintManager.this.getSelectedImageProvider(),
                 (paintTool, bufferedImage) -> paintTool instanceof TransformableCanvasSelection && bufferedImage.isPresent()
         );
     }

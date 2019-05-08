@@ -62,7 +62,7 @@ public class CheckboxButton extends JCheckBox implements SharedHilite, HyperCard
                 setText(showName ? buttonName : "");
                 break;
 
-            case ButtonModel.ALIAS_HILITE:
+            case ButtonModel.PROP_HIGHLIGHT:
                 CheckboxButton.super.setSelected(newValue.booleanValue());
                 break;
 
@@ -83,6 +83,7 @@ public class CheckboxButton extends JCheckBox implements SharedHilite, HyperCard
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:
+                //noinspection MagicConstant
                 setHorizontalAlignment(FontUtils.getAlignmentForValue(newValue));
                 break;
         }
@@ -90,7 +91,6 @@ public class CheckboxButton extends JCheckBox implements SharedHilite, HyperCard
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         // Swing automatically changes the selection state of the component for us; we need to un-do this change when not in auto-hilite mode.
         if (isAutoHilited()) {
             setSharedHilite(new ExecutionContext(), (ButtonPart) toolEditablePart, isSelected());

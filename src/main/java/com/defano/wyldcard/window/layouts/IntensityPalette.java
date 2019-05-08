@@ -19,11 +19,11 @@ public class IntensityPalette extends WyldCardDialog<Object> {
     private JCheckBox smooth;
 
     private IntensityPalette() {
-        intensitySlider.setValue((int) (WyldCard.getInstance().getToolsManager().getIntensity() * 100.0));
-        intensitySlider.addChangeListener(e -> WyldCard.getInstance().getToolsManager().setIntensity(intensitySlider.getValue() / 100.0));
+        intensitySlider.setValue((int) (WyldCard.getInstance().getPaintManager().getIntensity() * 100.0));
+        intensitySlider.addChangeListener(e -> WyldCard.getInstance().getPaintManager().setIntensity(intensitySlider.getValue() / 100.0));
 
-        smooth.setSelected(WyldCard.getInstance().getToolsManager().getPathInterpolation());
-        smooth.addChangeListener(e -> WyldCard.getInstance().getToolsManager().setPathInterpolation(smooth.isSelected()));
+        smooth.setSelected(WyldCard.getInstance().getPaintManager().isSmoothSpray());
+        smooth.addChangeListener(e -> WyldCard.getInstance().getPaintManager().setSmoothSpray(smooth.isSelected()));
     }
 
     public static IntensityPalette getInstance() {

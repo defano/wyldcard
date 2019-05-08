@@ -28,7 +28,7 @@ public class SelectionExp extends ContainerExp {
         Value oldSelection = WyldCard.getInstance().getSelectionManager().getSelection(context);
         Range range = WyldCard.getInstance().getSelectionManager().getSelectionRange();
         AddressableSelection field = WyldCard.getInstance().getSelectionManager().getManagedSelection(context);
-        PartModel partModel = WyldCard.getInstance().getSelectionManager().getSelectedPart(context);
+        PartModel partModel = WyldCard.getInstance().getSelectionManager().getSelectionOwningPart(context);
 
         // Create the new selectedText
         Value newSelection;

@@ -32,7 +32,7 @@ public class LinesPalette extends WyldCardDialog<Object> implements Consumer<Str
         px6.addActionListener(l -> select(6));
 
         allLines = new JButton[]{px1, px2, px3, px4, px5, px6};
-        WyldCard.getInstance().getToolsManager().getLineStrokeProvider().subscribe(this);
+        WyldCard.getInstance().getPaintManager().getLineStrokeProvider().subscribe(this);
     }
 
     public static LinesPalette getInstance() {
@@ -68,7 +68,7 @@ public class LinesPalette extends WyldCardDialog<Object> implements Consumer<Str
     }
 
     private void select(int width) {
-        WyldCard.getInstance().getToolsManager().setLineWidth(width);
+        WyldCard.getInstance().getPaintManager().setLineWidth(width);
     }
 
     private JButton getButtonForWidth(int width) {

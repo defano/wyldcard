@@ -14,6 +14,6 @@ public class ToolFunc extends Expression {
 
     @Override
     public Value onEvaluate(ExecutionContext context) {
-        return new Value(WyldCard.getInstance().getToolsManager().getSelectedTool().getPrimaryToolName().toLowerCase() + " tool");
+        return new Value(WyldCard.getInstance().getPaintManager().getSelectedTool().getPrimaryToolName().toLowerCase() + " tool");
     }
 }

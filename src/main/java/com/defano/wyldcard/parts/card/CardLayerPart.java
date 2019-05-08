@@ -43,7 +43,7 @@ public interface CardLayerPart<T extends PartModel> extends Part<T> {
      * @return The part layer currently being edited.
      */
     static CardDisplayLayer getActivePartLayer() {
-        return WyldCard.getInstance().getToolsManager().isEditingBackground() ? CardDisplayLayer.BACKGROUND_PARTS : CardDisplayLayer.CARD_PARTS;
+        return WyldCard.getInstance().getPaintManager().isEditingBackground() ? CardDisplayLayer.BACKGROUND_PARTS : CardDisplayLayer.CARD_PARTS;
     }
 
     /**

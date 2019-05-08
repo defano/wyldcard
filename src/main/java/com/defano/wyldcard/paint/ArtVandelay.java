@@ -60,9 +60,9 @@ public class ArtVandelay {
      */
     public static void exportPaint(File file) throws HtException {
         try {
-            BufferedImage exportImage = WyldCard.getInstance().getToolsManager().getSelectedImage() == null ?
+            BufferedImage exportImage = WyldCard.getInstance().getPaintManager().getSelectedImage() == null ?
                     WyldCard.getInstance().getStackManager().getFocusedStack().getDisplayedCard().getScreenshot() :
-                    WyldCard.getInstance().getToolsManager().getSelectedImage();
+                    WyldCard.getInstance().getPaintManager().getSelectedImage();
             exportPaint(file, exportImage);
         } catch (IOException e) {
             throw new HtSemanticException("Couldn't export paint to that file.");
@@ -122,7 +122,7 @@ public class ArtVandelay {
                     importedImage = scaleImageToDimension(importedImage, cardWidth, cardHeight);
                 }
 
-                MarqueeTool tool = (MarqueeTool) WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.SELECT, false);
+                MarqueeTool tool = (MarqueeTool) WyldCard.getInstance().getPaintManager().forceToolSelection(ToolType.SELECT, false);
                 tool.createSelection(importedImage, new Point(cardCenterX - importedImage.getWidth() / 2, cardCenterY - importedImage.getHeight() / 2));
             }
         } catch (IOException e) {

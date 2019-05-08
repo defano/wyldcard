@@ -74,9 +74,9 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
         redrawPatternButtons();
         attachButtonActions();
 
-        WyldCard.getInstance().getToolsManager().getFillPatternProvider().subscribe(this);
-        WyldCard.getInstance().getToolsManager().getBackgroundColorProvider().subscribe(this);
-        WyldCard.getInstance().getToolsManager().getForegroundColorProvider().subscribe(this);
+        WyldCard.getInstance().getPaintManager().getFillPatternProvider().subscribe(this);
+        WyldCard.getInstance().getPaintManager().getBackgroundColorProvider().subscribe(this);
+        WyldCard.getInstance().getPaintManager().getForegroundColorProvider().subscribe(this);
 
         WyldCardPatternFactory.getInstance().addPatternInvalidationObserver(this::redrawPatternButtons);
     }
@@ -102,7 +102,7 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
             allPatterns[index].addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    WyldCard.getInstance().getToolsManager().setPattern(i);
+                    WyldCard.getInstance().getPaintManager().setPattern(i);
                 }
 
                 @Override
@@ -141,7 +141,7 @@ public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
                 }
             } else if (newValue instanceof Color) {
                 redrawPatternButtons();
-                WyldCard.getInstance().getToolsManager().setPattern(WyldCard.getInstance().getToolsManager().getFillPatternProvider().blockingFirst());
+                WyldCard.getInstance().getPaintManager().setPattern(WyldCard.getInstance().getPaintManager().getFillPatternProvider().blockingFirst());
             }
         });
     }

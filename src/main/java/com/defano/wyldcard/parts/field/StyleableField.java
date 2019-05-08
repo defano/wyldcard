@@ -118,7 +118,7 @@ public abstract class StyleableField implements StyleablePart<FieldStyle, HyperC
     public void partOpened(ExecutionContext context) {
         fieldComponent.partOpened(context);
 
-        toolModeSubscription = WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolModeObserver);
+        toolModeSubscription = WyldCard.getInstance().getPaintManager().getToolModeProvider().subscribe(toolModeObserver);
         WyldCard.getInstance().getKeyboardManager().addGlobalKeyListener(this);
     }
 

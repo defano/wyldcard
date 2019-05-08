@@ -73,16 +73,16 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         line.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getLinesPalette().toggleVisible());
         paintbrush.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getBrushesPalette().toggleVisible());
         spraypaint.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getIntensityPalette().toggleVisible());
-        rectangle.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
-        roundRectangle.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
-        oval.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
-        curve.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
-        polygon.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
-        selection.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().selectAll());
+        rectangle.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getPaintManager().toggleShapesFilled());
+        roundRectangle.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getPaintManager().toggleShapesFilled());
+        oval.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getPaintManager().toggleShapesFilled());
+        curve.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getPaintManager().toggleShapesFilled());
+        polygon.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getPaintManager().toggleShapesFilled());
+        selection.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getPaintManager().selectAll());
         text.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getFontManager().setSelectedFont(JFontChooser.showDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow(), "Choose Font", WyldCard.getInstance().getFontManager().getFocusedTextStyle().toFont())));
         fill.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getPatternsPalette().toggleVisible());
 
-        WyldCard.getInstance().getToolsManager().getShapesFilledProvider().subscribe(filled -> {
+        WyldCard.getInstance().getPaintManager().getShapesFilledProvider().subscribe(filled -> {
             SwingUtilities.invokeLater(() -> {
                 rectangle.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/rectangle_filled.png" : "/icons/rectangle.png")));
                 roundRectangle.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/roundrect_filled.png" : "/icons/roundrect.png")));
@@ -93,8 +93,8 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
             });
         });
 
-        WyldCard.getInstance().getToolsManager().getPaintToolProvider().subscribe(this);
-        WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(arg -> {
+        WyldCard.getInstance().getPaintManager().getPaintToolProvider().subscribe(this);
+        WyldCard.getInstance().getPaintManager().getToolModeProvider().subscribe(arg -> {
             SwingUtilities.invokeLater(() -> {
                 if (arg == ToolMode.BROWSE) {
                     enableAllTools();
@@ -133,8 +133,8 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
     }
 
     private void selectTool(ToolType tool) {
-        lastTool = WyldCard.getInstance().getToolsManager().getSelectedTool();
-        WyldCard.getInstance().getToolsManager().chooseTool(tool);
+        lastTool = WyldCard.getInstance().getPaintManager().getSelectedTool();
+        WyldCard.getInstance().getPaintManager().chooseTool(tool);
     }
 
     private JButton getButtonForTool(PaintToolType paintToolType) {

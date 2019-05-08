@@ -32,7 +32,7 @@ public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<In
         hexagon.addActionListener(e -> selectShape(6));
         octogon.addActionListener(e -> selectShape(8));
 
-        WyldCard.getInstance().getToolsManager().getShapeSidesProvider().subscribe(this);
+        WyldCard.getInstance().getPaintManager().getShapeSidesProvider().subscribe(this);
     }
 
     public static ShapesPalette getInstance() {
@@ -68,7 +68,7 @@ public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<In
     }
 
     private void selectShape(int sides) {
-        WyldCard.getInstance().getToolsManager().setShapeSides(sides);
+        WyldCard.getInstance().getPaintManager().setShapeSides(sides);
     }
 
     @Override

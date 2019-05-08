@@ -202,7 +202,7 @@ public abstract class HyperCardTextField extends JScrollPane implements
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
 
         // Get notified when field tool is selected
-        toolModeSubscription = WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolModeObserver);
+        toolModeSubscription = WyldCard.getInstance().getPaintManager().getToolModeProvider().subscribe(toolModeObserver);
 
         fontAlignSubscription = WyldCard.getInstance().getFontManager().getSelectedTextAlignProvider().subscribe(fontAlignObserver);
         fontFamilySubscription = WyldCard.getInstance().getFontManager().getSelectedFontFamilyProvider().subscribe(fontFamilyObserver);

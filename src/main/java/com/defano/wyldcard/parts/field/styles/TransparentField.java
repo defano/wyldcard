@@ -25,7 +25,7 @@ public class TransparentField extends HyperCardTextField {
 
     @Override
     public void paint(Graphics g) {
-        if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD) {
+        if (WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.FIELD) {
             ((Graphics2D) g).setPaint(Color.GRAY);
             g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
         }

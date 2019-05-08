@@ -24,7 +24,7 @@ public class WyldCardCursorManager implements CursorManager {
     @Override
     public void start() {
         // Update cursor when the tool mode changes...
-        WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> updateCursor());
+        WyldCard.getInstance().getPaintManager().getToolModeProvider().subscribe(toolMode -> updateCursor());
 
         // ... or when the focused stack changes
         WyldCard.getInstance().getStackManager().getFocusedStackProvider().subscribe(stackPart -> {
@@ -56,8 +56,8 @@ public class WyldCardCursorManager implements CursorManager {
     }
 
     private void updateCursor() {
-        ToolMode mode = WyldCard.getInstance().getToolsManager().getToolMode();
-        Tool tool = WyldCard.getInstance().getToolsManager().getPaintTool();
+        ToolMode mode = WyldCard.getInstance().getPaintManager().getToolMode();
+        Tool tool = WyldCard.getInstance().getPaintManager().getPaintTool();
 
         Cursor effectiveCursor = mode == ToolMode.BROWSE ?
                 activeCursor.cursor :

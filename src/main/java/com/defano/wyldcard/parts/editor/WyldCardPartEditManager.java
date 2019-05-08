@@ -47,9 +47,9 @@ public class WyldCardPartEditManager implements PartEditManager {
         // User dragged the mouse
         else if (event.getID() == MouseEvent.MOUSE_DRAGGED) {
             if (WyldCard.getInstance().getKeyboardManager().isCtrlCommandDown() && part == null){
-                if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BUTTON) {
+                if (WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.BUTTON) {
                     doNewButton();
-                } else if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD) {
+                } else if (WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.FIELD) {
                     doNewField();
                 }
             }

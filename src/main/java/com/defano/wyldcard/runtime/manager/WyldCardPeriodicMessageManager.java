@@ -41,7 +41,7 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
         WyldCard.getInstance().getStackManager().getFocusedStackProvider().subscribe(stackPart -> stackPart.addNavigationObserver(WyldCardPeriodicMessageManager.this));
 
         // Stop tracking 'within' when not in browse mode
-        WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> {
+        WyldCard.getInstance().getPaintManager().getToolModeProvider().subscribe(toolMode -> {
             if (toolMode != ToolMode.BROWSE) {
                 withinParts.clear();
             }
@@ -103,7 +103,7 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
 
     private void send(SystemMessage message, PartModel... models) {
         for (PartModel model : models) {
-            if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BROWSE && deferCycles < 1) {
+            if (WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.BROWSE && deferCycles < 1) {
                 model.receiveMessage(new ExecutionContext(model), null, message, (command, wasTrapped, error) -> {
                     if (error != null) {
                         error.getStackTrace();

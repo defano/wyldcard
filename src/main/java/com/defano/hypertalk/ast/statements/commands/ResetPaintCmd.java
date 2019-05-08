@@ -16,7 +16,7 @@ public class ResetPaintCmd extends Command {
 
     @Override
     protected void onExecute(ExecutionContext context) {
-        WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.ROUND_12X12);
+        WyldCard.getInstance().getPaintManager().setSelectedBrush(PaintBrush.ROUND_12X12);
         WyldCard.getInstance().getWyldCardPart().set(context, WyldCardProperties.PROP_CENTERED, new Value(false));
         WyldCard.getInstance().getWyldCardPart().set(context, WyldCardProperties.PROP_FILLED, new Value(false));
         WyldCard.getInstance().getWyldCardPart().set(context, WyldCardProperties.PROP_GRID, new Value(false));

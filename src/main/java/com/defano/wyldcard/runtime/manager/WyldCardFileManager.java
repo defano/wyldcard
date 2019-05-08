@@ -15,6 +15,9 @@ public class WyldCardFileManager implements FileManager {
 
     private final Set<FileHandle> openFiles = new HashSet<>();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FileHandle open(String filename) {
         FileHandle handle = getFileHandle(filename);
@@ -29,6 +32,9 @@ public class WyldCardFileManager implements FileManager {
         return handle;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close(String filename) throws HtException {
         FileHandle handle = getFileHandle(filename);
@@ -40,6 +46,9 @@ public class WyldCardFileManager implements FileManager {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FileHandle getFileHandle(String filename) {
         for (FileHandle thisHandle : openFiles) {
@@ -51,6 +60,9 @@ public class WyldCardFileManager implements FileManager {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void closeAll() {
         for (FileHandle thisOpenFile : openFiles) {
