@@ -1,7 +1,7 @@
 package com.defano.wyldcard.menubar.main;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.menubar.HyperCardMenu;
+import com.defano.wyldcard.menubar.WyldCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.button.ButtonPart;
@@ -13,7 +13,7 @@ import java.util.Optional;
 /**
  * The HyperCard Objects menu.
  */
-public class ObjectsMenu extends HyperCardMenu {
+public class ObjectsMenu extends WyldCardMenu {
 
     public static ObjectsMenu instance = new ObjectsMenu();
 

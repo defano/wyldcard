@@ -1,5 +1,12 @@
 package com.defano.wyldcard.menubar;
 
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.menubar.dispatcher.MenuMessageDispatcher;
+import com.defano.wyldcard.menubar.dispatcher.MenuMessageHandler;
+import com.defano.wyldcard.message.Message;
+import com.defano.wyldcard.message.MessageBuilder;
+import com.defano.wyldcard.message.SystemMessage;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import io.reactivex.Observable;
 
@@ -19,24 +26,24 @@ public class MenuItemBuilder {
     private Observable<Boolean> checkmarkProvider;
     private Observable<Boolean> disabledProvider;
     private Observable<Boolean> enabledProvider;
-    private List<ActionListener> doMenuActionListeners = new ArrayList<>();
-    private ActionListener actionListener;
+    private List<ActionListener> actionListeners = new ArrayList<>();
     private Integer atIndex;
+    private Message menuMessage;
 
     private MenuItemBuilder(JMenuItem item) {
         this.item = item;
     }
 
     public static MenuItemBuilder ofCheckType () {
-        return new MenuItemBuilder(new JCheckBoxMenuItem());
+        return new MenuItemBuilder(new WyldCardCheckBoxMenuItem());
     }
 
     public static MenuItemBuilder ofDefaultType () {
-        return new MenuItemBuilder(new JMenuItem());
+        return new MenuItemBuilder(new WyldCardDefaultMenuItem());
     }
 
     public static MenuItemBuilder ofAction(Action action) {
-        return new MenuItemBuilder(new JMenuItem(action));
+        return new MenuItemBuilder(new WyldCardDefaultMenuItem(action));
     }
 
     public static MenuItemBuilder ofHierarchicalType() {
@@ -44,12 +51,17 @@ public class MenuItemBuilder {
     }
 
     public MenuItemBuilder withDoMenuAction(ActionListener action) {
-        this.doMenuActionListeners.add(action);
+        this.actionListeners.add(action);
         return this;
     }
 
     public MenuItemBuilder withAction(ActionListener action) {
-        this.actionListener = action;
+        this.actionListeners.add(action);
+        return this;
+    }
+
+    public MenuItemBuilder withMenuMessasge(Message menuMessage) {
+        this.menuMessage = menuMessage;
         return this;
     }
 
@@ -123,12 +135,19 @@ public class MenuItemBuilder {
 
     public JMenuItem build (JMenuItem intoMenu) {
 
-        if (actionListener != null) {
-            this.item.addActionListener(actionListener);
-        }
+        MenuMessageDispatcher.getInstance().addHandler(new MenuMessageHandler(item, actionListeners));
+        this.item.addActionListener(e -> {
+            Message message = MessageBuilder.named(SystemMessage.DO_MENU.messageName).withArgument(item.getName()).build();
 
-        if (doMenuActionListeners.size() > 0) {
-            this.item.addActionListener(new DoMenuAction(intoMenu, item, doMenuActionListeners));
+            if (item instanceof WyldCardMenuItem && ((WyldCardMenuItem) item).getMenuMessage() != null) {
+                message = ((WyldCardMenuItem) item).getMenuMessage();
+            }
+
+            WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().receiveMessage(ExecutionContext.unboundInstance(), message);
+        });
+
+        if (menuMessage != null && item instanceof WyldCardMenuItem) {
+            ((WyldCardMenuItem) item).setMenuMessage(menuMessage);
         }
 
         if (checkmarkProvider != null) {

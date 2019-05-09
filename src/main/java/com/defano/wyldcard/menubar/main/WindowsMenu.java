@@ -1,7 +1,7 @@
 package com.defano.wyldcard.menubar.main;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.menubar.HyperCardMenu;
+import com.defano.wyldcard.menubar.WyldCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.layouts.FindWindow;
@@ -13,7 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class WindowsMenu extends HyperCardMenu {
+public class WindowsMenu extends WyldCardMenu {
 
     public static WindowsMenu instance = new WindowsMenu();
 

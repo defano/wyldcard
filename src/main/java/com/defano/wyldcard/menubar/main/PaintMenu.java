@@ -7,7 +7,7 @@ import com.defano.jmonet.tools.selection.TransformableImageSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
 import com.defano.jmonet.transform.dither.NullDitherer;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.menubar.HyperCardMenu;
+import com.defano.wyldcard.menubar.WyldCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
@@ -17,7 +17,7 @@ import javax.swing.*;
 /**
  * The HyperCard Paint menu.
  */
-public class PaintMenu extends HyperCardMenu {
+public class PaintMenu extends WyldCardMenu {
 
     public static PaintMenu instance = new PaintMenu();
 

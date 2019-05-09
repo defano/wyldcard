@@ -186,6 +186,7 @@ commandStatement
     | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmd
     | 'keydown' expression                                                                                              # keydownCmd
     | 'lock' 'screen'                                                                                                   # lockScreenCmd
+    | 'lock' 'messages'                                                                                                 # lockMessagesCmd
     | 'mark' 'all' cards                                                                                                # markAllCardsCmd
     | 'mark' expression                                                                                                 # markCardCmd
     | 'mark' cards 'where' expression                                                                                   # markCardsWhereCmd
@@ -249,6 +250,7 @@ commandStatement
     | 'type' expression 'with' listExpression                                                                           # typeWithCmdKeyCmd
     | 'unlock' 'screen'                                                                                                 # unlockScreenCmd
     | 'unlock' 'screen' 'with' 'visual'? 'effect'? expression                                                           # unlockScreenVisualCmd
+    | 'unlock' 'messages'                                                                                               # unlockMessagesCmd
     | 'unmark' 'all' cards                                                                                              # unmarkAllCardsCmd
     | 'unmark' expression                                                                                               # unmarkCardCmd
     | 'unmark' cards 'where' expression                                                                                 # unmarkCardsWhereCmd
@@ -759,7 +761,7 @@ keyword
     | 'voices' | 'windows' | 'average' | 'min' | 'max' | 'sum' | 'random' | 'sqrt' | 'trunc' | 'sin' | 'cos' | 'tan'
     | 'atan' | 'exp' | 'exp1' | 'exp2' | 'ln' | 'ln1' | 'log2' | 'abs' | 'chartonum' | 'numtochar' | 'value' | 'length'
     | 'param' | 'annuity' | 'compound' | 'offset' | 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth'
-    | 'seventh' | 'eighth' | 'ninth' | 'tenth' | 'menumessages'
+    | 'seventh' | 'eighth' | 'ninth' | 'tenth' | 'menumessages' | 'messages'
     | 'mid' | 'middle' | 'last' | 'any' | 'parts' | 'menuitems' | 'integer' | 'point' | 'logical' | 'boolean' | 'bool'
     | 'word' | 'chars' | 'whole' | 'string' | 'bottom' | 'top' | 'center' | 'scroll' | 'plain' | 'picture' | 'pict'
     | 'seconds' | 'secs' | 'sec' | 'fast' | 'slow' | 'slowly' | 'very' | 'black' | 'card' | 'gray' | 'grey' | 'inverse'

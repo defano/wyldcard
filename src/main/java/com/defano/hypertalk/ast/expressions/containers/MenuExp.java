@@ -87,11 +87,7 @@ public class MenuExp extends ContainerExp {
                     MenuItemBuilder.ofDefaultType()
                             .named(thisItem.toString())
                             .atIndex(index)
-                            .withDoMenuAction(e -> {
-                                if (!menuMessages.isEmpty()) {
-                                    context.getCurrentCard().getPartModel().receiveMessage(context, menuMessage);
-                                }
-                            })
+                            .withMenuMessasge(menuMessage)
                             .build(menu);
                 }
             }, HtSemanticException.class);

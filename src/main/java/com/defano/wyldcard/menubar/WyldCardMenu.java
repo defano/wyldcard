@@ -5,9 +5,9 @@ import javax.swing.*;
 /**
  * An extension of {@link JMenu} that prevents menubar flickering when adjusting visibility.
  */
-public class HyperCardMenu extends JMenu {
+public class WyldCardMenu extends JMenu {
 
-    public HyperCardMenu(String name) {
+    public WyldCardMenu(String name) {
         super(name);
     }
 

@@ -4,7 +4,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.clipboard.CanvasClipboardActionListener;
 import com.defano.jmonet.tools.base.SelectionTool;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.menubar.HyperCardMenu;
+import com.defano.wyldcard.menubar.WyldCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.parts.clipboard.CardActionListener;
 import com.defano.wyldcard.runtime.ExecutionContext;
@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * The HyperCard Edit menu.
  */
-public class EditMenu extends HyperCardMenu {
+public class EditMenu extends WyldCardMenu {
 
     public static EditMenu instance = new EditMenu();
 

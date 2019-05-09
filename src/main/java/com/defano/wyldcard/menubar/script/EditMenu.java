@@ -1,11 +1,11 @@
 package com.defano.wyldcard.menubar.script;
 
 import com.defano.wyldcard.debug.DebugContext;
-import com.defano.wyldcard.menubar.HyperCardMenu;
+import com.defano.wyldcard.menubar.WyldCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
 
-public class EditMenu extends HyperCardMenu {
+public class EditMenu extends WyldCardMenu {
 
     public EditMenu(ScriptEditor editor) {
         super("Edit");

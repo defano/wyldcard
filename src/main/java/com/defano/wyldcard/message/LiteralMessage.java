@@ -36,9 +36,4 @@ public class LiteralMessage implements Message {
             return new ArrayList<>();
         }
     }
-
-    @Override
-    public String toMessageString(ExecutionContext context) {
-        return text;
-    }
 }

@@ -5,12 +5,14 @@ import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.menubar.WyldCardMenuItem;
+import com.defano.wyldcard.message.Message;
+import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
@@ -28,6 +30,7 @@ public class MenuPropertiesDelegate {
     private static final String PROP_CHECKMARK = "checkmark";
     private static final String PROP_COMMANDCHAR = "commandchar";
     private static final String PROP_NAME = "name";
+    private static final String PROP_MENUMESSAGE = "menumessage";
 
     public static Value getProperty(ExecutionContext context, String name, MenuItemSpecifier menuItem) throws HtException {
         return Invoke.onDispatch(() -> {
@@ -40,6 +43,15 @@ public class MenuPropertiesDelegate {
                     return new Value(menuItem.getSpecifiedMenuItem(context).getAccelerator().getKeyChar());
                 case PROP_NAME:
                     return new Value(menuItem.getSpecifiedMenuItem(context).getText());
+                case PROP_MENUMESSAGE:
+                    JMenuItem item = menuItem.getSpecifiedMenuItem(context);
+                    if (item instanceof WyldCardMenuItem) {
+                        Message menuMessage = ((WyldCardMenuItem) item).getMenuMessage();
+                        if (menuMessage != null) {
+                            return new Value(menuMessage.toEvaluatedMessage(context));
+                        }
+                    }
+                    return new Value();
                 default:
                     throw new HtSemanticException(name + " is not a menu item property.");
             }
@@ -66,6 +78,13 @@ public class MenuPropertiesDelegate {
                     break;
                 case PROP_NAME:
                     menuItem.getSpecifiedMenuItem(context).setText(value.toString());
+                case PROP_MENUMESSAGE:
+                    JMenuItem item = menuItem.getSpecifiedMenuItem(context);
+                    if (item instanceof WyldCardMenuItem) {
+                        ((WyldCardMenuItem) item).setMenuMessage(MessageBuilder.fromString(value.toString()));
+                    } else {
+                        throw new HtSemanticException("Can't set the message for that menu item.");
+                    }
                 default:
                     throw new HtSemanticException(name + " is not a menu item property.");
             }
@@ -86,14 +105,7 @@ public class MenuPropertiesDelegate {
         newItem.setText(oldItem.getText());
         newItem.setAccelerator(oldItem.getAccelerator());
         newItem.setIcon(oldItem.getIcon());
-        newItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Invoke.asynchronouslyOnDispatch(() -> {
-                    newItem.setSelected(!newItem.isSelected());
-                });
-            }
-        });
+        newItem.addActionListener(e -> Invoke.asynchronouslyOnDispatch(() -> newItem.setSelected(!newItem.isSelected())));
 
         for (ActionListener thisActionListener : oldItem.getActionListeners()) {
             newItem.addActionListener(thisActionListener);

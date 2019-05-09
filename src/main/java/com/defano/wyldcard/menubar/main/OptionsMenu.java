@@ -1,7 +1,7 @@
 package com.defano.wyldcard.menubar.main;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.menubar.HyperCardMenu;
+import com.defano.wyldcard.menubar.WyldCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.hypertalk.ast.model.ToolType;
@@ -9,7 +9,7 @@ import com.defano.jmonet.model.PaintToolType;
 
 import java.util.Optional;
 
-public class OptionsMenu extends HyperCardMenu {
+public class OptionsMenu extends WyldCardMenu {
 
     public static OptionsMenu instance = new OptionsMenu();
 

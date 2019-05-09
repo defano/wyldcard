@@ -32,20 +32,7 @@ public interface Message {
      */
     List<Value> getArguments(ExecutionContext context) throws HtException;
 
-    default String toMessageString(ExecutionContext context) throws HtException {
-        StringBuilder message = new StringBuilder();
-        List<Value> arguments = getArguments(context);
-
-        message.append(getMessageName()).append(" ");
-
-        for (Value argument : arguments) {
-            message.append(argument).append(",");
-        }
-
-        if (!arguments.isEmpty()) {
-            message.deleteCharAt(message.length() - 1);
-        }
-
-        return message.toString();
+    default EvaluatedMessage toEvaluatedMessage(ExecutionContext context) throws HtException {
+        return new EvaluatedMessage(getMessageName(), getArguments(context));
     }
 }

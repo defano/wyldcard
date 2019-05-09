@@ -1,14 +1,14 @@
 package com.defano.wyldcard.menubar.main;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.menubar.HyperCardMenu;
+import com.defano.wyldcard.menubar.WyldCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
 /**
  * The HyperCard Go menu.
  */
-public class GoMenu extends HyperCardMenu {
+public class GoMenu extends WyldCardMenu {
 
     public static GoMenu instance = new GoMenu();
 

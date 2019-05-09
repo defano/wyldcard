@@ -12,6 +12,8 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.cursor.HyperCardCursor;
+import com.defano.wyldcard.menubar.dispatcher.MenuMessageDispatcher;
+import com.defano.wyldcard.message.EvaluatedMessage;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.parts.field.DeferredKeyEventListener;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -88,15 +90,15 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
 
         define(PROP_CURSOR).asComputedValue()
                 .withSetter((context, model, value) -> WyldCard.getInstance().getCursorManager().setActiveCursor(value))
-                .withGetter((context, model) -> new Value (WyldCard.getInstance().getCursorManager().getActiveCursor().hyperTalkName));
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getCursorManager().getActiveCursor().hyperTalkName));
 
         define(PROP_GRID).asComputedValue()
                 .withSetter((context, model, value) -> WyldCard.getInstance().getPaintManager().setGridSpacing(value.booleanValue() ? 8 : 1))
-                .withGetter((context, model) -> new Value (WyldCard.getInstance().getPaintManager().getGridSpacing() > 1));
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getPaintManager().getGridSpacing() > 1));
 
         define(PROP_POLYSIDES).asComputedValue()
                 .withSetter((context, model, value) -> WyldCard.getInstance().getPaintManager().setShapeSides(value.integerValue()))
-                .withGetter((context, model) -> new Value (WyldCard.getInstance().getPaintManager().getShapeSides()));
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getPaintManager().getShapeSides()));
 
         define(PROP_PATTERN).asComputedValue()
                 .withSetter((context, model, value) -> {
@@ -104,7 +106,7 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
                         WyldCard.getInstance().getPaintManager().setFillPattern(value.integerValue() - 1);
                     }
                 })
-                .withGetter((context, model) -> new Value (WyldCard.getInstance().getPaintManager().getFillPattern() + 1));
+                .withGetter((context, model) -> new Value(WyldCard.getInstance().getPaintManager().getFillPattern() + 1));
 
         define(PROP_LOCKSCREEN).asComputedValue()
                 .withGetter((context, model) -> new Value(WyldCard.getInstance().getStackManager().getFocusedStack().getCurtainManager().isScreenLocked()))
@@ -134,11 +136,7 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
 
     @Override
     public void receiveMessage(ExecutionContext context, ASTNode initiator, Message message, MessageCompletionObserver onCompletion) {
-        try {
-            processMessage(context, message);
-        } catch (HtException e) {
-            // Nothing to do
-        }
+        processMessage(context, message);
 
         if (onCompletion != null) {
             onCompletion.onMessagePassed(message, false, null);
@@ -153,7 +151,6 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
     @Override
     public Value invokeFunction(ExecutionContext context, ASTNode initiator, Message message) throws HtException {
         // TODO: This would be a good place to hook XFCN-like functionality
-
         throw new HtException("No such function " + message.getMessageName() + ".");
     }
 
@@ -186,16 +183,22 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
         throw new HtUncheckedSemanticException(new HtSemanticException("Cannot edit the script of WyldCard."));
     }
 
-    private void processMessage(ExecutionContext context, Message message) throws HtException {
+    private void processMessage(ExecutionContext context, Message message) {
         // TODO: This would be a good place to hook XCMD-like functionality
 
-        String messageString = message.toMessageString(context);
         try {
-            Script script = (Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, messageString);
-            Statement s = script.getStatements().list.get(0);
+            EvaluatedMessage evaluatedMessage = message.toEvaluatedMessage(context);
 
-            if (s instanceof Command) {
-                s.execute(context);
+            if (MenuMessageDispatcher.getInstance().test(evaluatedMessage)) {
+                MenuMessageDispatcher.getInstance().handleMessage(context, evaluatedMessage);
+            } else {
+                String messageString = evaluatedMessage.toMessageString();
+                Script script = (Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, messageString);
+                Statement s = script.getStatements().list.get(0);
+
+                if (s instanceof Command) {
+                    s.execute(context);
+                }
             }
         } catch (HtException | Preemption e) {
             // Nothing to do

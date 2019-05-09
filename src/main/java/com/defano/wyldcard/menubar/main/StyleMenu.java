@@ -2,7 +2,7 @@ package com.defano.wyldcard.menubar.main;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.menubar.HyperCardMenu;
+import com.defano.wyldcard.menubar.WyldCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.window.WindowBuilder;
@@ -13,7 +13,7 @@ import java.awt.*;
 /**
  * The HyperCard Style menu.
  */
-public class StyleMenu extends HyperCardMenu {
+public class StyleMenu extends WyldCardMenu {
 
     public static StyleMenu instance = new StyleMenu();
 

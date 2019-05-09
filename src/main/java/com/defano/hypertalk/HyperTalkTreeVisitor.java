@@ -985,6 +985,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitLockMessagesCmd(HyperTalkParser.LockMessagesCmdContext ctx) {
+        return new SetPropertyCmd(ctx, WyldCardProperties.PROP_LOCKMESSAGES, new Value(true));
+    }
+
+    @Override
     public Object visitMarkAllCardsCmd(HyperTalkParser.MarkAllCardsCmdContext ctx) {
         return new MarkCmd(ctx, true, null, null, null, null, null);
     }
@@ -1057,6 +1062,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitUnlockScreenVisualCmd(HyperTalkParser.UnlockScreenVisualCmdContext ctx) {
         return new UnlockScreenCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitUnlockMessagesCmd(HyperTalkParser.UnlockMessagesCmdContext ctx) {
+        return new SetPropertyCmd(ctx, WyldCardProperties.PROP_LOCKMESSAGES, new Value(false));
     }
 
     @Override
