@@ -1,7 +1,6 @@
 package com.defano.wyldcard.message;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -31,24 +30,6 @@ public class EvaluatedMessage implements Message {
     public List<Value> getArguments() {
         return arguments;
     }
-
-    public String toMessageString() throws HtException {
-        StringBuilder message = new StringBuilder();
-        List<Value> arguments = getArguments();
-
-        message.append(getMessageName()).append(" ");
-
-        for (Value argument : arguments) {
-            message.append(argument).append(",");
-        }
-
-        if (!arguments.isEmpty()) {
-            message.deleteCharAt(message.length() - 1);
-        }
-
-        return message.toString();
-    }
-
 
     @Override
     public String toString() {

@@ -455,11 +455,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitMenuMessage(HyperTalkParser.MenuMessageContext ctx) {
-        return super.visitMenuMessage(ctx);
-    }
-
-    @Override
     public Object visitPropertyContainer(HyperTalkParser.PropertyContainerContext ctx) {
         return new PropertyExp(ctx, (PropertySpecifier) visit(ctx.property()));
     }

@@ -1,12 +1,9 @@
 package com.defano.wyldcard.menubar;
 
-import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.menubar.dispatcher.MenuActionListener;
 import com.defano.wyldcard.menubar.dispatcher.MenuMessageDispatcher;
 import com.defano.wyldcard.menubar.dispatcher.MenuMessageHandler;
 import com.defano.wyldcard.message.Message;
-import com.defano.wyldcard.message.MessageBuilder;
-import com.defano.wyldcard.message.SystemMessage;
-import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import io.reactivex.Observable;
 
@@ -136,15 +133,7 @@ public class MenuItemBuilder {
     public JMenuItem build (JMenuItem intoMenu) {
 
         MenuMessageDispatcher.getInstance().addHandler(new MenuMessageHandler(item, actionListeners));
-        this.item.addActionListener(e -> {
-            Message message = MessageBuilder.named(SystemMessage.DO_MENU.messageName).withArgument(item.getName()).build();
-
-            if (item instanceof WyldCardMenuItem && ((WyldCardMenuItem) item).getMenuMessage() != null) {
-                message = ((WyldCardMenuItem) item).getMenuMessage();
-            }
-
-            WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().receiveMessage(ExecutionContext.unboundInstance(), message);
-        });
+        item.addActionListener(new MenuActionListener(item));
 
         if (menuMessage != null && item instanceof WyldCardMenuItem) {
             ((WyldCardMenuItem) item).setMenuMessage(menuMessage);

@@ -57,11 +57,11 @@ public class MenuExp extends ContainerExp {
      * @param menu    The menu into which items should be added
      * @param index   The index at which the menu items should be added.
      */
-    public static void addValueToMenu(ExecutionContext context, Value v, JMenu menu, int index) throws HtSemanticException {
+    public static void addValueToMenu(ExecutionContext context, Value v, JMenu menu, int index) throws HtException {
         addValueToMenu(context, v, menu, index, new ArrayList<>());
     }
 
-    public static void addValueToMenu(ExecutionContext context, Value v, JMenu menu, int index, List<Value> menuMessages) throws HtSemanticException {
+    public static void addValueToMenu(ExecutionContext context, Value v, JMenu menu, int index, List<Value> menuMessages) throws HtException {
         List<Value> menuItems = v.getLines(context);
 
         // If value contains a single line, then attempt to onEvaluate it as items
@@ -78,7 +78,11 @@ public class MenuExp extends ContainerExp {
 
         for (int idx = 0; idx < menuItems.size(); idx++) {
             Value thisItem = menuItems.get(idx);
-            Message menuMessage = MessageBuilder.fromString(menuMessages.get(idx).toString());
+
+            if (menuMessages.size() > idx) {
+                System.err.println(MessageBuilder.fromString(menuMessages.get(idx).toString()).toString());
+            }
+            Message menuMessage = menuMessages.size() > idx ? MessageBuilder.fromString(menuMessages.get(idx).toString()) : null;
 
             Invoke.onDispatch(() -> {
                 if (thisItem.toString().equals("-")) {

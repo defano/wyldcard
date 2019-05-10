@@ -6,6 +6,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.compiler.ScriptCompiler;
 import com.defano.wyldcard.runtime.ExecutionContext;
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,10 @@ public class LiteralMessage implements Message {
         this.messageArgumentsText = messageText.substring(text.indexOf(messageNameText) + messageNameText.length()).trim();
     }
 
+    public String getMessageLiteral() {
+        return text;
+    }
+
     @Override
     public String getMessageName() {
         return messageNameText;
@@ -33,7 +38,7 @@ public class LiteralMessage implements Message {
             ListExp listExp = (ListExp) ScriptCompiler.blockingCompile(CompilationUnit.LIST_EXPRESSION, messageArgumentsText);
             return listExp == null ? new ArrayList<>() : listExp.evaluateAsList(context);
         } catch (HtException e) {
-            return new ArrayList<>();
+            return Lists.newArrayList(new Value(messageArgumentsText));
         }
     }
 }

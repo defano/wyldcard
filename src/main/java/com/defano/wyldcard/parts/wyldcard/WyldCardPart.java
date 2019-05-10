@@ -14,6 +14,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.cursor.HyperCardCursor;
 import com.defano.wyldcard.menubar.dispatcher.MenuMessageDispatcher;
 import com.defano.wyldcard.message.EvaluatedMessage;
+import com.defano.wyldcard.message.LiteralMessage;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.parts.field.DeferredKeyEventListener;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -191,8 +192,8 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
 
             if (MenuMessageDispatcher.getInstance().test(evaluatedMessage)) {
                 MenuMessageDispatcher.getInstance().handleMessage(context, evaluatedMessage);
-            } else {
-                String messageString = evaluatedMessage.toMessageString();
+            } else if (message instanceof LiteralMessage) {
+                String messageString = ((LiteralMessage) message).getMessageLiteral();
                 Script script = (Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, messageString);
                 Statement s = script.getStatements().list.get(0);
 

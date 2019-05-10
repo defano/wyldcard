@@ -31,6 +31,7 @@ public class MenuPropertiesDelegate {
     private static final String PROP_COMMANDCHAR = "commandchar";
     private static final String PROP_NAME = "name";
     private static final String PROP_MENUMESSAGE = "menumessage";
+    private static final String ALIAS_MENUMESSAGE = "menumsg";
 
     public static Value getProperty(ExecutionContext context, String name, MenuItemSpecifier menuItem) throws HtException {
         return Invoke.onDispatch(() -> {
@@ -44,6 +45,7 @@ public class MenuPropertiesDelegate {
                 case PROP_NAME:
                     return new Value(menuItem.getSpecifiedMenuItem(context).getText());
                 case PROP_MENUMESSAGE:
+                case ALIAS_MENUMESSAGE:
                     JMenuItem item = menuItem.getSpecifiedMenuItem(context);
                     if (item instanceof WyldCardMenuItem) {
                         Message menuMessage = ((WyldCardMenuItem) item).getMenuMessage();
@@ -79,17 +81,29 @@ public class MenuPropertiesDelegate {
                 case PROP_NAME:
                     menuItem.getSpecifiedMenuItem(context).setText(value.toString());
                 case PROP_MENUMESSAGE:
-                    JMenuItem item = menuItem.getSpecifiedMenuItem(context);
-                    if (item instanceof WyldCardMenuItem) {
-                        ((WyldCardMenuItem) item).setMenuMessage(MessageBuilder.fromString(value.toString()));
-                    } else {
-                        throw new HtSemanticException("Can't set the message for that menu item.");
-                    }
+                case ALIAS_MENUMESSAGE:
+                    setMenuMessage(context, menuItem, value);
+                    break;
                 default:
                     throw new HtSemanticException(name + " is not a menu item property.");
             }
             return null;
         }, HtException.class);
+
+    }
+
+    private static void setMenuMessage(ExecutionContext context, MenuItemSpecifier menuItem, Value message) throws HtException {
+        JMenuItem item = menuItem.getSpecifiedMenuItem(context);
+        if (item instanceof WyldCardMenuItem) {
+            WyldCardMenuItem wyldCardMenuItem = (WyldCardMenuItem) item;
+            if (message.toString().trim().isEmpty()) {
+                wyldCardMenuItem.setMenuMessage(null);
+            } else {
+                wyldCardMenuItem.setMenuMessage(MessageBuilder.fromString(message.toString()));
+            }
+        } else {
+            throw new HtSemanticException("Can't set the message for that menu item.");
+        }
 
     }
 

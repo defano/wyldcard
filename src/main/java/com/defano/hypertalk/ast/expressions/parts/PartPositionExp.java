@@ -23,7 +23,7 @@ public class PartPositionExp extends PartExp {
         super(context);
 
         if (type != PartType.BACKGROUND && type != PartType.CARD) {
-            throw new IllegalArgumentException("Cannot specify this type by position: " + type);
+            throw new IllegalArgumentException("Cannot specify " + type + " by position.");
         }
 
         this.type = type;
