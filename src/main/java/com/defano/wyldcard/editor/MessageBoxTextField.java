@@ -2,7 +2,7 @@ package com.defano.wyldcard.editor;
 
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSyntaxException;
-import com.defano.hypertalk.utils.Range;
+import com.defano.hypertalk.util.Range;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.runtime.compiler.ScriptCompiler;

@@ -1,8 +1,8 @@
 package com.defano.hypertalk.ast.model.enums;
 
-import com.defano.hypertalk.ast.expressions.CountableExp;
-import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.expressions.functions.*;
+import com.defano.hypertalk.ast.expression.CountableExp;
+import com.defano.hypertalk.ast.expression.Expression;
+import com.defano.hypertalk.ast.expression.function.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public enum BuiltInFunction {

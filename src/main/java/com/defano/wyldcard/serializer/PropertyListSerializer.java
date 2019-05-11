@@ -1,10 +1,10 @@
 package com.defano.wyldcard.serializer;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.properties.Property;
-import com.defano.wyldcard.properties.PropertyList;
-import com.defano.wyldcard.properties.value.BasicValue;
-import com.defano.wyldcard.properties.value.ConstantValue;
+import com.defano.wyldcard.property.Property;
+import com.defano.wyldcard.property.PropertyList;
+import com.defano.wyldcard.property.value.BasicValue;
+import com.defano.wyldcard.property.value.ConstantValue;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;

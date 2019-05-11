@@ -22,7 +22,7 @@ import com.defano.wyldcard.paint.PaintBrush;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
-import com.defano.wyldcard.patterns.WyldCardPatternFactory;
+import com.defano.wyldcard.pattern.WyldCardPatternFactory;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.google.inject.Singleton;
 import io.reactivex.Observable;

@@ -1,7 +1,7 @@
 package com.defano.wyldcard.runtime.manager;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.fonts.TextStyleSpecifier;
+import com.defano.wyldcard.font.TextStyleSpecifier;
 import io.reactivex.Observable;
 import io.reactivex.subjects.Subject;
 

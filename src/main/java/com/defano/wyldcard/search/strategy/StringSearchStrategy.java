@@ -1,6 +1,6 @@
 package com.defano.wyldcard.search.strategy;
 
-import com.defano.hypertalk.utils.Range;
+import com.defano.hypertalk.util.Range;
 
 /**
  * Finds a substring occurring anywhere in the searchable text. Search term may including whitespace, and found text may

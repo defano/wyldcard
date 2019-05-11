@@ -10,8 +10,8 @@ import com.defano.hypertalk.ast.model.enums.SortStyle;
 import com.defano.hypertalk.comparator.StyledComparable;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.utils.ChunkUtils;
-import com.defano.hypertalk.utils.DateUtils;
+import com.defano.hypertalk.util.ChunkUtils;
+import com.defano.hypertalk.util.DateUtils;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.awt.*;

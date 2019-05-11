@@ -1,10 +1,10 @@
 package com.defano.wyldcard;
 
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
-import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
-import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.stack.StackModel;
-import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.hypertalk.ast.model.specifier.StackPartSpecifier;
+import com.defano.wyldcard.part.card.CardPart;
+import com.defano.wyldcard.part.stack.StackModel;
+import com.defano.wyldcard.part.stack.StackPart;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import io.reactivex.Observable;
 

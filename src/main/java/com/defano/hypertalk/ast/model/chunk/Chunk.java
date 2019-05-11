@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.model.chunk;
 
-import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expression.Expression;
 
 public class Chunk {
 

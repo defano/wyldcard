@@ -1,6 +1,6 @@
 package com.defano.wyldcard.importer;
 
-import com.defano.wyldcard.parts.stack.StackModel;
+import com.defano.wyldcard.part.stack.StackModel;
 
 public interface ConversionStatusObserver {
 

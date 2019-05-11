@@ -1,8 +1,8 @@
 package com.defano.wyldcard.runtime.manager;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.fonts.FontUtils;
-import com.defano.wyldcard.fonts.TextStyleSpecifier;
+import com.defano.wyldcard.font.FontUtils;
+import com.defano.wyldcard.font.TextStyleSpecifier;
 import com.google.common.collect.Sets;
 import com.google.inject.Singleton;
 import io.reactivex.Observable;

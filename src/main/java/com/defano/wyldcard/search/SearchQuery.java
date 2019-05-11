@@ -1,7 +1,7 @@
 package com.defano.wyldcard.search;
 
 import com.defano.hypertalk.ast.model.enums.SearchType;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
 
 public class SearchQuery {
     private final SearchType searchType;

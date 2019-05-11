@@ -1,13 +1,13 @@
 package com.defano.wyldcard.debug;
 
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.statements.Statement;
+import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
+import com.defano.hypertalk.ast.statement.Statement;
 import com.defano.wyldcard.WyldCard;
 import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.runtime.callstack.StackFrame;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
-import com.defano.wyldcard.window.layouts.ScriptEditor;
+import com.defano.wyldcard.window.layout.ScriptEditor;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 

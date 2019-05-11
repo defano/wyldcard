@@ -2,11 +2,11 @@ package com.defano.wyldcard.runtime.executor.task;
 
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.preemptions.Preemption;
-import com.defano.hypertalk.ast.statements.ExpressionStatement;
-import com.defano.hypertalk.ast.statements.Statement;
-import com.defano.hypertalk.ast.statements.StatementList;
-import com.defano.hypertalk.ast.statements.commands.MessageCmd;
+import com.defano.hypertalk.ast.preemption.Preemption;
+import com.defano.hypertalk.ast.statement.ExpressionStatement;
+import com.defano.hypertalk.ast.statement.Statement;
+import com.defano.hypertalk.ast.statement.StatementList;
+import com.defano.hypertalk.ast.statement.command.MessageCmd;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;

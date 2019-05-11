@@ -1,10 +1,10 @@
 package com.defano.wyldcard.runtime.manager;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.ToolEditablePart;
-import com.defano.wyldcard.parts.button.ButtonPart;
-import com.defano.wyldcard.parts.card.CardLayerPartModel;
-import com.defano.wyldcard.parts.field.FieldPart;
+import com.defano.wyldcard.part.ToolEditablePart;
+import com.defano.wyldcard.part.button.ButtonPart;
+import com.defano.wyldcard.part.card.CardLayerPartModel;
+import com.defano.wyldcard.part.field.FieldPart;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;

@@ -1,7 +1,7 @@
 package com.defano.wyldcard.debug.message;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;

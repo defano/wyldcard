@@ -62,19 +62,20 @@ public enum ToolType {
 
     public PaintToolType toPaintTool() {
         switch (this) {
-            case BROWSE: return PaintToolType.ARROW;
+            case BROWSE:
+            case FIELD:
+            case BUTTON:
+                return PaintToolType.ARROW;
             case OVAL: return PaintToolType.OVAL;
             case BRUSH: return PaintToolType.PAINTBRUSH;
             case PENCIL: return PaintToolType.PENCIL;
             case BUCKET: return PaintToolType.FILL;
             case POLYGON: return PaintToolType.POLYGON;
-            case BUTTON: return PaintToolType.ARROW;
             case RECTANGLE: return PaintToolType.RECTANGLE;
             case CURVE: return PaintToolType.FREEFORM;
             case SHAPE: return PaintToolType.SHAPE;
             case ERASER: return PaintToolType.ERASER;
             case ROUNDRECT: return PaintToolType.ROUND_RECTANGLE;
-            case FIELD: return PaintToolType.ARROW;
             case SELECT: return PaintToolType.SELECTION;
             case LASSO: return PaintToolType.LASSO;
             case SPRAY: return PaintToolType.AIRBRUSH;
@@ -104,13 +105,14 @@ public enum ToolType {
             case LINE: return LINE;
             case POLYGON: return POLYGON;
             case SHAPE: return SHAPE;
-            case FREEFORM: return CURVE;
+            case FREEFORM:
+            case CURVE:
+                return CURVE;
             case SELECTION: return SELECT;
             case LASSO: return LASSO;
             case TEXT: return TEXT;
             case FILL: return BUCKET;
             case AIRBRUSH: return SPRAY;
-            case CURVE: return CURVE;
             case SLANT: return SLANT;
             case ROTATE: return ROTATE;
             case SCALE: return SCALE;

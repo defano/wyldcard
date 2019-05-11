@@ -1,7 +1,7 @@
 package com.defano.wyldcard.runtime.executor.observer;
 
 import com.defano.hypertalk.ast.model.Script;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 
 public interface HandlerCompletionObserver {

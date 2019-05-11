@@ -1,7 +1,7 @@
 package com.defano.wyldcard.runtime.print;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.part.stack.StackPart;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.awt.*;

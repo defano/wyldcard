@@ -2,8 +2,8 @@ package com.defano.wyldcard;
 
 import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.part.card.CardPart;
+import com.defano.wyldcard.part.stack.StackPart;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.util.CircleStack;
 

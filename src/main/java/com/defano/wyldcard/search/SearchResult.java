@@ -1,9 +1,9 @@
 package com.defano.wyldcard.search;
 
-import com.defano.wyldcard.parts.field.FieldModel;
-import com.defano.wyldcard.parts.util.FieldUtilities;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.utils.Range;
+import com.defano.wyldcard.part.field.FieldModel;
+import com.defano.wyldcard.part.util.FieldUtilities;
+import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
+import com.defano.hypertalk.util.Range;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
 public class SearchResult {

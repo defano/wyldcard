@@ -2,10 +2,10 @@ package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.part.stack.StackPart;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
-import com.defano.wyldcard.window.layouts.*;
+import com.defano.wyldcard.window.layout.*;
 import com.google.inject.Singleton;
 import io.reactivex.subjects.BehaviorSubject;
 

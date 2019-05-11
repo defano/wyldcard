@@ -2,8 +2,8 @@ package com.defano.wyldcard.runtime.callstack;
 
 import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifier.PartMessageSpecifier;
+import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.symbol.CompositeSymbolTable;

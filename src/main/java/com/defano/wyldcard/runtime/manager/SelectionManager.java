@@ -1,12 +1,12 @@
 package com.defano.wyldcard.runtime.manager;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.utils.Range;
-import com.defano.wyldcard.parts.field.AddressableSelection;
-import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.hypertalk.util.Range;
+import com.defano.wyldcard.part.field.AddressableSelection;
+import com.defano.wyldcard.part.model.PartModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
 /**

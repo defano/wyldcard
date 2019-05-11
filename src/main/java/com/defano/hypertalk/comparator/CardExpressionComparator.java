@@ -1,16 +1,16 @@
 package com.defano.hypertalk.comparator;
 
-import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expression.Expression;
 import com.defano.hypertalk.ast.model.enums.SortDirection;
 import com.defano.hypertalk.ast.model.enums.SortStyle;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
-import com.defano.wyldcard.parts.button.ButtonPart;
-import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.field.FieldPart;
+import com.defano.wyldcard.part.button.ButtonPart;
+import com.defano.wyldcard.part.card.CardModel;
+import com.defano.wyldcard.part.card.CardPart;
+import com.defano.wyldcard.part.field.FieldPart;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 

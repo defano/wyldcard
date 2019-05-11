@@ -1,7 +1,7 @@
 package com.defano.wyldcard.serializer;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.properties.PropertyList;
+import com.defano.wyldcard.property.PropertyList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

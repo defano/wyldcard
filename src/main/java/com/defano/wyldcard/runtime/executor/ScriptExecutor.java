@@ -1,13 +1,13 @@
 package com.defano.wyldcard.runtime.executor;
 
 import com.defano.hypertalk.ast.ASTNode;
-import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expression.Expression;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.statements.ExpressionStatement;
-import com.defano.hypertalk.ast.statements.Statement;
+import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
+import com.defano.hypertalk.ast.statement.ExpressionStatement;
+import com.defano.hypertalk.ast.statement.Statement;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.debug.message.HandlerInvocation;

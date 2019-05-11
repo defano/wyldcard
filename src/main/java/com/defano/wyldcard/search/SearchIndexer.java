@@ -1,14 +1,14 @@
 package com.defano.wyldcard.search;
 
-import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
-import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.wyldcard.parts.field.FieldModel;
-import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.stack.StackModel;
-import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
+import com.defano.wyldcard.part.bkgnd.BackgroundModel;
+import com.defano.wyldcard.part.card.CardModel;
+import com.defano.wyldcard.part.field.FieldModel;
+import com.defano.wyldcard.part.model.PartModel;
+import com.defano.wyldcard.part.stack.StackModel;
+import com.defano.hypertalk.ast.model.specifier.CompositePartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.utils.Range;
+import com.defano.hypertalk.util.Range;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.util.ArrayList;

@@ -3,7 +3,7 @@ package com.defano.wyldcard.window;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.menubar.main.MainWyldCardMenuBar;
+import com.defano.wyldcard.menu.main.MainWyldCardMenuBar;
 import com.defano.wyldcard.thread.Invoke;
 import io.reactivex.Observable;
 

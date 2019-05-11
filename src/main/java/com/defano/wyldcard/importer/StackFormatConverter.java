@@ -1,13 +1,13 @@
 package com.defano.wyldcard.importer;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
-import com.defano.wyldcard.parts.builder.*;
-import com.defano.wyldcard.parts.button.ButtonModel;
-import com.defano.wyldcard.parts.card.CardLayer;
-import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.wyldcard.parts.field.FieldModel;
-import com.defano.wyldcard.parts.stack.StackModel;
+import com.defano.wyldcard.part.bkgnd.BackgroundModel;
+import com.defano.wyldcard.part.builder.*;
+import com.defano.wyldcard.part.button.ButtonModel;
+import com.defano.wyldcard.part.card.CardLayer;
+import com.defano.wyldcard.part.card.CardModel;
+import com.defano.wyldcard.part.field.FieldModel;
+import com.defano.wyldcard.part.stack.StackModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.block.*;

@@ -1,8 +1,8 @@
 package com.defano.wyldcard.runtime.executor.observer;
 
 import com.defano.hypertalk.ast.model.Script;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.preemptions.ExitToHyperCard;
+import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
+import com.defano.hypertalk.ast.preemption.ExitToHyperCard;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.common.util.concurrent.FutureCallback;

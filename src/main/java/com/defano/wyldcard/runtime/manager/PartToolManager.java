@@ -1,6 +1,6 @@
 package com.defano.wyldcard.runtime.manager;
 
-import com.defano.wyldcard.parts.ToolEditablePart;
+import com.defano.wyldcard.part.ToolEditablePart;
 import io.reactivex.Observable;
 
 import java.util.Optional;

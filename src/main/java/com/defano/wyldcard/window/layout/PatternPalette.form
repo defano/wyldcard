@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.defano.wyldcard.window.layout.PatternPalette">
+  <grid id="27dc6" binding="palettePanel" layout-manager="GridBagLayout">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="7140b" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button1" default-binding="true">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="80ee8" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button2" default-binding="true">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="fe71c" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button3" default-binding="true">
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="78ca3" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button4" default-binding="true">
+        <constraints>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="918c9" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button5" default-binding="true">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="dc928" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button6" default-binding="true">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="d9b22" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button7" default-binding="true">
+        <constraints>
+          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="9e2b0" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button8" default-binding="true">
+        <constraints>
+          <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="3aaf6" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button9" default-binding="true">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="3464" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button10" default-binding="true">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="ca50a" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button11" default-binding="true">
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="954ff" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button12" default-binding="true">
+        <constraints>
+          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="d81da" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button13" default-binding="true">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="81565" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button14" default-binding="true">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="eb89b" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button15" default-binding="true">
+        <constraints>
+          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="52de5" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button16" default-binding="true">
+        <constraints>
+          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="2b963" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button17" default-binding="true">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="14e9d" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button18" default-binding="true">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="213e1" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button19" default-binding="true">
+        <constraints>
+          <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="c865a" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button20" default-binding="true">
+        <constraints>
+          <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="86d27" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button21" default-binding="true">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="4cb5f" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button22" default-binding="true">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="8cf38" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button23" default-binding="true">
+        <constraints>
+          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="d36ce" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button24" default-binding="true">
+        <constraints>
+          <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="d146b" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button25" default-binding="true">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="5ca06" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button26" default-binding="true">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="8eb86" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button27" default-binding="true">
+        <constraints>
+          <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="73113" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button28" default-binding="true">
+        <constraints>
+          <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="22346" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button29" default-binding="true">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="efa78" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button30" default-binding="true">
+        <constraints>
+          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="5c95f" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button31" default-binding="true">
+        <constraints>
+          <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="47ed8" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button32" default-binding="true">
+        <constraints>
+          <grid row="7" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="ba560" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button33" default-binding="true">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="3c697" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button34" default-binding="true">
+        <constraints>
+          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="26796" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button35" default-binding="true">
+        <constraints>
+          <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="5f47c" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button36" default-binding="true">
+        <constraints>
+          <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="87b0e" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button37" default-binding="true">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="32e49" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button38" default-binding="true">
+        <constraints>
+          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="cfbfd" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button39" default-binding="true">
+        <constraints>
+          <grid row="9" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+      <component id="afbb8" class="com.defano.wyldcard.pattern.PatternPaletteButton" binding="button40" default-binding="true">
+        <constraints>
+          <grid row="9" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="34" height="24"/>
+            <preferred-size width="34" height="24"/>
+            <maximum-size width="34" height="24"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+      </component>
+    </children>
+  </grid>
+</form>
