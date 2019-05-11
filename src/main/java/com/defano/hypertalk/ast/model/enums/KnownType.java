@@ -1,4 +1,4 @@
-package com.defano.hypertalk.ast.model;
+package com.defano.hypertalk.ast.model.enums;
 
 import com.google.common.collect.Lists;
 import com.defano.hypertalk.exception.HtSemanticException;

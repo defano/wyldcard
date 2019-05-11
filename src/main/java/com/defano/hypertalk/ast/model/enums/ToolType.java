@@ -1,4 +1,4 @@
-package com.defano.hypertalk.ast.model;
+package com.defano.hypertalk.ast.model.enums;
 
 import com.defano.jmonet.model.PaintToolType;
 import com.google.common.collect.Lists;

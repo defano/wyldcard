@@ -3,7 +3,7 @@ package com.defano.hypertalk.ast.statements.commands;
 import com.defano.hypertalk.GuiceTest;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.containers.ContainerExp;
-import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.enums.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.ExecutionContext;

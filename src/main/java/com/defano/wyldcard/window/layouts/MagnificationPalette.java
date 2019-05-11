@@ -1,6 +1,6 @@
 package com.defano.wyldcard.window.layouts;
 
-import com.defano.hypertalk.ast.model.ToolType;
+import com.defano.hypertalk.ast.model.enums.ToolType;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.window.WyldCardDialog;

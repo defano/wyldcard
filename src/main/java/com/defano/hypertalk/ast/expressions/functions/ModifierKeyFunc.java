@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.ModifierKey;
+import com.defano.hypertalk.ast.model.enums.ModifierKey;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.awt.keyboard.KeyboardManager;

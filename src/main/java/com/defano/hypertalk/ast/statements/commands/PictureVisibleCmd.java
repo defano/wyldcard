@@ -4,7 +4,7 @@ import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.enums.Owner;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;

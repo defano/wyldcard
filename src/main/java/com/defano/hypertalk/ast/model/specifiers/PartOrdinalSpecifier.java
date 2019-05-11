@@ -1,8 +1,8 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
-import com.defano.hypertalk.ast.model.Ordinal;
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.Ordinal;
+import com.defano.hypertalk.ast.model.enums.Owner;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.FindInCollectionSpecifier;

@@ -2,8 +2,8 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.expressions.parts.CompositePartExp;
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.Owner;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.hypertalk.exception.HtNoSuchPartException;

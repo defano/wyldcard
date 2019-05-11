@@ -2,7 +2,7 @@ package com.defano.wyldcard.paint;
 
 import com.defano.jmonet.tools.MarqueeTool;
 import com.defano.wyldcard.WyldCard;
-import com.defano.hypertalk.ast.model.ToolType;
+import com.defano.hypertalk.ast.model.enums.ToolType;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 

@@ -5,7 +5,7 @@ import com.defano.wyldcard.parts.field.AddressableSelection;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
-import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.enums.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.utils.Range;

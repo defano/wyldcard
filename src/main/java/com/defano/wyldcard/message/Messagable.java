@@ -2,7 +2,7 @@ package com.defano.wyldcard.message;
 
 import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.model.NamedBlock;
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;

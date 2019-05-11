@@ -1,6 +1,6 @@
 package com.defano.wyldcard.parts.finder;
 
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.card.CardDisplayLayer;

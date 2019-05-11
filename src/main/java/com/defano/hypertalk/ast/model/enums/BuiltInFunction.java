@@ -1,4 +1,4 @@
-package com.defano.hypertalk.ast.model;
+package com.defano.hypertalk.ast.model.enums;
 
 import com.defano.hypertalk.ast.expressions.CountableExp;
 import com.defano.hypertalk.ast.expressions.Expression;

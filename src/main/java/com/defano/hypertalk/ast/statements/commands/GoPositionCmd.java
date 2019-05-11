@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypertalk.ast.model.Position;
+import com.defano.hypertalk.ast.model.enums.Position;
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;

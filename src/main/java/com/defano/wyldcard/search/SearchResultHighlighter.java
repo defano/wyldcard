@@ -1,6 +1,6 @@
 package com.defano.wyldcard.search;
 
-import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.enums.Owner;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldPart;

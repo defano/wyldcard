@@ -1,4 +1,4 @@
-package com.defano.hypertalk.ast.model;
+package com.defano.hypertalk.ast.model.enums;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.ExecutionContext;

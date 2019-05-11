@@ -1,5 +1,6 @@
-package com.defano.hypertalk.ast.model;
+package com.defano.hypertalk.ast.model.enums;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.util.StringUtils;
 
 import java.util.ArrayList;

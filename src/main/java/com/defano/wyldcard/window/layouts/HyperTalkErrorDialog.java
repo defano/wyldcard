@@ -1,6 +1,6 @@
 package com.defano.wyldcard.window.layouts;
 
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;

@@ -1,8 +1,8 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.SortDirection;
-import com.defano.hypertalk.ast.model.SortStyle;
+import com.defano.hypertalk.ast.model.enums.SortDirection;
+import com.defano.hypertalk.ast.model.enums.SortStyle;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.comparator.CardExpressionComparator;
 import com.defano.hypertalk.exception.HtException;

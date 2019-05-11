@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.enums.Owner;
 
 public class ButtonFamilySpecifier {
 

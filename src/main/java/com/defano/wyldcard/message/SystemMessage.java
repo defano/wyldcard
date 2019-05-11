@@ -1,6 +1,6 @@
 package com.defano.wyldcard.message;
 
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.runtime.ExecutionContext;
 

@@ -1,7 +1,7 @@
 package com.defano.hypertalk.comparator;
 
-import com.defano.hypertalk.ast.model.SortDirection;
-import com.defano.hypertalk.ast.model.SortStyle;
+import com.defano.hypertalk.ast.model.enums.SortDirection;
+import com.defano.hypertalk.ast.model.enums.SortStyle;
 import com.defano.hypertalk.ast.model.Value;
 
 import java.util.Comparator;

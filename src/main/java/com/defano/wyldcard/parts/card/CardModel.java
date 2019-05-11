@@ -1,8 +1,8 @@
 package com.defano.wyldcard.parts.card;
 
-import com.defano.hypertalk.ast.model.LengthAdjective;
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.LengthAdjective;
+import com.defano.hypertalk.ast.model.enums.Owner;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.NamedPart;

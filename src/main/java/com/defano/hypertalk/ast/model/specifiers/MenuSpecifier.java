@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.Ordinal;
+import com.defano.hypertalk.ast.model.enums.Ordinal;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;

@@ -5,7 +5,7 @@ import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.containers.MenuExp;
 import com.defano.hypertalk.ast.expressions.containers.MenuItemExp;
 import com.defano.hypertalk.ast.expressions.factor.FactorAssociation;
-import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.enums.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.Command;

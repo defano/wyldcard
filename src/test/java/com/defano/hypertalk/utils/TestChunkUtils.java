@@ -2,8 +2,8 @@ package com.defano.hypertalk.utils;
 
 import com.defano.hypertalk.GuiceTest;
 import com.defano.hypertalk.ast.model.chunk.ChunkType;
-import com.defano.hypertalk.ast.model.Ordinal;
-import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.enums.Ordinal;
+import com.defano.hypertalk.ast.model.enums.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.parts.wyldcard.WyldCardProperties;

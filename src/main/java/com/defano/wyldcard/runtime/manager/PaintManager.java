@@ -1,6 +1,6 @@
 package com.defano.wyldcard.runtime.manager;
 
-import com.defano.hypertalk.ast.model.ToolType;
+import com.defano.hypertalk.ast.model.enums.ToolType;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.tools.base.Tool;

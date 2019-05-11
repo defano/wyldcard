@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions.parts;
 
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
-import com.defano.hypertalk.ast.model.SingletonWindowType;
+import com.defano.hypertalk.ast.model.enums.SingletonWindowType;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.WindowTypeSpecifier;
 import com.defano.wyldcard.runtime.ExecutionContext;

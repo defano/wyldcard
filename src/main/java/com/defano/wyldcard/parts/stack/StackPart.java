@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.stack;
 
 import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.NavigationManager;
 import com.defano.wyldcard.WyldCard;

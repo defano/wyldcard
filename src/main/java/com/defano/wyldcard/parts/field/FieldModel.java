@@ -1,7 +1,7 @@
 package com.defano.wyldcard.parts.field;
 
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.Owner;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;

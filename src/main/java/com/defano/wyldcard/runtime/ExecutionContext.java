@@ -1,7 +1,7 @@
 package com.defano.wyldcard.runtime;
 
 import com.defano.hypertalk.ast.ASTNode;
-import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.enums.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.chunk.Chunk;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;

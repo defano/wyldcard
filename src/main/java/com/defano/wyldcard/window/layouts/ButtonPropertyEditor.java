@@ -1,6 +1,6 @@
 package com.defano.wyldcard.window.layouts;
 
-import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.enums.Owner;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.button.ButtonModel;

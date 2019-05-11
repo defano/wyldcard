@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions.containers;
 
 import com.defano.wyldcard.runtime.ExecutionContext;
-import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.enums.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;

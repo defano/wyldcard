@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.SpeakingVoice;
+import com.defano.hypertalk.ast.model.enums.SpeakingVoice;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;

@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.Owner;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;

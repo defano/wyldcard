@@ -1,6 +1,6 @@
 package com.defano.wyldcard.parts;
 
-import com.defano.hypertalk.ast.model.ToolType;
+import com.defano.hypertalk.ast.model.enums.ToolType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.wyldcard.WyldCard;

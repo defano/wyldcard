@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.enums.Owner;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.ButtonFamilySpecifier;
 import com.defano.hypertalk.exception.HtException;

@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
-import com.defano.hypertalk.ast.model.SingletonWindowType;
+import com.defano.hypertalk.ast.model.enums.SingletonWindowType;
 import com.defano.hypertalk.exception.HtNoSuchPartException;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.window.WyldCardFrame;

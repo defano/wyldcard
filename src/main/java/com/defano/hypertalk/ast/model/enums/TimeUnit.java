@@ -1,4 +1,4 @@
-package com.defano.hypertalk.ast.model;
+package com.defano.hypertalk.ast.model.enums;
 
 public enum TimeUnit {
     TICKS, SECONDS;

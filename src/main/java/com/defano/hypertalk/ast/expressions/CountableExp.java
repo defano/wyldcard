@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypertalk.ast.model.Countable;
+import com.defano.hypertalk.ast.model.enums.Countable;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;

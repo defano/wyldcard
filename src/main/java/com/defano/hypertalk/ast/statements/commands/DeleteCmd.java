@@ -6,7 +6,7 @@ import com.defano.hypertalk.ast.expressions.containers.ContainerExp;
 import com.defano.hypertalk.ast.expressions.containers.MenuExp;
 import com.defano.hypertalk.ast.expressions.containers.MenuItemExp;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
-import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.enums.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;

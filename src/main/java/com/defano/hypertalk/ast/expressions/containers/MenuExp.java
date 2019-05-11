@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions.containers;
 
-import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.enums.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.MenuSpecifier;
 import com.defano.hypertalk.exception.HtException;

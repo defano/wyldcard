@@ -1,6 +1,10 @@
 package com.defano.wyldcard.parts.field;
 
 import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.enums.ArrowDirection;
+import com.defano.hypertalk.ast.model.enums.Owner;
+import com.defano.hypertalk.ast.model.enums.PartType;
+import com.defano.hypertalk.ast.model.enums.ToolType;
 import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.keyboard.DeferredKeyEvent;

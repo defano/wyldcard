@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.hypertalk.ast.model.ConvertibleDateFormat;
-import com.defano.hypertalk.ast.model.LengthAdjective;
+import com.defano.hypertalk.ast.model.enums.ConvertibleDateFormat;
+import com.defano.hypertalk.ast.model.enums.LengthAdjective;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;

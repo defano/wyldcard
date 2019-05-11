@@ -6,7 +6,7 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.keyboard.DoubleClickListenable;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.window.WyldCardWindow;
-import com.defano.hypertalk.ast.model.ToolType;
+import com.defano.hypertalk.ast.model.enums.ToolType;
 import com.defano.jmonet.model.PaintToolType;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;

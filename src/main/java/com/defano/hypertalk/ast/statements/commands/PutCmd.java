@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.enums.Preposition;
 import com.defano.hypertalk.ast.expressions.containers.ContainerExp;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;

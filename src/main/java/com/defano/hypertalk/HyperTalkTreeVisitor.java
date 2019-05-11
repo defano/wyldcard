@@ -13,6 +13,7 @@ import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.chunk.Chunk;
 import com.defano.hypertalk.ast.model.chunk.ChunkType;
 import com.defano.hypertalk.ast.model.chunk.CompositeChunk;
+import com.defano.hypertalk.ast.model.enums.*;
 import com.defano.hypertalk.ast.model.specifiers.ButtonFamilySpecifier;
 import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.MenuSpecifier;

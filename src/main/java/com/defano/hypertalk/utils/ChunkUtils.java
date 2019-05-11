@@ -1,7 +1,7 @@
 package com.defano.hypertalk.utils;
 
-import com.defano.hypertalk.ast.model.Ordinal;
-import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.enums.Ordinal;
+import com.defano.hypertalk.ast.model.enums.Preposition;
 import com.defano.hypertalk.ast.model.chunk.ChunkType;
 import com.defano.hypertalk.ast.model.chunk.CompositeChunk;
 import com.defano.hypertalk.exception.HtException;

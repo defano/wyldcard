@@ -3,10 +3,10 @@ package com.defano.hypertalk.ast.expressions.containers;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.MessageWindow;
-import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.enums.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 

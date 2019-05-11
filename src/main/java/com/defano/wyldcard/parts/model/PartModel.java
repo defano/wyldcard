@@ -2,6 +2,9 @@ package com.defano.wyldcard.parts.model;
 
 import com.defano.hypertalk.ast.expressions.parts.LiteralPartExp;
 import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.enums.LengthAdjective;
+import com.defano.hypertalk.ast.model.enums.Owner;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;

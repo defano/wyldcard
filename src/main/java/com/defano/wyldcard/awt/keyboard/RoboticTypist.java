@@ -1,6 +1,6 @@
 package com.defano.wyldcard.awt.keyboard;
 
-import com.defano.hypertalk.ast.model.ArrowDirection;
+import com.defano.hypertalk.ast.model.enums.ArrowDirection;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.thread.Invoke;

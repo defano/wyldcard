@@ -1,6 +1,6 @@
 package com.defano.hypertalk.comparator;
 
-import com.defano.hypertalk.ast.model.SortStyle;
+import com.defano.hypertalk.ast.model.enums.SortStyle;
 
 public interface StyledComparable<T> extends Comparable<T> {
 

@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.hypertalk.GuiceTest;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.BuiltInFunction;
+import com.defano.hypertalk.ast.model.enums.BuiltInFunction;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.junit.jupiter.api.Test;

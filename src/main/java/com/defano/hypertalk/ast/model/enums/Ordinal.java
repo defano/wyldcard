@@ -1,4 +1,6 @@
-package com.defano.hypertalk.ast.model;
+package com.defano.hypertalk.ast.model.enums;
+
+import com.defano.hypertalk.ast.model.Value;
 
 public enum Ordinal {
     FIRST(1, "first"),

@@ -8,7 +8,7 @@ import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.ActionBindable;
 import com.defano.wyldcard.window.WyldCardDialog;
-import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.enums.Owner;
 import com.defano.hypertalk.ast.model.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;

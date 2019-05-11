@@ -1,6 +1,6 @@
 package com.defano.wyldcard.parts.bkgnd;
 
-import com.defano.hypertalk.ast.model.LengthAdjective;
+import com.defano.hypertalk.ast.model.enums.LengthAdjective;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
@@ -13,8 +13,8 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.serializer.BufferedImageSerializer;
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.Owner;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.ast.model.Value;
 
 import javax.annotation.PostConstruct;

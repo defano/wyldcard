@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.SpeakingVoice;
+import com.defano.hypertalk.ast.model.enums.SpeakingVoice;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.sound.SpeechPlaybackManager;

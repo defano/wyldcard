@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
-import com.defano.hypertalk.ast.model.LengthAdjective;
+import com.defano.hypertalk.ast.model.enums.LengthAdjective;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.containers.MenuItemExp;

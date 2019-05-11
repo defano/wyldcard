@@ -1,8 +1,8 @@
 package com.defano.hypertalk.ast.expressions.parts;
 
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.ast.model.Position;
+import com.defano.hypertalk.ast.model.enums.Owner;
+import com.defano.hypertalk.ast.model.enums.PartType;
+import com.defano.hypertalk.ast.model.enums.Position;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.specifiers.CardPositionSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;

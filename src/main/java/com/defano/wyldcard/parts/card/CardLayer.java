@@ -1,6 +1,6 @@
 package com.defano.wyldcard.parts.card;
 
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.model.PartModel;

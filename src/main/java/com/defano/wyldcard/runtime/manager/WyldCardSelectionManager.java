@@ -3,7 +3,7 @@ package com.defano.wyldcard.runtime.manager;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.field.AddressableSelection;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;

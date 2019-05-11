@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
-import com.defano.hypertalk.ast.model.SearchType;
+import com.defano.hypertalk.ast.model.enums.SearchType;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;

@@ -1,7 +1,7 @@
 package com.defano.wyldcard.runtime.manager;
 
 import com.defano.wyldcard.message.SystemMessage;
-import com.defano.hypertalk.ast.model.ToolType;
+import com.defano.hypertalk.ast.model.enums.ToolType;
 import com.defano.jmonet.transform.dither.Ditherer;
 import com.defano.jmonet.transform.dither.FloydSteinbergDitherer;
 import com.defano.jmonet.canvas.PaintCanvas;

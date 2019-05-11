@@ -1,7 +1,7 @@
 package com.defano.wyldcard.search;
 
 import com.defano.wyldcard.search.strategy.*;
-import com.defano.hypertalk.ast.model.SearchType;
+import com.defano.hypertalk.ast.model.enums.SearchType;
 
 public class SearchFactory {
 
