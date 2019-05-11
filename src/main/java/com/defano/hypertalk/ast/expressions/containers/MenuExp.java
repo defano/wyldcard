@@ -78,10 +78,6 @@ public class MenuExp extends ContainerExp {
 
         for (int idx = 0; idx < menuItems.size(); idx++) {
             Value thisItem = menuItems.get(idx);
-
-            if (menuMessages.size() > idx) {
-                System.err.println(MessageBuilder.fromString(menuMessages.get(idx).toString()).toString());
-            }
             Message menuMessage = menuMessages.size() > idx ? MessageBuilder.fromString(menuMessages.get(idx).toString()) : null;
 
             Invoke.onDispatch(() -> {

@@ -1,6 +1,6 @@
 package com.defano.wyldcard.menubar;
 
-import com.defano.wyldcard.menubar.dispatcher.MenuActionListener;
+import com.defano.wyldcard.menubar.dispatcher.WyldCardMenuAction;
 import com.defano.wyldcard.menubar.dispatcher.MenuMessageDispatcher;
 import com.defano.wyldcard.menubar.dispatcher.MenuMessageHandler;
 import com.defano.wyldcard.message.Message;
@@ -133,7 +133,7 @@ public class MenuItemBuilder {
     public JMenuItem build (JMenuItem intoMenu) {
 
         MenuMessageDispatcher.getInstance().addHandler(new MenuMessageHandler(item, actionListeners));
-        item.addActionListener(new MenuActionListener(item));
+        item.addActionListener(new WyldCardMenuAction(item));
 
         if (menuMessage != null && item instanceof WyldCardMenuItem) {
             ((WyldCardMenuItem) item).setMenuMessage(menuMessage);

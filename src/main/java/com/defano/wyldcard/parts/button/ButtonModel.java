@@ -34,6 +34,9 @@ public class ButtonModel extends CardLayerPartModel implements PropertyChangeObs
     public static final String PROP_ICON = "icon";
     public static final String PROP_ICONALIGN = "iconalign";
 
+    public static final int MIN_BUTTON_FAMILY = 1;
+    public static final int MAX_BUTTON_FAMILY = 15;
+
     // "Hidden" internal property not addressable in HyperTalk; represents combo-box selection
     public static final String PROP_SELECTEDITEM = "--selectedindex--";
 

@@ -203,7 +203,7 @@ commandStatement
     | 'push' expression                                                                                                 # pushDestCmd
     | 'put' listExpression                                                                                              # putIntoCmd
     | 'put' listExpression preposition expression                                                                       # putPrepositionCmd
-    | 'put' listExpression preposition expression 'with' MENU_MESSAGE listExpression                                    # putWithMenuMessagesCmd
+    | 'put' listExpression preposition expression 'with' menuMessage listExpression                                     # putWithMenuMessagesCmd
     | 'read' 'from' 'file' expression                                                                                   # readFileCmd
     | 'read' 'from' 'file' expression 'for' expression                                                                  # readFileForCmd
     | 'read' 'from' 'file' expression 'at' expression 'for' expression                                                  # readFileAtCmd
@@ -532,6 +532,8 @@ builtInFunc
     | multiArgFunc '(' listExpression ')'                                                                               # builtinFuncArgList
     | 'the'? 'number' of countable                                                                                      # builtinFuncNumber
     | 'number' '(' countable ')'                                                                                        # builtinFuncNumber
+    | 'the'? 'selectedbutton' of buttonFamily                                                                           # builtinFuncBtnFamily
+    | 'selectedbutton' '(' buttonFamily ')'                                                                             # builtinFuncBtnFamily
     ;
 
 zeroArgFunc
@@ -700,6 +702,11 @@ countable
     | 'menuitems' of 'menu' term                                                                                        # menuItemsCount
     ;
 
+buttonFamily
+    : card 'family' term                                                                                                # cardFamily
+    | background 'family' term                                                                                          # bkgndFamily
+    ;
+
 mouseState
     : 'up'
     | 'down'
@@ -761,7 +768,7 @@ keyword
     | 'voices' | 'windows' | 'average' | 'min' | 'max' | 'sum' | 'random' | 'sqrt' | 'trunc' | 'sin' | 'cos' | 'tan'
     | 'atan' | 'exp' | 'exp1' | 'exp2' | 'ln' | 'ln1' | 'log2' | 'abs' | 'chartonum' | 'numtochar' | 'value' | 'length'
     | 'param' | 'annuity' | 'compound' | 'offset' | 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth'
-    | 'seventh' | 'eighth' | 'ninth' | 'tenth' | 'messages' | MENU_MESSAGE
+    | 'seventh' | 'eighth' | 'ninth' | 'tenth' | 'messages' | 'menumessage' | 'menumsg'
     | 'mid' | 'middle' | 'last' | 'any' | 'parts' | 'menuitems' | 'integer' | 'point' | 'logical' | 'boolean' | 'bool'
     | 'word' | 'chars' | 'whole' | 'string' | 'bottom' | 'top' | 'center' | 'scroll' | 'plain' | 'picture' | 'pict'
     | 'seconds' | 'secs' | 'sec' | 'fast' | 'slow' | 'slowly' | 'very' | 'black' | 'card' | 'gray' | 'grey' | 'inverse'
@@ -939,7 +946,7 @@ hypercard
     | 'wyldcard'
     ;
 
-MENU_MESSAGE
+menuMessage
     : 'menumessage'
     | 'menumessages'
     | 'menumsgs'

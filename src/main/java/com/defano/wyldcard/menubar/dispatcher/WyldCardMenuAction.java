@@ -11,11 +11,11 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MenuActionListener implements ActionListener {
+public class WyldCardMenuAction implements ActionListener {
 
     private final JMenuItem item;
 
-    public MenuActionListener(JMenuItem menuItem) {
+    public WyldCardMenuAction(JMenuItem menuItem) {
         this.item = menuItem;
     }
 

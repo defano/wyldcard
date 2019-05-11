@@ -3,6 +3,7 @@ package com.defano.hypertalk;
 import com.defano.hypertalk.ast.expressions.*;
 import com.defano.hypertalk.ast.expressions.containers.*;
 import com.defano.hypertalk.ast.expressions.functions.NumberFunc;
+import com.defano.hypertalk.ast.expressions.functions.SelectedButtonFunc;
 import com.defano.hypertalk.ast.expressions.operators.BinaryOperator;
 import com.defano.hypertalk.ast.expressions.operators.BinaryOperatorExp;
 import com.defano.hypertalk.ast.expressions.operators.UnaryOperator;
@@ -12,6 +13,7 @@ import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.chunk.Chunk;
 import com.defano.hypertalk.ast.model.chunk.ChunkType;
 import com.defano.hypertalk.ast.model.chunk.CompositeChunk;
+import com.defano.hypertalk.ast.model.specifiers.ButtonFamilySpecifier;
 import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.MenuSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PropertySpecifier;
@@ -1657,6 +1659,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitHypercard(HyperTalkParser.HypercardContext ctx) {
+        return super.visitHypercard(ctx);
+    }
+
+    @Override
+    public Object visitMenuMessage(HyperTalkParser.MenuMessageContext ctx) {
+        return super.visitMenuMessage(ctx);
+    }
+
+    @Override
     public Object visitThisCardPart(HyperTalkParser.ThisCardPartContext ctx) {
         return new PartPositionExp(ctx, PartType.CARD, Position.THIS);
     }
@@ -2160,6 +2172,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitBuiltinFuncBtnFamily(HyperTalkParser.BuiltinFuncBtnFamilyContext ctx) {
+        return new SelectedButtonFunc(ctx, (ButtonFamilySpecifier) visit(ctx.buttonFamily()));
+    }
+
+    @Override
     public Object visitOneArgArgFunc(HyperTalkParser.OneArgArgFuncContext ctx) {
         return visit(ctx.oneArgFunc());
     }
@@ -2379,6 +2396,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMenuItemsCount(HyperTalkParser.MenuItemsCountContext ctx) {
         return new CountableExp(ctx, Countable.MENU_ITEMS, (Expression) visit(ctx.term()));
+    }
+
+    @Override
+    public Object visitCardFamily(HyperTalkParser.CardFamilyContext ctx) {
+        return new ButtonFamilySpecifier(Owner.CARD, (Expression) visit(ctx.term()));
+    }
+
+    @Override
+    public Object visitBkgndFamily(HyperTalkParser.BkgndFamilyContext ctx) {
+        return new ButtonFamilySpecifier(Owner.BACKGROUND, (Expression) visit(ctx.term()));
     }
 
     @Override

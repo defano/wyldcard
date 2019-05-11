@@ -192,6 +192,10 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
         return ((LayeredPartFinder) getParentPartModel()).getPartCount(context, getType(), getOwner());
     }
 
+    public String getLayerNumberHypertalkIdentifier(ExecutionContext context) {
+        return getOwner().hyperTalkName.toLowerCase() + " button " + getPartNumber(context);
+    }
+
     @Override
     public String getShortName(ExecutionContext context) {
         return get(context, PROP_NAME).toString();
