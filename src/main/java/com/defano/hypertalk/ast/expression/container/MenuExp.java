@@ -78,13 +78,14 @@ public class MenuExp extends ContainerExp {
 
         for (int idx = 0; idx < menuItems.size(); idx++) {
             Value thisItem = menuItems.get(idx);
-            Message menuMessage = menuMessages.size() > idx ? MessageBuilder.fromString(menuMessages.get(idx).toString()) : null;
+            Message menuMessage = menuMessages.size() > idx ?
+                    MessageBuilder.fromString(menuMessages.get(idx).toString()) : null;
 
             Invoke.onDispatch(() -> {
                 if (thisItem.toString().equals("-")) {
                     menu.add(new JSeparator(), index);
                 } else {
-                    MenuItemBuilder.ofDefaultType()
+                    MenuItemBuilder.ofUserDefinedType()
                             .named(thisItem.toString())
                             .atIndex(index)
                             .withMenuMessasge(menuMessage)

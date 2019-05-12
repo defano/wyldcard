@@ -26,25 +26,31 @@ public class MenuItemBuilder {
     private List<ActionListener> actionListeners = new ArrayList<>();
     private Integer atIndex;
     private Message menuMessage;
+    private boolean isSystemMenuItem;
 
-    private MenuItemBuilder(JMenuItem item) {
+    private MenuItemBuilder(JMenuItem item, boolean isSystemMenuItem) {
         this.item = item;
+        this.isSystemMenuItem = isSystemMenuItem;
     }
 
     public static MenuItemBuilder ofCheckType () {
-        return new MenuItemBuilder(new WyldCardCheckBoxMenuItem());
+        return new MenuItemBuilder(new WyldCardCheckBoxMenuItem(), true);
     }
 
     public static MenuItemBuilder ofDefaultType () {
-        return new MenuItemBuilder(new WyldCardDefaultMenuItem());
+        return new MenuItemBuilder(new WyldCardDefaultMenuItem(), true);
     }
 
     public static MenuItemBuilder ofAction(Action action) {
-        return new MenuItemBuilder(new WyldCardDefaultMenuItem(action));
+        return new MenuItemBuilder(new WyldCardDefaultMenuItem(action), true);
     }
 
     public static MenuItemBuilder ofHierarchicalType() {
-        return new MenuItemBuilder(new JMenu());
+        return new MenuItemBuilder(new JMenu(), true);
+    }
+
+    public static MenuItemBuilder ofUserDefinedType() {
+        return new MenuItemBuilder(new WyldCardDefaultMenuItem(), false);
     }
 
     public MenuItemBuilder withDoMenuAction(ActionListener action) {
@@ -132,7 +138,10 @@ public class MenuItemBuilder {
 
     public JMenuItem build (JMenuItem intoMenu) {
 
-        MenuMessageDispatcher.getInstance().addHandler(new MenuMessageHandler(item, actionListeners));
+        if (isSystemMenuItem) {
+            MenuMessageDispatcher.getInstance().addHandler(new MenuMessageHandler(item, actionListeners));
+        }
+
         item.addActionListener(new WyldCardMenuAction(item));
 
         if (menuMessage != null && item instanceof WyldCardMenuItem) {
