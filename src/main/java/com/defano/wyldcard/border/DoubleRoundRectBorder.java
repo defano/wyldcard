@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
 public class DoubleRoundRectBorder implements Border, ColorStateBorder {
+
     private final int innerWidth;
     private final int outerWidth;
     private final int separation;
@@ -26,7 +27,6 @@ public class DoubleRoundRectBorder implements Border, ColorStateBorder {
         g2d.translate(x, y);
 
         double halfOuter = outerWidth / 2.0;
-        double halfInner = innerWidth / 2.0;
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setPaint(getBorderColor(c));

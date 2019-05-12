@@ -1,13 +1,11 @@
 package com.defano.wyldcard;
 
-import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
-import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
-import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.stack.StackModel;
-import com.defano.wyldcard.parts.stack.StackPart;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.LimitedDepthStack;
+import com.defano.hypertalk.ast.model.specifier.StackPartSpecifier;
+import com.defano.wyldcard.part.card.CardPart;
+import com.defano.wyldcard.part.stack.StackModel;
+import com.defano.wyldcard.part.stack.StackPart;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import io.reactivex.Observable;
 
 import java.io.File;
@@ -15,6 +13,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StackManager {
+
+    /**
+     * Start the stack manager. The behavior of the manager is n
+     */
+    void start();
+
     /**
      * Creates and opens a new stack in a new stack window.
      *
@@ -52,7 +56,9 @@ public interface StackManager {
      *                    to open a new stack).
      * @param title       The title to be displayed in the Open/Find file dialog.
      */
-    StackPart openStack(ExecutionContext context, boolean inNewWindow, String title);
+    StackPart findAndOpenStack(ExecutionContext context, boolean inNewWindow, String title);
+
+    StackPart openStack(ExecutionContext context, StackModel model, boolean inNewWindow);
 
     /**
      * Gets a list of all currently open stacks (those which are displayed inside of a window).
@@ -181,8 +187,4 @@ public interface StackManager {
     Observable<Boolean> getIsSelectableProvider();
 
     Observable<Double> getScaleProvider();
-
-    void onCardOpened(CardPart newCard);
-
-    LimitedDepthStack<Destination> getBackstack();
 }

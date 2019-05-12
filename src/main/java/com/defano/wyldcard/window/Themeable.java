@@ -3,6 +3,8 @@ package com.defano.wyldcard.window;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.runtime.ExecutionContext;
+import com.defano.wyldcard.window.layout.StackWindow;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
@@ -64,6 +66,10 @@ public interface Themeable {
                         thisWindow.getWindow().pack();
                         thisWindow.getWindow().validate();
                         thisWindow.getWindow().setVisible(true);
+
+                        if (thisWindow instanceof StackWindow) {
+                            ((StackWindow) thisWindow).invalidateWindowSize(new ExecutionContext());
+                        }
                     }
 
                 } catch (Exception e) {

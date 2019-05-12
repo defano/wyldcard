@@ -1,7 +1,7 @@
 package com.defano.wyldcard.border;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;

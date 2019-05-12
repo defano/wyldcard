@@ -611,6 +611,18 @@
   },
 
   {
+    "title": "Round",
+    "summary": "Rounds a number to the nearest whole value.",
+    "codePrefix": "round",
+    "templates": [
+      "the round of ${numericExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
     "title": "Sound",
     "summary": "Returns the name of the currently playing sound, or done if no sound is being played.",
     "codePrefix": "sound",

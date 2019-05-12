@@ -1,11 +1,11 @@
 package com.defano.hypertalk.ast.model;
 
-import com.defano.hypertalk.ast.statements.Statement;
-import com.defano.hypertalk.ast.statements.StatementList;
-import com.defano.hypertalk.ast.statements.commands.PassCmd;
+import com.defano.hypertalk.ast.statement.Statement;
+import com.defano.hypertalk.ast.statement.StatementList;
 import com.defano.hypertalk.exception.HtSyntaxException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.util.Collection;
 
@@ -14,21 +14,7 @@ public class NamedBlock {
     public final String name;
     public final StatementList statements;
     public final ParameterList parameters;
-
-    private boolean isEmptyPassBlock;
-
-    /**
-     * Creates a NamedBlock instance that simply passes the name of the block back to HyperCard. Useful as a "default"
-     * handler for objects that do not implement a handler for this message themselves.
-     *
-     * @param name The name of the block and message name to be passed.
-     * @return An empty NamedBlock that passes the command back to HyperCard.
-     */
-    public static NamedBlock emptyPassBlock(String name) {
-        NamedBlock block = new NamedBlock(null, name, name, new StatementList(new PassCmd(null, name)));
-        block.isEmptyPassBlock = true;
-        return block;
-    }
+    public final ParserRuleContext context;
 
     /**
      * Wraps a list of statements in an NamedBlock object whose name is unused.
@@ -60,14 +46,23 @@ public class NamedBlock {
         this.name = onName;
         this.statements = body;
         this.parameters = parameters;
-    }
-
-    public boolean isEmptyPassBlock() {
-        return isEmptyPassBlock;
+        this.context = context;
     }
 
     public Collection<Statement> findStatementsOnLine(int line) {
         return statements.findStatementsOnLine(line);
     }
 
+    public Integer getLineNumber() {
+        if (context != null && context.getStart() != null) {
+            return context.getStart().getLine();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }

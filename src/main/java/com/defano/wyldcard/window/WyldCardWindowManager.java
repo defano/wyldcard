@@ -2,9 +2,10 @@ package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.parts.stack.StackPart;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.layouts.*;
+import com.defano.wyldcard.part.stack.StackPart;
+import com.defano.wyldcard.runtime.ExecutionContext;
+import com.defano.wyldcard.thread.Invoke;
+import com.defano.wyldcard.window.layout.*;
 import com.google.inject.Singleton;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -34,23 +35,27 @@ public class WyldCardWindowManager implements WindowManager {
     private VariableWatcher variableWatcher;
     private ExpressionEvaluator expressionEvaluator;
     private MagnificationPalette magnifierPalette;
+    private FindWindow findWindow;
+    private ReplaceWindow replaceWindow;
     private JFrame hiddenPrintFrame;
 
     @RunOnDispatch
     @Override
     public void start() {
-        messageWindow = new MessageWindow();
-        paintToolsPalette = new PaintToolsPalette();
-        shapesPalette = new ShapesPalette();
-        linesPalette = new LinesPalette();
-        patternsPalette = new PatternPalette();
-        brushesPalette = new BrushesPalette();
-        colorPalette = new ColorPalette();
-        intensityPalette = new IntensityPalette();
-        messageWatcher = new MessageWatcher();
-        variableWatcher = new VariableWatcher();
-        expressionEvaluator = new ExpressionEvaluator();
-        magnifierPalette = new MagnificationPalette();
+        messageWindow = MessageWindow.getInstance();
+        paintToolsPalette = PaintToolsPalette.getInstance();
+        shapesPalette = ShapesPalette.getInstance();
+        linesPalette = LinesPalette.getInstance();
+        patternsPalette = PatternPalette.getInstance();
+        brushesPalette = BrushesPalette.getInstance();
+        colorPalette = ColorPalette.getInstance();
+        intensityPalette = IntensityPalette.getInstance();
+        messageWatcher = MessageWatcher.getInstance();
+        variableWatcher = VariableWatcher.getInstance();
+        expressionEvaluator = ExpressionEvaluator.getInstance();
+        magnifierPalette = MagnificationPalette.getInstance();
+        findWindow = FindWindow.getInstance();
+        replaceWindow = ReplaceWindow.getInstance();
         hiddenPrintFrame = WindowBuilder.buildHiddenScreenshotFrame();
 
         themeProvider.onNext(UIManager.getLookAndFeel().getName());
@@ -65,6 +70,12 @@ public class WyldCardWindowManager implements WindowManager {
         new WindowBuilder<>(paintToolsPalette)
                 .asPalette()
                 .withTitle("Tools")
+                .notInitiallyVisible()
+                .build();
+
+        new WindowBuilder<>(patternsPalette)
+                .asPalette()
+                .withTitle("Patterns")
                 .notInitiallyVisible()
                 .build();
 
@@ -86,12 +97,6 @@ public class WyldCardWindowManager implements WindowManager {
                 .notInitiallyVisible()
                 .build();
 
-        new WindowBuilder<>(patternsPalette)
-                .asPalette()
-                .withTitle("Patterns")
-                .notInitiallyVisible()
-                .build();
-
         new WindowBuilder<>(intensityPalette)
                 .asPalette()
                 .withTitle("Intensity")
@@ -102,6 +107,7 @@ public class WyldCardWindowManager implements WindowManager {
                 .asPalette()
                 .focusable(true)
                 .withTitle("Colors")
+                .withLocationCenteredOnScreen()
                 .notInitiallyVisible()
                 .build();
 
@@ -109,6 +115,7 @@ public class WyldCardWindowManager implements WindowManager {
                 .asPalette()
                 .focusable(false)
                 .withTitle("Message Watcher")
+                .withLocationCenteredOnScreen()
                 .notInitiallyVisible()
                 .resizeable(true)
                 .build();
@@ -117,16 +124,19 @@ public class WyldCardWindowManager implements WindowManager {
                 .asPalette()
                 .withTitle("Variable Watcher")
                 .focusable(true)
+                .withLocationCenteredOnScreen()
                 .notInitiallyVisible()
                 .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
                 .resizeable(true)
                 .build();
 
         new WindowBuilder<>(expressionEvaluator)
+                .asPalette()
                 .withTitle("Evaluate Expression")
-                .asModal()
                 .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
+                .focusable(true)
                 .notInitiallyVisible()
+                .withLocationCenteredOnScreen()
                 .resizeable(true)
                 .build();
 
@@ -137,6 +147,32 @@ public class WyldCardWindowManager implements WindowManager {
                 .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
                 .resizeable(false)
                 .build();
+
+        new WindowBuilder<>(replaceWindow)
+                .withTitle("Replace")
+                .asPalette()
+                .focusable(true)
+                .notInitiallyVisible()
+                .build();
+
+        new WindowBuilder<>(findWindow)
+                .asPalette()
+                .withTitle("Find")
+                .focusable(true)
+                .notInitiallyVisible()
+                .build();
+    }
+
+    @RunOnDispatch
+    @Override
+    public void showAllToolPalettes() {
+        paintToolsPalette.setVisible(true);
+        patternsPalette.setVisible(true);
+        magnifierPalette.setVisible(true);
+        brushesPalette.setVisible(true);
+        linesPalette.setVisible(true);
+        intensityPalette.setVisible(true);
+        shapesPalette.setVisible(true);
     }
 
     @RunOnDispatch
@@ -159,6 +195,10 @@ public class WyldCardWindowManager implements WindowManager {
 
         magnifierPalette
                 .setLocationRightOf(stackWindow)
+                .alignTopTo(stackWindow);
+
+        messageWatcher
+                .setLocationRightOf(magnifierPalette)
                 .alignTopTo(stackWindow);
 
         brushesPalette
@@ -244,11 +284,22 @@ public class WyldCardWindowManager implements WindowManager {
     }
 
     @Override
+    public FindWindow getFindWindow() {
+        return findWindow;
+    }
+
+    @Override
+    public ReplaceWindow getReplaceWindow() {
+        return replaceWindow;
+    }
+
+    @Override
     public void showPatternEditor() {
         new WindowBuilder<>(new PatternEditor())
-                .withModel(WyldCard.getInstance().getToolsManager().getFillPattern())
+                .withModel(WyldCard.getInstance().getPaintManager().getFillPattern())
                 .withTitle("Edit Pattern")
                 .resizeable(false)
+                .withLocationCenteredOver(WyldCard.getInstance().getStackManager().getFocusedCard())
                 .asModal()
                 .build();
     }
@@ -302,8 +353,9 @@ public class WyldCardWindowManager implements WindowManager {
         } else {
             return (StackWindow) new WindowBuilder<>(new StackWindow())
                     .withModel(stackPart)
-                    .withActionOnClose(window -> WyldCard.getInstance().getStackManager().closeStack(context, ((StackWindow) window).getStack()))
+                    .withActionOnClose(window -> WyldCard.getInstance().getStackManager().closeStack(context, ((StackWindow) window).getDisplayedStack()))
                     .ownsMenubar()
+                    .withLocationCenteredOnScreen()
                     .build();
         }
     }
@@ -376,10 +428,17 @@ public class WyldCardWindowManager implements WindowManager {
     }
 
     @Override
+    public void onApplicationFocusChanged(boolean appInFocus) {
+        WyldCard.getInstance().getKeyboardManager().resetKeyStates();
+    }
+
+    @Override
     public void notifyWindowVisibilityChanged() {
-        framesProvider.onNext(getFrames(false));
-        windowsProvider.onNext(getWindows(true));
-        palettesProvider.onNext(getPalettes(true));
+        Invoke.onDispatch(() -> {
+            framesProvider.onNext(getFrames(false));
+            windowsProvider.onNext(getWindows(true));
+            palettesProvider.onNext(getPalettes(true));
+        });
     }
 
 }

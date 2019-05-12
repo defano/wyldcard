@@ -1,7 +1,7 @@
 package com.defano.wyldcard.border;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.awt.*;
 
@@ -11,7 +11,7 @@ public interface ColorStateBorder {
         if (WyldCard.getInstance().getKeyboardManager().isPeeking(new ExecutionContext())) {
             return SystemColor.textHighlight;
         } else {
-            return c.isEnabled() ? Color.BLACK : Color.GRAY;
+            return c.isEnabled() ? Color.BLACK : Color.LIGHT_GRAY;
         }
     }
 

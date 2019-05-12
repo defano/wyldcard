@@ -1,15 +1,15 @@
 package com.defano.wyldcard.search;
 
-import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
-import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.wyldcard.parts.field.FieldModel;
-import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.stack.StackModel;
-import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
+import com.defano.wyldcard.part.bkgnd.BackgroundModel;
+import com.defano.wyldcard.part.card.CardModel;
+import com.defano.wyldcard.part.field.FieldModel;
+import com.defano.wyldcard.part.model.PartModel;
+import com.defano.wyldcard.part.stack.StackModel;
+import com.defano.hypertalk.ast.model.specifier.CompositePartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.utils.Range;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.hypertalk.util.Range;
+import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,10 +138,16 @@ public class SearchIndexer {
      * @param results A mutable list of search results; each hit in the indexed field will be appended to this list
      */
     private static void indexField(ExecutionContext context, SearchQuery query, FieldModel fieldModel, int cardIndex, List<SearchResult> results) {
+
+        // Ignore fields marked "don't search"
+        if (fieldModel.get(context, FieldModel.PROP_DONTSEARCH).booleanValue()) {
+            return;
+        }
+
         int searchFrom = 0;
         Range result;
 
-        int cardId = context.getCurrentStack().getStackModel().getCardModel(cardIndex).getId(context);
+        int cardId = context.getCurrentStack().getStackModel().getCardModel(cardIndex).getId();
         String fieldText = fieldModel.getText(context, cardId);
 
         do {
@@ -166,7 +172,8 @@ public class SearchIndexer {
      */
     private static boolean isCardSearchable(ExecutionContext context, SearchQuery query, CardModel cardModel) {
         return (!query.isSearchOnlyMarkedCards() || cardModel.isMarked(context)) &&
-                !cardModel.getKnownProperty(context, CardModel.PROP_DONTSEARCH).booleanValue()
-                && !cardModel.getBackgroundModel().getKnownProperty(context, BackgroundModel.PROP_DONTSEARCH).booleanValue();
+                !cardModel.get(context, CardModel.PROP_DONTSEARCH).booleanValue()
+                && !cardModel.getBackgroundModel().get(context, BackgroundModel.PROP_DONTSEARCH).booleanValue();
     }
+
 }

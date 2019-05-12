@@ -1,6 +1,5 @@
 package com.defano.hypertalk.exception;
 
-import com.defano.wyldcard.runtime.Breadcrumb;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
 

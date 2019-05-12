@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.defano.wyldcard.window.layout.PaintToolsPalette">
+  <grid id="27dc6" binding="palettePanel" layout-manager="GridLayoutManager" row-count="7" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="250" height="204"/>
+    </constraints>
+    <properties>
+      <maximumSize width="120" height="2147483647"/>
+      <minimumSize width="120" height="204"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <component id="a4cd3" class="javax.swing.JButton" binding="selection">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <enabled value="true"/>
+          <icon value="icons/selection.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+          <visible value="true"/>
+        </properties>
+      </component>
+      <component id="14a87" class="javax.swing.JButton" binding="lasso">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="icons/lasso.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="5f8c3" class="javax.swing.JButton" binding="pencil">
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/pencil.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="5282c" class="javax.swing.JButton" binding="paintbrush">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/paintbrush.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="ca8e6" class="javax.swing.JButton" binding="eraser">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/eraser.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="f3520" class="javax.swing.JButton" binding="line">
+        <constraints>
+          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/line.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="e5868" class="javax.swing.JButton" binding="spraypaint">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/spraypaint.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="e3154" class="javax.swing.JButton" binding="rectangle">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/rectangle.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="245a0" class="javax.swing.JButton" binding="roundRectangle">
+        <constraints>
+          <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/roundrect.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="27b97" class="javax.swing.JButton" binding="fill">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/fill.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="7a7f5" class="javax.swing.JButton" binding="oval">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/oval.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="eaaee" class="javax.swing.JButton" binding="curve">
+        <constraints>
+          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/curve.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="bd8d" class="javax.swing.JButton" binding="text">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/text.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="2ca15" class="javax.swing.JButton" binding="shape">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/shape.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="37d2f" class="javax.swing.JButton" binding="polygon">
+        <constraints>
+          <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <contentAreaFilled value="true"/>
+          <icon value="icons/polygon.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <opaque value="true"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="6e392" class="javax.swing.JButton" binding="finger">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="icons/finger.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="5d11a" class="javax.swing.JButton" binding="button">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="icons/button.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="88eaa" class="javax.swing.JButton" binding="field">
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="icons/field.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="b55c7" class="javax.swing.JSeparator">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <orientation value="1"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

@@ -3,15 +3,16 @@ package com.defano.hypertalk;
 import com.defano.wyldcard.NavigationManager;
 import com.defano.wyldcard.StackManager;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.KeyboardManager;
-import com.defano.wyldcard.awt.MouseManager;
+import com.defano.wyldcard.awt.keyboard.KeyboardManager;
+import com.defano.wyldcard.awt.mouse.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
-import com.defano.wyldcard.menubar.main.WyldCardMenuBar;
-import com.defano.wyldcard.parts.editor.PartEditManager;
-import com.defano.wyldcard.patterns.PatternManager;
-import com.defano.wyldcard.runtime.PeriodicMessageManager;
-import com.defano.wyldcard.runtime.WyldCardProperties;
-import com.defano.wyldcard.runtime.context.*;
+import com.defano.wyldcard.menu.main.WyldCardMenuBar;
+import com.defano.wyldcard.part.editor.PartEditManager;
+import com.defano.wyldcard.part.wyldcard.WyldCardPart;
+import com.defano.wyldcard.pattern.PatternManager;
+import com.defano.wyldcard.runtime.ExecutionContext;
+import com.defano.wyldcard.runtime.manager.PeriodicMessageManager;
+import com.defano.wyldcard.runtime.manager.*;
 import com.defano.wyldcard.search.SearchManager;
 import com.defano.wyldcard.sound.SoundManager;
 import com.defano.wyldcard.sound.SpeechPlaybackManager;
@@ -36,7 +37,7 @@ public class GuiceTest<T> implements TestDataGenerator {
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected MouseManager mockMouseManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected KeyboardManager mockKeyboardManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected WindowManager mockWindowManager;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected ToolsManager mockToolsManager;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected PaintManager mockPaintManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected FileManager mockFileManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected FontManager mockFontManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected SelectionManager mockSelectionManager;
@@ -49,7 +50,7 @@ public class GuiceTest<T> implements TestDataGenerator {
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected PartToolManager mockPartToolManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected SpeechPlaybackManager mockSpeechPlaybackManager;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected WyldCardMenuBar mockWyldCardMenuBar;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected WyldCardProperties mockWyldCardProperties;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected WyldCardPart mockWyldCardPart;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected NavigationManager mockNavigationManager;
 
     // Statically initialize these so they can be referenced before call to initialize()
@@ -101,7 +102,7 @@ public class GuiceTest<T> implements TestDataGenerator {
             bind(MouseManager.class).toInstance(mockMouseManager);
             bind(KeyboardManager.class).toInstance(mockKeyboardManager);
             bind(WindowManager.class).toInstance(mockWindowManager);
-            bind(ToolsManager.class).toInstance(mockToolsManager);
+            bind(PaintManager.class).toInstance(mockPaintManager);
             bind(FileManager.class).toInstance(mockFileManager);
             bind(FontManager.class).toInstance(mockFontManager);
             bind(SelectionManager.class).toInstance(mockSelectionManager);
@@ -114,7 +115,7 @@ public class GuiceTest<T> implements TestDataGenerator {
             bind(PartToolManager.class).toInstance(mockPartToolManager);
             bind(SpeechPlaybackManager.class).toInstance(mockSpeechPlaybackManager);
             bind(WyldCardMenuBar.class).toInstance(mockWyldCardMenuBar);
-            bind(WyldCardProperties.class).toInstance(mockWyldCardProperties);
+            bind(WyldCardPart.class).toInstance(mockWyldCardPart);
             bind(NavigationManager.class).toInstance(mockNavigationManager);
         }
     }

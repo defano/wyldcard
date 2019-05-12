@@ -3,8 +3,8 @@ package com.defano.wyldcard.window;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.menubar.main.MainWyldCardMenuBar;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.menu.main.MainWyldCardMenuBar;
+import com.defano.wyldcard.thread.Invoke;
 import io.reactivex.Observable;
 
 import javax.swing.*;
@@ -28,13 +28,6 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
      * @param data An object representing the data to be displayed in the window.
      */
     void bindModel(ModelType data);
-
-    /**
-     * Close and dispose the window.
-     */
-    default void dispose() {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> SwingUtilities.getWindowAncestor(getWindowPanel()).dispose());
-    }
 
     /**
      * Gets the AWT window object that is bound to this application window (e.g., a JFrame or JDialog).
@@ -99,24 +92,33 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
      * @param x The requested x coordinate of the window
      * @param y The requested y coordinate of the window
      */
-    @RunOnDispatch
     default void positionWindow(int x, int y) {
-        DisplayMode mode = getWindow().getGraphicsConfiguration().getDevice().getDisplayMode();
+        Invoke.onDispatch(() -> {
+            DisplayMode mode = getWindow().getGraphicsConfiguration().getDevice().getDisplayMode();
 
-        int xPos = Math.min(x, mode.getWidth() - getWindow().getWidth());
-        int yPos = Math.min(y, mode.getHeight() - getWindow().getHeight());
-        xPos = Math.max(0, xPos);
-        yPos = Math.max(0, yPos);
+            int xPos = Math.min(x, mode.getWidth() - getWindow().getWidth());
+            int yPos = Math.min(y, mode.getHeight() - getWindow().getHeight());
+            xPos = Math.max(0, xPos);
+            yPos = Math.max(0, yPos);
 
-        getWindow().setLocation(xPos, yPos);
+            getWindow().setLocation(xPos, yPos);
+        });
     }
 
     default boolean isPalette() {
-        return ThreadUtils.callAndWaitAsNeeded(() -> getWindow().getType() == Window.Type.UTILITY);
+        return Invoke.onDispatch(() -> getWindow().getType() == Window.Type.UTILITY);
+    }
+
+    default void setVisibleOverFocusedWindow(boolean isVisible) {
+        // Don't position the window if it's already visible
+        if (!getWindow().isVisible()) {
+            setLocationCenteredOver(FocusManager.getCurrentManager().getActiveWindow());
+        }
+        getWindow().setVisible(isVisible);
     }
 
     default void setContentPane(Container contentPane) {
-        SwingUtilities.invokeLater(() -> {
+        Invoke.onDispatch(() -> {
             if (getWindow() instanceof JDialog) {
                 ((JDialog) getWindow()).setContentPane(contentPane);
             } else if (getWindow() instanceof JFrame) {
@@ -126,7 +128,7 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
     }
 
     default void setDefaultCloseOperation(int operation) {
-        SwingUtilities.invokeLater(() -> {
+        Invoke.onDispatch(() -> {
             if (getWindow() instanceof JDialog) {
                 ((JDialog) getWindow()).setDefaultCloseOperation(operation);
             } else if (getWindow() instanceof JFrame) {
@@ -136,30 +138,32 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
     }
 
     default Value getNumberOfWindow() {
-        WindowManager windowManager = WyldCard.getInstance().getWindowManager();
-        for (int windowNumber = 1; windowNumber <= windowManager.getFrames(false).size(); windowNumber++) {
-            if (this == windowManager.getFrames(false).get(windowNumber - 1)) {
-                return new Value(windowNumber);
+        return Invoke.onDispatch(() -> {
+            WindowManager windowManager = WyldCard.getInstance().getWindowManager();
+            for (int windowNumber = 1; windowNumber <= windowManager.getFrames(false).size(); windowNumber++) {
+                if (this == windowManager.getFrames(false).get(windowNumber - 1)) {
+                    return new Value(windowNumber);
+                }
             }
-        }
 
-        return new Value();
+            return new Value();
+        });
     }
 
-
-    @RunOnDispatch
     default String getTitle() {
-        if (getWindow() instanceof JDialog) {
-            return ((JDialog) getWindow()).getTitle();
-        } else if (getWindow() instanceof JFrame) {
-            return ((JFrame) getWindow()).getTitle();
-        }
+        return Invoke.onDispatch(() -> {
+            if (getWindow() instanceof JDialog) {
+                return ((JDialog) getWindow()).getTitle();
+            } else if (getWindow() instanceof JFrame) {
+                return ((JFrame) getWindow()).getTitle();
+            }
 
-        throw new IllegalStateException("Bug! Unimplemented window type.");
+            throw new IllegalStateException("Bug! Unimplemented window type.");
+        }, IllegalStateException.class);
     }
 
     default void setTitle(String title) {
-        SwingUtilities.invokeLater(() -> {
+        Invoke.onDispatch(() -> {
             if (getWindow() instanceof JDialog) {
                 ((JDialog) getWindow()).setTitle(title);
             } else if (getWindow() instanceof JFrame) {
@@ -169,7 +173,7 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
     }
 
     default void setAllowResizing(boolean resizable) {
-        SwingUtilities.invokeLater(() -> {
+        Invoke.onDispatch(() -> {
             if (getWindow() instanceof JFrame) {
                 ((JFrame) getWindow()).setResizable(resizable);
             }
@@ -180,7 +184,7 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
     }
 
     default void applyMenuBar() {
-        SwingUtilities.invokeLater(() -> {
+        Invoke.onDispatch(() -> {
             if (getWindow() instanceof JFrame) {
                 JFrame frame = (JFrame) getWindow();
                 if (hasMenuBar() || WyldCard.getInstance().getWindowManager().isMacOsTheme()) {
@@ -198,69 +202,80 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
     }
 
     default void toggleVisible() {
-        SwingUtilities.invokeLater(() -> {
-            getWindow().setVisible(!getWindow().isVisible());
+        Invoke.onDispatch(() -> getWindow().setVisible(!getWindow().isVisible()));
+    }
+
+    default void setVisible(boolean visible) {
+        Invoke.onDispatch(() -> getWindow().setVisible(visible));
+    }
+
+    default void setIsModal() {
+        Invoke.onDispatch(() -> {
+            if (getWindow() instanceof JDialog) {
+                ((JDialog) getWindow()).setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+            } else {
+                throw new IllegalStateException("This kind of window cannot be made modal");
+            }
+        }, IllegalStateException.class);
+    }
+
+    default WyldCardFrame<WindowType, ModelType> setLocationRightOf(Component component) {
+        Invoke.onDispatch(() -> {
+            int targetX = component.getX() + component.getWidth() + DEFAULT_SEPARATION;
+            positionWindow(targetX, getWindow().getY());
+        });
+        return this;
+    }
+
+    default WyldCardFrame<WindowType, ModelType> setLocationLeftOf(Component component) {
+        Invoke.onDispatch(() -> {
+            int targetX = component.getX() - getWindow().getWidth() - DEFAULT_SEPARATION;
+            positionWindow(targetX, getWindow().getY());
+        });
+        return this;
+    }
+
+    default WyldCardFrame<WindowType, ModelType> setLocationBelow(Component component) {
+        Invoke.onDispatch(() -> {
+            int targetY = component.getY() + component.getHeight() + DEFAULT_SEPARATION;
+            positionWindow(getWindow().getX(), targetY);
+        });
+        return this;
+    }
+
+    default WyldCardFrame<WindowType, ModelType> alignTopTo(Component component) {
+        Invoke.onDispatch(() -> {
+            positionWindow(getWindow().getX(), component.getY());
+        });
+        return this;
+    }
+
+    default WyldCardFrame<WindowType, ModelType> alignLeftTo(Component component) {
+        Invoke.onDispatch(() -> {
+            positionWindow(component.getX(), getWindow().getY());
+        });
+        return this;
+    }
+
+    default WyldCardFrame<WindowType, ModelType> alignTopStaggeredTo(Component component) {
+        Invoke.onDispatch(() -> {
+            positionWindow(getWindow().getX(), component.getY() + DEFAULT_SEPARATION);
+        });
+        return this;
+    }
+
+    default void setLocationCenteredOver(Component component) {
+        Invoke.onDispatch(() -> {
+            getWindow().setLocationRelativeTo(component);
         });
     }
 
-    @RunOnDispatch
-    default void setIsModal() {
-        if (getWindow() instanceof JDialog) {
-            ((JDialog) getWindow()).setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-        } else {
-            throw new IllegalStateException("This kind of window cannot be made modal");
-        }
-    }
-
-    @RunOnDispatch
-    default WyldCardFrame<WindowType, ModelType> setLocationRightOf(Component component) {
-        int targetX = component.getX() + component.getWidth() + DEFAULT_SEPARATION;
-        getWindow().setLocation(targetX, getWindow().getY());
-        return this;
-    }
-
-    @RunOnDispatch
-    default WyldCardFrame<WindowType, ModelType> setLocationLeftOf(Component component) {
-        int targetX = component.getX() - getWindow().getWidth() - DEFAULT_SEPARATION;
-        getWindow().setLocation(targetX, getWindow().getY());
-        return this;
-    }
-
-    @RunOnDispatch
-    default WyldCardFrame<WindowType, ModelType> setLocationBelow(Component component) {
-        int targetY = component.getY() + component.getHeight() + DEFAULT_SEPARATION;
-        getWindow().setLocation(getWindow().getX(), targetY);
-        return this;
-    }
-
-    @RunOnDispatch
-    default WyldCardFrame<WindowType, ModelType> alignTopTo(Component component) {
-        getWindow().setLocation(getWindow().getX(), component.getY());
-        return this;
-    }
-
-    @RunOnDispatch
-    default WyldCardFrame<WindowType, ModelType> alignLeftTo(Component component) {
-        getWindow().setLocation(component.getX(), getWindow().getY());
-        return this;
-    }
-
-    @RunOnDispatch
-    default WyldCardFrame<WindowType, ModelType> alignTopStaggeredTo(Component component) {
-        getWindow().setLocation(getWindow().getX(), component.getY() + DEFAULT_SEPARATION);
-        return this;
-    }
-
-    @RunOnDispatch
-    default void setLocationCenteredOver(Component component) {
-        getWindow().setLocationRelativeTo(component);
-    }
-
-    @RunOnDispatch
     default void setLocationStaggeredOver(Component component) {
-        getWindow().setLocation(new Point(
-                (int) component.getLocationOnScreen().getX() + DEFAULT_SEPARATION,
-                (int) component.getLocationOnScreen().getY() + DEFAULT_SEPARATION)
-        );
+        Invoke.onDispatch(() -> {
+            getWindow().setLocation(new Point(
+                    (int) component.getLocationOnScreen().getX() + DEFAULT_SEPARATION,
+                    (int) component.getLocationOnScreen().getY() + DEFAULT_SEPARATION)
+            );
+        });
     }
 }

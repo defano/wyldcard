@@ -1,10 +1,13 @@
 package com.defano.hypertalk.ast.model;
 
 import com.defano.hypertalk.GuiceTest;
+import com.defano.hypertalk.ast.model.chunk.ChunkType;
+import com.defano.hypertalk.ast.model.enums.Preposition;
+import com.defano.hypertalk.ast.model.enums.SortStyle;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.utils.TestChunkBuilder;
-import com.defano.wyldcard.runtime.WyldCardProperties;
+import com.defano.hypertalk.util.TestChunkBuilder;
+import com.defano.wyldcard.part.wyldcard.WyldCardProperties;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +26,7 @@ public class ValueTest extends GuiceTest<Value> {
 
     @Test
     public void testIsInteger() {
-        assertTrue(new Value().isInteger());
+        assertFalse(new Value().isInteger());
         assertTrue(new Value("0").isInteger());
         assertTrue(new Value("123").isInteger());
         assertTrue(new Value("-123").isInteger());
@@ -255,12 +258,12 @@ public class ValueTest extends GuiceTest<Value> {
 
     @Test
     public void testGetItems() {
-        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
+        Mockito.when(mockWyldCardPart.get(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
         assertIterableEquals(Lists.newArrayList(), new Value().getItems(mockExecutionContext));
         assertIterableEquals(Lists.newArrayList(new Value("1")), new Value("1").getItems(mockExecutionContext));
         assertIterableEquals(Lists.newArrayList(new Value("1"), new Value("2")), new Value("1,2").getItems(mockExecutionContext));
 
-        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value("-"));
+        Mockito.when(mockWyldCardPart.get(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value("-"));
         assertIterableEquals(Lists.newArrayList(), new Value().getItems(mockExecutionContext));
         assertIterableEquals(Lists.newArrayList(new Value("1")), new Value("1").getItems(mockExecutionContext));
         assertIterableEquals(Lists.newArrayList(new Value("1"), new Value("2")), new Value("1-2").getItems(mockExecutionContext));
@@ -268,7 +271,7 @@ public class ValueTest extends GuiceTest<Value> {
 
     @Test
     public void testGetItemAt() {
-        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
+        Mockito.when(mockWyldCardPart.get(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
         assertEquals(new Value(), new Value().getItemAt(mockExecutionContext, 0));
         assertEquals(new Value("1"), new Value("1, 2, 3").getItemAt(mockExecutionContext, 0));
         assertEquals(new Value("2"), new Value("1, 2, 3").getItemAt(mockExecutionContext, 1));
@@ -326,7 +329,7 @@ public class ValueTest extends GuiceTest<Value> {
 
     @Test
     public void testGetChunksGetsItems() {
-        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
+        Mockito.when(mockWyldCardPart.get(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
 
         for (ChunkType itemType : Lists.newArrayList(ChunkType.ITEM, ChunkType.ITEMRANGE)) {
             assertIterableEquals(Lists.newArrayList(),
@@ -376,7 +379,7 @@ public class ValueTest extends GuiceTest<Value> {
 
     @Test
     public void testItemCount() {
-        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
+        Mockito.when(mockWyldCardPart.get(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
 
         assertEquals(0, new Value().itemCount(mockExecutionContext));
         assertEquals(1, new Value("one").itemCount(mockExecutionContext));
@@ -433,7 +436,7 @@ public class ValueTest extends GuiceTest<Value> {
 
     @Test
     public void testGetChunkGetsItems() throws Exception {
-        Mockito.when(mockWyldCardProperties.getKnownProperty(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
+        Mockito.when(mockWyldCardPart.get(mockExecutionContext, WyldCardProperties.PROP_ITEMDELIMITER)).thenReturn(new Value(","));
 
         assertThrows(HtSemanticException.class, () -> new Value().getChunk(mockExecutionContext, TestChunkBuilder.buildSingleChunk(ChunkType.ITEM, -1)));
         assertThrows(HtSemanticException.class, () -> new Value().getChunk(mockExecutionContext, TestChunkBuilder.buildChunkRange(ChunkType.ITEMRANGE, -1, -1)));

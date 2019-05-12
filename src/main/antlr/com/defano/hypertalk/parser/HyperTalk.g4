@@ -24,9 +24,10 @@
 
 grammar HyperTalk;
 
-// Start symbol accepting only well-formed HyperTalk scripts that consist of handlers, functions, whitespace and
-// comments (representing scipts that are assignable to objects like buttons, fields and cards). Disallows statements or
-// expressions that are not inside of a handler or function block.
+/* Start symbol accepting only well-formed HyperTalk scripts that consist of handlers, functions, whitespace and
+ * comments (representing scipts that are assignable to objects like buttons, fields and cards). Disallows statements or
+ * expressions that are not inside of a handler or function block.
+ */
 script
     : handler script                                                                                                    # handlerScript
     | function script                                                                                                   # functionScript
@@ -34,8 +35,9 @@ script
     | EOF                                                                                                               # emptyScript
     ;
 
-// Start symbol accepting any sequence of HyperTalk statements, expressions, whitespace and comments. Suitable when
-// evaluating the message box or HyperTalk strings via the 'do' command and 'value of' function.
+/* Start symbol accepting any sequence of HyperTalk statements, expressions, whitespace and comments. Suitable when
+ * evaluating the message box or HyperTalk strings via the 'do' command and 'value of' function.
+ */
 scriptlet
     : statement EOF                                                                                                     # singleScriptlet
     | multilineScriptlet                                                                                                # mutliScriptlet
@@ -49,23 +51,23 @@ multilineScriptlet
     ;
 
 handler
-    : 'on' handlerName NEWLINE+ statementList? 'end' handlerName                                                        # noArgHandler
-    | 'on' handlerName parameterList NEWLINE+ statementList? 'end' handlerName                                          # argHandler
+    : 'on' symbol NEWLINE+ statementList? 'end' symbol                                                                  # noArgHandler
+    | 'on' symbol parameterList NEWLINE+ statementList? 'end' symbol                                                    # argHandler
     ;
 
 function
-    : 'function' ID NEWLINE+ statementList? 'end' ID                                                                    # noArgFunction
-    | 'function' ID parameterList NEWLINE+ statementList? 'end' ID                                                      # argFunction
-    ;
-
-handlerName
-    : ID
-    | commandName   // Handlers can take the name of a command keyword (other keywords are disallowed)
+    : 'function' symbol NEWLINE+ statementList? 'end' symbol                                                            # noArgFunction
+    | 'function' symbol parameterList NEWLINE+ statementList? 'end' symbol                                              # argFunction
     ;
 
 parameterList
-    : ID                                                                                                                # singleParamList
-    | parameterList ',' ID                                                                                              # multiParamList
+    : symbol                                                                                                            # singleParamList
+    | parameterList ',' symbol                                                                                          # multiParamList
+    ;
+
+symbol
+    : ID                                                                                                                # idSymbol
+    | keyword                                                                                                           # keywordSymbol
     ;
 
 statementList
@@ -74,21 +76,21 @@ statementList
     ;
 
 statement
-    : commandStmnt                                                                                                      # nonEmptyCommandStmnt
-    | functionCall                                                                                                      # nonEmptyFuncStmnt
-    | messageStatement                                                                                                  # nonEmptyMsgStmnt
-    | expression                                                                                                        # nonEmptyExpStmnt
-    | ifStatement                                                                                                       # nonEmptyIfStmnt
-    | repeatStatement                                                                                                   # nonEmptyRepeatStmnt
-    | globalStmnt                                                                                                       # nonEmptyGlobalStmnt
-    | returnStmnt                                                                                                       # nonEmptyReturnStmnt
+    : commandStatement                                                                                                  # commandStmnt
+    | functionCall                                                                                                      # funcStmnt
+    | messageStatement                                                                                                  # msgStmnt
+    | expression                                                                                                        # expStmnt
+    | ifStatement                                                                                                       # ifStmnt
+    | repeatStatement                                                                                                   # repeatStmnt
+    | globalStatement                                                                                                   # globalStmnt
+    | returnStatement                                                                                                   # returnStmnt
     ;
 
-globalStmnt
+globalStatement
     : 'global' parameterList
     ;
 
-returnStmnt
+returnStatement
     : 'return' expression                                                                                               # eprReturnStmnt
     | 'return'                                                                                                          # voidReturnStmnt
     ;
@@ -118,89 +120,98 @@ messageStatement
     | ID listExpression                                                                                                 # argMsgCmdStmt
     ;
 
-commandStmnt
-    : 'add' expression 'to' expression                                                                                  # addCmdStmnt
+commandStatement
+    : 'add' expression 'to' expression                                                                                  # addCmd
     | 'answer' expression 'with' term 'or' term 'or' term                                                               # answerThreeButtonCmd
     | 'answer' expression 'with' term 'or' term                                                                         # answerTwoButtonCmd
     | 'answer' expression 'with' term                                                                                   # answerOneButtonCmd
     | 'answer' expression                                                                                               # answerDefaultCmd
+    | 'answer' 'file' expression                                                                                        # answerFileCmd
+    | 'answer' 'file' expression 'of' 'type' expression                                                                 # answerFileTypeCmd
     | 'arrowkey' arrowExpression                                                                                        # arrowKeyCmd
     | 'ask' expression 'with' expression                                                                                # askExpWithCmd
     | 'ask' expression                                                                                                  # askExpCmd
     | 'ask' 'file' expression                                                                                           # askFileCmd
     | 'ask' 'file' expression 'with' expression                                                                         # askFileWithCmd
-    | 'beep'                                                                                                            # beepCmdStmt
-    | 'beep' expression                                                                                                 # beepMultipleStmt
-    | 'choose' toolExpression 'tool'?                                                                                   # chooseToolCmdStmt
-    | 'choose' 'tool' toolExpression                                                                                    # chooseToolNumberCmdStmt
-    | 'click' 'at' listExpression                                                                                       # clickCmdStmt
-    | 'click' 'at' listExpression 'with' listExpression                                                                 # clickWithKeyCmdStmt
-    | 'close' 'file' expression                                                                                         # closeFileCmdStmt
-    | 'commandkeydown' expression                                                                                       # commandKeyDownCmdStmt
-    | 'controlkey' expression                                                                                           # controlKeyCmdStmt
-    | 'convert' container 'to' convertible                                                                              # convertContainerToCmd
-    | 'convert' container 'from' convertible 'to' convertible                                                           # convertContainerFromToCmd
+    | 'ask' 'password' expression                                                                                       # askPasswordCmd
+    | 'ask' 'password' expression 'with' expression                                                                     # askPasswordWithCmd
+    | 'ask' 'password' 'clear' expression                                                                               # askPasswordClearCmd
+    | 'ask' 'password' 'clear' expression 'with' expression                                                             # askPasswordClearWithCmd
+    | 'beep'                                                                                                            # beepCmd
+    | 'beep' expression                                                                                                 # beepMultipleCmd
+    | 'choose' toolExpression 'tool'?                                                                                   # chooseToolCmd
+    | 'choose' 'tool' toolExpression                                                                                    # chooseToolNumberCmd
+    | 'click' 'at' listExpression                                                                                       # clickCmd
+    | 'click' 'at' listExpression 'with' listExpression                                                                 # clickWithKeyCmd
+    | 'close' 'file' expression                                                                                         # closeFileCmd
+    | 'close' card 'window'                                                                                             # closeCardWindowCmd
+    | 'close' 'window' expression                                                                                       # closeWindowCmd
+    | 'commandkeydown' expression                                                                                       # commandKeyDownCmd
+    | 'controlkey' expression                                                                                           # controlKeyCmd
+    | 'optionkey' expression                                                                                            # optionKeyCmd
     | 'convert' expression 'to' convertible                                                                             # convertToCmd
     | 'convert' expression 'from' convertible 'to' convertible                                                          # convertFromToCmd
-    | 'create' 'menu' expression                                                                                        # createMenuCmdStmt
-    | 'debug' 'checkpoint'                                                                                              # debugCheckpointCmdStmt
-    | 'delete' expression                                                                                               # deleteCmdStmt
-    | 'dial' expression                                                                                                 # dialCmdStmt
-    | 'disable' expression                                                                                              # disableExprStmt
-    | 'divide' expression 'by' expression                                                                               # divideCmdStmnt
-    | 'do' expression                                                                                                   # doCmdStmt
-    | 'domenu' expression                                                                                               # doMenuCmdStmt
-    | 'drag' 'from' listExpression 'to' listExpression                                                                  # dragCmdStmt
-    | 'drag' 'from' listExpression 'to' listExpression 'with' listExpression                                            # dragWithKeyCmdStmt
-    | 'edit' 'the'? 'script' of expression                                                                              # editScriptCmdStmt
-    | 'enable' expression                                                                                               # enableExpStmnt
-    | 'enterinfield'                                                                                                    # enterInFieldCmdStmt
-    | 'enterkey'                                                                                                        # enterKeyCmdStmt
-    | 'exit' handlerName                                                                                                # exitCmdStmt
-    | 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
-    | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
-    | 'export' 'paint' 'to' 'file' expression                                                                           # exportPaintCmdStmt
-    | 'find' expression? 'international'? expression of expression of 'marked' cards                                    # findFieldMarkedCards
-    | 'find' expression? 'international'? expression of expression                                                      # findField
-    | 'find' expression? 'international'? expression of 'marked' cards                                                  # findMarkedCards
-    | 'find' expression? 'international'? expression                                                                    # findAnywhere
-    | 'get' expression                                                                                                  # getCmdStmnt
-    | 'go' 'to'? expression 'with' 'visual' expression                                                                  # goVisualEffectCmdStmnd
-    | 'go' 'to'? expression remoteNavOption                                                                             # goCmdStmnt
-    | 'go' 'back'                                                                                                       # goBackCmdStmt
-    | 'go' 'back' 'with' 'visual' expression                                                                            # goBackVisualEffectCmdStmt
-    | 'hide' expression                                                                                                 # hideCmdStmnt
+    | 'create' 'menu' expression                                                                                        # createMenuCmd
+    | 'debug' 'checkpoint'                                                                                              # debugCheckpointCmd
+    | 'delete' expression                                                                                               # deleteCmd
+    | 'dial' expression                                                                                                 # dialCmd
+    | 'disable' expression                                                                                              # disableCmd
+    | 'divide' expression 'by' expression                                                                               # divideCmd
+    | 'do' expression                                                                                                   # doCmd
+    | 'domenu' expression                                                                                               # doMenuCmd
+    | 'drag' 'from' listExpression 'to' listExpression                                                                  # dragCmd
+    | 'drag' 'from' listExpression 'to' listExpression 'with' listExpression                                            # dragWithKeyCmd
+    | 'edit' 'the'? 'script' of expression                                                                              # editScriptCmd
+    | 'enable' expression                                                                                               # enableCmd
+    | 'enterinfield'                                                                                                    # enterInFieldCmd
+    | 'enterkey'                                                                                                        # enterKeyCmd
+    | 'exit' symbol                                                                                                     # exitCmd
+    | 'exit' 'repeat'                                                                                                   # exitRepeatCmd
+    | 'exit' 'to' hypercard                                                                                             # exitToHyperCardCmd
+    | 'export' 'paint' 'to' 'file' expression                                                                           # exportPaintCmd
+    | 'find' expression? 'international'? expression of expression of 'marked' cards                                    # findFieldMarkedCardsCmd
+    | 'find' expression? 'international'? expression of expression                                                      # findFieldCmd
+    | 'find' expression? 'international'? expression of 'marked' cards                                                  # findMarkedCardsCmd
+    | 'find' expression? 'international'? expression                                                                    # findAnywhereCmd
+    | 'get' expression                                                                                                  # getCmd
+    | 'go' 'to'? position                                                                                               # goPosition
+    | 'go' 'to'? ordinal                                                                                                # goOrdinal
+    | 'go' 'to'? expression navigationOption                                                                            # goCmd
+    | 'hide' 'the'? 'menubar'                                                                                           # hideMenubarCmd
+    | 'hide' 'the'? 'titlebar'                                                                                          # hideTitleBarCmd
     | 'hide' card picture                                                                                               # hideThisCardPictCmd
     | 'hide' background picture                                                                                         # hideThisBkgndPictCmd
     | 'hide' picture of expression                                                                                      # hidePictCmd
-    | 'hide' 'the'? 'titlebar'                                                                                          # hideTitleBar
-    | 'hide' 'the'? 'menubar'                                                                                           # hideMenubarCmd
-    | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmdStmt
-    | 'keydown' expression                                                                                              # keydownCmdStmt
-    | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
-    | 'mark' 'all' cards                                                                                                # markAllCardsCmdStmt
-    | 'mark' expression                                                                                                 # markCardCmdStmt
-    | 'mark' cards 'where' expression                                                                                   # markCardsWhereCmdStmt
-    | 'mark' cards 'by' 'finding' expression? 'international'? expression of expression                                 # markCardsFindingInFieldCmdStmt
-    | 'mark' cards 'by' 'finding' expression? 'international'? expression                                               # markCardsFindingCmdStmt
-    | 'multiply' expression 'by' expression                                                                             # multiplyCmdStmnt
-    | 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
-    | 'open' 'file' expression                                                                                          # openFileCmdStmt
-    | 'pass' handlerName                                                                                                # passCmdStmt
-    | 'play' musicExpression                                                                                            # playCmdStmt
-    | 'pop' card                                                                                                        # popCardCmdStmt
-    | 'push' card                                                                                                       # pushCardCmdStmt
-    | 'push' expression                                                                                                 # pushDestCmdStmt
+    | 'hide' expression                                                                                                 # hideCmd
+    | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmd
+    | 'keydown' expression                                                                                              # keydownCmd
+    | 'lock' 'screen'                                                                                                   # lockScreenCmd
+    | 'lock' 'messages'                                                                                                 # lockMessagesCmd
+    | 'mark' 'all' cards                                                                                                # markAllCardsCmd
+    | 'mark' expression                                                                                                 # markCardCmd
+    | 'mark' cards 'where' expression                                                                                   # markCardsWhereCmd
+    | 'mark' cards 'by' 'finding' expression? 'international'? expression of expression                                 # markCardsFindingInFieldCmd
+    | 'mark' cards 'by' 'finding' expression? 'international'? expression                                               # markCardsFindingCmd
+    | 'multiply' expression 'by' expression                                                                             # multiplyCmd
+    | 'next' 'repeat'                                                                                                   # nextRepeatCmd
+    | 'open' 'file' expression                                                                                          # openFileCmd
+    | 'pass' symbol                                                                                                     # passCmd
+    | 'play' musicExpression                                                                                            # playCmd
+    | 'pop' card                                                                                                        # popCardCmd
+    | 'pop' card preposition expression                                                                                 # popCardIntoCmd
+    | 'push' card                                                                                                       # pushCardCmd
+    | 'push' expression                                                                                                 # pushDestCmd
     | 'put' listExpression                                                                                              # putIntoCmd
     | 'put' listExpression preposition expression                                                                       # putPrepositionCmd
+    | 'put' listExpression preposition expression 'with' menuMessage listExpression                                     # putWithMenuMessagesCmd
     | 'read' 'from' 'file' expression                                                                                   # readFileCmd
     | 'read' 'from' 'file' expression 'for' expression                                                                  # readFileForCmd
     | 'read' 'from' 'file' expression 'at' expression 'for' expression                                                  # readFileAtCmd
     | 'read' 'from' 'file' expression 'until' expression                                                                # readFileUntil
-    | 'reset' 'the'? 'menubar'                                                                                          # resetMenuCmdStmt
-    | 'reset' 'paint'                                                                                                   # resetPaintCmdStmt
-    | 'save' 'this'? 'stack' 'as' 'stack'? expression                                                                   # saveThisStackAsCmdStmt
-    | 'save' 'stack' expression 'as' 'stack'? expression                                                                # saveStackAsCmdStmt
+    | 'reset' 'the'? 'menubar'                                                                                          # resetMenuCmd
+    | 'reset' 'paint'                                                                                                   # resetPaintCmd
+    | 'save' 'this'? 'stack' 'as' 'stack'? expression                                                                   # saveThisStackAsCmd
+    | 'save' 'stack' expression 'as' 'stack'? expression                                                                # saveStackAsCmd
     | 'select' 'empty'                                                                                                  # selectEmptyCmd
     | 'select' 'text' of expression                                                                                     # selectTextCmd
     | 'select' 'before' 'text' of expression                                                                            # selectBeforeCmd
@@ -210,36 +221,42 @@ commandStmnt
     | 'select' 'after' expression                                                                                       # selectAfterChunkCmd
     | 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
     | 'send' listExpression 'to' expression                                                                             # sendCmdStmnt
-    | 'show' expression                                                                                                 # showCmdStmnt
+    | 'show' 'the'? 'titlebar'                                                                                          # showTitleBarCmd
+    | 'show' 'the'? 'menubar'                                                                                           # showMenubarCmd
+    | 'show' 'all' cards                                                                                                # showAllCardsCmd
+    | 'show' 'marked' cards                                                                                             # showMarkedCardsCmd
+    | 'show' expression cards                                                                                           # showCardsCmd
     | 'show' card picture                                                                                               # showThisCardPictCmd
     | 'show' background picture                                                                                         # showThisBkgndPictCmd
     | 'show' picture of expression                                                                                      # showPictCmd
-    | 'show' 'the'? 'titlebar'                                                                                          # showTitleBarCmd
-    | 'show' 'the'? 'menubar'                                                                                           # showMenubarCmd
-    | 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
-    | 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
-    | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
+    | 'show' expression                                                                                                 # showCmd
+    | 'show' expression 'at' listExpression                                                                             # showAtCmd
     | 'sort' 'this'? 'stack' sortDirection sortStyle 'by' expression                                                    # sortStackCmd
     | 'sort' 'the'? cards (of 'this' 'stack')? sortDirection sortStyle 'by' expression                                  # sortStackCmd
     | 'sort' 'the'? 'marked' cards (of 'this' 'stack')? sortDirection sortStyle 'by' expression                         # sortMarkedCardsCmd
+    | 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
+    | 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
+    | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
     | 'sort' expression sortDirection sortStyle 'by' expression                                                         # sortBkgndCardsCmd
     | 'sort' 'the'? cards of expression sortDirection sortStyle 'by' expression                                         # sortBkgndCardsCmd
     | 'sort' 'the'? 'marked' cards of expression sortDirection sortStyle 'by' expression                                # sortMarkedBkgndCardsCmd
     | 'speak' expression                                                                                                # speakCmd
     | 'speak' expression 'with' gender=('male'|'female'|'neuter'|'robotic') 'voice'                                     # speakGenderCmd
     | 'speak' expression 'with' 'voice' expression                                                                      # speakVoiceCmd
-    | 'subtract' expression 'from' expression                                                                           # subtractCmdStmnt
-    | 'tabkey'                                                                                                          # tabKeyCmdStmnt
-    | 'type' expression                                                                                                 # typeCmdStmt
-    | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmdStmt
-    | 'unlock' 'screen'                                                                                                 # unlockScreenCmdStmt
-    | 'unlock' 'screen' 'with' 'visual' expression                                                                      # unlockScreenVisualCmdStmt
-    | 'unmark' 'all' cards                                                                                              # unmarkAllCardsCmdStmt
-    | 'unmark' expression                                                                                               # unmarkCardCmdStmt
-    | 'unmark' cards 'where' expression                                                                                 # unmarkCardsWhereCmdStmt
-    | 'unmark' cards 'by' 'finding' expression? 'international'? expression of expression                               # unmarkCardsFindingInFieldCmdStmt
-    | 'unmark' cards 'by' 'finding' expression? 'international'? expression                                             # unmarkCardsFindingCmdStmt
-    | 'visual' expression                                                                                               # visualEffectCmdStmt
+    | 'subtract' expression 'from' expression                                                                           # subtractCmd
+    | 'start' 'using' expression                                                                                        # startUsingCmd
+    | 'tabkey'                                                                                                          # tabKeyCmd
+    | 'type' expression                                                                                                 # typeCmd
+    | 'type' expression 'with' listExpression                                                                           # typeWithCmdKeyCmd
+    | 'unlock' 'screen'                                                                                                 # unlockScreenCmd
+    | 'unlock' 'screen' 'with' 'visual'? 'effect'? expression                                                           # unlockScreenVisualCmd
+    | 'unlock' 'messages'                                                                                               # unlockMessagesCmd
+    | 'unmark' 'all' cards                                                                                              # unmarkAllCardsCmd
+    | 'unmark' expression                                                                                               # unmarkCardCmd
+    | 'unmark' cards 'where' expression                                                                                 # unmarkCardsWhereCmd
+    | 'unmark' cards 'by' 'finding' expression? 'international'? expression of expression                               # unmarkCardsFindingInFieldCmd
+    | 'unmark' cards 'by' 'finding' expression? 'international'? expression                                             # unmarkCardsFindingCmd
+    | 'visual' 'effect'? expression                                                                                     # visualEffectCmd
     | 'wait' expression timeUnit                                                                                        # waitCountCmd
     | 'wait' 'for' expression timeUnit                                                                                  # waitForCountCmd
     | 'wait' 'until' expression                                                                                         # waitUntilCmd
@@ -249,7 +266,7 @@ commandStmnt
     | 'write' expression 'to' 'file' expression 'at' expression                                                         # writeAtFileCmd
     ;
 
-remoteNavOption
+navigationOption
     : IN_A_NEW 'window'                                                                                                 # remoteInNewWindow
     | IN_A_NEW 'window' 'without' 'dialog'                                                                              # remoteInNewWindowWithoutDialog
     | 'without' 'dialog'                                                                                                # remoteWithoutDialog
@@ -298,10 +315,10 @@ sortStyle
     ;
 
 repeatRange
-    : duration                                                                                                          # durationLoop
-    | count                                                                                                             # countLoop
+    : 'forever'                                                                                                         # infiniteLoop
     | 'with' ID '=' range                                                                                               # withLoop
-    | 'forever'                                                                                                         # infiniteLoop
+    | duration                                                                                                          # durationLoop
+    | count                                                                                                             # countLoop
     |                                                                                                                   # infiniteLoop
     ;
 
@@ -354,12 +371,12 @@ property
     ;
 
 globalProperty
-    : 'the'? propertyName                                                                                               # propertySpecGlobal
+    : 'the'? symbol                                                                                                     # propertySpecGlobal
     ;
 
 partProperty
-    : 'the'? propertyName of term                                                                                       # propertySpecPart
-    | 'the'? length propertyName of term                                                                                # lengthPropertySpecPart
+    : 'the'? symbol of term                                                                                             # propertySpecPart
+    | 'the'? length symbol of term                                                                                      # lengthPropertySpecPart
     ;
 
 part
@@ -370,9 +387,10 @@ part
     | buttonPart                                                                                                        # buttonPartPart
     | fieldPart                                                                                                         # fieldPartPart
     | bkgndPart                                                                                                         # bkgndPartPart
+    | windowPart                                                                                                        # windowPartPart
     | cardPart                                                                                                          # cardPartPart
     | stackPart                                                                                                         # stackPartPart
-    | windowPart                                                                                                        # windowPartPart
+    | hypercard                                                                                                         # hypercardPart
     ;
 
 stackPart
@@ -404,10 +422,15 @@ cardPart
     : 'this'? card                                                                                                      # thisCardPart
     | card 'id' term                                                                                                    # cardIdPart
     | position card                                                                                                     # positionCardPart
+    | position 'marked' card                                                                                            # positionMarkedCardPart
     | ordinal card                                                                                                      # ordinalCardPart
+    | ordinal 'marked' card                                                                                             # ordinalMarkedCardPart
     | card term                                                                                                         # expressionCardPart
+    | 'marked' card term                                                                                                # markedCardExpressionPart
     | cardPart of bkgndPart                                                                                             # cardOfBkgndPart
     | cardPart of stackPart                                                                                             # cardOfStackPart
+    | 'recent' card                                                                                                     # recentCardPart
+    | direction                                                                                                         # directionCardPart
     ;
 
 bkgndPart
@@ -450,24 +473,23 @@ expression
     ;
 
 term
-    : literal                                                                                                           # literalFactor
-    | '-' literal                                                                                                       # negativeLiteralFactor
-    | '(' expression ')'                                                                                                # expressionFactor
-    | effectExpression                                                                                                  # visualEffectFactor
-    | functionCall                                                                                                      # functionExp
-    | container                                                                                                         # containerFactor
-    | chunk term                                                                                                        # chunkFactorChunk
+    : literal                                                                                                           # literalTerm
+    | '-' literal                                                                                                       # negativeLiteralTerm
+    | '(' expression ')'                                                                                                # expressionTerm
+    | effectExpression                                                                                                  # visualEffectTerm
+    | functionCall                                                                                                      # functionTerm
+    | container                                                                                                         # containerTerm
+    | chunk term                                                                                                        # chunkTerm
     ;
 
 container
-    : ID                                                                                                                # variableDest
-    | 'the'? 'selection'                                                                                                # selectionDest
-    | 'target'                                                                                                          # targetDest
-    | property                                                                                                          # propertyDest
-    | menu                                                                                                              # menuDest
-    | menuItem                                                                                                          # menuItemDest
-    | part                                                                                                              # partDest
-    | chunk container                                                                                                   # chunkContainerDest
+    : 'the'? 'selection'                                                                                                # selectionContainer
+    | 'target'                                                                                                          # targetContainer
+    | part                                                                                                              # partContainer
+    | menu                                                                                                              # menuContainer
+    | menuItem                                                                                                          # menuItemContainer
+    | symbol                                                                                                            # variableContainer
+    | property                                                                                                          # propertyContainer
     ;
 
 musicExpression
@@ -497,13 +519,6 @@ arrowExpression
     | expression                                                                                                        # arrowExpr
     ;
 
-effectExpression
-    : 'effect'? effect                                                                                                  # effectDefault
-    | 'effect'? effect 'to' image                                                                                       # effectTo
-    | 'effect'? effect speed                                                                                            # effectSpeed
-    | 'effect'? effect speed 'to' image                                                                                 # effectSpeedTo
-    ;
-
 functionCall
     : builtInFunc                                                                                                       # builtInFuncCall
     | ID '(' listExpression? ')'                                                                                        # userArgFuncCall
@@ -515,12 +530,10 @@ builtInFunc
     | 'the'? oneArgFunc of term                                                                                         # builtinFuncOneArgs
     | oneArgFunc '(' listExpression ')'                                                                                 # builtinFuncOneArgs
     | multiArgFunc '(' listExpression ')'                                                                               # builtinFuncArgList
-    | numberFunc                                                                                                        # builtinNumberFunc
-    ;
-
-numberFunc
-    : 'the'? 'number' of countable                                                                                      # numberOfCountable
-    | 'number' '(' countable ')'                                                                                        # numberOfCountable
+    | 'the'? 'number' of countable                                                                                      # builtinFuncNumber
+    | 'number' '(' countable ')'                                                                                        # builtinFuncNumber
+    | 'the'? 'selectedbutton' of buttonFamily                                                                           # builtinFuncBtnFamily
+    | 'selectedbutton' '(' buttonFamily ')'                                                                             # builtinFuncBtnFamily
     ;
 
 zeroArgFunc
@@ -539,6 +552,8 @@ zeroArgFunc
     | 'foundtext'                                                                                                       # foundTextFunc
     | 'menus'                                                                                                           # menusFunc
     | 'mouse'                                                                                                           # mouseFunc
+    | 'mouseh'                                                                                                          # mouseHFunc
+    | 'mousev'                                                                                                          # mouseVFunc
     | 'mouseclick'                                                                                                      # mouseClickFunc
     | 'mouseloc'                                                                                                        # mouseLocFunc
     | 'optionkey'                                                                                                       # optionKeyFunc
@@ -571,6 +586,7 @@ oneArgFunc
     | 'max'                                                                                                             # maxFunc
     | 'sum'                                                                                                             # sumFunc
     | 'random'                                                                                                          # randomFunc
+    | 'round'                                                                                                           # roundFunc
     | 'sqrt'                                                                                                            # sqrtFunc
     | 'trunc'                                                                                                           # truncFunc
     | 'sin'                                                                                                             # sinFunc
@@ -643,51 +659,52 @@ cardinalValue
     ;
 
 ordinal
-    : 'the'? ordinalValue                                                                                               # theOrdinalVal
-    ;
-
-ordinalValue
-    : 'first'
-    | 'second'
-    | 'third'
-    | 'fourth'
-    | 'fifth'
-    | 'sixth'
-    | 'seventh'
-    | 'eighth'
-    | 'ninth'
-    | 'tenth'
-    | ('mid' | 'middle')
-    | 'last'
-    | 'any'
+    : 'the'? 'first'
+    | 'the'? 'second'
+    | 'the'? 'third'
+    | 'the'? 'fourth'
+    | 'the'? 'fifth'
+    | 'the'? 'sixth'
+    | 'the'? 'seventh'
+    | 'the'? 'eighth'
+    | 'the'? 'ninth'
+    | 'the'? 'tenth'
+    | 'the'? ('mid' | 'middle')
+    | 'the'? 'last'
+    | 'the'? 'any'
     ;
 
 countable
     : cards (of 'this' 'stack')?                                                                                        # cardsCount
-    | cards of expression                                                                                               # cardsOfCount
+    | cards of term                                                                                                     # cardsOfCount
     | background (of 'this' 'stack')?                                                                                   # backgroundCount
-    | background of expression                                                                                          # backgroundsOfCount
+    | background of term                                                                                                # backgroundsOfCount
     | card button                                                                                                       # cardButtonCount
-    | card button of expression                                                                                         # cardButtonsOfCount
+    | card button of term                                                                                               # cardButtonsOfCount
     | card field                                                                                                        # cardFieldCount
-    | card field of expression                                                                                          # cardFieldsOfCount
-    | card? 'parts'                                                                                                      # cardPartCount
-    | card 'parts' of expression                                                                                        # cardPartsOfCount
+    | card field of term                                                                                                # cardFieldsOfCount
+    | card? 'parts'                                                                                                     # cardPartCount
+    | card 'parts' of term                                                                                              # cardPartsOfCount
     | background button                                                                                                 # bkgndButtonCount
-    | background button of expression                                                                                   # bkgndButtonsOfCount
-    | background? field                                                                                                  # bkgndFieldCount
-    | background field of expression                                                                                    # bkgndFieldsOfCount
+    | background button of term                                                                                         # bkgndButtonsOfCount
+    | background? field                                                                                                 # bkgndFieldCount
+    | background field of term                                                                                          # bkgndFieldsOfCount
     | background 'parts'                                                                                                # bkgndPartCount
-    | background 'parts' of expression                                                                                  # bkgndPartsOfCount
+    | background 'parts' of term                                                                                        # bkgndPartsOfCount
     | 'marked' cards (of 'this' 'stack')?                                                                               # markedCardsCount
-    | 'marked' cards of expression                                                                                      # markedCardsOfCount
-    | character of expression                                                                                           # charsOfCount
-    | item of expression                                                                                                # itemsOfCount
-    | word of expression                                                                                                # wordsOfCount
-    | line of expression                                                                                                # linesOfCount
+    | 'marked' cards of term                                                                                            # markedCardsOfCount
+    | character of term                                                                                                 # charsOfCount
+    | item of term                                                                                                      # itemsOfCount
+    | word of term                                                                                                      # wordsOfCount
+    | line of term                                                                                                      # linesOfCount
     | 'windows'                                                                                                         # windowsCount
     | 'menus'                                                                                                           # menusCount
-    | 'menuitems' of 'menu' expression                                                                                  # menuItemsCount
+    | 'menuitems' of 'menu' term                                                                                        # menuItemsCount
+    ;
+
+buttonFamily
+    : card 'family' term                                                                                                # cardFamily
+    | background 'family' term                                                                                          # bkgndFamily
     ;
 
 mouseState
@@ -699,6 +716,8 @@ modifierKey
     : 'commandkey'
     | 'cmdkey'
     | 'optionkey'
+    | 'controlkey'
+    | 'ctrlkey'
     | 'shiftkey'
     ;
 
@@ -721,88 +740,42 @@ findType
     | 'string'
     ;
 
-// Not all properties need to be enumerated here, only those sharing a name with another keyword.
-propertyName
-    : 'marked'
-    | 'selectedtext'
-    | 'selectedchunk'
-    | 'selectedfield'
-    | 'selectedline'
-    | 'number'
-    | 'id'
-    | 'rect'
-    | 'rectangle'
-    | 'bottom'
-    | 'left'
-    | 'right'
-    | 'top'
-    | 'center'
-    | 'scroll'
-    | 'script'
-    | 'pattern'
-    | ID
-    ;
-
-// Not all property values need to be enumerated here, only known values sharing a name with another keyword.
 propertyValue
-    : 'plain'                                                                                                           # propertyValueLiteral
-    | 'menu'                                                                                                            # propertyValueLiteral
-    | 'bottom'                                                                                                          # propertyValueLiteral
-    | 'left'                                                                                                            # propertyValueLiteral
-    | 'right'                                                                                                           # propertyValueLiteral
-    | 'top'                                                                                                             # propertyValueLiteral
-    | 'center'                                                                                                          # propertyValueLiteral
+    : symbol                                                                                                            # propertySymbolValueExp
     | listExpression                                                                                                    # propertyValueExp
     ;
 
-commandName
-    : 'answer'
-    | 'ask'
-    | 'arrowkey'
-    | 'commandkeydown'
-    | 'controlkey'
-    | 'enterinfield'
-    | 'enterkey'
-    | 'keydown'
-    | 'tabkey'
-    | 'put'
-    | 'get'
-    | 'set'
-    | 'send'
-    | 'wait'
-    | 'sort'
-    | 'go'
-    | 'enable'
-    | 'disable'
-    | 'read'
-    | 'write'
-    | 'hide'
-    | 'show'
-    | 'add'
-    | 'subtract'
-    | 'multiply'
-    | 'divide'
-    | 'choose'
-    | 'click'
-    | 'drag'
-    | 'type'
-    | 'lock'
-    | 'unlock'
-    | 'pass'
-    | 'domenu'
-    | 'visual'
-    | 'reset'
-    | 'create'
-    | 'delete'
-    | 'play'
-    | 'dial'
-    | 'beep'
-    | 'open'
-    | 'close'
-    | 'select'
-    | 'find'
-    | 'import'
-    | 'export'
+keyword
+    : 'add' | 'to' | 'answer' | 'optionkey' | 'ctrlkey'
+    | 'with' | 'arrowkey' | 'ask' | 'file' | 'beep' | 'choose' | 'tool' | 'click' | 'at' | 'close'
+    | 'commandkeydown' | 'controlkey' | 'convert' | 'from' | 'create' | 'menu' | 'debug' | 'checkpoint' | 'delete'
+    | 'dial' | 'disable' | 'divide' | 'by' | 'domenu' | 'drag' | 'edit' | 'script' | 'enable'
+    | 'enterinfield' | 'enterkey' | 'export' | 'paint' | 'find' | 'international' | 'marked'
+    | 'get' | 'go' | 'visual' | 'hide' | 'titlebar' | 'menubar' | 'import' | 'keydown' | 'lock' | 'screen'
+    | 'mark' | 'all' | 'where' | 'finding' | 'multiply' | 'next' | 'open' | 'pass' | 'play' | 'pop' | 'push' | 'put'
+    | 'read' | 'for' | 'until' | 'reset' | 'save' | 'this' | 'stack' | 'as' | 'select' | 'text'
+    | 'set' | 'send' | 'show' | 'sort' | 'speak' | 'male' | 'female' | 'neuter' | 'robotic' | 'voice'
+    | 'subtract' | 'tabkey' | 'type' | 'commandkey' | 'cmdkey' | 'unlock' | 'unmark' | 'wait' | 'while' | 'write'
+    | 'window' | 'without' | 'dialog' | 'dateitems' | 'date' | 'time' | 'english' | 'long' | 'abbreviated'
+    | 'abbrev' | 'abbr' | 'short' | 'ascending' | 'descending' | 'numeric' | 'datetime' | 'forever' | 'times'
+    | 'down' | 'menuitem' | 'part' | 'id' | 'pattern' | 'watcher' | 'variable' | 'start' | 'using' | 'password'
+    | 'selection' | 'tempo' | 'field' | 'button' | 'line' | 'reg' | 'regular'
+    | 'poly' | 'polygon' | 'round' | 'rect' | 'rectangle' | 'spray' | 'can' | 'up' | 'left' | 'right' | 'effect'
+    | 'number' | 'clickh' | 'clickchunk' | 'clickloc' | 'clickline' | 'clicktext' | 'clickv' | 'diskspace'
+    | 'foundchunk' | 'foundfield' | 'foundline' | 'foundtext' | 'menus' | 'mouse' | 'mouseclick' | 'mouseloc'
+    | 'optionkey' | 'result' | 'screenrect' | 'selectedchunk' | 'selectedfield' | 'selectedline' | 'selectedloc'
+    | 'selectedtext' | 'shiftkey' | 'sound' | 'speech' | 'stacks' | 'systemversion' | 'ticks' | 'paramcount' | 'params'
+    | 'voices' | 'windows' | 'average' | 'min' | 'max' | 'sum' | 'random' | 'sqrt' | 'trunc' | 'sin' | 'cos' | 'tan'
+    | 'atan' | 'exp' | 'exp1' | 'exp2' | 'ln' | 'ln1' | 'log2' | 'abs' | 'chartonum' | 'numtochar' | 'value' | 'length'
+    | 'param' | 'annuity' | 'compound' | 'offset' | 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth'
+    | 'seventh' | 'eighth' | 'ninth' | 'tenth' | 'messages' | 'menumessage' | 'menumsg'
+    | 'mid' | 'middle' | 'last' | 'any' | 'parts' | 'menuitems' | 'integer' | 'point' | 'logical' | 'boolean' | 'bool'
+    | 'word' | 'chars' | 'whole' | 'string' | 'bottom' | 'top' | 'center' | 'scroll' | 'plain' | 'picture' | 'pict'
+    | 'seconds' | 'secs' | 'sec' | 'fast' | 'slow' | 'slowly' | 'very' | 'black' | 'card' | 'gray' | 'grey' | 'inverse'
+    | 'white' | 'dissolve' | 'barn' | 'door' | 'checkerboard' | 'iris' | 'shrink' | 'stretch' | 'venetian' | 'blinds'
+    | 'wipe' | 'zoom' | 'in' | 'out' | 'tick' | 'prev' | 'previous' | 'msg' | 'box' | 'cards' | 'cds' | 'cd'
+    | 'background' | 'backgrounds' | 'bkgnd' | 'bkgnds' | 'bg' | 'bgs' | 'buttons' | 'btn' | 'btns' | 'fields' | 'fld'
+    | 'flds' | 'character' | 'characters' | 'char' | 'words' | 'lines' | 'item' | 'items' | 'of'
     ;
 
 picture
@@ -817,52 +790,68 @@ seconds
     | 'sec'
     ;
 
-speed
-    : 'fast'                                                                                                            # fastSpeed
-    | ('slow' | 'slowly')                                                                                               # slowSpeed
-    | 'very' 'fast'                                                                                                     # veryFastSpeed
-    | 'very' ('slow' | 'slowly')                                                                                        # verySlowSpeed
+effectExpression
+    : 'visual' 'effect'? effectNameExpresssion effectDirection                                                          # visualEffectNameExpr
+    | 'visual' 'effect'? effectNameExpresssion effectDirection 'to' effectImage                                         # visualEffectNameImageExpr
+    | 'visual' 'effect'? effectNameExpresssion effectDirection effectSpeed                                              # visualEffectNameSpeedExpr
+    | 'visual' 'effect'? effectNameExpresssion effectDirection effectSpeed 'to' effectImage                             # visualEffectNameSpeedImageExpr
+    | 'visual'? 'effect'? effectName effectDirection                                                                    # visualEffectName
+    | 'visual'? 'effect'? effectName effectDirection 'to' effectImage                                                   # visualEffectImageExpr
+    | 'visual'? 'effect'? effectName effectDirection effectSpeed                                                        # visualEffectSpeedExpr
+    | 'visual'? 'effect'? effectName effectDirection effectSpeed 'to' effectImage                                       # visualEffectSpeedImageExpr
     ;
 
-image
-    : 'black'                                                                                                           # blackImage
-    | 'card'                                                                                                            # cardImage
-    | ('gray' | 'grey')                                                                                                 # grayImage
-    | 'inverse'                                                                                                         # inverseImage
-    | 'white'                                                                                                           # whiteImage
+effectNameExpresssion
+    : effectName                                                                                                        # literalEffectNameExpr
+    | expression                                                                                                        # exprEffectNameExpr
     ;
 
-effect
-    : 'dissolve'                                                                                                        # dissolveEffect
-    | 'barn' 'door' 'open'                                                                                              # barnDoorOpenEffect
-    | 'barn' 'door' 'close'                                                                                             # barnDoorCloseEffect
-    | 'checkerboard'                                                                                                    # checkerboardEffect
-    | 'iris' 'open'                                                                                                     # irisOpenEffect
-    | 'iris' 'close'                                                                                                    # irisCloseEffect
-    | 'plain'                                                                                                           # plainEffect
-    | 'push' 'up'                                                                                                       # pushUpEffect
-    | 'push' 'down'                                                                                                     # pushDownEffect
-    | 'push' 'left'                                                                                                     # pushLeftEffect
-    | 'push' 'right'                                                                                                    # pushRightEffect
-    | 'scroll' 'down'                                                                                                   # scrollDownEffect
-    | 'scroll' 'up'                                                                                                     # scrollUpEffect
-    | 'scroll' 'left'                                                                                                   # scrollLeftEffect
-    | 'scroll' 'right'                                                                                                  # scrollRightEffect
-    | 'shrink' 'to' 'top'                                                                                               # shrinkToTopEffect
-    | 'shrink' 'to' 'center'                                                                                            # shrinkToCenterEffect
-    | 'shrink' 'to' 'bottom'                                                                                            # shrinkToBottomEffect
-    | 'stretch' 'from' 'top'                                                                                            # stretchFromTopEffect
-    | 'stretch' 'from' 'center'                                                                                         # stretchFromCenterEffect
-    | 'stretch' 'from' 'bottom'                                                                                         # stretchFromBottomEffect
-    | 'venetian' 'blinds'                                                                                               # venitianBlindsEffect
-    | 'wipe' 'up'                                                                                                       # wipeUpEffect
-    | 'wipe' 'down'                                                                                                     # wipeDownEffect
-    | 'wipe' 'left'                                                                                                     # wipeLeftEffect
-    | 'wipe' 'right'                                                                                                    # wipeRightEffect
-    | 'zoom' 'in'                                                                                                       # zoomInEffect
-    | 'zoom' 'out'                                                                                                      # zoomOutEffect
-    | 'zoom' 'open'                                                                                                     # zoomOpenEffect
-    | 'zoom' 'close'                                                                                                    # zoomCloseEffect
+effectName
+    : 'dissolve'                                                                                                        # literalEffectName
+    | 'barn' 'door'                                                                                                     # literalEffectName
+    | 'checkerboard'                                                                                                    # literalEffectName
+    | 'iris'                                                                                                            # literalEffectName
+    | 'plain'                                                                                                           # literalEffectName
+    | 'push'                                                                                                            # literalEffectName
+    | 'scroll'                                                                                                          # literalEffectName
+    | 'shrink' 'to'                                                                                                     # literalEffectName
+    | 'stretch' 'from'                                                                                                  # literalEffectName
+    | 'venetian' 'blinds'                                                                                               # literalEffectName
+    | 'wipe'                                                                                                            # literalEffectName
+    | 'zoom'                                                                                                            # literalEffectName
+    ;
+
+effectDirection
+    : 'open'                                                                                                            # literalEffectDirection
+    | 'close'                                                                                                           # literalEffectDirection
+    | 'up'                                                                                                              # literalEffectDirection
+    | 'down'                                                                                                            # literalEffectDirection
+    | 'left'                                                                                                            # literalEffectDirection
+    | 'right'                                                                                                           # literalEffectDirection
+    | 'top'                                                                                                             # literalEffectDirection
+    | 'center'                                                                                                          # literalEffectDirection
+    | 'bottom'                                                                                                          # literalEffectDirection
+    | 'in'                                                                                                              # literalEffectDirection
+    | 'out'                                                                                                             # literalEffectDirection
+    |                                                                                                                   # emptyEffectDirection
+    | expression                                                                                                        # expressionEffectDirection
+    ;
+
+effectSpeed
+    : 'fast'                                                                                                            # literalEffectSpeed
+    | ('slow' | 'slowly')                                                                                               # literalEffectSpeed
+    | 'very' 'fast'                                                                                                     # literalEffectSpeed
+    | 'very' ('slow' | 'slowly')                                                                                        # literalEffectSpeed
+    | expression                                                                                                        # expressionEffectSpeed
+    ;
+
+effectImage
+    : 'black'                                                                                                           # literalEffectImage
+    | 'card'                                                                                                            # literalEffectImage
+    | ('gray' | 'grey')                                                                                                 # literalEffectImage
+    | 'inverse'                                                                                                         # literalEffectImage
+    | 'white'                                                                                                           # literalEffectImage
+    | expression                                                                                                        # expressionEffectImage
     ;
 
 timeUnit
@@ -878,8 +867,13 @@ position
     | 'this'                                                                                                            # thisPosition
     ;
 
+direction
+    : 'back'                                                                                                            # backDirection
+    | 'forth'                                                                                                           # forthDirection
+    ;
+
 message
-    : 'the'? ('message' | 'msg') ('box' | 'window' | )
+    : 'the'? ('message' | 'msg') ('box' | 'window')?
     ;
 
 cards
@@ -947,6 +941,18 @@ of
     | 'in'
     ;
 
+hypercard
+    : 'hypercard'
+    | 'wyldcard'
+    ;
+
+menuMessage
+    : 'menumessage'
+    | 'menumessages'
+    | 'menumsgs'
+    | 'menumsg'
+    ;
+
 ID
     : (ALPHA (ALPHA | DIGIT)*)
     ;
@@ -976,7 +982,7 @@ STRING_LITERAL
     ;
 
 ALPHA
-    : ('a' .. 'z' | 'A' .. 'Z')+
+    : ('a' .. 'z' | 'A' .. 'Z' | '_' )+
     ;
 
 DIGIT
@@ -997,6 +1003,7 @@ WHITESPACE
 
 IN_A_NEW
     : 'in' WHITESPACE 'a' WHITESPACE 'new'
+    | 'in' WHITESPACE 'new'
     ;
 
 THERE_IS_A

@@ -1,13 +1,13 @@
 package com.defano.wyldcard.debug;
 
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.statements.Statement;
+import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
+import com.defano.hypertalk.ast.statement.Statement;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.parts.PartException;
-import com.defano.wyldcard.runtime.StackFrame;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.layouts.ScriptEditor;
+import com.defano.hypertalk.exception.HtNoSuchPartException;
+import com.defano.wyldcard.runtime.callstack.StackFrame;
+import com.defano.wyldcard.runtime.ExecutionContext;
+import com.defano.wyldcard.thread.Invoke;
+import com.defano.wyldcard.window.layout.ScriptEditor;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -90,7 +90,7 @@ public class DebugContext {
         isExecutionPaused.onNext(true);
 
         // Focus the debugger window and update the context of the variable watcher
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        Invoke.onDispatch(() -> {
             WyldCard.getInstance().getWindowManager().getVariableWatcher().setWatchedVariables(debugContext);
             WyldCard.getInstance().getWindowManager().getExpressionEvaluator().setContext(debugContext);
             editor.getEditor().showTraceHighlight(statement.getToken().getLine() - 1);
@@ -100,7 +100,7 @@ public class DebugContext {
         if (isTracing.blockingFirst()) {
             try {
                 Thread.sleep(traceDelayMs);
-                ThreadUtils.invokeAndWaitAsNeeded(() -> editor.getEditor().clearTraceHighlights());
+                Invoke.onDispatch(() -> editor.getEditor().clearTraceHighlights());
             } catch (InterruptedException e) {
                 // Nothing to do
             }
@@ -144,7 +144,7 @@ public class DebugContext {
                 SwingUtilities.invokeLater(() -> {
                     editor.getEditor().finishDebugging();
                     WyldCard.getInstance().getWindowManager().getVariableWatcher().setWatchGlobalVariables();
-                    WyldCard.getInstance().getWindowManager().getExpressionEvaluator().setVisible(false);
+                    WyldCard.getInstance().getWindowManager().getExpressionEvaluator().setContext(ExecutionContext.unboundInstance());
                     clearDebugContext();
                 });
             }
@@ -332,7 +332,7 @@ public class DebugContext {
     private ScriptEditor showDebugEditor(ExecutionContext context, PartSpecifier partSpecifier) {
         try {
             return context.getPart(partSpecifier).editScript(context);
-        } catch (PartException e) {
+        } catch (HtNoSuchPartException e) {
             throw new IllegalStateException("Bug! Attempt to debug a bogus part.");
         }
     }

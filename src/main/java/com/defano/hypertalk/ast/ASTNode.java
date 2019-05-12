@@ -1,8 +1,8 @@
 package com.defano.hypertalk.ast;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.Breadcrumb;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.hypertalk.exception.Breadcrumb;
+import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
@@ -38,7 +38,7 @@ public abstract class ASTNode {
      * Gets the Antlr parse rule context that was provided when this node was instantiated. May be null if this node
      * was generated outside of parsing a script.
      *
-     * @return The ParserRuleContext associated with this node.
+     * @return The ParserRuleContext associated with this node, or null if this node was generated programmatically.
      */
     protected ParserRuleContext getParserContext() {
         return context;
@@ -64,4 +64,12 @@ public abstract class ASTNode {
         throw e;
     }
 
+    @Override
+    public String toString() {
+        if (context != null) {
+            return context.getText();
+        } else {
+            return super.toString();
+        }
+    }
 }

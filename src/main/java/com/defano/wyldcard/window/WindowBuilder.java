@@ -1,6 +1,5 @@
 package com.defano.wyldcard.window;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
@@ -9,14 +8,12 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelType>> {
+public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?, ModelType>> {
 
     private final WindowType window;
-    private Point location = null;
-    private Component relativeLocation = null;
     private boolean initiallyVisible = true;
     private boolean resizable = false;
-    private boolean isPalette = false;
+    private boolean isAlwaysOnTop = false;
     private boolean isFocusable = true;
     private WindowClosingAction actionOnClose = null;
 
@@ -30,7 +27,7 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
     /**
      * Creates a JFrame intended to be used when creating card screenshots (for use in visual effects processing and
      * displaying card thumbnails).
-     *
+     * <p>
      * Swing has some seemingly odd requirements here. Components can only be printed if they're attached to a JFrame
      * and that frame has been made visible at some point. If these conditions are not met, calls to
      * {@link Component#printAll(Graphics)} produce empty or partially populated renderings. Ostensibly, this is a side
@@ -80,9 +77,15 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
 
     @RunOnDispatch
     public WindowBuilder asPalette() {
-        this.isPalette = true;
+        this.isAlwaysOnTop = true;
         this.isFocusable = false;
         this.window.getWindow().setType(Window.Type.UTILITY);
+        return this;
+    }
+
+    @RunOnDispatch
+    public WindowBuilder alwaysOnTop() {
+        this.isAlwaysOnTop = true;
         return this;
     }
 
@@ -92,8 +95,32 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
         return this;
     }
 
+    public WindowBuilder withLocation(Point location) {
+        if (location != null) {
+            this.window.getWindow().pack();
+            this.window.positionWindow(location.x, location.y);
+        }
+        return this;
+    }
+
+    public WindowBuilder withLocationOriginCenteredOver(Component component) {
+        Window ancestor = SwingUtilities.getWindowAncestor(component);
+        int x = ancestor.getX() + (ancestor.getWidth() / 2);
+        int y = ancestor.getY() + (ancestor.getHeight() / 2);
+        this.window.positionWindow(x, y);
+        return this;
+    }
+
+    @RunOnDispatch
+    public WindowBuilder withLocationCenteredOnScreen() {
+        this.window.getWindow().pack();
+        this.window.setLocationCenteredOver(null);
+        return this;
+    }
+
     @RunOnDispatch
     public WindowBuilder withLocationCenteredOver(Component component) {
+        this.window.getWindow().pack();
         this.window.setLocationCenteredOver(component);
         return this;
     }
@@ -128,20 +155,15 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
     }
 
     @RunOnDispatch
-    public WindowType buildReplacing(WyldCardFrame window) {
+    public void buildReplacing(WyldCardFrame window) {
         window.getWindow().dispose();
-        return build();
+        this.window.getWindow().setLocationRelativeTo(window.getWindow());
+        build();
     }
 
     @RunOnDispatch
     public WindowType build() {
         this.window.getWindow().pack();
-
-        if (location != null) {
-            this.window.positionWindow(location.x, location.y);
-        } else {
-            this.window.getWindow().setLocationRelativeTo(relativeLocation);
-        }
 
         if (window instanceof WyldCardDialog) {
             this.window.setAllowResizing(resizable);
@@ -161,31 +183,8 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
             });
         }
 
-        // Notify the DefaultWindowManager when a new window is opened or closed
-        this.window.getWindow().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
-            }
-
-            @Override
-            public void windowOpened(WindowEvent e) {
-                WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
-            }
-        });
-
-        // Push palettes to back when WyldCard is not in foreground
-        if (!isPalette) {
-            this.window.getWindow().addWindowListener(new PaletteActivationManager());
-        }
-
-        // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
-        // otherwise, the frame will "automagically" move to the lower left of the screen.
-        // See: http://stackoverflow.com/questions/26332251/jframe-moves-to-the-bottom-left-corner-of-the-screen
-
-        this.window.setAllowResizing(resizable);
         this.window.getWindow().setFocusableWindowState(isFocusable);
-        this.window.getWindow().setAlwaysOnTop(isPalette);
+        this.window.getWindow().setAlwaysOnTop(isAlwaysOnTop);
 
         // Calculate and set minimum allowable frame size
         int minWidth = window.getWindowPanel().getMinimumSize().width;
@@ -197,6 +196,17 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelTy
         }
         this.window.getWindow().setMinimumSize(new Dimension(minWidth, minHeight));
         this.window.getWindow().setVisible(initiallyVisible);
+
+        // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
+        // otherwise, the frame will "automagically" move to the lower left of the screen.
+        // See: http://stackoverflow.com/questions/26332251/jframe-moves-to-the-bottom-left-corner-of-the-screen
+        this.window.setAllowResizing(resizable);
+
+        // Notify the DefaultWindowManager when a new window is opened or closed
+        this.window.getWindow().addWindowListener(new WindowActivationManager());
+
+        // Push palettes to back when WyldCard is not in foreground
+        this.window.getWindow().addWindowListener(new PaletteActivationManager());
 
         return window;
     }

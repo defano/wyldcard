@@ -2,15 +2,16 @@ package com.defano.wyldcard.editor;
 
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSyntaxException;
-import com.defano.hypertalk.utils.Range;
+import com.defano.hypertalk.util.Range;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
-import com.defano.wyldcard.runtime.interpreter.Interpreter;
-import com.defano.wyldcard.runtime.interpreter.MessageEvaluationObserver;
-import com.defano.wyldcard.util.SquigglePainter;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.runtime.compiler.ScriptCompiler;
+import com.defano.wyldcard.runtime.ExecutionContext;
+import com.defano.wyldcard.runtime.compiler.CompilationUnit;
+import com.defano.wyldcard.runtime.executor.ScriptExecutor;
+import com.defano.wyldcard.runtime.executor.observer.MessageEvaluationObserver;
+import com.defano.wyldcard.awt.SquigglePainter;
+import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -76,7 +77,7 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
     private void checkSyntax() {
         try {
             getHighlighter().removeAllHighlights();
-            Interpreter.blockingCompile(CompilationUnit.SCRIPTLET, getText());
+            ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, getText());
         } catch (HtException e) {
             squiggleHighlight(e);
         }
@@ -105,7 +106,7 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
     public void evaluate() {
         if (!getText().trim().isEmpty()) {
             String messageText = getText();
-            Interpreter.asyncStaticContextEvaluate(staticContext, messageText, messageEvaluationObserver);
+            ScriptExecutor.asyncStaticContextEvaluate(staticContext, messageText, messageEvaluationObserver);
 
             // Special case: Message may have set the stack context; unset it after evaluation (un-bind the context)
             staticContext.unbind();
@@ -116,7 +117,7 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
     public void onMessageEvaluated(String result) {
         // Replace the message box text with the result of evaluating the expression (ignore if user entered statement)
         if (result != null) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> setText(result));
+            Invoke.onDispatch(() -> setText(result));
         }
     }
 

@@ -1,6 +1,6 @@
 package com.defano.wyldcard.search.strategy;
 
-import com.defano.hypertalk.utils.Range;
+import com.defano.hypertalk.util.Range;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.model;
 
-import com.defano.hypertalk.ast.statements.Statement;
-import com.defano.hypertalk.ast.statements.StatementList;
+import com.defano.hypertalk.ast.statement.Statement;
+import com.defano.hypertalk.ast.statement.StatementList;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.*;
@@ -11,7 +11,7 @@ public class Script {
     private final Map<BlockName, NamedBlock> handlers = new HashMap<>();
     private final Map<BlockName, Integer> handlerStartingLine = new HashMap<>();
     private final Map<BlockName, Integer> handlerEndingLine = new HashMap<>();
-    private final Map<BlockName, UserFunction> functions = new HashMap<>();
+    private final Map<BlockName, NamedBlock> functions = new HashMap<>();
     private StatementList statements = null;
     private Collection<Integer> appliedBreakpoints = new ArrayList<>();
     
@@ -30,7 +30,7 @@ public class Script {
         handlerEndingLine.put(name, endingLine);
     }
     
-    public void defineUserFunction (UserFunction function, int startingLine, int endingLine) {
+    public void defineUserFunction (NamedBlock function, int startingLine, int endingLine) {
         BlockName name = new BlockName(function.name);
 
         functions.put(name, function);
@@ -49,6 +49,18 @@ public class Script {
 
     public NamedBlock getHandler(String handler) {
         return handlers.get(new BlockName(handler));
+    }
+
+    public NamedBlock getNamedBlock(String block) {
+        if (handlers.containsKey(new BlockName(block))) {
+            return handlers.get(new BlockName(block));
+        }
+
+        if (functions.containsKey(new BlockName(block))) {
+            return functions.get(new BlockName(block));
+        }
+
+        return null;
     }
 
     public Collection<String> getHandlers() {
@@ -88,9 +100,9 @@ public class Script {
         return null;
     }
 
-    public UserFunction getFunction(String function) {
-        return functions.get(new BlockName(function));
-    }
+//    public NamedBlock getFunction(String function) {
+//        return functions.get(new BlockName(function));
+//    }
 
     public StatementList getStatements() {
         return statements;
@@ -122,7 +134,7 @@ public class Script {
             foundStatements.addAll(block.findStatementsOnLine(line));
         }
 
-        for (UserFunction function : functions.values()) {
+        for (NamedBlock function : functions.values()) {
             foundStatements.addAll(function.findStatementsOnLine(line));
         }
 

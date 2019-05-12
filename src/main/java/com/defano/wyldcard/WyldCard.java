@@ -1,37 +1,41 @@
 package com.defano.wyldcard;
 
-import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.awt.WyldCardKeyboardManager;
-import com.defano.wyldcard.awt.WyldCardMouseManager;
-import com.defano.wyldcard.awt.KeyboardManager;
-import com.defano.wyldcard.awt.MouseManager;
+import com.defano.hypertalk.exception.HtUncheckedSemanticException;
+import com.defano.wyldcard.awt.keyboard.KeyboardManager;
+import com.defano.wyldcard.awt.keyboard.WyldCardKeyboardManager;
+import com.defano.wyldcard.awt.mouse.MouseManager;
+import com.defano.wyldcard.awt.mouse.WyldCardMouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.cursor.WyldCardCursorManager;
-import com.defano.wyldcard.menubar.main.MainWyldCardMenuBar;
-import com.defano.wyldcard.menubar.main.WyldCardMenuBar;
-import com.defano.wyldcard.parts.editor.WyldCardPartEditManager;
-import com.defano.wyldcard.parts.editor.PartEditManager;
-import com.defano.wyldcard.parts.finder.PartFinder;
-import com.defano.wyldcard.patterns.WyldCardPatternManager;
-import com.defano.wyldcard.patterns.PatternManager;
-import com.defano.wyldcard.runtime.WyldCardPeriodicMessageManager;
-import com.defano.wyldcard.runtime.DefaultWyldCardProperties;
-import com.defano.wyldcard.runtime.WyldCardProperties;
-import com.defano.wyldcard.runtime.PeriodicMessageManager;
-import com.defano.wyldcard.runtime.context.*;
-import com.defano.wyldcard.search.WyldCardSearchManager;
+import com.defano.wyldcard.menu.main.MainWyldCardMenuBar;
+import com.defano.wyldcard.menu.main.WyldCardMenuBar;
+import com.defano.wyldcard.part.editor.PartEditManager;
+import com.defano.wyldcard.part.editor.WyldCardPartEditManager;
+import com.defano.wyldcard.part.finder.PartFinder;
+import com.defano.wyldcard.part.wyldcard.WyldCardPart;
+import com.defano.wyldcard.part.wyldcard.WyldCardProperties;
+import com.defano.wyldcard.pattern.PatternManager;
+import com.defano.wyldcard.pattern.WyldCardPatternManager;
+import com.defano.wyldcard.runtime.ExecutionContext;
+import com.defano.wyldcard.runtime.manager.PeriodicMessageManager;
+import com.defano.wyldcard.runtime.manager.WyldCardPeriodicMessageManager;
+import com.defano.wyldcard.runtime.manager.*;
 import com.defano.wyldcard.search.SearchManager;
-import com.defano.wyldcard.sound.WyldCardSoundManager;
-import com.defano.wyldcard.sound.WyldCardSpeechPlaybackManager;
+import com.defano.wyldcard.search.WyldCardSearchManager;
 import com.defano.wyldcard.sound.SoundManager;
 import com.defano.wyldcard.sound.SpeechPlaybackManager;
-import com.defano.wyldcard.window.WyldCardWindowManager;
+import com.defano.wyldcard.sound.WyldCardSoundManager;
+import com.defano.wyldcard.sound.WyldCardSpeechPlaybackManager;
+import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
+import com.defano.wyldcard.window.WyldCardWindowManager;
+import com.defano.wyldcard.window.layout.HyperTalkErrorDialog;
 import com.google.inject.*;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * The WyldCard application object.
@@ -55,7 +59,7 @@ public class WyldCard implements PartFinder {
     @Inject private MouseManager mouseManager;                          // AWT mouse state handler (mouseLoc, etc.)
     @Inject private KeyboardManager keyboardManager;                    // AWT keyboard state handler (keyDown, etc.)
     @Inject private WindowManager windowManager;                        // Window and palette management
-    @Inject private ToolsManager toolsManager;                          // Paint and part tools state management
+    @Inject private PaintManager paintManager;                          // Paint and part tools state management
     @Inject private FileManager fileManager;                            // Manages files for reading/writing in scripts
     @Inject private FontManager fontManager;                            // Font style selection state management
     @Inject private SelectionManager selectionManager;                  // Management of "the selection" text
@@ -68,7 +72,7 @@ public class WyldCard implements PartFinder {
     @Inject private PartToolManager partToolManager;                    // Button/field tool selection state
     @Inject private SpeechPlaybackManager speechPlaybackManager;        // Text to speech management
     @Inject private WyldCardMenuBar wyldCardMenuBar;                    // Main menubar
-    @Inject private WyldCardProperties wyldCardProperties;              // WyldCard script-addressable properties
+    @Inject private WyldCardPart wyldCardPart;                          // WyldCard script-addressable properties
 
     /**
      * Returns the singleton instance of the WyldCard application.
@@ -83,7 +87,9 @@ public class WyldCard implements PartFinder {
     }
 
     /**
-     * The application's main method. Invoked initially by the JVM on launch.
+     * The application's main method. Invoked initially by the JVM on launch. Responsible for assembling the
+     * application's object graph and setting system-level properties that must be provisioned before any AWT calls are
+     * made.
      *
      * @param argv Arguments passed to WyldCard (not used)
      */
@@ -108,9 +114,13 @@ public class WyldCard implements PartFinder {
         instance.startup();
     }
 
+    /**
+     * Starts the WyldCard application and all its managers after the application object graph has been initialized by
+     * Guice.
+     */
     private void startup() {
 
-        SwingUtilities.invokeLater(() -> {
+        Invoke.onDispatch(() -> {
             keyboardManager.start();                            // Global key event handler
             mouseManager.start();                               // Global mouse event and mouseLoc handler
             partEditManager.start();                            // Button field movement and resize management
@@ -119,17 +129,27 @@ public class WyldCard implements PartFinder {
             periodicMessageManager.start();                     // Idle and mouseWithin periodic message generation
             cursorManager.start();                              // Mouse cursor assignment
             partToolManager.start();                            // Button and field tool selection state
+            stackManager.start();                               // Stack opening, closing and disposal
 
             // Create and open a default stack
             stackManager.newStack(new ExecutionContext());
 
             // Need to have an open stack before showing the menu bar
-            WyldCard.getInstance().getWyldCardMenuBar().reset();
+            getWyldCardMenuBar().reset();
 
-            // Apply default palette layout
-            WyldCard.getInstance().getWindowManager().restoreDefaultLayout();
-            WyldCard.getInstance().getWindowManager().getPaintToolsPalette().toggleVisible();
-            WyldCard.getInstance().getWindowManager().getPatternsPalette().toggleVisible();
+            getWindowManager().restoreDefaultLayout();          // Apply default palette layout
+            getWindowManager().toggleDockPalettes();            // Dock palettes to stack window
+
+            // Show tools and patterns palettes. Tool palette must be fully packed and rendered before showing
+            // patterns, otherwise patterns palette may display in the wrong location.
+            windowManager.getPaintToolsPalette().setVisible(true);
+            windowManager.getPaintToolsPalette().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowOpened(WindowEvent e) {
+                    super.windowOpened(e);
+                    windowManager.getPatternsPalette().setVisible(true);
+                }
+            });
         });
 
         // Close all open files before we die
@@ -142,11 +162,13 @@ public class WyldCard implements PartFinder {
      *
      * @param e The syntax error to display
      */
+    public void showErrorDialogAndAbort(HtUncheckedSemanticException e) throws HtException {
+        showErrorDialog(e.getHtCause());
+        throw e.getHtCause();
+    }
+
     public void showErrorDialog(HtException e) {
         SwingUtilities.invokeLater(() -> HyperTalkErrorDialog.getInstance().showError(e));
-
-        // Abort further script execution
-        throw new ExitToHyperCardPreemption();
     }
 
     /**
@@ -180,13 +202,13 @@ public class WyldCard implements PartFinder {
     }
 
     /**
-     * Returns the {@link ToolsManager} object (singleton). The {@link ToolsManager} maintains state for all the paint
+     * Returns the {@link PaintManager} object (singleton). The {@link PaintManager} maintains state for all the paint
      * tools (i.e., line size, selected pattern, etc.)
      *
      * @return The manager object.
      */
-    public ToolsManager getToolsManager() {
-        return toolsManager;
+    public PaintManager getPaintManager() {
+        return paintManager;
     }
 
     /**
@@ -321,13 +343,13 @@ public class WyldCard implements PartFinder {
     }
 
     /**
-     * Returns the {@link WyldCardProperties} object (singleton). The {@link WyldCardProperties} object maintains the
+     * Returns the {@link WyldCardPart} object (singleton). The {@link WyldCardPart} object maintains the
      * state of every script-addressable systemwide property (like 'the itemDelimiter').
      *
      * @return The properties object.
      */
-    public WyldCardProperties getWyldCardProperties() {
-        return wyldCardProperties;
+    public WyldCardPart getWyldCardPart() {
+        return wyldCardPart;
     }
 
     /**
@@ -375,7 +397,7 @@ public class WyldCard implements PartFinder {
             bind(MouseManager.class).to(WyldCardMouseManager.class);
             bind(KeyboardManager.class).to(WyldCardKeyboardManager.class);
             bind(WindowManager.class).to(WyldCardWindowManager.class);
-            bind(ToolsManager.class).to(WyldCardToolsManager.class);
+            bind(PaintManager.class).to(WyldCardPaintManager.class);
             bind(FileManager.class).to(WyldCardFileManager.class);
             bind(FontManager.class).to(WyldCardFontManager.class);
             bind(SelectionManager.class).to(WyldCardSelectionManager.class);
@@ -388,7 +410,7 @@ public class WyldCard implements PartFinder {
             bind(PartToolManager.class).to(WyldCardPartToolManager.class);
             bind(SpeechPlaybackManager.class).to(WyldCardSpeechPlaybackManager.class);
             bind(WyldCardMenuBar.class).to(MainWyldCardMenuBar.class);
-            bind(WyldCardProperties.class).to(DefaultWyldCardProperties.class);
+            bind(WyldCardProperties.class).to(WyldCardPart.class);
             bind(NavigationManager.class).to(WyldCardNavigationManager.class);
         }
     }

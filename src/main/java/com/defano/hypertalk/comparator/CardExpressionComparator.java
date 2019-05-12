@@ -1,16 +1,18 @@
 package com.defano.hypertalk.comparator;
 
-import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.*;
-import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.expression.Expression;
+import com.defano.hypertalk.ast.model.enums.SortDirection;
+import com.defano.hypertalk.ast.model.enums.SortStyle;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
-import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.field.FieldPart;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.part.button.ButtonPart;
+import com.defano.wyldcard.part.card.CardModel;
+import com.defano.wyldcard.part.card.CardPart;
+import com.defano.wyldcard.part.field.FieldPart;
+import com.defano.wyldcard.runtime.ExecutionContext;
+import com.defano.wyldcard.thread.Invoke;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -39,12 +41,10 @@ public class CardExpressionComparator implements Comparator<CardModel> {
 
             // Evaluate expression in the context of card o1
             context.setCurrentCard(acquire(o1));
-            context.getStackFrame().setMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o1.getId(context)));
             Value o1Value = evaluate(o1);
 
             // Evaluate expression in the context of card o2
             context.setCurrentCard(acquire(o2));
-            context.getStackFrame().setMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o2.getId(context)));
             Value o2Value = evaluate(o2);
 
             // Stop overriding card context in this thread
@@ -75,7 +75,7 @@ public class CardExpressionComparator implements Comparator<CardModel> {
     private CardPart acquire(CardModel model) {
 
         if (!cache.containsKey(model)) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            Invoke.onDispatch(() -> {
                 cache.put(model, CardPart.fromModel(context, model));
             });
         }
@@ -84,7 +84,11 @@ public class CardExpressionComparator implements Comparator<CardModel> {
 
         // Shared background fields in cached cards maintain original text; update the shared text context
         for (FieldPart thisPart : card.getFields()) {
-            thisPart.getPartModel().setCurrentCardId(model.getId(context));
+            thisPart.getPartModel().setCurrentCardId(model.getId());
+        }
+
+        for (ButtonPart thisPart : card.getButtons()) {
+            thisPart.getPartModel().setCurrentCardId(model.getId());
         }
 
         return card;

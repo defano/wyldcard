@@ -1,10 +1,10 @@
 package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.parts.finder.WindowFinder;
-import com.defano.wyldcard.parts.stack.StackPart;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.layouts.*;
+import com.defano.wyldcard.part.finder.WindowFinder;
+import com.defano.wyldcard.part.stack.StackPart;
+import com.defano.wyldcard.runtime.ExecutionContext;
+import com.defano.wyldcard.window.layout.*;
 import io.reactivex.subjects.BehaviorSubject;
 
 import javax.swing.*;
@@ -14,6 +14,8 @@ import java.util.List;
 public interface WindowManager extends WindowFinder, Themeable {
 
     void start();
+
+    void showAllToolPalettes();
 
     void restoreDefaultLayout();
 
@@ -42,6 +44,10 @@ public interface WindowManager extends WindowFinder, Themeable {
     ExpressionEvaluator getExpressionEvaluator();
 
     MagnificationPalette getMagnifierPalette();
+
+    FindWindow getFindWindow();
+
+    ReplaceWindow getReplaceWindow();
 
     void showPatternEditor();
 
@@ -85,6 +91,12 @@ public interface WindowManager extends WindowFinder, Themeable {
     void toggleDockPalettes();
 
     BehaviorSubject<Boolean> getPalettesDockedProvider();
+
+    /**
+     * Invoke to notify the window manager that WyldCard has gained or lost focus in the host operating system.
+     * @param appInFocus True to indicate that WyldCard has gained focus; false to indicate that it has lost focus.
+     */
+    void onApplicationFocusChanged(boolean appInFocus);
 
     void notifyWindowVisibilityChanged();
 }

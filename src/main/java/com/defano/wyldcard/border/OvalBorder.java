@@ -11,10 +11,6 @@ public class OvalBorder implements Border, ColorStateBorder {
 
     private final int strokeWidth;
 
-    OvalBorder() {
-        this(1);
-    }
-
     OvalBorder(int strokeWidth) {
         this.strokeWidth = strokeWidth;
     }

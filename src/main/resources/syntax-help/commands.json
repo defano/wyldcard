@@ -29,6 +29,23 @@
   },
 
   {
+    "title": "Ask Password",
+    "summary": "Prompts the user to enter a password in which each entered character is obscured with a bullet.",
+    "description": "The value returned in the variable it is the SHA-256 cryptographic hash of the entered value, except when using the `clear` option (in which case, the plaintext is returned).",
+    "codePrefix": "ask",
+    "templates": [
+      "ask password ${expression} with ${defaultValue}",
+      "ask password ${expression}",
+      "ask password clear ${expression} with ${defaultValue}",
+      "ask password clear ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A prompt string to display in the dialog."},
+      {"parameter": "defaultValue", "description": "The default text to be displayed (obscured with bullets) in the edit field."}
+    ]
+  },
+
+  {
     "title": "Answer",
     "summary": "Displays a dialog box with up to three user-selectable buttons.",
     "description": "When no button names are provided, a single button, `OK` will be assumed.\n\nThe HyperTalk script stops executing until a user has made a choice. The name of the button chosen by the user will be put into the the `it` variable.",
@@ -44,6 +61,21 @@
       {"parameter": "button1", "description": "The name of the first (default) button."},
       {"parameter": "button2", "description": "The name of the second button."},
       {"parameter": "button3", "description": "The name of the third button."}
+    ]
+  },
+
+  {
+    "title": "Answer File",
+    "summary": "Produces a file chooser dialog, prompting the user to select a single file optionally of a specified type.",
+    "description": "The absolute path of the selected file will be placed in the local variable `it`. If the user cancels the dialog without choosing a file, `Cancel` will be placed in `the result`.",
+    "codePrefix": "answer",
+    "templates": [
+      "answer file ${expression}",
+      "answer file ${expression} of type ${typeExpr}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The prompt string to display in the dialog."},
+      {"parameter": "typeExpr", "description": "A file filter value; files allowed for selection must have a name ending in this value."}
     ]
   },
 
@@ -567,23 +599,43 @@
     "codePrefix": "show",
     "templates": [
       "show ${partFactor}",
+      "show ${partFactor} at ${locationExpression}",
       "show ${windowExpression}",
       "show titleBar",
       "show menuBar"
     ],
     "parameters": [
       {"parameter": "partFactor", "description": "An expression referring to the part to be shown."},
+      {"parameter": "locationExpression", "description": "An expression referring to a point (location) where the part to be shown should be displayed."},
       {"parameter": "windowExpression", "description": "An expression referring to a window."}
     ],
     "examples": [
-      {"code": "show any card button"}
+      {"code": "show any card button"},
+      {"code": "show card btn \"Surprise\" at 100,20"}
+    ]
+  },
+
+  {
+    "title": "Show Cards",
+    "summary": "Displays a series of cards in rapid succession.",
+    "codePrefix": "show",
+    "templates": [
+      "show all cards",
+      "show marked cards",
+      "show ${integerExpression} cards"
+    ],
+    "parameters": [
+      {"parameter": "integerExpression", "description": "An expression referring to the number of cards to be shown."}
+    ],
+    "examples": [
+      {"code": "show all cards"},
+      {"code": "show 283 cards"}
     ]
   },
 
   {
     "title": "Sort",
     "summary": "Sorts cards in the stack or text within a container.",
-    "description": "When sorting text, ",
     "codePrefix": "sort",
     "templates": [
       "sort the ${chunks} of ${container}",
