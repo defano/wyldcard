@@ -5,7 +5,6 @@ import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.serializer.Serializer;
 import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.WyldCardDialog;
-import com.defano.hypertalk.ast.model.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -45,7 +44,7 @@ public class StackPropertyEditor extends WyldCardDialog<StackModel> {
             model.setDimension(new ExecutionContext(), StackSizeEditor.editStackSize(this.model.getDimension(new ExecutionContext()), getWindowPanel()));
         });
 
-        resizableCheckBox.addActionListener(e -> model.set(new ExecutionContext(), StackModel.PROP_RESIZABLE, new Value(resizableCheckBox.isSelected())));
+        resizableCheckBox.addActionListener(e -> model.setResizable(new ExecutionContext(), resizableCheckBox.isSelected()));
     }
 
     @Override
@@ -142,8 +141,8 @@ public class StackPropertyEditor extends WyldCardDialog<StackModel> {
         backgroundCountLabel.setText("Stack contains 1 background.");
         propertiesPanel.add(backgroundCountLabel, new GridConstraints(6, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         resizableCheckBox = new JCheckBox();
-        resizableCheckBox.setText("Resizable");
+        resizableCheckBox.setText("Resizable window");
         resizableCheckBox.setToolTipText("When checked, the stack window can be resized by dragging from the corners.");
-        propertiesPanel.add(resizableCheckBox, new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        propertiesPanel.add(resizableCheckBox, new GridConstraints(8, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 }

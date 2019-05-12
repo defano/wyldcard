@@ -12,7 +12,6 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?, ModelT
 
     private final WindowType window;
     private boolean initiallyVisible = true;
-    private boolean centeredOnScreen = false;
     private boolean resizable = false;
     private boolean isAlwaysOnTop = false;
     private boolean isFocusable = true;
@@ -98,19 +97,30 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?, ModelT
 
     public WindowBuilder withLocation(Point location) {
         if (location != null) {
+            this.window.getWindow().pack();
             this.window.positionWindow(location.x, location.y);
         }
         return this;
     }
 
+    public WindowBuilder withLocationOriginCenteredOver(Component component) {
+        Window ancestor = SwingUtilities.getWindowAncestor(component);
+        int x = ancestor.getX() + (ancestor.getWidth() / 2);
+        int y = ancestor.getY() + (ancestor.getHeight() / 2);
+        this.window.positionWindow(x, y);
+        return this;
+    }
+
     @RunOnDispatch
     public WindowBuilder withLocationCenteredOnScreen() {
-        this.centeredOnScreen = true;
+        this.window.getWindow().pack();
+        this.window.setLocationCenteredOver(null);
         return this;
     }
 
     @RunOnDispatch
     public WindowBuilder withLocationCenteredOver(Component component) {
+        this.window.getWindow().pack();
         this.window.setLocationCenteredOver(component);
         return this;
     }
@@ -145,19 +155,15 @@ public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?, ModelT
     }
 
     @RunOnDispatch
-    public WindowType buildReplacing(WyldCardFrame window) {
+    public void buildReplacing(WyldCardFrame window) {
         window.getWindow().dispose();
         this.window.getWindow().setLocationRelativeTo(window.getWindow());
-        return build();
+        build();
     }
 
     @RunOnDispatch
     public WindowType build() {
         this.window.getWindow().pack();
-
-        if (centeredOnScreen) {
-            this.window.getWindow().setLocationRelativeTo(null);
-        }
 
         if (window instanceof WyldCardDialog) {
             this.window.setAllowResizing(resizable);

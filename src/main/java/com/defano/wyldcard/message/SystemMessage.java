@@ -227,6 +227,7 @@ public enum SystemMessage implements Message {
 
     /**
      * Determines if this system message is sent repeatedly by HyperCard.
+     *
      * @return True if the message is sent repeatedly, false otherwise.
      */
     public boolean isPeriodicMessage() {
@@ -234,19 +235,46 @@ public enum SystemMessage implements Message {
     }
 
     /**
-     * Determines if the message is impacted by the 'lockMessages' system property.
+     * Determines if the message is effected by the 'lockMessages' system property.
      *
      * @return True if the lockMessages property prevents the message from being sent.
      */
     public boolean isLockable() {
-        return this == OPEN_CARD || this == OPEN_STACK || this == CLOSE_CARD;
+        return this == OPEN_CARD ||
+                this == OPEN_STACK ||
+                this == CLOSE_CARD ||
+                this == OPEN_BACKGROUND ||
+                this == CLOSE_BACKGROUND ||
+                this == RESUME_STACK ||
+                this == SUSPEND_STACK;
     }
 
+    /**
+     * Determines if this message has order constraints.
+     * <p>
+     * That is, whether this message is is intended to be delivered and processed in a specific order relative to other
+     * messages. For example, when navigating between cards, the 'closeCard' message must be delivered before the
+     * 'openCard' message. The behavior of some scripts may depend on this sequential consistency; this technique allows
+     * us to "multi-thread" messages whose order is unimportant, while maintaining sequential consistency for those
+     * messages whose order matters.
+     *
+     * @return True if this message has ordering constraints, false otherwise.
+     */
+    public boolean isOrderGuaranteed() {
+        return isLockable() || this == DELETE_BACKGROUND || this == DELETE_CARD;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getMessageName() {
         return messageName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Value> getArguments(ExecutionContext context) {
         if (arguments == null) {

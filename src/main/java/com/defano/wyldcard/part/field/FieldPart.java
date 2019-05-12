@@ -123,7 +123,6 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
 
         partModel.removePropertyChangedObserver(this);
         getHyperCardTextPane().removeFocusListener(this);
-        WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
     }
 
     /** {@inheritDoc}
@@ -222,7 +221,6 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
 
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER);
-            WyldCard.getInstance().getPeriodicMessageManager().addWithin(getPartModel());
         }
     }
 
@@ -233,7 +231,6 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
 
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE);
-            WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
         }
     }
 

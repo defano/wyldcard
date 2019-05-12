@@ -299,6 +299,7 @@ public class WyldCardWindowManager implements WindowManager {
                 .withModel(WyldCard.getInstance().getPaintManager().getFillPattern())
                 .withTitle("Edit Pattern")
                 .resizeable(false)
+                .withLocationCenteredOver(WyldCard.getInstance().getStackManager().getFocusedCard())
                 .asModal()
                 .build();
     }

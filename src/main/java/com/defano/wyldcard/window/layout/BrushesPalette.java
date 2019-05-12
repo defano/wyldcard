@@ -176,6 +176,7 @@ public class BrushesPalette extends WyldCardDialog<Object> implements Consumer<P
     private void $$$setupUI$$$() {
         brushesPanel = new JPanel();
         brushesPanel.setLayout(new GridLayoutManager(4, 6, new Insets(0, 0, 0, 0), 0, 0));
+        brushesPanel.setMaximumSize(new Dimension(427, 128));
         square16 = new JButton();
         square16.setIcon(new ImageIcon(getClass().getResource("/brushes/square_16x16.png")));
         square16.setText("");

@@ -7,7 +7,9 @@ import com.defano.hypertalk.ast.statement.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.NavigationManager;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.part.stack.StackPart;
+import com.defano.wyldcard.part.wyldcard.WyldCardPart;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -51,6 +53,9 @@ public class ShowCardsCmd extends Command {
         int cardsInStack = currentStack.getCardCountProvider().blockingFirst();
         int shownCards = 0;
 
+        Value lockMessages = WyldCard.getInstance().getWyldCardPart().get(context, WyldCardPart.PROP_LOCKMESSAGES);
+        WyldCard.getInstance().getWyldCardPart().set(context, WyldCardPart.PROP_LOCKMESSAGES, new Value(true));
+
         // Keep cycling until we've shown requested count (count may exceed total number of cards in stack)
         do {
 
@@ -71,6 +76,9 @@ public class ShowCardsCmd extends Command {
             }
 
         } while (shownCards <= count);
+
+        // Restore lockMessages setting
+        WyldCard.getInstance().getWyldCardPart().set(context, WyldCardPart.PROP_LOCKMESSAGES, lockMessages);
     }
 
 }

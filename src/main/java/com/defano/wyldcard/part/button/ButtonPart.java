@@ -1,10 +1,9 @@
 package com.defano.wyldcard.part.button;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.enums.Owner;
 import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.ast.model.enums.ToolType;
-import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.mouse.MouseStillDown;
 import com.defano.wyldcard.message.SystemMessage;
@@ -103,7 +102,6 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
     public void partClosed(ExecutionContext context) {
         super.partClosed(context);
         partModel.removePropertyChangedObserver(this);
-        WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
     }
 
     /**
@@ -203,7 +201,6 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         super.mouseEntered(e);
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER);
-            WyldCard.getInstance().getPeriodicMessageManager().addWithin(getPartModel());
         }
     }
 
@@ -216,7 +213,6 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         super.mouseExited(e);
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE);
-            WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
         }
     }
 

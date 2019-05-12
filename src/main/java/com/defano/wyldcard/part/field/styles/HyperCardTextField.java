@@ -80,6 +80,10 @@ public abstract class HyperCardTextField extends JScrollPane implements
         textPane.setBorder(PartBorderFactory.createEmptyBorder());
     }
 
+    public ToolEditablePart getToolEditablePart() {
+        return toolEditablePart;
+    }
+
     /**
      * {@inheritDoc}
      */

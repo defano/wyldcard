@@ -28,6 +28,7 @@ public class NativeButton extends JPanel implements ContainerWrappedPart, HyperC
         super.setLayout(new BorderLayout());
         super.add(button);
         super.setBorder(PartBorderFactory.createEmptyBorder());
+        super.setBackground(Color.WHITE);
     }
 
     @Override

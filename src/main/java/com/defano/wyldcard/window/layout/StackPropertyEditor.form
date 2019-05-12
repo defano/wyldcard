@@ -138,10 +138,10 @@
           </component>
           <component id="507ca" class="javax.swing.JCheckBox" binding="resizableCheckBox">
             <constraints>
-              <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="8" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Resizable"/>
+              <text value="Resizable window"/>
               <toolTipText value="When checked, the stack window can be resized by dragging from the corners."/>
             </properties>
           </component>

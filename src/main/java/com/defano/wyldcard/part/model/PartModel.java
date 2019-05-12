@@ -463,7 +463,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
                         .withTitle("Script of " + getLongName(context))
                         .ownsMenubar()
                         .resizeable(true)
-                        .withLocationStaggeredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                        .withLocationOriginCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                         .withLocation(getScriptEditorLocation())
                         .build();
 
@@ -490,7 +490,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
                             .withModel((FieldModel) this)
                             .asModal()
                             .withTitle(getLongName(context))
-                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                            .withLocationOriginCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                             .resizeable(false)
                             .build();
                     break;
@@ -499,7 +499,7 @@ public abstract class PartModel extends SimplePropertiesModel implements Messaga
                             .withModel((ButtonModel) this)
                             .asModal()
                             .withTitle(getLongName(context))
-                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                            .withLocationOriginCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                             .resizeable(false)
                             .build();
                     break;

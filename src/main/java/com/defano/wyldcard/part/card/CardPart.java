@@ -48,41 +48,36 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The "controller" object that represents a card in a WyldCard stack.
- *
+ * <p>
  * Note that this controller is responsible for the merged view of foreground and background layers, and aggregates
  * all card and background graphics, buttons and fields.
- *
+ * <p>
  * See {@link CardLayeredPane} for the view object, a Swing component.
  * See {@link CardModel} and {@link BackgroundModel} for the model object.
  */
 public class CardPart extends CardLayeredPane implements Part<CardModel>, CanvasCommitObserver, CanvasTransferDelegate, MouseListenable, KeyListener, PropertyChangeObserver {
 
-    private CardModel cardModel;
-
     private final static int CANVAS_UNDO_DEPTH = 20;
-
     private final PartTable<FieldPart> fields = new PartTable<>();
     private final PartTable<ButtonPart> buttons = new PartTable<>();
-
     private final EditingBackgroundObserver editingBackgroundObserver = new EditingBackgroundObserver(this);
     private final ForegroundScaleObserver foregroundScaleObserver = new ForegroundScaleObserver(this);
     private final BackgroundScaleObserver backgroundScaleObserver = new BackgroundScaleObserver(this);
     private final CardModelObserver cardModelObserver = new CardPartModelObserver(this);
-
+    // Sanity flag: card must be opened exactly once and closed exactly once; bad things happen if this constraint
+    // is violated.
+    private final AtomicBoolean isOpened = new AtomicBoolean(false);
+    private CardModel cardModel;
     private Disposable editingBackgroundSubscription;
     private Disposable foregroundScaleSubscription;
     private Disposable backgroundScaleSubscription;
 
-    // Sanity flag: card must be opened exactly once and closed exactly once; bad things happen if this constraint
-    // is violated.
-    private final AtomicBoolean isOpened = new AtomicBoolean(false);
-
     /**
      * Instantiates the CardPart occurring at a specified position in a the stack.
      *
-     * @param context The execution context.
+     * @param context   The execution context.
      * @param cardIndex The location in the stack where the card should be created.
-     * @param stack The stack data model containing the card to return
+     * @param stack     The stack data model containing the card to return
      * @return The CardPart.
      */
     public static CardPart fromPositionInStack(ExecutionContext context, int cardIndex, StackModel stack) {
@@ -93,7 +88,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * Instantiates a CardPart given a {@link CardModel} and {@link StackModel}.
      *
      * @param context The execution context.
-     * @param model The model of the card to instantiate.
+     * @param model   The model of the card to instantiate.
      * @return The fully instantiated CardPart.
      */
     public static CardPart fromModel(ExecutionContext context, CardModel model) {
@@ -116,10 +111,10 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     /**
      * Adds a new button to this card, activates the button tool from the tool palette and makes the new button the
      * active part selection.
-     *
+     * <p>
      * The new button is added to the layer (foreground or background) currently being edited.
      *
-     * @param context The execution context
+     * @param context   The execution context
      * @param rectangle The location and size of the new button, or null to produce a default-sized button in the
      *                  center of the card.
      * @return The newly created button.
@@ -134,10 +129,10 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     /**
      * Adds a new field to this card, activates the field tool from the tool palette and makes the new field the
      * active part selection.
-     *
+     * <p>
      * The new field is added to the layer (foreground or background) currently being edited.
      *
-     * @param context The execution context
+     * @param context   The execution context
      * @param rectangle The location and size of the new field, or null to produce a default-sized field in the
      *                  center of the card.
      * @return The newly created field.
@@ -151,12 +146,12 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
     /**
      * Adds a new part to this card or its background.
-     *
+     * <p>
      * This method adds the part to the card (or its background) model, depending on the owning layer specified by the
      * part. It makes the part visible on the card, sends either the 'newButton' or 'newField' to the part (and its
      * message passing order), and finally makes the part the active selection with either the button or field tool,
      * as applicable.
-     *
+     * <p>
      * This method should only be used to add new parts to a card that is presently open and displayed in a stack
      * window.
      *
@@ -198,6 +193,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
     /**
      * Gets an unordered collection of buttons that appear on this card in either the foreground or background layer.
+     *
      * @return The buttons on this card.
      */
     public Collection<ButtonPart> getButtons() {
@@ -206,6 +202,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
     /**
      * Gets an unordered collection of fields that appear on this card in either the foreground or background layer.
+     *
      * @return The fields on this card.
      */
     public Collection<FieldPart> getFields() {
@@ -215,6 +212,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     /**
      * Gets the active paint canvas associated with this card, either the foreground or background canvas depending
      * on whether the user is currently editing the card's background.
+     *
      * @return The active paint canvas for this card.
      */
     public JMonetCanvas getActiveCanvas() {
@@ -225,7 +223,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * Hides or shows the card foreground, including the canvas and all parts. When made visible, only those parts
      * whose visible property is true will actually become visible.
      *
-     * @param context The execution context.
+     * @param context             The execution context.
      * @param isEditingBackground Hides the foreground when true; shows it otherwise.
      */
     @RunOnDispatch
@@ -239,6 +237,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
     /**
      * Determines whether the foreground layer of the card is hidden, revealing only the background layer underneath it.
+     *
      * @return True if foreground layer has been hidden, false otherwise.
      */
     public boolean isEditingBackground() {
@@ -268,7 +267,8 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
     /**
      * Hides or shows the background layer for this card.
-     * @param context The execution context.
+     *
+     * @param context   The execution context.
      * @param isVisible True to show the background; false to hide it.
      */
     @RunOnDispatch
@@ -284,7 +284,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * Removes a button from this card view. Does not affect the {@link CardModel}. Has no effect if the button does
      * not exist on the card.
      *
-     * @param context The execution context.
+     * @param context     The execution context.
      * @param buttonModel The button to be removed.
      */
     @RunOnDispatch
@@ -302,7 +302,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * Removes a field from this card view. Does not affect the {@link CardModel}. Has no effect if the field does not
      * exist on the card.
      *
-     * @param context The execution context.
+     * @param context    The execution context.
      * @param fieldModel The field to be removed.
      */
     @RunOnDispatch
@@ -320,8 +320,8 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * Swap the Swing component associated with a given part (button or field) for a new component. This is useful
      * when changing button or field styles.
      *
-     * @param context The execution context.
-     * @param forPart The part whose Swing component should be replaced.
+     * @param context            The execution context.
+     * @param forPart            The part whose Swing component should be replaced.
      * @param oldButtonComponent The old Swing component associated with this part.
      * @param newButtonComponent The new Swing component to be used.
      */
@@ -337,6 +337,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     /**
      * Indicates that the z-order of a part changed (and that components should be reordered on the pane according to
      * their new position).
+     *
      * @param context The execution context.
      */
     public void invalidatePartsZOrder(ExecutionContext context) {
@@ -378,7 +379,9 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         });
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCommit(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
 
@@ -390,7 +393,9 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BufferedImage copySelection() {
         Tool activeTool = WyldCard.getInstance().getPaintManager().getPaintTool();
@@ -401,7 +406,9 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteSelection() {
         Tool activeTool = WyldCard.getInstance().getPaintManager().getPaintTool();
@@ -410,7 +417,9 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void pasteSelection(BufferedImage image) {
         int cardCenterX = getWidth() / 2;
@@ -420,13 +429,17 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getHeight() {
         return cardModel.getStackModel().getHeight(new ExecutionContext());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getWidth() {
         return cardModel.getStackModel().getWidth(new ExecutionContext());
@@ -436,11 +449,11 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * Adds a part to this card's view. This method is intended to add parts that are already part of the card or
      * background's model to the view when the card is "re-hydrated" from its model. Has no effect if the specified
      * part cannot be added to a card.
-     *
+     * <p>
      * This method does not affect the model's understanding of how many parts exist on the card or background. Use
      * {@link #addNewPartToCard(ExecutionContext, ToolEditablePart)} to add a new button or field to this card.
      *
-     * @param context The execution context.
+     * @param context  The execution context.
      * @param thisPart The data model of the part to be added.
      */
     @RunOnDispatch
@@ -463,40 +476,50 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
 
     /**
      * Removes a Swing component from this card's JLayeredPane.
+     *
      * @param component The component to remove.
      */
     @RunOnDispatch
     private void removeSwingComponent(Component component) {
         remove(component);
-        revalidate(); repaint();
+        revalidate();
+        repaint();
     }
 
     /**
      * Adds a Swing component to this card's JLayeredPane.
+     *
      * @param component The component to add.
-     * @param bounds The component's desired location and size.
+     * @param bounds    The component's desired location and size.
      */
     @RunOnDispatch
     private void addSwingComponent(Component component, Rectangle bounds, CardDisplayLayer layer) {
         component.setBounds(bounds);
         addToCardLayer(component, layer);
         moveToFront(component);
-        revalidate(); repaint();
+        revalidate();
+        repaint();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PartType getType() {
         return PartType.CARD;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CardModel getPartModel() {
         return cardModel;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void partOpened(ExecutionContext context) {
@@ -515,6 +538,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         setForegroundCanvas(new JMonetScrollPane(new JMonetCanvas(cardImage, CANVAS_UNDO_DEPTH)));
         getForegroundCanvas().addCanvasCommitObserver(this);
         getForegroundCanvas().setTransferHandler(new CanvasTransferHandler(getForegroundCanvas(), this));
+        getForegroundCanvas().setCanvasSize(stack.getSize(context));
         getForegroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
 
         // Setup the background paint canvas
@@ -522,6 +546,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         setBackgroundCanvas(new JMonetScrollPane(new JMonetCanvas(backgroundImage, CANVAS_UNDO_DEPTH)));
         getBackgroundCanvas().addCanvasCommitObserver(this);
         getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(getBackgroundCanvas(), this));
+        getBackgroundCanvas().setCanvasSize(stack.getSize(context));
         getBackgroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
         getBackgroundCanvas().setCanvasBackground(Color.WHITE);
 
@@ -556,12 +581,15 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         // Send openCard message after UI elements are ready
         getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD);
 
-        Invoke.asynchronouslyOnDispatch(this::revalidate);
+        revalidate();
+        repaint();
 
         isOpened.set(true);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void partClosed(ExecutionContext context) {
@@ -609,8 +637,8 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * Returns the button or field represented by the given PartModel.
      *
      * @param partModel The PartModel associated with the desired Part.
-     * @throws IllegalArgumentException Thrown if no such part exists on this card
      * @return The matching CardLayerPart
+     * @throws IllegalArgumentException Thrown if no such part exists on this card
      */
     public CardLayerPart getPart(PartModel partModel) {
         CardLayerPart part = null;
@@ -628,7 +656,9 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         return part;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void mouseClicked(MouseEvent e) {
@@ -640,7 +670,9 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         WyldCard.getInstance().getSearchManager().reset();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void mousePressed(MouseEvent e) {
@@ -648,28 +680,36 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_STILL_DOWN));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void mouseReleased(MouseEvent e) {
         getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_UP);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void mouseEntered(MouseEvent e) {
         getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void mouseExited(MouseEvent e) {
         getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void keyTyped(KeyEvent e) {
@@ -678,7 +718,9 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
                 MessageBuilder.named(SystemMessage.KEY_DOWN.messageName).withArgument(e.getKeyChar()).build());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void keyPressed(KeyEvent e) {
@@ -688,14 +730,18 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void keyReleased(KeyEvent e) {
         // Nothing to do
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {

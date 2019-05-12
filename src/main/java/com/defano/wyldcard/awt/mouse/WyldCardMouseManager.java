@@ -156,7 +156,6 @@ public class WyldCardMouseManager implements MouseManager {
     }
 
     private final AWTEventListener listener = event -> {
-
         if (event.getID() == MouseEvent.MOUSE_PRESSED) {
             mouseIsDown = true;
             clickLoc = getMouseLoc(new ExecutionContext());

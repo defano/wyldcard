@@ -14,6 +14,7 @@ import com.defano.wyldcard.debug.message.HandlerInvocation;
 import com.defano.wyldcard.debug.message.HandlerInvocationCache;
 import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
+import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.runtime.compiler.*;
 import com.defano.wyldcard.runtime.executor.observer.HandlerCompletionObserver;
 import com.defano.wyldcard.runtime.executor.observer.HandlerExecutionFutureCallback;
@@ -39,12 +40,18 @@ import java.util.concurrent.ThreadPoolExecutor;
 @SuppressWarnings("UnstableApiUsage")
 public class ScriptExecutor {
 
-    private final static int MAX_EXECUTOR_THREADS = 8;         // Simultaneous scripts executing
-
-    private static final ExecutorService staticExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("script-executor-msg").build());
-    private static final ThreadPoolExecutor scriptExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_EXECUTOR_THREADS, new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
-    private static final ListeningExecutorService listeningScriptExecutor = MoreExecutors.listeningDecorator(scriptExecutor);
+    // Executor for the message box and "evaluate expression" window
+    private static final ExecutorService staticExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("script-exe-msg").build());
     private static final ListeningExecutorService listeningStaticExecutor = MoreExecutors.listeningDecorator(staticExecutor);
+
+    // Executor for special messages that require guaranteed ordering
+    private static final ExecutorService orderedExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("script-exe-ordered").build());
+    private static final ListeningExecutorService listeningOrderedExecutor = MoreExecutors.listeningDecorator(orderedExecutor);
+
+    // Executor for all other HyperTalk scripts and handlers
+    private final static int MAX_EXECUTOR_THREADS = 8;
+    private static final ThreadPoolExecutor scriptExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_EXECUTOR_THREADS, new ThreadFactoryBuilder().setNameFormat("script-exe-%d").build());
+    private static final ListeningExecutorService listeningScriptExecutor = MoreExecutors.listeningDecorator(scriptExecutor);
 
     /**
      * Returns the result of evaluating a string as a HyperTalk expression on the current thread. An expression that
@@ -155,16 +162,23 @@ public class ScriptExecutor {
 
         // Script implements handler for message; execute it
         if (handler != null) {
-            future = getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, callingNode, me, handler, message));
+            future = submit(getExecutorForMessage(message), new MessageHandlerExecutionTask(context, callingNode, me, handler, message));
         }
 
         // Special case: No handler in the script for this message; produce a "no-op" execution
         else {
-            future = getFutureForHandlerExecutionTask(() -> {
+            future = submit(getExecutorForMessage(message), () -> {
 
                 // Synthesize handler invocation for message watcher
-                HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message.getMessageName(), message.getArguments(context), me, context.getTarget() == null, context.getStackDepth(), false);
-                HandlerInvocationCache.getInstance().notifyMessageHandled(invocation);
+                HandlerInvocationCache.getInstance().notifyMessageHandled(new HandlerInvocation(
+                        Thread.currentThread().getName(),
+                        message.getMessageName(),
+                        message.getArguments(context),
+                        me,
+                        context.getTarget() == null,
+                        context.getStackDepth(),
+                        false)
+                );
 
                 // No handler for script, but we still need to capture that this part was the target
                 if (context.getTarget() == null) {
@@ -235,7 +249,7 @@ public class ScriptExecutor {
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
     public static CheckedFuture<Boolean, HtException> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
-        return getFutureForHandlerExecutionTask(new MessageHandlerExecutionTask(context, null, me, NamedBlock.anonymousBlock(((Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, statementList)).getStatements()), MessageBuilder.emptyMessage()));
+        return submit(listeningScriptExecutor, new MessageHandlerExecutionTask(context, null, me, NamedBlock.anonymousBlock(((Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, statementList)).getStatements()), MessageBuilder.emptyMessage()));
     }
 
     /**
@@ -254,7 +268,7 @@ public class ScriptExecutor {
      * @return True if the current thread is a script-executor thread.
      */
     private static boolean isScriptExecutorThread() {
-        return Thread.currentThread().getName().startsWith("script-executor-");
+        return Thread.currentThread().getName().startsWith("script-exe-");
     }
 
     /**
@@ -267,12 +281,13 @@ public class ScriptExecutor {
      * If this thread is not a script execution thread (e.g., the Swing dispatch thread), then the handler task is
      * submitted for execution by one of the available script executor threads.
      *
+     * @param executor    The executor service that should be used to execute this handler.
      * @param handlerTask The handler task to execute
      * @return A future (placeholder) for the result of executing the handler (which may occur after some delay). The
      * success disposition provides a boolean indicating whether the handler "trapped" the message; the failure
      * disposition provides a {@link HtException} describing why the handler failed to execute.
      */
-    private static CheckedFuture<Boolean, HtException> getFutureForHandlerExecutionTask(HandlerExecutionTask handlerTask) {
+    private static CheckedFuture<Boolean, HtException> submit(ListeningExecutorService executor, HandlerExecutionTask handlerTask) {
         if (isScriptExecutorThread()) {
             try {
                 return Futures.makeChecked(Futures.immediateFuture(handlerTask.call()), new CheckedFutureExceptionMapper());
@@ -280,7 +295,23 @@ public class ScriptExecutor {
                 return Futures.makeChecked(Futures.immediateFailedCheckedFuture(e), new CheckedFutureExceptionMapper());
             }
         } else {
-            return Futures.makeChecked(listeningScriptExecutor.submit(handlerTask), new CheckedFutureExceptionMapper());
+            return Futures.makeChecked(executor.submit(handlerTask), new CheckedFutureExceptionMapper());
+        }
+    }
+
+    /**
+     * Gets the preferred executor service to use when executing the handler for the given message. Provides a shared,
+     * single-threaded executor for messages that have a guaranteed ordering (like open, close, suspend and resume),
+     * returns the shared (pooled) executor for other messages.
+     *
+     * @param m The message whose executor should be retrieved.
+     * @return The executor on which to submit the handler task associated with this message.
+     */
+    private static ListeningExecutorService getExecutorForMessage(Message m) {
+        if (m instanceof SystemMessage && ((SystemMessage) m).isOrderGuaranteed()) {
+            return listeningOrderedExecutor;
+        } else {
+            return listeningScriptExecutor;
         }
     }
 

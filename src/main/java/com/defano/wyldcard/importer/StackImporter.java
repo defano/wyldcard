@@ -8,6 +8,7 @@ import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layout.StackImportProgress;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
@@ -27,7 +28,7 @@ public class StackImporter {
         StackImportProgress progressWindow = new StackImportProgress();
         new WindowBuilder<>(progressWindow)
                 .withTitle("Importing HyperCard Stack")
-                .withLocationCenteredOnScreen()
+                .withLocationCenteredOver(SwingUtilities.getWindowAncestor(context.getCurrentCard()))
                 .alwaysOnTop()
                 .build();
 

@@ -6,7 +6,8 @@ import com.defano.wyldcard.part.model.PartModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
 class CardPartModelObserver implements CardModelObserver {
-    private CardPart cardPart;
+
+    private final CardPart cardPart;
 
     public CardPartModelObserver(CardPart cardPart) {
         this.cardPart = cardPart;
