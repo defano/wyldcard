@@ -137,9 +137,6 @@ public class WyldCard implements PartFinder {
             // Need to have an open stack before showing the menu bar
             getWyldCardMenuBar().reset();
 
-            getWindowManager().restoreDefaultLayout();          // Apply default palette layout
-            getWindowManager().toggleDockPalettes();            // Dock palettes to stack window
-
             // Show tools and patterns palettes. Tool palette must be fully packed and rendered before showing
             // patterns, otherwise patterns palette may display in the wrong location.
             windowManager.getPaintToolsPalette().setVisible(true);
@@ -150,6 +147,8 @@ public class WyldCard implements PartFinder {
                     windowManager.getPatternsPalette().setVisible(true);
                 }
             });
+
+            getWindowManager().restoreDefaultLayout();          // Apply default palette layout
         });
 
         // Close all open files before we die
