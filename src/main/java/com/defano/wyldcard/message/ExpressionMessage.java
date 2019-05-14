@@ -7,6 +7,9 @@ import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.util.List;
 
+/**
+ * A HyperTalk message represented by a list of HyperTalk expressions.
+ */
 public class ExpressionMessage implements Message {
 
     private final String messageName;
@@ -23,7 +26,7 @@ public class ExpressionMessage implements Message {
     }
 
     @Override
-    public List<Value> getArguments(ExecutionContext context) throws HtException {
+    public List<Value> evaluateArguments(ExecutionContext context) throws HtException {
         return messageArgumentsExpr.evaluateAsList(context);
     }
 }

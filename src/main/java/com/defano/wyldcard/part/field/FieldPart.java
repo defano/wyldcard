@@ -13,6 +13,7 @@ import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.paint.ToolMode;
+import com.defano.wyldcard.part.ToolEditablePart;
 import com.defano.wyldcard.part.builder.FieldModelBuilder;
 import com.defano.wyldcard.part.card.CardLayerPart;
 import com.defano.wyldcard.part.card.CardLayerPartModel;
@@ -96,6 +97,11 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         field.partModel = model;
 
         return field;
+    }
+
+    @Override
+    public ToolEditablePart<FieldModel> getToolEditablePart() {
+        return this;
     }
 
     /** {@inheritDoc} */

@@ -1,7 +1,7 @@
 package com.defano.wyldcard.part;
 
-import com.defano.hypertalk.ast.model.enums.ToolType;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.enums.ToolType;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
@@ -15,11 +15,13 @@ import com.defano.wyldcard.part.card.CardLayerPartModel;
 import com.defano.wyldcard.part.field.styles.HyperCardTextField;
 import com.defano.wyldcard.part.model.PartModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
+import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 /**
  * An object, like buttons and fields, that can be selected, moved, resized, and edited using the button field tool on
@@ -31,7 +33,7 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
      * Indicates whether or not the part is currently selected for being edited (i.e., user clicked the part and
      * should be highlighted with marching ants).
      *
-     * @param context The execution context.
+     * @param context     The execution context.
      * @param beingEdited True if selected; false otherwise.
      */
     void setSelectedForEditing(ExecutionContext context, boolean beingEdited);
@@ -45,12 +47,14 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
 
     /**
      * Gets the Part object associated with this ToolEditablePart.
+     *
      * @return The associated Part
      */
     CardLayerPart getPart();
 
     /**
      * Determines the tool that is used to edit parts of this type (i.e., ButtonTool or FieldTool).
+     *
      * @return The appropriate edit tool.
      */
     ToolType getEditTool();
@@ -59,6 +63,7 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
 
     /**
      * Returns a rectangle representing the bounds of the bottom-right drag handle for this part.
+     *
      * @return The drag handle bounds.
      */
     default Rectangle getResizeDragHandle() {
@@ -79,10 +84,10 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
         if (isSelectedForEditing()) {
             // Draw marching ants
             g2d.setPaint(Color.WHITE);
-            g2d.drawRect(0,0, getComponent().getWidth() - 1, getComponent().getHeight() - 1);
+            g2d.drawRect(0, 0, getComponent().getWidth() - 1, getComponent().getHeight() - 1);
             g2d.setPaint(Color.BLACK);
             g2d.setStroke(MarchingAnts.getInstance().getMarchingAnts());
-            g2d.drawRect(0, 0, getComponent().getWidth() -1 , getComponent().getHeight() - 1);
+            g2d.drawRect(0, 0, getComponent().getWidth() - 1, getComponent().getHeight() - 1);
 
             // Draw drag handle
             g2d.setPaint(Color.BLACK);
@@ -92,6 +97,7 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
 
     /**
      * Invoke to indicate that the selected tool has been changed by the user.
+     *
      * @param context The execution context.
      */
     default void onToolModeChanged(ExecutionContext context) {
@@ -103,8 +109,9 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
 
     /**
      * Determines if this part is presently visible on the card (as determined by its "visible" property).
-     * @return True if visible; false otherwise.
+     *
      * @param context The execution context.
+     * @return True if visible; false otherwise.
      */
     default boolean isHidden(ExecutionContext context) {
         return !getPartModel().get(context, PartModel.PROP_VISIBLE).booleanValue();
@@ -113,8 +120,9 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
     /**
      * Determines if this part is presently enabled on the card (as determined by its "enabled" property) and
      * not currently disabled as a result of the part's edit tool being active.
-     * @return True if enabled; false if disabled.
+     *
      * @param context The execution context.
+     * @return True if enabled; false if disabled.
      */
     default boolean isEnabled(ExecutionContext context) {
         return getPartModel().get(context, CardLayerPartModel.PROP_ENABLED).booleanValue();
@@ -126,7 +134,7 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
      * hidden parts will be visible when the part tool is active; foreground parts visible when browsing may be hidden
      * when editing the background).
      *
-     * @param context The execution context.
+     * @param context       The execution context.
      * @param visibleOnCard True to make it visible; false otherwise
      */
     @RunOnDispatch
@@ -147,7 +155,7 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
      * enable of this Swing component may be overridden by tool context (i.e., all parts will be disabled while they
      * are being edited by the part tool).
      *
-     * @param context The execution context.
+     * @param context       The execution context.
      * @param enabledOnCard True to make the part enabled; false to disable.
      */
     @RunOnDispatch
@@ -161,6 +169,7 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
 
     /**
      * Adjust the z-order of this part, moving it one part closer to the front of the part stack.
+     *
      * @param context The execution context.
      */
     @RunOnDispatch
@@ -170,6 +179,7 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
 
     /**
      * Adjust the z-order of this part, moving it one part further from the front of the part stack.
+     *
      * @param context The execution context.
      */
     @RunOnDispatch
@@ -179,8 +189,9 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
 
     /**
      * Determines the z-order of this part.
-     * @return The relative front-to-back position of this part to others drawn on the card.
+     *
      * @param context The execution context.
+     * @return The relative front-to-back position of this part to others drawn on the card.
      */
     default int getZOrder(ExecutionContext context) {
         return getPartModel().get(context, CardLayerPartModel.PROP_ZORDER).integerValue();
@@ -213,8 +224,7 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
 
         // Single click to select part
         else if ((WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) ||
-                (WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField))
-        {
+                (WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField)) {
             WyldCard.getInstance().getPartToolManager().setSelectedPart(this);
         }
     }
@@ -249,6 +259,30 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
                     break;
             }
         }
+    }
+
+    default BufferedImage getPreviewImage(ExecutionContext context, int width, int height) {
+        int origWidth = getPartModel().get(context, PartModel.PROP_WIDTH).integerValue();
+        int origHeight = getPartModel().get(context, PartModel.PROP_HEIGHT).integerValue();
+        boolean origSelected = isSelectedForEditing();
+
+        setSelectedForEditing(context, false);
+        getPartModel().set(context, PartModel.PROP_WIDTH, new Value(width));
+        getPartModel().set(context, PartModel.PROP_HEIGHT, new Value(height));
+
+        BufferedImage preview = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        Invoke.onDispatch(() -> {
+            Graphics2D g2d = preview.createGraphics();
+            getComponent().printAll(g2d);
+            g2d.dispose();
+        });
+
+        setSelectedForEditing(context, origSelected);
+        getPartModel().set(context, PartModel.PROP_WIDTH, new Value(origWidth));
+        getPartModel().set(context, PartModel.PROP_HEIGHT, new Value(origHeight));
+
+        return preview;
     }
 
 }

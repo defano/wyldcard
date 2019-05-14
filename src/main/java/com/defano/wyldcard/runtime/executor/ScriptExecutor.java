@@ -173,7 +173,7 @@ public class ScriptExecutor {
                 HandlerInvocationCache.getInstance().notifyMessageHandled(new HandlerInvocation(
                         Thread.currentThread().getName(),
                         message.getMessageName(),
-                        message.getArguments(context),
+                        message.evaluateArguments(context),
                         me,
                         context.getTarget() == null,
                         context.getStackDepth(),

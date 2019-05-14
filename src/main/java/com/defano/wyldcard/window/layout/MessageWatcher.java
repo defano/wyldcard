@@ -231,7 +231,7 @@ public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInv
 
                 List<Value> arguments = new ArrayList<>();
                 try {
-                    arguments = invocation.getArguments(context);
+                    arguments = invocation.evaluateArguments(context);
                 } catch (HtException e) {
                     // Nothing to do
                 }
