@@ -6,6 +6,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.font.TextStyleSpecifier;
 import com.defano.wyldcard.part.button.ButtonModel;
+import com.defano.wyldcard.part.button.ButtonPart;
 import com.defano.wyldcard.part.button.ButtonStyle;
 import com.defano.wyldcard.part.card.CardLayerPart;
 import com.defano.wyldcard.part.model.PartModel;
@@ -23,8 +24,11 @@ import java.awt.*;
 
 public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements ActionBindable {
 
-    private static final int PREVIEW_WIDTH = 150;
-    private static final int PREVIEW_HEIGHT = 50;
+    private static final int PREVIEW_WIDTH = ButtonPart.DEFAULT_WIDTH;
+    private static final int PREVIEW_HEIGHT = ButtonPart.DEFAULT_HEIGHT;
+    private static final int MIN_COORDINATE = 0;
+    private static final int MIN_DIMENSION = 10;
+    private static final int MAX_VALUE = 9999;
 
     private ButtonModel model;
 
@@ -84,10 +88,10 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
             }
         });
 
-        buttonHeight.setModel(new SpinnerNumberModel(10, 10, 9999, 1));
-        buttonWidth.setModel(new SpinnerNumberModel(10, 10, 9999, 1));
-        buttonTop.setModel(new SpinnerNumberModel(0, 0, 9999, 1));
-        buttonLeft.setModel(new SpinnerNumberModel(0, 0, 9999, 1));
+        buttonHeight.setModel(new SpinnerNumberModel(MIN_DIMENSION, MIN_DIMENSION, MAX_VALUE, 1));
+        buttonWidth.setModel(new SpinnerNumberModel(MIN_DIMENSION, MIN_DIMENSION, MAX_VALUE, 1));
+        buttonTop.setModel(new SpinnerNumberModel(MIN_COORDINATE, MIN_COORDINATE, MAX_VALUE, 1));
+        buttonLeft.setModel(new SpinnerNumberModel(MIN_COORDINATE, MIN_COORDINATE, MAX_VALUE, 1));
 
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (ButtonStyle thisStyle : ButtonStyle.values()) {

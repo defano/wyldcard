@@ -197,6 +197,47 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
         return getPartModel().get(context, CardLayerPartModel.PROP_ZORDER).integerValue();
     }
 
+    /**
+     * Produces an image of this part drawn at a given size, ignoring style or state applied by the part tool (for
+     * example, marching ants are never drawn, and the part is not drawn disabled simply because the part tool is
+     * active).
+     *
+     * @param context The execution context
+     * @param width   The desired width of the preview image
+     * @param height  The desired height of the preview image
+     * @return The preview image.
+     */
+    default BufferedImage getPreviewImage(ExecutionContext context, int width, int height) {
+        BufferedImage preview = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        // Squirrel away current properties
+        boolean origEnabled = getPartModel().get(context, CardLayerPartModel.PROP_ENABLED).booleanValue();
+        int origWidth = getPartModel().get(context, PartModel.PROP_WIDTH).integerValue();
+        int origHeight = getPartModel().get(context, PartModel.PROP_HEIGHT).integerValue();
+        boolean origSelected = isSelectedForEditing();
+
+        // Override properties for preview generation
+        setSelectedForEditing(context, false);
+        getPartModel().set(context, PartModel.PROP_WIDTH, new Value(width));
+        getPartModel().set(context, PartModel.PROP_HEIGHT, new Value(height));
+        setComponentHierarchyEnabled(origEnabled);      // Force enabled state ignoring part tool active
+
+        // Wait for property changes to take effect, then printAll the part
+        Invoke.onDispatch(() -> {
+            Graphics2D g2d = preview.createGraphics();
+            getComponent().printAll(g2d);
+            g2d.dispose();
+        });
+
+        // Finally, revert the properties to their original state
+        setSelectedForEditing(context, origSelected);
+        getPartModel().set(context, PartModel.PROP_WIDTH, new Value(origWidth));
+        getPartModel().set(context, PartModel.PROP_HEIGHT, new Value(origHeight));
+        setEnabledOnCard(context, origEnabled);
+
+        return preview;
+    }
+
     @Override
     @RunOnDispatch
     default void mousePressed(MouseEvent e) {
@@ -259,30 +300,6 @@ public interface ToolEditablePart<T extends PartModel> extends MouseListenable, 
                     break;
             }
         }
-    }
-
-    default BufferedImage getPreviewImage(ExecutionContext context, int width, int height) {
-        int origWidth = getPartModel().get(context, PartModel.PROP_WIDTH).integerValue();
-        int origHeight = getPartModel().get(context, PartModel.PROP_HEIGHT).integerValue();
-        boolean origSelected = isSelectedForEditing();
-
-        setSelectedForEditing(context, false);
-        getPartModel().set(context, PartModel.PROP_WIDTH, new Value(width));
-        getPartModel().set(context, PartModel.PROP_HEIGHT, new Value(height));
-
-        BufferedImage preview = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-        Invoke.onDispatch(() -> {
-            Graphics2D g2d = preview.createGraphics();
-            getComponent().printAll(g2d);
-            g2d.dispose();
-        });
-
-        setSelectedForEditing(context, origSelected);
-        getPartModel().set(context, PartModel.PROP_WIDTH, new Value(origWidth));
-        getPartModel().set(context, PartModel.PROP_HEIGHT, new Value(origHeight));
-
-        return preview;
     }
 
 }
