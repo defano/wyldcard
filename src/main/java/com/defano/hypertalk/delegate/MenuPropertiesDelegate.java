@@ -1,4 +1,4 @@
-package com.defano.hypertalk.util;
+package com.defano.hypertalk.delegate;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifier.MenuItemSpecifier;
