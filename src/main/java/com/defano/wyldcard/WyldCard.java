@@ -34,8 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 /**
  * The WyldCard application object.
@@ -140,18 +138,12 @@ public class WyldCard implements PartFinder {
             getWyldCardMenuBar().reset();
 
             getWindowManager().restoreDefaultLayout();          // Apply default palette layout
-            getWindowManager().toggleDockPalettes();            // Dock palettes to stack window
 
             // Show tools and patterns palettes. Tool palette must be fully packed and rendered before showing
             // patterns, otherwise patterns palette may display in the wrong location.
             windowManager.getPaintToolsPalette().setVisible(true);
-            windowManager.getPaintToolsPalette().addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowOpened(WindowEvent e) {
-                    super.windowOpened(e);
-                    windowManager.getPatternsPalette().setVisible(true);
-                }
-            });
+            windowManager.getPatternsPalette().setVisible(true);
+
         });
 
         // Close all open files before we die

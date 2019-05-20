@@ -16,7 +16,7 @@ public interface PartSpecifier {
     /**
      * Gets the "value" of this specification. The exact type returned and its meaning depends on the type of
      * specification. For example, the value returned by {@link PartIdSpecifier} is an int representing the integer
-     * ID of the part.
+     * ID of the part, the value of a {@link PartNameSpecifier} is the String-typed name of the part.
      *
      * @return The value of the specification
      */

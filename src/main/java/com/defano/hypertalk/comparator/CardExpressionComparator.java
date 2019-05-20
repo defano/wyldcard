@@ -38,6 +38,7 @@ public class CardExpressionComparator implements Comparator<CardModel> {
     public int compare(CardModel o1, CardModel o2) {
         try {
             PartSpecifier originalMe = context.getStackFrame().getMe();
+            CardPart originalCard = context.getCurrentCard();
 
             // Evaluate expression in the context of card o1
             context.setCurrentCard(acquire(o1));
@@ -48,7 +49,7 @@ public class CardExpressionComparator implements Comparator<CardModel> {
             Value o2Value = evaluate(o2);
 
             // Stop overriding card context in this thread
-            context.setCurrentCard(null);
+            context.setCurrentCard(originalCard);
             context.getStackFrame().setMe(originalMe);
 
             if (direction == SortDirection.ASCENDING) {

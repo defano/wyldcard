@@ -1,6 +1,6 @@
 package com.defano.wyldcard.part.field;
 
-import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.enums.ArrowDirection;
 import com.defano.hypertalk.ast.model.enums.Owner;
 import com.defano.hypertalk.ast.model.enums.PartType;
@@ -13,6 +13,7 @@ import com.defano.wyldcard.message.Message;
 import com.defano.wyldcard.message.MessageBuilder;
 import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.paint.ToolMode;
+import com.defano.wyldcard.part.ToolEditablePart;
 import com.defano.wyldcard.part.builder.FieldModelBuilder;
 import com.defano.wyldcard.part.card.CardLayerPart;
 import com.defano.wyldcard.part.card.CardLayerPartModel;
@@ -37,18 +38,18 @@ import java.lang.ref.WeakReference;
 
 /**
  * The controller object associated with a field on the card.
- *
+ * <p>
  * See {@link FieldModel} for the model object associated with this controller.
  * See {@link StyleableField} for the view object associated with this view.
  */
 public class FieldPart extends StyleableField implements CardLayerPart<FieldModel>, Searchable, PropertyChangeObserver, DeferredKeyEventListener, FocusListener {
 
-    private static final int DEFAULT_WIDTH = 250;
-    private static final int DEFAULT_HEIGHT = 100;
+    public static final int DEFAULT_WIDTH = 250;
+    public static final int DEFAULT_HEIGHT = 100;
 
     private final Owner owner;
-    private FieldModel partModel;
     private final WeakReference<CardPart> parent;
+    private FieldModel partModel;
 
     private FieldPart(FieldStyle style, CardPart parent, Owner owner) {
         super(style);
@@ -60,16 +61,22 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
     /**
      * Creates a new field with default attributes on the given card.
      *
-     * @param context The execution context.
-     * @param parent The card in which the field should be generated.
-     * @param rectangle The size and location of the field on the card; when null, a default size and location is assumed.
+     * @param context   The execution context.
+     * @param parent    The card in which the field should be generated.
+     * @param rectangle The size and location of the field on the card; when null, a default sized field will be placed
+     *                  in the center of the card.
      * @return The newly created FieldPart
      */
     public static FieldPart newField(ExecutionContext context, CardPart parent, Owner owner, Rectangle rectangle) {
         FieldPart newField = new FieldPart(FieldStyle.TRANSPARENT, parent, owner);
 
+        // When bounds are specified, place default-sized field in center of the card
         if (rectangle == null) {
-            rectangle = new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+            rectangle = new Rectangle(
+                    parent.getWidth() / 2 - (DEFAULT_WIDTH / 2),
+                    parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2),
+                    DEFAULT_WIDTH,
+                    DEFAULT_HEIGHT);
         }
 
         newField.initProperties(rectangle, parent.getPartModel());
@@ -83,10 +90,9 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
     /**
      * Creates a new field from an existing field data model.
      *
-     *
      * @param context The execution context.
-     * @param parent The card in which the field should be created.
-     * @param model The data model of the field to be created.
+     * @param parent  The card in which the field should be created.
+     * @param model   The data model of the field to be created.
      * @return The newly created field.
      */
     public static FieldPart fromModel(ExecutionContext context, CardPart parent, FieldModel model) {
@@ -98,13 +104,22 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         return field;
     }
 
-    /** {@inheritDoc} */
+    @Override
+    public ToolEditablePart<FieldModel> getToolEditablePart() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void clearSearchHilites() {
         getHyperCardTextPane().clearSearchHilights();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void applySearchHilite(Range range) {
         getHyperCardTextPane().applySearchHilight(range);
@@ -115,8 +130,11 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         return getPartModel().getText(context);
     }
 
-    /** {@inheritDoc}
-     * @param context*/
+    /**
+     * {@inheritDoc}
+     *
+     * @param context
+     */
     @Override
     public void partClosed(ExecutionContext context) {
         super.partClosed(context);
@@ -125,8 +143,11 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         getHyperCardTextPane().removeFocusListener(this);
     }
 
-    /** {@inheritDoc}
-     * @param context*/
+    /**
+     * {@inheritDoc}
+     *
+     * @param context
+     */
     @Override
     public void partOpened(ExecutionContext context) {
         super.partOpened(context);
@@ -135,13 +156,17 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         getHyperCardTextPane().addFocusListener(this);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ToolType getEditTool() {
         return ToolType.FIELD;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void replaceViewComponent(ExecutionContext context, Component oldComponent, Component newComponent) {
         CardPart part = parent.get();
@@ -150,43 +175,57 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PartType getType() {
         return PartType.FIELD;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public JComponent getComponent() {
         return this.getFieldComponent();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CardLayerPart getPart() {
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FieldModel getPartModel() {
         return partModel;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isPartToolActive() {
         return WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.FIELD;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CardPart getCard() {
         return parent.get();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
@@ -202,7 +241,9 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
         super.mouseReleased(e);
@@ -214,7 +255,9 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
@@ -224,7 +267,9 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
@@ -234,7 +279,9 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
@@ -260,7 +307,9 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
@@ -268,8 +317,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         // Special case: When textArrows is false, arrow keys navigate between cards even when field has focus
         if (!WyldCard.getInstance().getWyldCardPart().isTextArrows() &&
                 e.getID() == KeyEvent.KEY_PRESSED &&
-                ArrowDirection.fromKeyEvent(e) != null)
-        {
+                ArrowDirection.fromKeyEvent(e) != null) {
             new TextArrowsMessageCompletionObserver(getCard(), e).doArrowKeyNavigation();
         }
 
@@ -285,7 +333,9 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
@@ -325,8 +375,8 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
             int endWordIndex = Utilities.getWordEnd(getHyperCardTextPane(), clickIndex);
 
             WyldCard.getInstance().getSelectionManager().setClickChunk(new Value(
-                "chars " + startWordIndex + " to " + endWordIndex + " of " +
-                        getPartModel().getHyperTalkAddress(new ExecutionContext(this)))
+                    "chars " + startWordIndex + " to " + endWordIndex + " of " +
+                            getPartModel().getHyperTalkAddress(new ExecutionContext(this)))
             );
         } catch (BadLocationException e) {
             // Nothing to do
@@ -366,9 +416,7 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         // Special case: Enter in field should cause field to lose focus without adding a newline
         if (FieldUtilities.isEnterKeyEvent(event)) {
             Invoke.onDispatch(() -> getCard().requestFocusInWindow());
-        }
-
-        else {
+        } else {
             Invoke.onDispatch(() -> {
                 try {
                     getHyperCardTextPane().dispatchEvent(event);
@@ -379,6 +427,9 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void focusGained(FocusEvent e) {
         if (getHyperCardTextPane().isEditable() && e.getOppositeComponent() != null) {
@@ -386,6 +437,9 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void focusLost(FocusEvent e) {
         if (getHyperCardTextPane().isEditable()) {

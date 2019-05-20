@@ -10,8 +10,8 @@ import com.defano.hypertalk.ast.model.specifier.PropertySpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtNoSuchPropertyException;
-import com.defano.hypertalk.util.ChunkPropertiesDelegate;
-import com.defano.hypertalk.util.MenuPropertiesDelegate;
+import com.defano.hypertalk.delegate.ChunkPropertiesDelegate;
+import com.defano.hypertalk.delegate.MenuPropertiesDelegate;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PropertyExp extends ContainerExp {

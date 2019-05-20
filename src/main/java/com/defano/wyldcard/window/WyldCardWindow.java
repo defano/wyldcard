@@ -1,6 +1,7 @@
 package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.thread.Invoke;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
@@ -88,8 +89,10 @@ public abstract class WyldCardWindow<ModelType> extends JFrame implements WyldCa
 
     @Override
     public void setVisible(boolean isVisible) {
-        super.setVisible(isVisible);
-        WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
+        Invoke.onDispatch(() -> {
+            super.setVisible(isVisible);
+            WyldCard.getInstance().getWindowManager().notifyWindowVisibilityChanged();
+        });
     }
 
     @Override

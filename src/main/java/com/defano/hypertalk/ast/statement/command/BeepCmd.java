@@ -28,13 +28,16 @@ public class BeepCmd extends Statement {
 
         for (int count = 0; count < beepCount; count++) {
             Toolkit.getDefaultToolkit().beep();
-            try {
-                Thread.sleep(250);
-                if (context.didAbort()) {
-                    throw new HtSemanticException("Script aborted.");
+
+            if (beepCount > 1) {
+                try {
+                    Thread.sleep(250);
+                    if (context.didAbort()) {
+                        throw new HtSemanticException("Script aborted.");
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             }
         }
     }

@@ -8,19 +8,19 @@ public class MusicalScore {
     public final Expression notes;
     public final Expression tempo;
 
-    public static MusicalScore forSoundEffect(Expression instrument) {
+    public static MusicalScore ofSoundEffect(Expression instrument) {
         return new MusicalScore(instrument, null, null);
     }
 
-    public static MusicalScore forNotes(Expression instrument, Expression notes) {
+    public static MusicalScore ofNotes(Expression instrument, Expression notes) {
         return new MusicalScore(instrument, notes, null);
     }
 
-    public static MusicalScore forTempo(Expression instrument, Expression tempo) {
+    public static MusicalScore ofTempo(Expression instrument, Expression tempo) {
         return new MusicalScore(instrument, null, tempo);
     }
 
-    public static MusicalScore forNotesAndTempo(Expression instrument, Expression notes, Expression tempo) {
+    public static MusicalScore ofNotesAndTempo(Expression instrument, Expression notes, Expression tempo) {
         return new MusicalScore(instrument, notes, tempo);
     }
 

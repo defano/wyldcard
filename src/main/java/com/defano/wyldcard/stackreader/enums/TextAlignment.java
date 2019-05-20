@@ -21,6 +21,5 @@ public enum TextAlignment {
                 .filter(t -> t.alignmentId.contains(alignmentId))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No such alignment: " + alignmentId));
-//                .orElse(null);
     }
 }

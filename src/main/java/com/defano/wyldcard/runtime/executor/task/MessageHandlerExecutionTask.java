@@ -36,7 +36,7 @@ public class MessageHandlerExecutionTask implements HandlerExecutionTask {
     public Boolean call() throws HtException {
         boolean trapped = true;
 
-        List<Value> arguments = message.getArguments(context);
+        List<Value> arguments = message.evaluateArguments(context);
 
         HandlerInvocationCache.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, arguments, me, context.getTarget() == null, context.getStackDepth(), true));
 

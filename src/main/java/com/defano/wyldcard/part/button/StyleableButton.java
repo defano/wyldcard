@@ -129,7 +129,7 @@ public abstract class StyleableButton implements StyleablePart<ButtonStyle,Hyper
         ToolEditablePart.super.mousePressed(e);
         this.isFocused = true;
 
-        if (isAutoHilited()) {
+        if (isAutoHilited() && !isSelectedForEditing()) {
             if (!(buttonComponent instanceof SharedHilite)) {
                 getPartModel().set(new ExecutionContext(), ButtonModel.ALIAS_HILITE, new Value(true));
             }

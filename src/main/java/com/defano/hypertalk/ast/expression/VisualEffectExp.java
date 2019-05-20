@@ -7,7 +7,7 @@ import com.defano.hypertalk.ast.model.effect.VisualEffectName;
 import com.defano.hypertalk.ast.model.effect.VisualEffectSpeed;
 import com.defano.hypertalk.ast.model.specifier.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.jsegue.SegueName;
+import com.defano.jsegue.AnimatedSegue;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -39,7 +39,7 @@ public class VisualEffectExp extends Expression {
 
         VisualEffectName name = VisualEffectName.fromHypertalkName(effectNameExp.evaluate(context).toString());
         VisualEffectDirection direction = VisualEffectDirection.fromHypertalkName(effectDirectionExp.evaluate(context).toString());
-        SegueName segueName = name.toSegueName(direction);
+        Class<? extends AnimatedSegue> effect = name.toAnimatedSegueClass(direction);
 
         if (effectSpeedExp != null) {
             speed = VisualEffectSpeed.fromHypertalkName(effectSpeedExp.evaluate(context).toString());
@@ -49,7 +49,7 @@ public class VisualEffectExp extends Expression {
             image = VisualEffectImage.fromHypertalkName(effectImageExp.evaluate(context).toString());
         }
 
-        return new VisualEffectSpecifier(segueName, speed, image);
+        return new VisualEffectSpecifier(effect, speed, image);
     }
 
 }
