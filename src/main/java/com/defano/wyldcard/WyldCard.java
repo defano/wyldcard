@@ -18,8 +18,6 @@ import com.defano.wyldcard.part.wyldcard.WyldCardProperties;
 import com.defano.wyldcard.pattern.PatternManager;
 import com.defano.wyldcard.pattern.WyldCardPatternManager;
 import com.defano.wyldcard.runtime.ExecutionContext;
-import com.defano.wyldcard.runtime.manager.PeriodicMessageManager;
-import com.defano.wyldcard.runtime.manager.WyldCardPeriodicMessageManager;
 import com.defano.wyldcard.runtime.manager.*;
 import com.defano.wyldcard.search.SearchManager;
 import com.defano.wyldcard.search.WyldCardSearchManager;
@@ -32,6 +30,8 @@ import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.WyldCardWindowManager;
 import com.defano.wyldcard.window.layout.HyperTalkErrorDialog;
 import com.google.inject.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
@@ -50,6 +50,8 @@ import java.awt.event.WindowEvent;
 @SuppressWarnings("unused")
 @Singleton
 public class WyldCard implements PartFinder {
+
+    private static Logger LOG = LoggerFactory.getLogger(WyldCard.class);
 
     private static WyldCard instance;                                   // Application object graph
     private static Injector injector;                                   // Google Guice injector that built the app
@@ -103,7 +105,7 @@ public class WyldCard implements PartFinder {
             System.setProperty("apple.awt.application.name", "WyldCard");
             System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");
         } catch (Exception e) {
-            e.printStackTrace();        // Should never occur
+            LOG.error("An error occurred setting system properties.", e);
         }
 
         // Assemble WyldCard application object graph

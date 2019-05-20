@@ -3,6 +3,10 @@ package com.defano.wyldcard.thread;
 import javax.swing.*;
 
 public class ThreadChecker {
+
+    private ThreadChecker() {
+    }
+
     /**
      * Asserts that the current thread is not the Swing dispatch thread; throws a {@link RuntimeException} if this
      * condition is not met.
@@ -13,7 +17,7 @@ public class ThreadChecker {
 
     private static void assertByThrowing(boolean condition, String errorMessage) {
         if (!condition) {
-            throw new RuntimeException(errorMessage);
+            throw new IllegalStateException(errorMessage);
         }
     }
 }

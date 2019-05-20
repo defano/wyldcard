@@ -17,6 +17,9 @@ import java.nio.file.Files;
  */
 public class Serializer {
 
+    private Serializer() {
+    }
+
     private final static Gson gson = new GsonBuilder()
             .registerTypeAdapterFactory(new PostConstructAdapterFactory())
             .registerTypeAdapter(Value.class, new ValueSerializer())

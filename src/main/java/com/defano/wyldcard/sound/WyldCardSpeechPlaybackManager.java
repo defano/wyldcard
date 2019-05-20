@@ -1,13 +1,15 @@
 package com.defano.wyldcard.sound;
 
-import com.defano.hypertalk.ast.model.enums.SpeakingVoice;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.enums.SpeakingVoice;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.inject.Singleton;
 import marytts.LocalMaryInterface;
 import marytts.exceptions.MaryConfigurationException;
 import marytts.exceptions.SynthesisException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
@@ -18,6 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class WyldCardSpeechPlaybackManager extends ThreadPoolExecutor implements SpeechPlaybackManager {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WyldCardSpeechPlaybackManager.class);
 
     private LocalMaryInterface mary;
     private String theSpeech = "done";
@@ -34,7 +38,7 @@ public class WyldCardSpeechPlaybackManager extends ThreadPoolExecutor implements
 
     @Override
     public Value getTheSpeech() {
-        if (getActiveCount() == 0 && getQueue().size() == 0) {
+        if (getActiveCount() == 0 && getQueue().isEmpty()) {
             return new Value("done");
         }
 
@@ -69,8 +73,7 @@ public class WyldCardSpeechPlaybackManager extends ThreadPoolExecutor implements
                 latch.await();
 
             } catch (SynthesisException | IOException | LineUnavailableException | InterruptedException e) {
-                // Nothing useful to do
-                e.printStackTrace();
+                LOG.error("An error occurred trying to speak text.", e);
             }
         });
     }

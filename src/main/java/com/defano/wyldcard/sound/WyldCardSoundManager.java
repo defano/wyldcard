@@ -1,9 +1,12 @@
 package com.defano.wyldcard.sound;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.WyldCardStackManager;
 import com.google.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
@@ -13,8 +16,10 @@ import java.util.concurrent.CountDownLatch;
 @Singleton
 public class WyldCardSoundManager implements SoundManager {
 
+    private static final Logger LOG = LoggerFactory.getLogger(WyldCardStackManager.class);
     private static final int DEFAULT_TEMPO = 120;
-    private static String lastPlayedSound = "";
+
+    private String lastPlayedSound = "";
 
     @Override
     public void play(Value sound, Value notes, Value tempo) {
@@ -36,7 +41,7 @@ public class WyldCardSoundManager implements SoundManager {
         if (SoundPlaybackExecutor.getInstance().getActiveSoundChannelsCount() == 0) {
             return "done";
         } else {
-            return WyldCardSoundManager.lastPlayedSound;
+            return lastPlayedSound;
         }
     }
 
@@ -114,7 +119,7 @@ public class WyldCardSoundManager implements SoundManager {
             try {
                 playAudio(getAudioForNote(soundSampleResource, thisNote, bpm));
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("An error occurred trying to play audio.", e);
             }
         }
     }

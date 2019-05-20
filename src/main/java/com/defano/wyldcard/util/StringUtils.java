@@ -8,6 +8,9 @@ import java.util.List;
 
 public class StringUtils {
 
+    private StringUtils() {
+    }
+
     public static String pluralize(long count, String singularFormat, String pluralFormat) {
         return Math.abs(count) == 1 ?
             String.format(singularFormat, count) :

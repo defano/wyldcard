@@ -14,7 +14,7 @@ import java.util.Base64;
 public class BufferedImageSerializer implements JsonSerializer<BufferedImage>, JsonDeserializer<BufferedImage> {
 
     @Override
-    public BufferedImage deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public BufferedImage deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
         byte[] imageData = Base64.getDecoder().decode(json.getAsString());
 
         if (imageData == null || imageData.length == 0) {
@@ -24,7 +24,7 @@ public class BufferedImageSerializer implements JsonSerializer<BufferedImage>, J
                 ByteArrayInputStream stream = new ByteArrayInputStream(imageData);
                 return ImageIO.read(stream);
             } catch (IOException e) {
-                throw new RuntimeException("An error occurred decoding an image. This stack is corrupted.", e);
+                throw new JsonIOException("An error occurred decoding an image. This stack is corrupted.", e);
             }
         }
     }
@@ -39,7 +39,7 @@ public class BufferedImageSerializer implements JsonSerializer<BufferedImage>, J
             baos.close();
             return new JsonPrimitive(Base64.getEncoder().encodeToString(serialized));
         } catch (IOException e) {
-            throw new RuntimeException("An error occurred while trying to save the image.", e);
+            throw new JsonIOException("An error occurred while trying to save the image.", e);
         }
     }
 

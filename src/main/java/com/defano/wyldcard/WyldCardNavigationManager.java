@@ -10,15 +10,13 @@ import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.util.CircleStack;
 import com.defano.wyldcard.window.layout.StackWindow;
 
-import java.util.EmptyStackException;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 public class WyldCardNavigationManager implements NavigationManager {
 
     // Circular stack of recently visited destinations
-    private final static CircleStack<Destination> backstack = new CircleStack<>(20);
-    private final static Stack<Destination> pushPopStack = new Stack<>();
+    private static final CircleStack<Destination> backstack = new CircleStack<>(20);
+    private static final Deque<Destination> pushPopStack = new ArrayDeque<>();
 
     /**
      * {@inheritDoc}

@@ -306,6 +306,8 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
             case CardLayerPartModel.PROP_ZORDER:
                 getCard().invalidatePartsZOrder(context);
                 break;
+            default:
+                // Nothing to do
         }
     }
 

@@ -46,10 +46,10 @@ import java.util.Set;
 @Singleton
 public class WyldCardFontManager implements FontManager {
 
-    private final static String DEFAULT_FONT_FAMILY = "Arial";
-    private final static String DEFAULT_FONT_STYLE = "plain";
-    private final static int DEFAULT_FONT_STYLE_CONST = Font.PLAIN;
-    private final static int DEFAULT_FONT_SIZE = 12;
+    private static final String DEFAULT_FONT_FAMILY = "Arial";
+    private static final String DEFAULT_FONT_STYLE = "plain";
+    private static final int DEFAULT_FONT_STYLE_CONST = Font.PLAIN;
+    private static final int DEFAULT_FONT_SIZE = 12;
 
     // Font, size and style of last-focused text element (focused element may contain a mix of sizes, fonts and styles)
     private final Subject<Set<Value>> focusedFontFamilyProvider = BehaviorSubject.createDefault(Sets.newHashSet(new Value(DEFAULT_FONT_FAMILY)));
@@ -258,7 +258,7 @@ public class WyldCardFontManager implements FontManager {
      * @return A HyperTalk representation of the focused font style
      */
     private Value getFocusedHyperTalkFontStyle() {
-        TextStyleSpecifier tss = TextStyleSpecifier.fromFontStyle(new Value("plain"));
+        TextStyleSpecifier tss = TextStyleSpecifier.fromFontStyle(new Value(DEFAULT_FONT_STYLE));
         tss.setBold(focusedBoldProvider.blockingFirst());
         tss.setItalic(focusedItalicProvider.blockingFirst());
         tss.setUnderline(focusedUnderlineProvider.blockingFirst());

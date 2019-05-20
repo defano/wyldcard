@@ -1,5 +1,8 @@
 package com.defano.wyldcard.thread;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
@@ -9,7 +12,11 @@ import java.util.concurrent.Future;
 
 public class Invoke {
 
-    private final static ExecutorService delegatedActionExecutor = Executors.newSingleThreadExecutor();
+    private static final Logger LOG = LoggerFactory.getLogger(Invoke.class);
+    private static final ExecutorService delegatedActionExecutor = Executors.newSingleThreadExecutor();
+
+    private Invoke() {
+    }
 
     /**
      * Synchronously invokes the given callable on the Swing UI dispatch thread, returning the result of executing the
@@ -116,7 +123,7 @@ public class Invoke {
                 SwingUtilities.invokeAndWait(() -> {});
 
             } catch (InterruptedException | InvocationTargetException e) {
-                e.printStackTrace();
+                LOG.warn("Dispatch work item was interrupted.", e);
                 Thread.currentThread().interrupt();
             }
         }
@@ -140,7 +147,7 @@ public class Invoke {
      * @return A Future representing the execution state of the runnable.
      */
     @SuppressWarnings("UnusedReturnValue")
-    public static Future<?> asynchronouslyOnWorkerThread(Runnable r) {
+    public static Future asynchronouslyOnWorkerThread(Runnable r) {
         return delegatedActionExecutor.submit(r);
     }
 

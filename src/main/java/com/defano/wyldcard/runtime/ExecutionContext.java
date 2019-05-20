@@ -290,7 +290,7 @@ public class ExecutionContext {
         if (callStack.size() - depth - 1 < 0) {
             return null;
         } else {
-            return callStack.get(callStack.size() - depth - 1);
+            return (StackFrame) callStack.toArray()[callStack.size() - depth - 1];
         }
     }
 

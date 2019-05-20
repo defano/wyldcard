@@ -71,9 +71,10 @@ public enum SoundSample {
             case '9': return DIAL_9;
             case '*': return DIAL_STAR;
             case '#': return DIAL_HASH;
-        }
 
-        throw new IllegalArgumentException("No TouchTone for: " + c);
+            default:
+                throw new IllegalArgumentException("No TouchTone for: " + c);
+        }
     }
 
     public static SoundSample fromName(String name) {

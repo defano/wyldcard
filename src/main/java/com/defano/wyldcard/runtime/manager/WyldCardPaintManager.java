@@ -70,7 +70,6 @@ public class WyldCardPaintManager implements PaintManager {
     // Properties that we provide the canvas
     private final Subject<Integer> gridSpacingProvider = createDefault(1);
 
-    private PaintToolType lastToolType;
     private Disposable selectedImageSubscription;
     private Disposable gridSpacingSubscription;
 
@@ -342,7 +341,7 @@ public class WyldCardPaintManager implements PaintManager {
 
     @Override
     public int getLineWidth() {
-        return Math.round((int) ((BasicStroke) lineStrokeProvider.blockingFirst()).getLineWidth());
+        return (int) ((BasicStroke) lineStrokeProvider.blockingFirst()).getLineWidth();
     }
 
     @Override
@@ -498,7 +497,7 @@ public class WyldCardPaintManager implements PaintManager {
         }
 
         // Deactivate current tool
-        lastToolType = paintToolProvider.blockingFirst().getPaintToolType();
+        PaintToolType lastToolType = paintToolProvider.blockingFirst().getPaintToolType();
         paintToolProvider.blockingFirst().deactivate();
 
         // Update selected image provider (so UI can tell when a selection exists)

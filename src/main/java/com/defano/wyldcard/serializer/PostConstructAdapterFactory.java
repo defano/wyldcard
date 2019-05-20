@@ -51,7 +51,7 @@ public class PostConstructAdapterFactory implements TypeAdapterFactory {
         return null;
     }
 
-    final static class PostConstructAdapter<T> extends TypeAdapter<T> {
+    static final class PostConstructAdapter<T> extends TypeAdapter<T> {
         private final TypeAdapter<T> delegate;
         private final Method method;
 

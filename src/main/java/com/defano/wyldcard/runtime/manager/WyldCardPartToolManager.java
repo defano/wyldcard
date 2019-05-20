@@ -81,8 +81,8 @@ public class WyldCardPartToolManager implements PartToolManager {
 
     @Override
     public void deleteSelectedPart() {
-        Optional<ToolEditablePart> selectedPart = this.selectedPart.blockingFirst();
-        selectedPart.ifPresent(part -> {
+        Optional<ToolEditablePart> theSelectedPart = this.selectedPart.blockingFirst();
+        theSelectedPart.ifPresent(part -> {
             WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel().removePartModel(new ExecutionContext(), part.getPartModel());
             this.selectedPart.onNext(Optional.empty());
         });
@@ -101,32 +101,32 @@ public class WyldCardPartToolManager implements PartToolManager {
     private class TextStyleObserver implements Consumer<Value> {
         @Override
         public void accept(Value value) {
-            Optional<ToolEditablePart> selectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
-            selectedPart.ifPresent(part -> part.getPartModel().set(new ExecutionContext(), CardLayerPartModel.PROP_TEXTSTYLE, value));
+            Optional<ToolEditablePart> theSelectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
+            theSelectedPart.ifPresent(part -> part.getPartModel().set(new ExecutionContext(), CardLayerPartModel.PROP_TEXTSTYLE, value));
         }
     }
 
     private class TextSizeObserver implements Consumer<Value> {
         @Override
         public void accept(Value value) {
-            Optional<ToolEditablePart> selectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
-            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().set(new ExecutionContext(), CardLayerPartModel.PROP_TEXTSIZE, value));
+            Optional<ToolEditablePart> theSelectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
+            theSelectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().set(new ExecutionContext(), CardLayerPartModel.PROP_TEXTSIZE, value));
         }
     }
 
     private class TextFontObserver implements Consumer<Value> {
         @Override
         public void accept(Value value) {
-            Optional<ToolEditablePart> selectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
-            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().set(new ExecutionContext(), CardLayerPartModel.PROP_TEXTFONT, value));
+            Optional<ToolEditablePart> theSelectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
+            theSelectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().set(new ExecutionContext(), CardLayerPartModel.PROP_TEXTFONT, value));
         }
     }
 
     private class TextAlignObserver implements Consumer<Value> {
         @Override
         public void accept(Value value) {
-            Optional<ToolEditablePart> selectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
-            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().set(new ExecutionContext(), CardLayerPartModel.PROP_TEXTALIGN, value));
+            Optional<ToolEditablePart> theSelectedPart = WyldCardPartToolManager.this.selectedPart.blockingFirst();
+            theSelectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().set(new ExecutionContext(), CardLayerPartModel.PROP_TEXTALIGN, value));
         }
     }
 

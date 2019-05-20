@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Singleton
 public class WyldCardStackManager implements StackNavigationObserver, StackManager, IdleObserver {
 
-    private final static Logger LOG = LoggerFactory.getLogger(WyldCardStackManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WyldCardStackManager.class);
 
     private final ArrayList<StackPart> openedStacks = new ArrayList<>();
     private final ConcurrentLinkedQueue<Runnable> disposeQueue = new ConcurrentLinkedQueue<>();
@@ -136,7 +136,6 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
             displayStack(context, part, inNewWindow);
             return part;
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -482,7 +481,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
             openedStacks.remove(stack);
 
             // Finally, quit application when last stack window has closed
-            if (openedStacks.size() == 0) {
+            if (openedStacks.isEmpty()) {
                 System.exit(0);
             }
         }));
@@ -536,7 +535,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
             model.setSavedStackFile(context, stackFile);
             return openStack(context, model, inNewWindow);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.warn("An error occured opening the stack.", e);
         }
 
         return null;

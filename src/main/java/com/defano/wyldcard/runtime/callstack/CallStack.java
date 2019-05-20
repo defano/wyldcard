@@ -1,14 +1,16 @@
 package com.defano.wyldcard.runtime.callstack;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
 
-public class CallStack extends Stack<StackFrame> {
+public class CallStack extends ArrayDeque<StackFrame> {
 
     public String getStackTraceString() {
         StringBuilder builder = new StringBuilder();
 
-        for (int idx = this.size() - 1; idx >= 0; idx--) {
-            builder.append("\t").append("at ").append(this.get(idx).getStackTraceEntryString()).append("\n");
+        StackFrame[] frames = toArray(new StackFrame[0]);
+
+        for (int idx = frames.length - 1; idx >= 0; idx--) {
+            builder.append("\t").append("at ").append(frames[idx].getStackTraceEntryString()).append("\n");
         }
 
         return builder.toString();
