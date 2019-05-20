@@ -276,7 +276,7 @@ public enum SystemMessage implements Message {
      * {@inheritDoc}
      */
     @Override
-    public List<Value> getArguments(ExecutionContext context) {
+    public List<Value> evaluateArguments(ExecutionContext context) {
         if (arguments == null) {
             return new ArrayList<>();
         } else {

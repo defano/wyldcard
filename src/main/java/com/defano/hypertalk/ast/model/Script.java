@@ -100,10 +100,6 @@ public class Script {
         return null;
     }
 
-//    public NamedBlock getFunction(String function) {
-//        return functions.get(new BlockName(function));
-//    }
-
     public StatementList getStatements() {
         return statements;
     }

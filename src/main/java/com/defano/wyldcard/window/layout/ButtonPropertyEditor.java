@@ -1,16 +1,19 @@
 package com.defano.wyldcard.window.layout;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.enums.Owner;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.font.TextStyleSpecifier;
 import com.defano.wyldcard.part.button.ButtonModel;
+import com.defano.wyldcard.part.button.ButtonPart;
 import com.defano.wyldcard.part.button.ButtonStyle;
+import com.defano.wyldcard.part.card.CardLayerPart;
 import com.defano.wyldcard.part.model.PartModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.window.ActionBindable;
-import com.defano.wyldcard.window.WyldCardDialog;
 import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -20,6 +23,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements ActionBindable {
+
+    private static final int PREVIEW_WIDTH = ButtonPart.DEFAULT_WIDTH;
+    private static final int PREVIEW_HEIGHT = ButtonPart.DEFAULT_HEIGHT;
+    private static final int MIN_COORDINATE = 0;
+    private static final int MIN_DIMENSION = 10;
+    private static final int MAX_VALUE = 9999;
+
     private ButtonModel model;
 
     private JButton saveButton;
@@ -46,6 +56,8 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
     private JButton textStyle;
     private JButton iconButton;
     private JCheckBox sharedHilite;
+    private JPanel previewPanel;
+    private JLabel previewImage;
 
     @SuppressWarnings("unchecked")
     public ButtonPropertyEditor() {
@@ -76,12 +88,17 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
             }
         });
 
+        buttonHeight.setModel(new SpinnerNumberModel(MIN_DIMENSION, MIN_DIMENSION, MAX_VALUE, 1));
+        buttonWidth.setModel(new SpinnerNumberModel(MIN_DIMENSION, MIN_DIMENSION, MAX_VALUE, 1));
+        buttonTop.setModel(new SpinnerNumberModel(MIN_COORDINATE, MIN_COORDINATE, MAX_VALUE, 1));
+        buttonLeft.setModel(new SpinnerNumberModel(MIN_COORDINATE, MIN_COORDINATE, MAX_VALUE, 1));
+
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (ButtonStyle thisStyle : ButtonStyle.values()) {
             model.addElement(thisStyle);
         }
-        style.setModel(model);
 
+        style.setModel(model);
     }
 
     @Override
@@ -140,6 +157,8 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
                 buttonLeft,
                 buttonTop,
                 buttonWidth);
+
+        updateProperties();
     }
 
     private void updateProperties() {
@@ -157,6 +176,8 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         model.set(context, ButtonModel.PROP_FAMILY, new Value(String.valueOf(family.getSelectedItem())));
         model.set(context, ButtonModel.ALIAS_AUTOHILIGHT, new Value(autoHilite.isSelected()));
         model.set(context, ButtonModel.PROP_SHAREDHILITE, new Value(sharedHilite.isSelected()));
+
+        updatePreviewImage();
     }
 
     @RunOnDispatch
@@ -166,6 +187,12 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         if (contents != null) {
             model.set(new ExecutionContext(), PartModel.PROP_CONTENTS, new Value(contents));
         }
+    }
+
+    @RunOnDispatch
+    private void updatePreviewImage() {
+        CardLayerPart part = WyldCard.getInstance().getStackManager().getOpenStack(model.getParentStackModel()).getDisplayedCard().getPart(model);
+        previewImage.setIcon(new ImageIcon(part.getToolEditablePart().getPreviewImage(new ExecutionContext(), PREVIEW_WIDTH, PREVIEW_HEIGHT)));
     }
 
     {
@@ -184,10 +211,10 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
      */
     private void $$$setupUI$$$() {
         buttonEditor = new JPanel();
-        buttonEditor.setLayout(new GridLayoutManager(5, 7, new Insets(10, 10, 10, 10), -1, -1));
+        buttonEditor.setLayout(new GridLayoutManager(6, 7, new Insets(10, 10, 10, 10), -1, -1));
         buttonEditor.setMaximumSize(new Dimension(587, 257));
         coordinatePanel = new JPanel();
-        coordinatePanel.setLayout(new GridLayoutManager(4, 6, new Insets(5, 5, 5, 5), -1, -1));
+        coordinatePanel.setLayout(new GridLayoutManager(3, 6, new Insets(5, 5, 5, 5), -1, -1));
         buttonEditor.add(coordinatePanel, new GridConstraints(0, 0, 1, 7, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         coordinatePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Identification"));
         final JLabel label1 = new JLabel();
@@ -198,27 +225,27 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         coordinatePanel.add(buttonName, new GridConstraints(0, 1, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         buttonLabel = new JLabel();
         buttonLabel.setText("Card Button:");
-        coordinatePanel.add(buttonLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        coordinatePanel.add(buttonLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         buttonLabelValue = new JLabel();
         buttonLabelValue.setText("Label");
-        coordinatePanel.add(buttonLabelValue, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        coordinatePanel.add(buttonLabelValue, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         partLabel = new JLabel();
         partLabel.setText("Card Part:");
-        coordinatePanel.add(partLabel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        coordinatePanel.add(partLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         partLabelValue = new JLabel();
         partLabelValue.setText("Label");
-        coordinatePanel.add(partLabelValue, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        coordinatePanel.add(partLabelValue, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        coordinatePanel.add(spacer1, new GridConstraints(2, 2, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        coordinatePanel.add(spacer1, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setText("Button ID:");
-        coordinatePanel.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        coordinatePanel.add(label2, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         idLabelValue = new JLabel();
         idLabelValue.setText("Label");
-        coordinatePanel.add(idLabelValue, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        coordinatePanel.add(idLabelValue, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(5, 4, new Insets(5, 5, 5, 5), -1, -1));
-        buttonEditor.add(panel1, new GridConstraints(1, 0, 2, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        buttonEditor.add(panel1, new GridConstraints(1, 0, 3, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Look and Feel"));
         style = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
@@ -278,23 +305,23 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         editScriptButton = new JButton();
         editScriptButton.setText("Edit Script...");
         editScriptButton.setToolTipText("");
-        buttonEditor.add(editScriptButton, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonEditor.add(editScriptButton, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         textStyle = new JButton();
         textStyle.setText("Text Style...");
-        buttonEditor.add(textStyle, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonEditor.add(textStyle, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         contents = new JButton();
         contents.setText("Contents...");
-        buttonEditor.add(contents, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonEditor.add(contents, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveButton = new JButton();
         saveButton.setText("OK");
-        buttonEditor.add(saveButton, new GridConstraints(4, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonEditor.add(saveButton, new GridConstraints(5, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
-        buttonEditor.add(spacer3, new GridConstraints(4, 4, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        buttonEditor.add(spacer3, new GridConstraints(5, 4, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
-        buttonEditor.add(spacer4, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        buttonEditor.add(spacer4, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         iconButton = new JButton();
         iconButton.setText("Icon...");
-        buttonEditor.add(iconButton, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonEditor.add(iconButton, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(3, 5, new Insets(5, 5, 5, 5), -1, -1));
         buttonEditor.add(panel2, new GridConstraints(1, 4, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -319,10 +346,18 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         final JLabel label8 = new JLabel();
         label8.setText("Height:");
         panel2.add(label8, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        previewPanel = new JPanel();
+        previewPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        buttonEditor.add(previewPanel, new GridConstraints(3, 4, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        previewPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Preview"));
+        previewImage = new JLabel();
+        previewImage.setHorizontalAlignment(0);
+        previewImage.setHorizontalTextPosition(0);
+        previewImage.setIconTextGap(0);
+        previewImage.setText("");
+        previewPanel.add(previewImage);
         final Spacer spacer5 = new Spacer();
-        panel2.add(spacer5, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final Spacer spacer6 = new Spacer();
-        buttonEditor.add(spacer6, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        buttonEditor.add(spacer5, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**

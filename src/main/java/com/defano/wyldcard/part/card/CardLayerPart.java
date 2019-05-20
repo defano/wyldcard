@@ -3,6 +3,7 @@ package com.defano.wyldcard.part.card;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.part.Part;
+import com.defano.wyldcard.part.ToolEditablePart;
 import com.defano.wyldcard.part.finder.LayeredPartFinder;
 import com.defano.wyldcard.part.model.PartModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
@@ -14,6 +15,8 @@ import java.util.List;
  * Represents a part that exists on a layer (foreground or background) of the card (i.e., either a button or a field).
  */
 public interface CardLayerPart<T extends PartModel> extends Part<T> {
+
+    ToolEditablePart<T> getToolEditablePart();
 
     /**
      * Gets the Swing component associated with this part.

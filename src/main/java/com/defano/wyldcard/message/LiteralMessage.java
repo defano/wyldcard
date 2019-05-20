@@ -11,6 +11,13 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a HyperTalk message in String-literal form (i.e., 'doMenu "New Button"').
+ * <p>
+ * Before execution, the string must be parsed into message name and arguments, and arguments must be evaluated.
+ * For example, if the text contains 'doSomething (cd fld 1), x` the value of 'cd fld 1' and 'x' will be evaluated
+ * when {@link Message#evaluateArguments(ExecutionContext)} is called using the provided execution context.
+ */
 public class LiteralMessage implements Message {
 
     private final String text;
@@ -33,7 +40,7 @@ public class LiteralMessage implements Message {
     }
 
     @Override
-    public List<Value> getArguments(ExecutionContext context) {
+    public List<Value> evaluateArguments(ExecutionContext context) {
         try {
             ListExp listExp = (ListExp) ScriptCompiler.blockingCompile(CompilationUnit.LIST_EXPRESSION, messageArgumentsText);
             return listExp == null ? new ArrayList<>() : listExp.evaluateAsList(context);

@@ -26,6 +26,7 @@ import com.defano.wyldcard.runtime.executor.observer.MessageCompletionObserver;
 import com.defano.wyldcard.window.layout.ScriptEditor;
 import com.google.inject.Singleton;
 
+import javax.annotation.PostConstruct;
 import java.awt.event.KeyEvent;
 
 /**
@@ -118,6 +119,12 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
                         WyldCard.getInstance().getStackManager().getFocusedStack().getCurtainManager().unlockScreen(new ExecutionContext(), context.getVisualEffect());
                     }
                 });
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        // TODO: @PostConstruct is not implemented yet
+        WyldCard.getInstance().getPeriodicMessageManager().addIdleObserver(() -> resetProperties(new ExecutionContext()));
     }
 
     @Override

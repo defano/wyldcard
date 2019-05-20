@@ -2,9 +2,10 @@ package com.defano.wyldcard.effect;
 
 import com.defano.hypertalk.ast.model.effect.VisualEffectImage;
 import com.defano.hypertalk.ast.model.specifier.VisualEffectSpecifier;
+import com.defano.jmonet.transform.image.ApplyPixelTransform;
+import com.defano.jmonet.transform.pixel.InvertPixelTransform;
 import com.defano.jsegue.AnimatedSegue;
-import com.defano.jsegue.SegueName;
-import com.defano.jsegue.renderers.*;
+import com.defano.jsegue.renderers.PlainEffect;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.awt.*;
@@ -16,12 +17,16 @@ import java.awt.image.BufferedImage;
 public class VisualEffectFactory {
 
     public static AnimatedSegue create(VisualEffectSpecifier effectSpecifier, BufferedImage from, BufferedImage to) {
-        AnimatedSegue effect = effectNamed(effectSpecifier.name);
-        effect.setSource(from);
-        effect.setDestination(effectImage(effectSpecifier.image, to));
-        effect.setDurationMs(effectSpecifier.speed.durationMs);
+        try {
+            AnimatedSegue effect = effectSpecifier.effect.newInstance();
+            effect.setSource(from);
+            effect.setDestination(effectImage(effectSpecifier.image, to));
+            effect.setDurationMs(effectSpecifier.speed.durationMs);
 
-        return effect;
+            return effect;
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new IllegalStateException("Bug! Visual effect renderer class cannot be instantiated.", e);
+        }
     }
 
     public static PlainEffect createScreenLock(ExecutionContext context) {
@@ -35,62 +40,6 @@ public class VisualEffectFactory {
         return effect;
     }
 
-    private static AnimatedSegue effectNamed(SegueName name) {
-        switch (name) {
-            case DISSOLVE:
-                return new DissolveEffect();
-            case SCROLL_LEFT:
-                return new ScrollLeftEffect();
-            case SCROLL_RIGHT:
-                return new ScrollRightEffect();
-            case SCROLL_UP:
-                return new ScrollUpEffect();
-            case SCROLL_DOWN:
-                return new ScrollDownEffect();
-            case BARN_DOOR_OPEN:
-                return new BarnDoorOpenEffect();
-            case BARN_DOOR_CLOSE:
-                return new BarnDoorCloseEffect();
-            case WIPE_LEFT:
-                return new WipeLeftEffect();
-            case WIPE_RIGHT:
-                return new WipeRightEffect();
-            case WIPE_UP:
-                return new WipeUpEffect();
-            case WIPE_DOWN:
-                return new WipeDownEffect();
-            case IRIS_OPEN:
-                return new IrisOpenEffect();
-            case IRIS_CLOSE:
-                return new IrisCloseEffect();
-            case ZOOM_IN:
-                return new ZoomInEffect();
-            case ZOOM_OUT:
-                return new ZoomOutEffect();
-            case PLAIN:
-                return new PlainEffect();
-            case STRETCH_FROM_TOP:
-                return new StretchFromTopEffect();
-            case STRETCH_FROM_BOTTOM:
-                return new StretchFromBottomEffect();
-            case STRETCH_FROM_CENTER:
-                return new StretchFromCenterEffect();
-            case SHRINK_TO_BOTTOM:
-                return new ShrinkToBottomEffect();
-            case SHRINK_TO_TOP:
-                return new ShrinkToTopEffect();
-            case SHRINK_TO_CENTER:
-                return new ShrinkToCenterEffect();
-            case VENETIAN_BLINDS:
-                return new BlindsEffect();
-            case CHECKERBOARD:
-                return new CheckerboardEffect();
-
-            default:
-                throw new IllegalArgumentException("Bug! Unimplemented visual effect: " + name);
-        }
-    }
-
     private static BufferedImage effectImage(VisualEffectImage image, BufferedImage to) {
         switch (image) {
             case BLACK:
@@ -102,33 +51,10 @@ public class VisualEffectFactory {
             case WHITE:
                 return solidColorImage(to.getWidth(), to.getHeight(), Color.WHITE);
             case INVERSE:
-                return invert(to);
-
+                return new ApplyPixelTransform(new InvertPixelTransform()).apply(to);
             default:
-                throw new IllegalArgumentException("Bug! Not implemented yet.");
+                throw new IllegalArgumentException("Bug! Not implemented: " + image);
         }
-    }
-
-    private static BufferedImage invert(BufferedImage image) {
-
-        BufferedImage inverted = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = inverted.createGraphics();
-        g.drawImage(image,0, 0, null);
-        g.dispose();
-
-        for (int x = 0; x < inverted.getWidth(); x++) {
-            for (int y = 0; y < inverted.getHeight(); y++) {
-
-                int argb = inverted.getRGB(x, y);
-                int alpha = 0xff000000 & argb;
-                int rgb = 0x00ffffff & argb;
-
-                // Invert preserving alpha channel
-                inverted.setRGB(x, y, alpha | (~rgb & 0x00ffffff));
-            }
-        }
-
-        return inverted;
     }
 
     private static BufferedImage solidColorImage(int width, int height, Color color) {

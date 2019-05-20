@@ -23,7 +23,7 @@ public class EvaluatedMessage implements Message {
     }
 
     @Override
-    public List<Value> getArguments(ExecutionContext context) {
+    public List<Value> evaluateArguments(ExecutionContext context) {
         return arguments;
     }
 

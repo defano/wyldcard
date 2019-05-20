@@ -1,7 +1,8 @@
 package com.defano.hypertalk.ast.model.effect;
 
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.jsegue.SegueName;
+import com.defano.jsegue.AnimatedSegue;
+import com.defano.jsegue.renderers.*;
 
 import java.util.Arrays;
 
@@ -35,87 +36,87 @@ public enum VisualEffectName {
                 .orElseThrow(() -> new HtSemanticException("Not the name of a visual effect."));
     }
 
-    public SegueName toSegueName(VisualEffectDirection direction) throws HtSemanticException {
+    public Class<? extends AnimatedSegue> toAnimatedSegueClass(VisualEffectDirection direction) throws HtSemanticException {
         switch (this) {
             case DISSOLVE:
-                return SegueName.DISSOLVE;
+                return PixelDissolveEffect.class;
             case BARN_DOOR:
                 if (direction == VisualEffectDirection.OPEN) {
-                    return SegueName.BARN_DOOR_OPEN;
+                    return BarnDoorOpenEffect.class;
                 } else if (direction == VisualEffectDirection.CLOSE) {
-                    return SegueName.BARN_DOOR_CLOSE;
+                    return BarnDoorCloseEffect.class;
                 }
                 break;
             case CHECKERBOARD:
-                return SegueName.CHECKERBOARD;
+                return CheckerboardEffect.class;
             case IRIS:
                 if (direction == VisualEffectDirection.OPEN) {
-                    return SegueName.IRIS_OPEN;
+                    return IrisOpenEffect.class;
                 } else if (direction == VisualEffectDirection.CLOSE) {
-                    return SegueName.IRIS_CLOSE;
+                    return IrisCloseEffect.class;
                 }
                 break;
             case PLAIN:
-                return SegueName.PLAIN;
+                return PlainEffect.class;
             case PUSH:
                 // TODO: Push effect not implemented; delegate to scroll
                 if (direction == VisualEffectDirection.UP) {
-                    return SegueName.SCROLL_UP;
+                    return ScrollUpEffect.class;
                 } else if (direction == VisualEffectDirection.DOWN) {
-                    return SegueName.SCROLL_DOWN;
+                    return ScrollDownEffect.class;
                 } else if (direction == VisualEffectDirection.LEFT) {
-                    return SegueName.SCROLL_LEFT;
+                    return ScrollLeftEffect.class;
                 } else if (direction == VisualEffectDirection.RIGHT) {
-                    return SegueName.SCROLL_RIGHT;
+                    return ScrollRightEffect.class;
                 }
                 break;
             case SCROLL:
                 if (direction == VisualEffectDirection.UP) {
-                    return SegueName.SCROLL_UP;
+                    return ScrollUpEffect.class;
                 } else if (direction == VisualEffectDirection.DOWN) {
-                    return SegueName.SCROLL_DOWN;
+                    return ScrollDownEffect.class;
                 } else if (direction == VisualEffectDirection.LEFT) {
-                    return SegueName.SCROLL_LEFT;
+                    return ScrollLeftEffect.class;
                 } else if (direction == VisualEffectDirection.RIGHT) {
-                    return SegueName.SCROLL_RIGHT;
+                    return ScrollRightEffect.class;
                 }
                 break;
             case SHRINK:
                 if (direction == VisualEffectDirection.TOP) {
-                    return SegueName.SHRINK_TO_TOP;
+                    return ShrinkToTopEffect.class;
                 } else if (direction == VisualEffectDirection.CENTER) {
-                    return SegueName.SHRINK_TO_CENTER;
+                    return ShrinkToCenterEffect.class;
                 } else if (direction == VisualEffectDirection.BOTTOM) {
-                    return SegueName.SHRINK_TO_BOTTOM;
+                    return ShrinkToBottomEffect.class;
                 }
                 break;
             case STRETCH:
                 if (direction == VisualEffectDirection.TOP) {
-                    return SegueName.STRETCH_FROM_TOP;
+                    return StretchFromTopEffect.class;
                 } else if (direction == VisualEffectDirection.CENTER) {
-                    return SegueName.STRETCH_FROM_CENTER;
+                    return StretchFromCenterEffect.class;
                 } else if (direction == VisualEffectDirection.BOTTOM) {
-                    return SegueName.STRETCH_FROM_BOTTOM;
+                    return StretchFromBottomEffect.class;
                 }
                 break;
             case VENETIAN_BLINDS:
-                return SegueName.VENETIAN_BLINDS;
+                return BlindsEffect.class;
             case WIPE:
                 if (direction == VisualEffectDirection.UP) {
-                    return SegueName.WIPE_UP;
+                    return WipeUpEffect.class;
                 } else if (direction == VisualEffectDirection.DOWN) {
-                    return SegueName.WIPE_DOWN;
+                    return WipeDownEffect.class;
                 } else if (direction == VisualEffectDirection.LEFT) {
-                    return SegueName.WIPE_LEFT;
+                    return WipeLeftEffect.class;
                 } else if (direction == VisualEffectDirection.RIGHT) {
-                    return SegueName.WIPE_RIGHT;
+                    return WipeRightEffect.class;
                 }
                 break;
             case ZOOM:
                 if (direction == VisualEffectDirection.IN || direction == VisualEffectDirection.OPEN) {
-                    return SegueName.ZOOM_IN;
+                    return ZoomInEffect.class;
                 } else if (direction == VisualEffectDirection.OUT || direction == VisualEffectDirection.CLOSE) {
-                    return SegueName.ZOOM_OUT;
+                    return ZoomOutEffect.class;
                 }
                 break;
         }

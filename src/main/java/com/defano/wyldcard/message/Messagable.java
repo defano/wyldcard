@@ -125,7 +125,7 @@ public interface Messagable {
     default void receiveMessage(ExecutionContext context, ASTNode initiator, Message message, MessageCompletionObserver onCompletion) {
 
         // No messages are sent when cmd-option is down; some messages not sent when 'lockMessages' is true
-        if (WyldCard.getInstance().getKeyboardManager().isPeeking(context) || isMessageLocked(message)) {
+        if (WyldCard.getInstance().getKeyboardManager().isPeeking(context) || message.isMessageLocked()) {
             onCompletion.onMessagePassed(message, false, null);
             return;
         }
@@ -215,7 +215,7 @@ public interface Messagable {
             function = target.getScript(context).getNamedBlock(message.getMessageName());
         }
 
-        return ScriptExecutor.blockingExecuteFunction(context, initiator, target.getMe(context), function, message.getArguments(context));
+        return ScriptExecutor.blockingExecuteFunction(context, initiator, target.getMe(context), function, message.evaluateArguments(context));
     }
 
     /**
@@ -246,14 +246,4 @@ public interface Messagable {
         throw new IllegalStateException("Bug! Unimplemented part type.");
     }
 
-    /**
-     * Determines if the given message is "locked" and should not be sent.
-     * @param message
-     * @return
-     */
-    default boolean isMessageLocked(Message message) {
-        return message instanceof SystemMessage &&
-                ((SystemMessage) message).isLockable() &&
-                WyldCard.getInstance().getWyldCardPart().isLockMessages();
-    }
 }
