@@ -18,8 +18,6 @@ import com.defano.wyldcard.part.wyldcard.WyldCardProperties;
 import com.defano.wyldcard.pattern.PatternManager;
 import com.defano.wyldcard.pattern.WyldCardPatternManager;
 import com.defano.wyldcard.runtime.ExecutionContext;
-import com.defano.wyldcard.runtime.manager.PeriodicMessageManager;
-import com.defano.wyldcard.runtime.manager.WyldCardPeriodicMessageManager;
 import com.defano.wyldcard.runtime.manager.*;
 import com.defano.wyldcard.search.SearchManager;
 import com.defano.wyldcard.search.WyldCardSearchManager;
@@ -34,8 +32,6 @@ import com.defano.wyldcard.window.layout.HyperTalkErrorDialog;
 import com.google.inject.*;
 
 import javax.swing.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 /**
  * The WyldCard application object.
@@ -138,18 +134,12 @@ public class WyldCard implements PartFinder {
             getWyldCardMenuBar().reset();
 
             getWindowManager().restoreDefaultLayout();          // Apply default palette layout
-            getWindowManager().toggleDockPalettes();            // Dock palettes to stack window
 
             // Show tools and patterns palettes. Tool palette must be fully packed and rendered before showing
             // patterns, otherwise patterns palette may display in the wrong location.
             windowManager.getPaintToolsPalette().setVisible(true);
-            windowManager.getPaintToolsPalette().addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowOpened(WindowEvent e) {
-                    super.windowOpened(e);
-                    windowManager.getPatternsPalette().setVisible(true);
-                }
-            });
+            windowManager.getPatternsPalette().setVisible(true);
+
         });
 
         // Close all open files before we die

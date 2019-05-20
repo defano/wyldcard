@@ -7,6 +7,7 @@ import com.defano.hypertalk.ast.model.enums.ToolType;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.mouse.MouseStillDown;
 import com.defano.wyldcard.message.SystemMessage;
+import com.defano.wyldcard.part.ToolEditablePart;
 import com.defano.wyldcard.part.builder.ButtonModelBuilder;
 import com.defano.wyldcard.part.card.CardLayerPart;
 import com.defano.wyldcard.part.card.CardModel;
@@ -29,8 +30,8 @@ import java.lang.ref.WeakReference;
  */
 public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonModel>, MouseListener, PropertyChangeObserver {
 
-    private static final int DEFAULT_WIDTH = 120;
-    private static final int DEFAULT_HEIGHT = 30;
+    public static final int DEFAULT_WIDTH = 120;
+    public static final int DEFAULT_HEIGHT = 30;
 
     private final WeakReference<CardPart> parent;
     private ButtonModel partModel;
@@ -82,6 +83,11 @@ public class ButtonPart extends StyleableButton implements CardLayerPart<ButtonM
         button.partModel = partModel;
         button.partModel.setCurrentCardId(parent.getId(context));
         return button;
+    }
+
+    @Override
+    public ToolEditablePart<ButtonModel> getToolEditablePart() {
+        return this;
     }
 
     /**

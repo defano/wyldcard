@@ -3,6 +3,9 @@ package com.defano.wyldcard.awt;
 import java.awt.*;
 import java.util.Arrays;
 
+/**
+ * A mixin that can set the enabled state of a component and all of its children.
+ */
 public interface DeepEnable {
 
     /**

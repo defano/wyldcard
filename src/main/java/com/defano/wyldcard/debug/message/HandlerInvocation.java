@@ -51,8 +51,8 @@ public class HandlerInvocation implements Comparable<HandlerInvocation>, Message
     }
 
     @Override
-    public List<Value> getArguments(ExecutionContext context) throws HtException {
-        return message.getArguments(context);
+    public List<Value> evaluateArguments(ExecutionContext context) throws HtException {
+        return message.evaluateArguments(context);
     }
 
     public PartSpecifier getRecipient() {

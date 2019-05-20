@@ -7,8 +7,8 @@ import com.defano.hypertalk.ast.model.specifier.PropertySpecifier;
 import com.defano.hypertalk.ast.expression.Expression;
 import com.defano.hypertalk.ast.statement.Command;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.util.MenuPropertiesDelegate;
-import com.defano.hypertalk.util.ChunkPropertiesDelegate;
+import com.defano.hypertalk.delegate.MenuPropertiesDelegate;
+import com.defano.hypertalk.delegate.ChunkPropertiesDelegate;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class SetCmd extends Command {

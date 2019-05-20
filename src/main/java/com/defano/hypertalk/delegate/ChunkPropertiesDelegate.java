@@ -1,5 +1,7 @@
-package com.defano.hypertalk.util;
+package com.defano.hypertalk.delegate;
 
+import com.defano.hypertalk.util.Range;
+import com.defano.hypertalk.util.RangeUtils;
 import com.defano.wyldcard.part.field.FieldModel;
 import com.defano.wyldcard.part.model.PartModel;
 import com.defano.wyldcard.runtime.ExecutionContext;

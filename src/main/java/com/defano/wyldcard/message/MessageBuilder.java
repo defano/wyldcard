@@ -28,7 +28,7 @@ public class MessageBuilder {
      * Creates a message by parsing the given string into a message name a list of zero or more argument expressions.
      * <p>
      * For example, if the text contains 'doSomething (cd fld 1), x` the value of 'cd fld 1' and 'x' will be evaluated
-     * when {@link Message#getArguments(ExecutionContext)} is called using the provided execution context.
+     * when {@link Message#evaluateArguments(ExecutionContext)} is called using the provided execution context.
      * <p>
      * NOTE that the message returned has the limitation that its arguments may only be retrieved on a script execution
      * thread because of the need to invoke the runtime environment in order to evaluate argument expressions.

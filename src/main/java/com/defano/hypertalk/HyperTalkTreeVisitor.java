@@ -869,17 +869,17 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitMusicInstrumentNotes(HyperTalkParser.MusicInstrumentNotesContext ctx) {
-        return MusicalScore.forNotes((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+        return MusicalScore.ofNotes((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitMusicInstrumentNotesTempo(HyperTalkParser.MusicInstrumentNotesTempoContext ctx) {
-        return MusicalScore.forNotesAndTempo((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(2)), (Expression) visit(ctx.expression(1)));
+        return MusicalScore.ofNotesAndTempo((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(2)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitMusicInstrumentTempo(HyperTalkParser.MusicInstrumentTempoContext ctx) {
-        return MusicalScore.forTempo((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+        return MusicalScore.ofTempo((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
@@ -974,7 +974,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitMusicInstrument(HyperTalkParser.MusicInstrumentContext ctx) {
-        return MusicalScore.forSoundEffect((Expression) visit(ctx.expression()));
+        return MusicalScore.ofSoundEffect((Expression) visit(ctx.expression()));
     }
 
     @Override
