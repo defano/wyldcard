@@ -45,7 +45,7 @@ public class ScriptExecutor {
     private static final ListeningExecutorService listeningStaticExecutor = MoreExecutors.listeningDecorator(staticExecutor);
 
     // Executor for special messages that require guaranteed ordering
-    private static final ExecutorService orderedExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("script-exe-ordered").build());
+    private static final ThreadPoolExecutor orderedExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, new ThreadFactoryBuilder().setNameFormat("script-exe-ordered").build());
     private static final ListeningExecutorService listeningOrderedExecutor = MoreExecutors.listeningDecorator(orderedExecutor);
 
     // Executor for all other HyperTalk scripts and handlers
@@ -259,7 +259,8 @@ public class ScriptExecutor {
      * @return The number of active or pending scripts
      */
     public static int getPendingScriptCount() {
-        return scriptExecutor.getActiveCount() + scriptExecutor.getQueue().size();
+        return scriptExecutor.getActiveCount() + scriptExecutor.getQueue().size() +
+                orderedExecutor.getActiveCount() + orderedExecutor.getQueue().size();
     }
 
     /**

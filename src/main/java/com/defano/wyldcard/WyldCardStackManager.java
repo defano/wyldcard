@@ -24,6 +24,8 @@ import com.defano.wyldcard.window.layout.StackWindow;
 import com.google.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,6 +41,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 @Singleton
 public class WyldCardStackManager implements StackNavigationObserver, StackManager, IdleObserver {
+
+    private final static Logger LOG = LoggerFactory.getLogger(WyldCardStackManager.class);
 
     private final ArrayList<StackPart> openedStacks = new ArrayList<>();
     private final ConcurrentLinkedQueue<Runnable> disposeQueue = new ConcurrentLinkedQueue<>();
@@ -464,7 +468,8 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
      * @param disposeWindow When true, dispose the stack's window
      */
     private void disposeStack(ExecutionContext context, StackPart stack, boolean disposeWindow) {
-        disposeQueue.add(() -> {
+        LOG.debug("Enqueueing disposal task for stack {}", stack);
+        disposeQueue.add(() -> Invoke.onDispatch(() -> {
             // Clean up stack resources
             stack.partClosed(context);
 
@@ -480,7 +485,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
             if (openedStacks.size() == 0) {
                 System.exit(0);
             }
-        });
+        }));
     }
 
     /**
@@ -537,6 +542,9 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         return null;
     }
 
+    /**
+     * Executes each time the HyperTalk script interpreter is "idle" (no more scripts waiting to execute).
+     */
     @Override
     public void onIdle() {
         Runnable workItem;
@@ -544,6 +552,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         do {
             workItem = disposeQueue.poll();
             if (workItem != null) {
+                LOG.debug("Running stack disposal job.");
                 workItem.run();
             }
 
