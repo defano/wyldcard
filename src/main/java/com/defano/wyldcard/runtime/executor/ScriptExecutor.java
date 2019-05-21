@@ -49,9 +49,12 @@ public class ScriptExecutor {
     private static final ListeningExecutorService listeningOrderedExecutor = MoreExecutors.listeningDecorator(orderedExecutor);
 
     // Executor for all other HyperTalk scripts and handlers
-    private final static int MAX_EXECUTOR_THREADS = 8;
-    private static final ThreadPoolExecutor scriptExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_EXECUTOR_THREADS, new ThreadFactoryBuilder().setNameFormat("script-exe-%d").build());
-    private static final ListeningExecutorService listeningScriptExecutor = MoreExecutors.listeningDecorator(scriptExecutor);
+    private static final int MAX_EXECUTOR_THREADS = 8;
+    private static final ThreadPoolExecutor defaultExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_EXECUTOR_THREADS, new ThreadFactoryBuilder().setNameFormat("script-exe-%d").build());
+    private static final ListeningExecutorService listeningDefaultExecutor = MoreExecutors.listeningDecorator(defaultExecutor);
+
+    private ScriptExecutor() {
+    }
 
     /**
      * Returns the result of evaluating a string as a HyperTalk expression on the current thread. An expression that
@@ -249,7 +252,7 @@ public class ScriptExecutor {
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
     public static CheckedFuture<Boolean, HtException> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
-        return submit(listeningScriptExecutor, new MessageHandlerExecutionTask(context, null, me, NamedBlock.anonymousBlock(((Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, statementList)).getStatements()), MessageBuilder.emptyMessage()));
+        return submit(listeningDefaultExecutor, new MessageHandlerExecutionTask(context, null, me, NamedBlock.anonymousBlock(((Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, statementList)).getStatements()), MessageBuilder.emptyMessage()));
     }
 
     /**
@@ -259,7 +262,7 @@ public class ScriptExecutor {
      * @return The number of active or pending scripts
      */
     public static int getPendingScriptCount() {
-        return scriptExecutor.getActiveCount() + scriptExecutor.getQueue().size() +
+        return defaultExecutor.getActiveCount() + defaultExecutor.getQueue().size() +
                 orderedExecutor.getActiveCount() + orderedExecutor.getQueue().size();
     }
 
@@ -312,7 +315,7 @@ public class ScriptExecutor {
         if (m instanceof SystemMessage && ((SystemMessage) m).isOrderGuaranteed()) {
             return listeningOrderedExecutor;
         } else {
-            return listeningScriptExecutor;
+            return listeningDefaultExecutor;
         }
     }
 

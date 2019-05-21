@@ -53,7 +53,7 @@ class StyledDocumentSerializer implements JsonSerializer<StyledDocument>, JsonDe
             return baos.toByteArray();
 
         } catch (IOException | BadLocationException e) {
-            throw new RuntimeException("An error occurred while saving field contents.", e);
+            throw new IllegalStateException("An error occurred while saving field contents.", e);
         }
     }
 

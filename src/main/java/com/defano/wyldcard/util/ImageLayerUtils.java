@@ -7,6 +7,9 @@ import java.awt.*;
 
 public class ImageLayerUtils {
 
+    private ImageLayerUtils() {
+    }
+
     public static boolean layersRemovesPaint(ImageLayer... layers) {
         for (ImageLayer layer : layers) {
             if (layerRemovesPaint(layer)) {

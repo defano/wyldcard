@@ -11,7 +11,7 @@ import java.lang.reflect.Type;
  */
 class ValueSerializer implements JsonSerializer<Value>, JsonDeserializer<Value> {
     @Override
-    public Value deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public Value deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
         return new Value(json.getAsString());
     }
 

@@ -7,6 +7,7 @@ import com.defano.hypertalk.ast.expression.part.StackPartExp;
 import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.enums.Direction;
 import com.defano.hypertalk.ast.model.specifier.CompositePartSpecifier;
 import com.defano.hypertalk.ast.model.specifier.PartDirectionSpecifier;
 import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
@@ -136,13 +137,10 @@ public class GoCmd extends Command {
         if (directionExp != null) {
             PartDirectionSpecifier ps = directionExp.evaluateAsSpecifier(context);
 
-            switch (ps.getValue()) {
-                case BACK:
-                    navigationManager.goBack(context);
-                    break;
-                case FORTH:
-                    navigationManager.goForth(context);
-                    break;
+            if (ps.getValue() == Direction.BACK) {
+                navigationManager.goBack(context);
+            } else if (ps.getValue() == Direction.FORTH) {
+                navigationManager.goForth(context);
             }
 
             return true;

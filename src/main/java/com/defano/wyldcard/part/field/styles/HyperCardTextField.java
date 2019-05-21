@@ -41,29 +41,29 @@ import java.util.Set;
 public abstract class HyperCardTextField extends JScrollPane implements
         PropertyChangeObserver, DocumentListener, CaretListener, FieldModelObserver, LifecycleObserver
 {
-    protected final static int WIDE_MARGIN_PX = 6;
-    protected final static int NARROW_MARGIN_PX = 1;
+    protected static final int WIDE_MARGIN_PX = 6;
+    protected static final int NARROW_MARGIN_PX = 1;
 
-    private final HyperCardTextPane textPane;
-    private final ToolModeObserver toolModeObserver = new ToolModeObserver();
-    private final FontAlignObserver fontAlignObserver = new FontAlignObserver();
-    private final FontSizeObserver fontSizeObserver = new FontSizeObserver();
-    private final FontStyleObserver fontStyleObserver = new FontStyleObserver();
-    private final FontFamilyObserver fontFamilyObserver = new FontFamilyObserver();
-    private final AutoTabKeyObserver autoTabKeyObserver = new AutoTabKeyObserver();
-    private final AutoSelectObserver autoSelectObserver = new AutoSelectObserver();
-    private final ScrollObserver scrollObserver = new ScrollObserver();
-    private final FocusObserver focusObserver = new FocusObserver();
-    private final ViewportChangeListener viewportChangeListener = new ViewportChangeListener();
+    private final transient HyperCardTextPane textPane;
+    private final transient ToolModeObserver toolModeObserver = new ToolModeObserver();
+    private final transient FontAlignObserver fontAlignObserver = new FontAlignObserver();
+    private final transient FontSizeObserver fontSizeObserver = new FontSizeObserver();
+    private final transient FontStyleObserver fontStyleObserver = new FontStyleObserver();
+    private final transient FontFamilyObserver fontFamilyObserver = new FontFamilyObserver();
+    private final transient AutoTabKeyObserver autoTabKeyObserver = new AutoTabKeyObserver();
+    private final transient AutoSelectObserver autoSelectObserver = new AutoSelectObserver();
+    private final transient ScrollObserver scrollObserver = new ScrollObserver();
+    private final transient FocusObserver focusObserver = new FocusObserver();
+    private final transient ViewportChangeListener viewportChangeListener = new ViewportChangeListener();
 
-    private Disposable toolModeSubscription;
-    private Disposable fontSizeSubscription;
-    private Disposable fontStyleSubscription;
-    private Disposable fontFamilySubscription;
-    private Disposable fontAlignSubscription;
+    private transient Disposable toolModeSubscription;
+    private transient Disposable fontSizeSubscription;
+    private transient Disposable fontStyleSubscription;
+    private transient Disposable fontFamilySubscription;
+    private transient Disposable fontAlignSubscription;
 
-    private final ToolEditablePart toolEditablePart;
-    private final static Throttle fontSelectionThrottle = new Throttle("font-selection-throttle", 500);
+    private final transient ToolEditablePart toolEditablePart;
+    private static final Throttle fontSelectionThrottle = new Throttle("font-selection-throttle", 500);
 
     // Non-Mac L&Fs cause focus to be lost when user clicks on menu bar; this boolean overrides that behavior so that
     // menu remains useful for text property changes.
@@ -108,8 +108,7 @@ public abstract class HyperCardTextField extends JScrollPane implements
     @Override
     @RunOnDispatch
     public void insertUpdate(DocumentEvent e) {
-        syncModelToView(new ExecutionContext());
-        textPane.invalidateViewport(getViewport());
+        documentUpdate();
     }
 
     /**
@@ -118,8 +117,7 @@ public abstract class HyperCardTextField extends JScrollPane implements
     @Override
     @RunOnDispatch
     public void removeUpdate(DocumentEvent e) {
-        syncModelToView(new ExecutionContext());
-        textPane.invalidateViewport(getViewport());
+        documentUpdate();
     }
 
     /**
@@ -128,6 +126,10 @@ public abstract class HyperCardTextField extends JScrollPane implements
     @Override
     @RunOnDispatch
     public void changedUpdate(DocumentEvent e) {
+        documentUpdate();
+    }
+
+    private void documentUpdate() {
         syncModelToView(new ExecutionContext());
         textPane.invalidateViewport(getViewport());
     }
@@ -187,6 +189,9 @@ public abstract class HyperCardTextField extends JScrollPane implements
             case FieldModel.PROP_SCROLL:
                 setScroll(newValue.integerValue());
                 break;
+
+            default:
+                // Nothing to do
         }
     }
 
@@ -313,7 +318,7 @@ public abstract class HyperCardTextField extends JScrollPane implements
         try {
             textPane.setSelectionStart(selection.start);
             textPane.setSelectionEnd(selection.end);
-        } catch (Throwable t) {
+        } catch (Exception t) {
             textPane.paintSelection(selection);
         }
         updateSelection();
@@ -368,81 +373,6 @@ public abstract class HyperCardTextField extends JScrollPane implements
         textPane.getStyledDocument().setParagraphAttributes(0, textPane.getStyledDocument().getLength(), alignment, false);
 
         syncModelToView(context);
-    }
-
-    @RunOnDispatch
-    private void setTextFontFamily(ExecutionContext context, Value fontFamily) {
-        Range selection = getSelectedTextRange();
-        StyledDocument doc = textPane.getStyledDocument();
-
-        // Apply change to field
-        if (selection.length() == 0) {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getCharacterAttributes());
-            tss.setFontFamily(fontFamily.toString());
-            textPane.setCharacterAttributes(tss.toAttributeSet(), true);
-        }
-
-        // Apply change to highlighted text
-        else {
-            for (int index = selection.start; index < selection.start + selection.length(); index++) {
-                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
-                tss.setFontFamily(fontFamily.toString());
-                doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
-            }
-        }
-
-        syncModelToView(context);
-        updateSelection();
-    }
-
-    @RunOnDispatch
-    private void setTextFontSize(ExecutionContext context, Value fontSize) {
-        Range selection = getSelectedTextRange();
-        StyledDocument doc = textPane.getStyledDocument();
-
-        // Apply change to field
-        if (selection.length() == 0) {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getCharacterAttributes());
-            tss.setFontSize(fontSize.integerValue());
-            textPane.setCharacterAttributes(tss.toAttributeSet(), true);
-        }
-
-        // Apply change to highlighted text
-        else {
-            for (int index = selection.start; index < selection.start + selection.length(); index++) {
-                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
-                tss.setFontSize(fontSize.integerValue());
-                doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
-            }
-        }
-
-        syncModelToView(context);
-        updateSelection();
-    }
-
-    @RunOnDispatch
-    private void setTextFontStyle(ExecutionContext context, Value fontStyle) {
-        Range selection = getSelectedTextRange();
-        StyledDocument doc = textPane.getStyledDocument();
-
-        // Apply change to field
-        if (selection.length() == 0) {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getCharacterAttributes());
-            tss.setFontStyle(fontStyle);
-            textPane.setCharacterAttributes(tss.toAttributeSet(), true);
-        }
-
-        // Apply change to highlighted text
-        else {
-            for (int index = selection.start; index < selection.start + selection.length(); index++) {
-                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
-                tss.setFontStyle(fontStyle);
-                doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
-            }
-        }
-
-        syncModelToView(context);
-        updateSelection();
     }
 
     @RunOnDispatch
@@ -528,6 +458,31 @@ public abstract class HyperCardTextField extends JScrollPane implements
                 Invoke.onDispatch(() -> setTextFontStyle(new ExecutionContext(), style));
             }
         }
+
+        @RunOnDispatch
+        private void setTextFontStyle(ExecutionContext context, Value fontStyle) {
+            Range selection = getSelectedTextRange();
+            StyledDocument doc = textPane.getStyledDocument();
+
+            // Apply change to field
+            if (selection.length() == 0) {
+                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getCharacterAttributes());
+                tss.setFontStyle(fontStyle);
+                textPane.setCharacterAttributes(tss.toAttributeSet(), true);
+            }
+
+            // Apply change to highlighted text
+            else {
+                for (int index = selection.start; index < selection.start + selection.length(); index++) {
+                    TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
+                    tss.setFontStyle(fontStyle);
+                    doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+                }
+            }
+
+            syncModelToView(context);
+            updateSelection();
+        }
     }
 
     private class FontAlignObserver implements Consumer<Value> {
@@ -546,6 +501,31 @@ public abstract class HyperCardTextField extends JScrollPane implements
                 Invoke.onDispatch(() -> setTextFontSize(new ExecutionContext(), size));
             }
         }
+
+        @RunOnDispatch
+        private void setTextFontSize(ExecutionContext context, Value fontSize) {
+            Range selection = getSelectedTextRange();
+            StyledDocument doc = textPane.getStyledDocument();
+
+            // Apply change to field
+            if (selection.length() == 0) {
+                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getCharacterAttributes());
+                tss.setFontSize(fontSize.integerValue());
+                textPane.setCharacterAttributes(tss.toAttributeSet(), true);
+            }
+
+            // Apply change to highlighted text
+            else {
+                for (int index = selection.start; index < selection.start + selection.length(); index++) {
+                    TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
+                    tss.setFontSize(fontSize.integerValue());
+                    doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+                }
+            }
+
+            syncModelToView(context);
+            updateSelection();
+        }
     }
 
     private class FontFamilyObserver implements Consumer<Value> {
@@ -554,6 +534,31 @@ public abstract class HyperCardTextField extends JScrollPane implements
             if (hasFocus()) {
                 Invoke.onDispatch(() -> setTextFontFamily(new ExecutionContext(), family));
             }
+        }
+
+        @RunOnDispatch
+        private void setTextFontFamily(ExecutionContext context, Value fontFamily) {
+            Range selection = getSelectedTextRange();
+            StyledDocument doc = textPane.getStyledDocument();
+
+            // Apply change to field
+            if (selection.length() == 0) {
+                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getCharacterAttributes());
+                tss.setFontFamily(fontFamily.toString());
+                textPane.setCharacterAttributes(tss.toAttributeSet(), true);
+            }
+
+            // Apply change to highlighted text
+            else {
+                for (int index = selection.start; index < selection.start + selection.length(); index++) {
+                    TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
+                    tss.setFontFamily(fontFamily.toString());
+                    doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+                }
+            }
+
+            syncModelToView(context);
+            updateSelection();
         }
     }
 
