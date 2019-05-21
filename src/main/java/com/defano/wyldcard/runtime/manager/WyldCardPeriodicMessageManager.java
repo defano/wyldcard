@@ -19,7 +19,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -30,10 +29,11 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
 
-    private final static int IDLE_PERIOD_MS = 200;              // Frequency that periodic messages are sent
-    private final static int IDLE_DEFERRAL_CYCLES = 50;         // Number of cycles we defer if error is encountered
+    private static final int IDLE_PERIOD_MS = 200;              // Frequency that periodic messages are sent
+    private static final int IDLE_DEFERRAL_CYCLES = 50;         // Number of cycles we defer if error is encountered
+
     private final ScheduledExecutorService idleTimeExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("periodic-executor-%d").build());
-    private final Vector<PartModel> withinParts = new Vector<>();
+    private final ArrayList<PartModel> withinParts = new ArrayList<>();
     private final Set<IdleObserver> idleObservers = new HashSet<>();
     private int deferCycles = 0;
 

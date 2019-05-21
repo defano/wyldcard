@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SoundPlaybackExecutor extends ThreadPoolExecutor {
 
-    private final static SoundPlaybackExecutor instance = new SoundPlaybackExecutor();
+    private static final SoundPlaybackExecutor instance = new SoundPlaybackExecutor();
     private AtomicInteger activeChannelsCount = new AtomicInteger(0);
 
     private SoundPlaybackExecutor() {

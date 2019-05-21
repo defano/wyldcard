@@ -8,8 +8,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class ScriptCompiler {
 
-    private final static int MAX_COMPILE_THREADS = 6;          // Simultaneous background parse tasks
+    private static final int MAX_COMPILE_THREADS = 6;          // Simultaneous background parse tasks
     private static final ThreadPoolExecutor bestEffortCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("be-async-compiler-%d").build());
+
+    private ScriptCompiler() {
+    }
 
     /**
      * Attempts to compile the given script text on a background thread and invoke the CompileCompletionObserver
@@ -62,8 +65,7 @@ public class ScriptCompiler {
                 compiledScript = TwoPhaseParser.parseScript(compilationUnit, scriptText);
             } catch (HtException e) {
                 generatedError = e;
-            } catch (Throwable t) {
-                t.printStackTrace();
+            } catch (Exception t) {
                 generatedError = new HtException("An unexpected error occurred: " + t.getMessage());
             }
 

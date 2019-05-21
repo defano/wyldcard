@@ -18,6 +18,9 @@ import java.io.IOException;
  */
 public class ArtVandelay {
 
+    private ArtVandelay() {
+    }
+
     /**
      * Prompts the user to choose a file from which to import paint from; graphics from selected file are "pasted" onto
      * the card as the active selection.

@@ -30,6 +30,8 @@ import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.WyldCardWindowManager;
 import com.defano.wyldcard.window.layout.HyperTalkErrorDialog;
 import com.google.inject.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 
@@ -46,6 +48,8 @@ import javax.swing.*;
 @SuppressWarnings("unused")
 @Singleton
 public class WyldCard implements PartFinder {
+
+    private static Logger LOG = LoggerFactory.getLogger(WyldCard.class);
 
     private static WyldCard instance;                                   // Application object graph
     private static Injector injector;                                   // Google Guice injector that built the app
@@ -99,7 +103,7 @@ public class WyldCard implements PartFinder {
             System.setProperty("apple.awt.application.name", "WyldCard");
             System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");
         } catch (Exception e) {
-            e.printStackTrace();        // Should never occur
+            LOG.error("An error occurred setting system properties.", e);
         }
 
         // Assemble WyldCard application object graph

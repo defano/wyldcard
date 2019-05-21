@@ -138,7 +138,7 @@ public class FileMenu extends WyldCardMenu {
         }
     }
 
-    public void reset() {
+    public static void reset() {
         instance = new FileMenu();
     }
 }

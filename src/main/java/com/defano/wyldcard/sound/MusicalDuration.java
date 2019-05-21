@@ -28,10 +28,10 @@ public enum  MusicalDuration {
     }
 
     public double getDurationMs(int forBpm) {
-        double SECONDS_PER_MINUTE = 60.0;
-        double MILLISECONDS_PER_SECOND = 1000.0;
+        double secondsPerMinute = 60.0;
+        double millisecondsPerSecond = 1000.0;
 
-        return ((SECONDS_PER_MINUTE / forBpm) * MILLISECONDS_PER_SECOND) * getRelativeDuration();
+        return ((secondsPerMinute / forBpm) * millisecondsPerSecond) * getRelativeDuration();
     }
 
     public MusicalDuration getUndotted() {

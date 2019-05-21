@@ -1,5 +1,8 @@
 package com.defano.wyldcard.thread;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Callable;
@@ -9,7 +12,11 @@ import java.util.concurrent.Future;
 
 public class Invoke {
 
-    private final static ExecutorService delegatedActionExecutor = Executors.newSingleThreadExecutor();
+    private static final Logger LOG = LoggerFactory.getLogger(Invoke.class);
+    private static final ExecutorService delegatedActionExecutor = Executors.newSingleThreadExecutor();
+
+    private Invoke() {
+    }
 
     /**
      * Synchronously invokes the given callable on the Swing UI dispatch thread, returning the result of executing the
@@ -35,11 +42,30 @@ public class Invoke {
     }
 
     /**
+     * Executes the given callable using {@link #onDispatch(CallableNoException)}, then waits for the AWT
+     * dispatch queue to drain.
+     * <p>
+     * This method is useful for specialized situations where no further processing on a thread should occur until the
+     * given runnable has completed, AND any AWT-related side effects produced executing the callable have also been
+     * processed. This is a very expensive operation and should be used only where needed.
+     *
+     * @param callable The callable to execute on the dispatch thread.
+     * @param <V>      The type of object returned by the callable
+     * @return The value returned by the callable.
+     */
+    public static <V> V onDispatchAndFlush(CallableNoException<V> callable) {
+        V v = onDispatch(callable);
+        flushDispatchQueue();
+        return v;
+    }
+
+    /**
      * Synchronously invokes the given callable on the Swing UI dispatch thread, returning the result of executing the
      * callable on the current thread. Blocks the current thread until the callable has completed executing.
      *
-     * @param callable The callable to execute on the dispatch thread
-     * @param <V>      The type of object returned by the callable
+     * @param callable       The callable to execute on the dispatch thread
+     * @param exceptionClass The type of exception that may be thrown by the callable.
+     * @param <V>            The type of object returned by the callable
      * @return The value returned by the callable
      * @throws E The exception thrown by the callable if execution of the callable throws an exception.
      */
@@ -70,6 +96,27 @@ public class Invoke {
 
             return (V) value[0];
         }
+    }
+
+    /**
+     * Executes the given callable using {@link #onDispatch(Callable, Class)}, then waits for the AWT dispatch queue to
+     * drain.
+     * <p>
+     * This method is useful for specialized situations where no further processing on a thread should occur until the
+     * given runnable has completed, AND any AWT-related side effects produced executing the callable have also been
+     * processed. This is a very expensive operation and should be used only where needed.
+     *
+     * @param callable       The callable to execute on the dispatch thread
+     * @param exceptionClass The type of exception that may be thrown by the callable.
+     * @param <E>            A type of exception.
+     * @param <V>            The type of object returned by the callable
+     * @return The value returned by the callable
+     * @throws E The exception thrown by the callable if execution of the callable throws an exception.
+     */
+    public static <V, E extends Exception> V onDispatchAndFlush(Callable<V> callable, Class<E> exceptionClass) throws E {
+        V v = onDispatch(callable, exceptionClass);
+        flushDispatchQueue();
+        return v;
     }
 
     /**
@@ -109,14 +156,25 @@ public class Invoke {
             r.run();
         } else {
             try {
-                // Invoke runnable on dispatch thread
                 SwingUtilities.invokeAndWait(r);
-
-                // ... then wait for dispatch thread to complete any events that runnable enqueued
-                SwingUtilities.invokeAndWait(() -> {});
-
             } catch (InterruptedException | InvocationTargetException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    /**
+     * Flushes the AWT event dispatch queue, blocking the current thread until all events have been processed. Has no
+     * effect if the current thread is the event dispatch thread.
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static void flushDispatchQueue() {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            try {
+                SwingUtilities.invokeAndWait(() -> {
+                });
+            } catch (InterruptedException | InvocationTargetException e) {
+                LOG.warn("Dispatch work item was interrupted.", e);
                 Thread.currentThread().interrupt();
             }
         }
@@ -140,7 +198,7 @@ public class Invoke {
      * @return A Future representing the execution state of the runnable.
      */
     @SuppressWarnings("UnusedReturnValue")
-    public static Future<?> asynchronouslyOnWorkerThread(Runnable r) {
+    public static Future asynchronouslyOnWorkerThread(Runnable r) {
         return delegatedActionExecutor.submit(r);
     }
 

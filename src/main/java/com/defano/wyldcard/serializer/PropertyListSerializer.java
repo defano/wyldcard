@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 public class PropertyListSerializer implements JsonSerializer<PropertyList>, JsonDeserializer<PropertyList> {
 
     @Override
-    public PropertyList deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public PropertyList deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
 
         PropertyList list = new PropertyList();
         JsonObject jsonObj = json.getAsJsonObject();

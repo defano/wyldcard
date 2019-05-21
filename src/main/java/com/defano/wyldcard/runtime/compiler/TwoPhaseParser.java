@@ -18,9 +18,12 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 public class TwoPhaseParser {
 
-    private final static String HANDLER_START = "^\\s*(on)\\s+\\w.*";
-    private final static String FUNCTION_START = "^\\s*(function)\\s+\\w.*";
-    private final static String HANDLER_END = "^\\s*(end)\\s+.*";
+    private static final String HANDLER_START = "^\\s*(on)\\s+\\w.*";
+    private static final String FUNCTION_START = "^\\s*(function)\\s+\\w.*";
+    private static final String HANDLER_END = "^\\s*(end)\\s+.*";
+
+    private TwoPhaseParser() {
+    }
 
     /**
      * Performs a two-phase parse of the given HyperTalk script text. First attempts to parse the script using the SLL

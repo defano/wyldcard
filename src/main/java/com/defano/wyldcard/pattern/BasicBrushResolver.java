@@ -8,6 +8,9 @@ import java.util.Arrays;
 
 public class BasicBrushResolver {
 
+    private BasicBrushResolver() {
+    }
+
     public static Value valueOfBasicBrush(PaintBrush brush) {
         return new Value(Arrays.asList(PaintBrush.values()).indexOf(brush));
     }
