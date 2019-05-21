@@ -42,30 +42,30 @@ public class CompositePartSpecifier implements PartSpecifier {
             }
 
             // Recursively find the card or background containing the requested part
-            PartModel owningPart = stack.findPart(context, owningPartSpecifier);
+            PartModel owningPartModel = stack.findPart(context, owningPartSpecifier);
 
             // Looking for a background button or field on a remote card or background
             if (isSpecifyingBackgroundPart()) {
-                if (owningPart instanceof CardModel) {
-                    foundPart = stack.findPart(context, getPart(), ((CardModel) owningPart).getBackgroundModel().getPartsInDisplayOrder(context, getOwner()));
+                if (owningPartModel instanceof CardModel) {
+                    foundPart = stack.findPart(context, getPart(), ((CardModel) owningPartModel).getBackgroundModel().getPartsInDisplayOrder(context, getOwner()));
                 } else {
-                    foundPart = stack.findPart(context, getPart(), ((BackgroundModel) owningPart).getPartsInDisplayOrder(context, getOwner()));
+                    foundPart = stack.findPart(context, getPart(), ((BackgroundModel) owningPartModel).getPartsInDisplayOrder(context, getOwner()));
                 }
             }
 
             // Looking for button or field on a remote card
             else if (isSpecifyingCardPart()) {
-                foundPart = stack.findPart(context, getPart(), ((CardModel) owningPart).getPartsInDisplayOrder(context));
+                foundPart = stack.findPart(context, getPart(), ((CardModel) owningPartModel).getPartsInDisplayOrder(context));
             }
 
             // Looking for a card in a remote background
             else {
-                foundPart = stack.findPart(context, getPart(), ((LayeredPartFinder) owningPart).getPartsInDisplayOrder(context));
+                foundPart = stack.findPart(context, getPart(), ((LayeredPartFinder) owningPartModel).getPartsInDisplayOrder(context));
             }
 
             // Special case: Field needs to be evaluated in the context of the requested card
             if (foundPart instanceof CardLayerPartModel) {
-                ((CardLayerPartModel) foundPart).setCurrentCardId(owningPart.getId());
+                ((CardLayerPartModel) foundPart).setCurrentCardId(owningPartModel.getId());
             }
 
             return foundPart;

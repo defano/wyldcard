@@ -24,14 +24,14 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
     private ScheduledFuture animationResult;
     private AnimatedSegue activeEffect;
 
-    synchronized public void lockScreen(ExecutionContext context) {
+    public synchronized void lockScreen(ExecutionContext context) {
         // Nothing to do when trying to lock a locked screen
         if (!isScreenLocked()) {
             start(VisualEffectFactory.createScreenLock(context));
         }
     }
 
-    synchronized public void unlockScreen(ExecutionContext context, VisualEffectSpecifier effectSpecifier) {
+    public synchronized void unlockScreen(ExecutionContext context, VisualEffectSpecifier effectSpecifier) {
         if (isScreenLocked()) {
 
             // Unlock without effect
@@ -62,7 +62,7 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
             } catch (ExecutionException e) {
-                throw new RuntimeException("An error occurred rendering visual effect", e);
+                throw new IllegalStateException("An error occurred rendering visual effect", e);
             } catch (CancellationException ce) {
                 // Nothing to do
             }
