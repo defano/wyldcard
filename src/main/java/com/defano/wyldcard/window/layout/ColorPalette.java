@@ -11,7 +11,7 @@ import java.awt.*;
 
 public class ColorPalette extends WyldCardWindow<Object> {
 
-    private final static ColorPalette instance = new ColorPalette();
+    private static final ColorPalette instance = new ColorPalette();
 
     private JPanel panel;
     private JTabbedPane tabs;
@@ -69,7 +69,7 @@ public class ColorPalette extends WyldCardWindow<Object> {
 
     @Override
     public void bindModel(Object data) {
-
+        throw new UnsupportedOperationException("Color palette has not data model.");
     }
 
     {

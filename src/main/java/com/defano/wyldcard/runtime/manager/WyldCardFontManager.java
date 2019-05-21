@@ -281,7 +281,7 @@ public class WyldCardFontManager implements FontManager {
 
     @Override
     public void setFocusedHyperTalkFontStyles(Collection<Value> values) {
-        TextStyleSpecifier tss = TextStyleSpecifier.fromFontStyle(new Value("plain"));
+        TextStyleSpecifier tss = TextStyleSpecifier.fromFontStyle(new Value(DEFAULT_FONT_STYLE));
         boolean includesPlain = false;
 
         for (Value thisStyleSet : values) {

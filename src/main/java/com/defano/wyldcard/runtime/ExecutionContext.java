@@ -54,10 +54,10 @@ import java.util.List;
 public class ExecutionContext {
 
     // Throw 'too much recursion' if HyperTalk call stack exceeds this depth
-    private final static int MAX_CALL_STACK_DEPTH = 256;
+    private static final int MAX_CALL_STACK_DEPTH = 256;
 
     // Globals are shared across all contexts... that what makes them global :)
-    private final static SymbolTable globals = new BasicSymbolTable();
+    private static final SymbolTable globals = new BasicSymbolTable();
 
     private StackPart stack;                                // WyldCard stack that this script is bound to
     private CardPart card;                                  // "Current" card in the context of this execution
@@ -261,7 +261,7 @@ public class ExecutionContext {
     public void popStackFrame() {
         callStack.pop();
 
-        if (callStack.size() == 0) {
+        if (callStack.isEmpty()) {
             expire();
         }
     }

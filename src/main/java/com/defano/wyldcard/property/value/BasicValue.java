@@ -5,10 +5,12 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.property.PropertiesModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
+import java.io.Serializable;
+
 /**
  * A read/write {@link PropertyValue} backed by a {@link Value} object.
  */
-public class BasicValue implements ConcreteValue {
+public class BasicValue implements ConcreteValue, Serializable {
 
     private Value v;
     private transient ValueTransformer transformer;

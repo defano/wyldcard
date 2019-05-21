@@ -62,9 +62,8 @@ public class BackgroundBlock extends CardLayerBlock {
 
     @Override
     public void unpack() throws ImportException {
-        StackInputStream sis = new StackInputStream(getBlockData());
 
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
             bitmapId = sis.readInt();
             flags = LayerFlag.fromBitmask(sis.readShort());
             sis.readShort();

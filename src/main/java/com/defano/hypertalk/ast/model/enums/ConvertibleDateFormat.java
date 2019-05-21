@@ -16,7 +16,7 @@ public enum ConvertibleDateFormat {
     LONG_TIME(new SimpleDateFormat("h:mm:ss a")),
     SHORT_TIME(new SimpleDateFormat("h:mm a"));
 
-    private final static int MS_PER_S = 1000;
+    private static final int MS_PER_S = 1000;
     public final DateFormat dateFormat;
 
     ConvertibleDateFormat(DateFormat format) {

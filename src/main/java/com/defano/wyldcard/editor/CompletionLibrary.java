@@ -26,7 +26,7 @@ public enum CompletionLibrary {
     public Icon getIcon() {
         try {
             return new ImageIcon(getClass().getResource(iconPath));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return null;
         }
     }

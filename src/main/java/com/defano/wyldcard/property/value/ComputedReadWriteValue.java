@@ -5,11 +5,13 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.property.PropertiesModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
+import java.io.Serializable;
+
 /**
  * A {@link PropertyValue} that stores no value of its own, but rather invokes a provided {@link ComputedValueGetter}
  * and {@link ComputedValueSetter} when the property is read or written.
  */
-public class ComputedReadWriteValue implements PropertyValue {
+public class ComputedReadWriteValue implements PropertyValue, Serializable {
 
     private final transient ComputedValueGetter getter;
     private final transient ComputedValueSetter setter;
