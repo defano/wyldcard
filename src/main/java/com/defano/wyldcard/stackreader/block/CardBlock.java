@@ -9,6 +9,9 @@ import com.defano.wyldcard.stackreader.record.PartContentRecord;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Represents a card in a HyperCard stack.
+ */
 @SuppressWarnings("unused")
 public class CardBlock extends CardLayerBlock {
 
@@ -86,9 +89,8 @@ public class CardBlock extends CardLayerBlock {
     /** {@inheritDoc} */
     @Override
     public void unpack() throws ImportException {
-        StackInputStream sis = new StackInputStream(getBlockData());
 
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
             bitmapId = sis.readInt();
             flags = LayerFlag.fromBitmask(sis.readShort());
             sis.skipBytes(10);
@@ -100,7 +102,7 @@ public class CardBlock extends CardLayerBlock {
             super.unpack(sis);
 
         } catch (IOException e) {
-            throw new ImportException(this, "Layer block is malformed; stack is corrupt.");
+            throw new ImportException(this, "Layer block is malformed; stack is corrupt.", e);
         }
     }
 

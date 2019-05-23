@@ -35,6 +35,7 @@ import java.awt.image.BufferedImage;
 
 public interface WOBAImageDecoder {
 
+    @SuppressWarnings("PointlessArithmeticExpression")
     default BufferedImage decodeImage(Rectangle boundRect, Rectangle maskRect, Rectangle imageRect, int imageSize, byte[] imageData, int maskSize, byte[] maskData) {
         BufferedImage image;
 

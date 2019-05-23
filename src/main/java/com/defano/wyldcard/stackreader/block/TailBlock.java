@@ -26,13 +26,12 @@ public class TailBlock extends Block {
 
     @Override
     public void unpack() throws ImportException {
-        StackInputStream sis = new StackInputStream(getBlockData());
 
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
             tailStringLength = sis.readUnsignedByte();
             tailString = sis.readString(tailStringLength);
         } catch (IOException e) {
-            throw new ImportException(this, "Malformed TAIL block.");
+            throw new ImportException(this, "Malformed TAIL block.", e);
         }
     }
 }

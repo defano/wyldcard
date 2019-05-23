@@ -9,6 +9,9 @@ import com.defano.wyldcard.stackreader.record.PartContentRecord;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Represents a HyperCard background.
+ */
 @SuppressWarnings("unused")
 public class BackgroundBlock extends CardLayerBlock {
 
@@ -23,13 +26,17 @@ public class BackgroundBlock extends CardLayerBlock {
         super(stack, blockType, blockSize, blockId, blockData);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public short getPartCount() {
         return partCount;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PartContentRecord getPartContents(int partId) {
         return Arrays.stream(getContents())
@@ -38,28 +45,55 @@ public class BackgroundBlock extends CardLayerBlock {
                 .orElse(new PartContentRecord());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getBitmapId() {
         return bitmapId;
     }
 
+    /**
+     * Gets an array of layer flags associated with this background (like cant-delete, hide picture, don't search).
+     *
+     * @return Layer flags associated with this background.
+     */
     public LayerFlag[] getFlags() {
         return flags;
     }
 
+    /**
+     * Gets the number of cards sharing this background.
+     *
+     * @return The number of cards in this background.
+     */
     public int getCardCount() {
         return cardCount;
     }
 
+    /**
+     * Gets the ID of the next background in the stack; the last background in the stack returns the ID of the first
+     * background in the stack (like a circular buffer).
+     *
+     * @return The ID of the next background.
+     */
     public int getNextBkgndId() {
         return nextBkgndId;
     }
 
+    /**
+     * Gets the ID of the previous background in the stack; the first background in the stack returns the id of the
+     * last background in the stack (like a circular buffer).
+     *
+     * @return The ID of the previous background.
+     */
     public int getPrevBkgndId() {
         return prevBkgndId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void unpack() throws ImportException {
 
@@ -76,7 +110,7 @@ public class BackgroundBlock extends CardLayerBlock {
             super.unpack(sis);
 
         } catch (IOException e) {
-            throw new ImportException(this, "Malformed BKGD block.");
+            throw new ImportException(this, "Malformed BKGD (background) block.", e);
         }
 
     }

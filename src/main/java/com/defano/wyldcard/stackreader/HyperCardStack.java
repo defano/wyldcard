@@ -2,10 +2,11 @@ package com.defano.wyldcard.stackreader;
 
 import com.defano.wyldcard.stackreader.block.*;
 import com.defano.wyldcard.stackreader.misc.ImportException;
-import com.defano.wyldcard.stackreader.misc.ImportOrderComparator;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class HyperCardStack {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HyperCardStack.class);
     private final List<Block> blocks = new ArrayList<>();
 
     public static HyperCardStack fromFile(File f) throws FileNotFoundException, ImportException {
@@ -65,6 +67,10 @@ public class HyperCardStack {
                 .orElseThrow(() -> new IllegalArgumentException("No block matching type " + klass));
     }
 
+    public <T extends Block> boolean hasBlock(Class<T> klass) {
+        return blocks.stream().anyMatch(b -> b.getClass() == klass);
+    }
+
     /**
      * Gets a list of blocks matching the requested type, in the order they appear in the stack file.
      *
@@ -85,9 +91,9 @@ public class HyperCardStack {
      * stack. Block structures often make reference to other blocks by id; use this method to find a block referenced
      * by another block.
      *
-     * @param klass The class of the de-serialized block type. Use {@link BlockType#blockClass()} as a valid argument.
+     * @param klass   The class of the de-serialized block type. Use {@link BlockType#blockClass()} as a valid argument.
      * @param blockId The id of the block to retrieve.
-     * @param <T>   Any subclass of {@link Block} representing the type of the block to return.
+     * @param <T>     Any subclass of {@link Block} representing the type of the block to return.
      * @return The block matching the given type.
      */
     @SuppressWarnings("unchecked")
@@ -108,7 +114,11 @@ public class HyperCardStack {
      * @return A list of all the stack's cards, in the order they appear to the user in the stack.
      */
     public List<CardBlock> getCardBlocks() {
-        return getBlock(ListBlock.class).getCards();
+        if (hasBlock(ListBlock.class)) {
+            return getBlock(ListBlock.class).getCards();
+        } else {
+            return getBlocks(CardBlock.class);
+        }
     }
 
     public BufferedImage getImage(int bitmapId) {
@@ -121,41 +131,31 @@ public class HyperCardStack {
     }
 
     private void deserialize(StackInputStream fis) throws ImportException {
-        BlockType blockType;
+        BlockType blockType = null;
 
         try {
 
-            // First pass, read in raw block data
             do {
-                int blockSize = fis.readInt();
-                int blockTypeId = fis.readInt();
-                int blockId = fis.readInt();
-                fis.readInt();  // Padding; ignored
+                int blockSize = fis.readInt() & 0xffff;     // 4-byte block size, but never > 64KB
+                int blockTypeId = fis.readInt();            // 4-byte block identifier (i.e, 'STAK')
+                int blockId = fis.readInt();                // 4-byte block id number
+                fis.readInt();                              // 4-byte padding, ignored
+
+                LOG.debug("Unpacking {} bytes of block {}, id={}", blockSize, BlockType.fromBlockId(blockTypeId), blockId);
+
                 byte[] blockData = fis.readBytes(blockSize - 16);
-
                 blockType = BlockType.fromBlockId(blockTypeId);
+                blocks.add(blockType.instantiate(this, blockId, blockSize, blockData));
 
-                if (blockType == null) {
-                    throw new ImportException("Encountered block with unknown enums: " + blockTypeId + ".");
-                } else {
-                    Block block = blockType.instantiateBlock(this, blockId, blockSize, blockData);
-                    if (block != null) {
-                        blocks.add(block);
-                    }
+                Block b = blockType.instantiate(this, blockId, blockSize, blockData);
+                if (b instanceof BackgroundBlock) {
+                    System.err.println(((BackgroundBlock)b).getPrevBkgndId());
                 }
 
             } while (blockType != BlockType.TAIL);
 
-            // Second pass: unpack block data
-            ArrayList<Block> importOrder = new ArrayList<>(blocks);
-            importOrder.sort(new ImportOrderComparator());
-
-            for (Block thisBlock : importOrder) {
-                thisBlock.unpack();
-            }
-
         } catch (IOException e) {
-            throw new ImportException("Malformed block array; stack structure is corrupt.", e);
+            throw new ImportException("Malformed block of type " + blockType + "; stack structure is corrupt.", e);
         }
     }
 

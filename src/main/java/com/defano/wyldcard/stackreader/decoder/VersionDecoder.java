@@ -23,7 +23,7 @@ public interface VersionDecoder {
         } else if (state == 20) {
             return "development";
         } else {
-            return "";  // Bad value...?
+            return "unknown";  // Bad value...?
         }
     }
 
@@ -32,8 +32,8 @@ public interface VersionDecoder {
     }
 
     default String getVersionString(int versionCode) {
-        return getMajorVersion(versionCode) + "." + getMinorVersion(versionCode) + " r" + getBuildNumber(versionCode) +
-                " " + getReleaseState(versionCode);
+        return getMajorVersion(versionCode) + "." + getMinorVersion(versionCode) + " build " + getBuildNumber(versionCode) +
+                " (" + getReleaseState(versionCode) + ")";
     }
 
 }

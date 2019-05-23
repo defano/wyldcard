@@ -32,9 +32,8 @@ public class PrintTableBlock extends Block {
 
     @Override
     public void unpack() throws ImportException {
-        StackInputStream sis = new StackInputStream(getBlockData());
 
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
             sis.skipBytes(32);
             prstBlockId = sis.readShort();
             sis.skipBytes(258);

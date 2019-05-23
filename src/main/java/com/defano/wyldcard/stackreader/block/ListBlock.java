@@ -126,9 +126,7 @@ public class ListBlock extends Block {
     @Override
     public void unpack() throws ImportException {
 
-        StackInputStream sis = new StackInputStream(getBlockData());
-
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
             this.pageCount = sis.readInt();
             this.pageSize = sis.readInt();
             this.pageEntryTotal = sis.readInt();

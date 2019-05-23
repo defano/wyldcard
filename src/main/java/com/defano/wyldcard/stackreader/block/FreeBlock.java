@@ -24,17 +24,19 @@ public class FreeBlock extends Block {
         return markerText;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void unpack() throws ImportException {
-        StackInputStream sis = new StackInputStream(getBlockData());
 
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
 
             markerLength = sis.readByte();
             markerText = sis.readString(markerLength);
 
         } catch (IOException e) {
-            throw new ImportException(this, "Malformed FREE block.");
+            throw new ImportException(this, "Malformed FREE block.", e);
         }
     }
 }

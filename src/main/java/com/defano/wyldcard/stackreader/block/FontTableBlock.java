@@ -8,6 +8,9 @@ import com.defano.wyldcard.stackreader.record.FontRecord;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Provides a list of {@link FontRecord} objects describing all the fonts used in the stack.
+ */
 @SuppressWarnings("unused")
 public class FontTableBlock extends Block {
 
@@ -18,25 +21,43 @@ public class FontTableBlock extends Block {
         super(stack, blockType, blockSize, blockId, blockData);
     }
 
+    /**
+     * Gets the number of FontRecords in this block.
+     *
+     * @return The number of FontRecords.
+     */
     public int getFontCount() {
         return fontCount;
     }
 
+    /**
+     * Gets all FontRecords held in this block.
+     *
+     * @return All FontRecords.
+     */
     public FontRecord[] getFonts() {
         return fonts;
     }
 
+    /**
+     * Gets the {@link FontRecord} associated with the given ID.
+     *
+     * @param fontId The ID of the font record to retrieve.
+     * @return The associated FontRecord.
+     */
     public FontRecord getFont(int fontId) {
         return Arrays.stream(getFonts())
                 .filter(f -> f.getFontId() == fontId).findFirst()
-                .orElse(fonts[0]);      // TODO: Some stacks reference unknown fonts...?
+                .orElse(fonts[0]);      // TODO: Some stacks reference fonts not in the font table block... wtf?
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void unpack() throws ImportException {
-        StackInputStream sis = new StackInputStream(getBlockData());
 
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
             fontCount = sis.readInt();
             sis.readInt();
 
@@ -54,7 +75,7 @@ public class FontTableBlock extends Block {
             }
 
         } catch (IOException e) {
-            throw new ImportException(this, "Malformed FTBL (font table) block; stack is corrupted.");
+            throw new ImportException(this, "Malformed FTBL (font table) block; stack is corrupted.", e);
         }
     }
 }

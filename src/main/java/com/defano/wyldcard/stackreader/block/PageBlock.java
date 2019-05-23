@@ -42,7 +42,6 @@ public class PageBlock extends Block {
 
     @Override
     public void unpack() throws ImportException {
-        StackInputStream sis = new StackInputStream(getBlockData());
 
         if (getStack().getBlocks(BlockType.LIST).size() != 1) {
             throw new ImportException(this, "Unable to cross-reference LIST block from PAGE; stack is corrupt.");
@@ -56,7 +55,7 @@ public class PageBlock extends Block {
             throw new ImportException(this, "Unable to find page entry in list index for block id " + getBlockId() + "; stack is corrupted.");
         }
 
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
             listId = sis.readInt();
             checksum = sis.readInt();
 
@@ -70,7 +69,7 @@ public class PageBlock extends Block {
             }
 
         } catch (IOException e) {
-            throw new ImportException(this, "Malformed page block; stack is corrupt.");
+            throw new ImportException(this, "Malformed page block; stack is corrupt.", e);
         }
     }
 

@@ -14,7 +14,7 @@ public class StackBlock extends Block {
 
     private StackFormat format;
     private StackFlag[] flags;
-    private transient BufferedImage[] patterns = new BufferedImage[40];
+    private BufferedImage[] patterns = new BufferedImage[40];
 
     private int formatId;
     private int totalSize;
@@ -227,9 +227,7 @@ public class StackBlock extends Block {
     @Override
     public void unpack() throws ImportException {
 
-        StackInputStream sis = new StackInputStream(getBlockData());
-
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
             formatId = sis.readInt();
             format = StackFormat.fromFormatInt(formatId);
             totalSize = sis.readInt();

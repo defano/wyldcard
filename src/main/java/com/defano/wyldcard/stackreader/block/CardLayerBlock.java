@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 /**
- * Represents the fields common to CARD and BKGD blocks.
+ * Represents data elements that are common to CARD and BKGD blocks.
  */
 @SuppressWarnings("unused")
 public abstract class CardLayerBlock extends Block {
@@ -48,6 +48,7 @@ public abstract class CardLayerBlock extends Block {
 
     /**
      * Gets the image (painted graphics) of this card or background.
+     *
      * @return The layer's bitmap image.
      */
     public BufferedImage getImage() {
@@ -131,6 +132,13 @@ public abstract class CardLayerBlock extends Block {
         return partContentSize;
     }
 
+    /**
+     * Unpacks the data from the given StackInputStream into properties provided by this class. The input stream
+     * should not be closed by this method.
+     *
+     * @param sis The StackInputStream to read
+     * @throws ImportException Thrown if an error occurs unpacking data from the input stream.
+     */
     public void unpack(StackInputStream sis) throws ImportException {
 
         int partCount = getPartCount();
@@ -168,7 +176,7 @@ public abstract class CardLayerBlock extends Block {
             script = sis.readString();
 
         } catch (IOException e) {
-            throw new ImportException(this, "Malformed CARD or BGND block.");
+            throw new ImportException(this, "Malformed CARD or BGND block.", e);
         }
     }
 }

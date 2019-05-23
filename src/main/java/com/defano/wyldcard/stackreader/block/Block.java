@@ -9,11 +9,16 @@ import com.defano.wyldcard.stackreader.misc.ImportException;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import java.io.Serializable;
+
+/**
+ * Represents a "block" structure, an array of which comprise the HyperCard stack file format.
+ */
 @SuppressWarnings("unused")
-public abstract class Block implements PatternDecoder, VersionDecoder, WOBAImageDecoder, MacRomanDecoder {
+public abstract class Block implements PatternDecoder, VersionDecoder, WOBAImageDecoder, MacRomanDecoder, Serializable {
 
     // Ignore when serializing; creates cycle in object graph
-    private transient final HyperCardStack stack;
+    private final transient HyperCardStack stack;
 
     private final BlockType blockType;
     private final int blockSize;
@@ -33,7 +38,9 @@ public abstract class Block implements PatternDecoder, VersionDecoder, WOBAImage
     }
 
     /**
-     * Unpacks (de-serializes) the block data stored in {@link #getBlockData()} into block-specific Java field.
+     * Unpacks (de-serializes) the block data stored in {@link #getBlockData()} into block-specific Java fields. None
+     * of the getter methods on the block (except for the block size, id, type and raw data) will return valid data
+     * before this method has been called.
      *
      * @throws ImportException Thrown if a fatal error occurs unpacking the data, typically caused by malformed or unexpected values in the data.
      */
@@ -104,7 +111,6 @@ public abstract class Block implements PatternDecoder, VersionDecoder, WOBAImage
      */
     @Override
     public String toString() {
-        ToStringBuilder.setDefaultStyle(ToStringStyle.MULTI_LINE_STYLE);
-        return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 }

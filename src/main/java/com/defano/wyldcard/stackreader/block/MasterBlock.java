@@ -23,10 +23,9 @@ public class MasterBlock extends Block {
 
     @Override
     public void unpack() throws ImportException {
-        StackInputStream sis = new StackInputStream(getBlockData());
         ArrayList<BlockOffsetRecord> records = new ArrayList<>();
 
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
             sis.readBytes(16);
 
             for (int idx = 0; idx < (getBlockSize() - 32) / 4; idx++) {

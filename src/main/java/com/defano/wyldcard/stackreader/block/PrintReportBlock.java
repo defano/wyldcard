@@ -89,9 +89,8 @@ public class PrintReportBlock extends Block {
 
     @Override
     public void unpack() throws ImportException {
-        StackInputStream sis = new StackInputStream(getBlockData());
 
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
             units = PrintMeasurementUnit.fromByte(sis.readByte());
             sis.skipBytes(1);
             marginTop = sis.readShort();

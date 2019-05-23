@@ -144,34 +144,50 @@ public class ImageBlock extends Block implements WOBAImageDecoder {
         return imageRect;
     }
 
+    /**
+     * The decoded image represented by this block, in {@link BufferedImage#TYPE_INT_ARGB} format. Returns an empty,
+     * 0x0 BufferedImage if the image data cannot be decoded.
+     * @return The decoded BufferedImage.
+     */
     public BufferedImage getImage() {
         return image;
     }
 
     @Override
     public void unpack() throws ImportException {
-        StackInputStream sis = new StackInputStream(getBlockData());
 
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
             sis.readShort(4);   // Unknown field; skip
 
             bitmapTop = sis.readShort();
             bitmapLeft = sis.readShort();
             bitmapBottom = sis.readShort();
             bitmapRight = sis.readShort();
-            boundRect = new Rectangle(bitmapLeft, bitmapTop, bitmapRight - bitmapLeft, bitmapBottom - bitmapTop);
+            boundRect = new Rectangle(
+                    bitmapLeft,
+                    bitmapTop,
+                    bitmapRight - bitmapLeft,
+                    bitmapBottom - bitmapTop);
 
             maskBoundTop = sis.readShort();
             maskBoundLeft = sis.readShort();
             maskBoundBottom = sis.readShort();
             maskBoundRight = sis.readShort();
-            maskRect = new Rectangle(maskBoundLeft, maskBoundTop, maskBoundRight - maskBoundLeft, maskBoundBottom - maskBoundTop);
+            maskRect = new Rectangle(
+                    maskBoundLeft,
+                    maskBoundTop,
+                    maskBoundRight - maskBoundLeft,
+                    maskBoundBottom - maskBoundTop);
 
             imageBoundTop = sis.readShort();
             imageBoundLeft = sis.readShort();
             imageBoundBottom = sis.readShort();
             imageBoundRight = sis.readShort();
-            imageRect = new Rectangle(imageBoundLeft, imageBoundTop, imageBoundRight - imageBoundLeft, imageBoundBottom - imageBoundTop);
+            imageRect = new Rectangle(
+                    imageBoundLeft,
+                    imageBoundTop,
+                    imageBoundRight - imageBoundLeft,
+                    imageBoundBottom - imageBoundTop);
 
             sis.readInt(2); // Unknown field; skip
 
@@ -187,7 +203,7 @@ public class ImageBlock extends Block implements WOBAImageDecoder {
             }
 
         } catch (IOException e) {
-            throw new ImportException(this, "Malformed image block; stack is corrupt.");
+            throw new ImportException(this, "Malformed image block; stack is corrupt.", e);
         }
     }
 }

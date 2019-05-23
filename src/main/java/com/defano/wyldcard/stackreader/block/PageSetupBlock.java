@@ -162,9 +162,8 @@ public class PageSetupBlock extends Block {
 
     @Override
     public void unpack() throws ImportException {
-        StackInputStream sis = new StackInputStream(getBlockData());
 
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
             printManagerVersion = sis.readShort();
             sis.readShort();
             verticalDpi = sis.readShort();

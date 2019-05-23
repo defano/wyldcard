@@ -40,9 +40,8 @@ public class StyleTableBlock extends Block {
 
     @Override
     public void unpack() throws ImportException {
-        StackInputStream sis = new StackInputStream(getBlockData());
 
-        try {
+        try (StackInputStream sis = new StackInputStream(getBlockData())) {
 
             styleCount = sis.readInt();
             nextStyleId = sis.readInt();

@@ -333,7 +333,8 @@ public class StackFormatConverter {
             }
         }
 
-        throw new IllegalStateException("Can't find card in page entry");
+        // Some stacks may not have a page block (ostensibly, this implies that the stack has no marked cards...?)
+        return false;
     }
 
 }
