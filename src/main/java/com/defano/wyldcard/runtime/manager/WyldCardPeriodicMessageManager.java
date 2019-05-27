@@ -5,7 +5,6 @@ import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.part.button.HyperCardButton;
-import com.defano.wyldcard.part.card.CardModel;
 import com.defano.wyldcard.part.card.CardPart;
 import com.defano.wyldcard.part.field.styles.HyperCardTextField;
 import com.defano.wyldcard.part.model.PartModel;
@@ -33,23 +32,12 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
     private static final int IDLE_DEFERRAL_CYCLES = 50;         // Number of cycles we defer if error is encountered
 
     private final ScheduledExecutorService idleTimeExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("periodic-executor-%d").build());
-    private final ArrayList<PartModel> withinParts = new ArrayList<>();
     private final Set<IdleObserver> idleObservers = new HashSet<>();
     private int deferCycles = 0;
 
     @Override
     public void start() {
         idleTimeExecutor.scheduleAtFixedRate(this, 0, IDLE_PERIOD_MS, TimeUnit.MILLISECONDS);
-
-        // Stop tracking 'within' when card goes away
-        WyldCard.getInstance().getStackManager().getFocusedStackProvider().subscribe(stackPart -> stackPart.addNavigationObserver(WyldCardPeriodicMessageManager.this));
-
-        // Stop tracking 'within' when not in browse mode
-        WyldCard.getInstance().getPaintManager().getToolModeProvider().subscribe(toolMode -> {
-            if (toolMode != ToolMode.BROWSE) {
-                withinParts.clear();
-            }
-        });
     }
 
     @Override
@@ -83,11 +71,6 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
         } catch (Exception e) {
             // Nothing to do
         }
-    }
-
-    @Override
-    public void onDisplayedCardChanged(CardModel prevCard, CardPart nextCard) {
-        withinParts.clear();
     }
 
     private void fireIdleListeners() {
