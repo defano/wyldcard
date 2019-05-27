@@ -3,6 +3,7 @@ package com.defano.wyldcard.stackreader;
 import com.defano.wyldcard.stackreader.block.*;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
+import com.defano.wyldcard.stackreader.misc.UnsupportedVersionException;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.slf4j.Logger;
@@ -14,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a HyperCard stack file.
+ */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class HyperCardStack {
 
@@ -26,7 +30,7 @@ public class HyperCardStack {
 
     public static HyperCardStack fromInputStream(InputStream sis) throws ImportException {
         HyperCardStack stack = new HyperCardStack();
-        stack.deserialize(new StackInputStream(sis));
+        stack.unpack(new StackInputStream(sis));
         return stack;
     }
 
@@ -52,7 +56,7 @@ public class HyperCardStack {
     }
 
     /**
-     * Gets the first block matching the requested class.
+     * Gets the first block in the file matching the requested class.
      *
      * @param klass The class of the de-serialized block type. Use {@link BlockType#blockClass()} as a valid argument.
      * @param <T>   Any subclass of {@link Block} representing the type of the block to return.
@@ -130,7 +134,7 @@ public class HyperCardStack {
                 .orElse(null);
     }
 
-    private void deserialize(StackInputStream fis) throws ImportException {
+    private void unpack(StackInputStream fis) throws ImportException {
         BlockType blockType = null;
 
         try {
@@ -145,11 +149,12 @@ public class HyperCardStack {
 
                 byte[] blockData = fis.readBytes(blockSize - 16);
                 blockType = BlockType.fromBlockId(blockTypeId);
-                blocks.add(blockType.instantiate(this, blockId, blockSize, blockData));
+                Block block = blockType.instantiate(this, blockId, blockSize, blockData);
 
-                Block b = blockType.instantiate(this, blockId, blockSize, blockData);
-                if (b instanceof BackgroundBlock) {
-                    System.err.println(((BackgroundBlock)b).getPrevBkgndId());
+                blocks.add(block);
+
+                if (block instanceof StackBlock && block.getMajorVersion(((StackBlock) block).getModifyVersion()) < 2) {
+                    throw new UnsupportedVersionException("Cannot import stacks from HyperCard 1.x. Please use the \"Convert Stack...\" command in HyperCard 2.x to update this stack.");
                 }
 
             } while (blockType != BlockType.TAIL);
