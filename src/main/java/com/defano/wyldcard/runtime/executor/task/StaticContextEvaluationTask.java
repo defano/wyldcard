@@ -16,7 +16,7 @@ import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.util.concurrent.Callable;
 
-public class StaticContextEvaluationTask implements Callable<String> {
+public class StaticContextEvaluationTask implements Callable<String>, MeteredTask {
 
     private final ExecutionContext context;
     private final String messageText;
@@ -29,6 +29,8 @@ public class StaticContextEvaluationTask implements Callable<String> {
 
     @Override
     public String call() throws HtException {
+        started();
+
         StatementList statements = ((Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, messageText)).getStatements();
 
         if (context.getStackDepth() == 0) {
@@ -42,6 +44,8 @@ public class StaticContextEvaluationTask implements Callable<String> {
             statements.execute(context);
         } catch (Preemption e) {
             return null;            // Can't really exit from here; just return null
+        } finally {
+            stopped();
         }
 
         Statement lastStatement = statements.list.get(statements.list.size() - 1);

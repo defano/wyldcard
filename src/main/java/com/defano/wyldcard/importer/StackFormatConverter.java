@@ -13,6 +13,7 @@ import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.block.*;
 import com.defano.wyldcard.stackreader.enums.*;
 import com.defano.wyldcard.stackreader.misc.ImportException;
+import com.defano.wyldcard.stackreader.misc.UnsupportedVersionException;
 import com.defano.wyldcard.stackreader.record.*;
 import com.defano.wyldcard.thread.Invoke;
 
@@ -65,6 +66,8 @@ public class StackFormatConverter {
 
         } catch (FileNotFoundException e) {
             status.onConversionFailed("Cannot find or open the stack file " + stackFile.getAbsolutePath(), e);
+        } catch (UnsupportedVersionException e) {
+            status.onConversionFailed("WyldCard cannot import stacks from HyperCard 1.x.\nPlease use the \"Convert Stack...\" command in HyperCard 2.x to update this stack before importing it.", e);
         } catch (ImportException e) {
             status.onConversionFailed("File is not a HyperCard stack or the stack is corrupted.", e);
         } catch (Exception t) {

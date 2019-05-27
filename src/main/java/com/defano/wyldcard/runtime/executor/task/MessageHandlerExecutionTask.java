@@ -16,7 +16,7 @@ import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.util.List;
 
-public class MessageHandlerExecutionTask implements HandlerExecutionTask {
+public class MessageHandlerExecutionTask implements HandlerExecutionTask, MeteredTask {
 
     private final ExecutionContext context;
     private final ASTNode callingNode;
@@ -34,11 +34,21 @@ public class MessageHandlerExecutionTask implements HandlerExecutionTask {
 
     @Override
     public Boolean call() throws HtException {
+        started();
+
         boolean trapped = true;
 
         List<Value> arguments = message.evaluateArguments(context);
 
-        HandlerInvocationCache.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, arguments, me, context.getTarget() == null, context.getStackDepth(), true));
+        // Log this invocation (for the message watcher, et al)
+        HandlerInvocationCache.getInstance().notifyMessageHandled(new HandlerInvocation(
+                Thread.currentThread().getName(),
+                handler.name,
+                arguments,
+                me,
+                context.getTarget() == null,
+                context.getStackDepth(),
+                true));
 
         // Push a new context
         context.pushStackFrame(callingNode, handler.name, me, arguments);
@@ -77,6 +87,10 @@ public class MessageHandlerExecutionTask implements HandlerExecutionTask {
         // Script invoked some other (illegal) form of exit (like 'exit repeat')
         catch (Preemption e) {
             throw new HtSemanticException("Cannot exit from here.");
+        }
+
+        finally {
+            stopped();
         }
 
         return trapped;

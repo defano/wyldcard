@@ -28,10 +28,8 @@ public class StackPartSpecifier implements PartSpecifier {
     public PartModel find(ExecutionContext context, List<StackPart> parts) throws HtNoSuchPartException {
         if (isThisStack()) {
             return context.getCurrentStack().getStackModel();
-        } else {
-            String stackName = String.valueOf(getValue());
-
-            for (StackPart thisOpenStack : parts) {
+        } else if (stackName != null) {
+            for (StackPart thisOpenStack : parts.toArray(new StackPart[0])) {
                 String shortName = thisOpenStack.getStackModel().getShortName(context);
                 String abbrevName = thisOpenStack.getStackModel().getAbbreviatedName(context);
                 String longName = thisOpenStack.getStackModel().getLongName(context);

@@ -19,10 +19,7 @@ import com.defano.wyldcard.runtime.compiler.*;
 import com.defano.wyldcard.runtime.executor.observer.HandlerCompletionObserver;
 import com.defano.wyldcard.runtime.executor.observer.HandlerExecutionFutureCallback;
 import com.defano.wyldcard.runtime.executor.observer.MessageEvaluationObserver;
-import com.defano.wyldcard.runtime.executor.task.FunctionHandlerExecutionTask;
-import com.defano.wyldcard.runtime.executor.task.HandlerExecutionTask;
-import com.defano.wyldcard.runtime.executor.task.MessageHandlerExecutionTask;
-import com.defano.wyldcard.runtime.executor.task.StaticContextEvaluationTask;
+import com.defano.wyldcard.runtime.executor.task.*;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.ThreadChecker;
 import com.google.common.util.concurrent.*;
@@ -262,8 +259,8 @@ public class ScriptExecutor {
      * @return The number of active or pending scripts
      */
     public static int getPendingScriptCount() {
-        return defaultExecutor.getActiveCount() + defaultExecutor.getQueue().size() +
-                orderedExecutor.getActiveCount() + orderedExecutor.getQueue().size();
+        return MeteredTask.getRunningTaskCount() + defaultExecutor.getQueue().size() +
+                MeteredTask.getRunningTaskCount() + orderedExecutor.getQueue().size();
     }
 
     /**

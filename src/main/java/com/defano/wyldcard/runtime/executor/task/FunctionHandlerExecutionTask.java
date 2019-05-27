@@ -14,7 +14,7 @@ import com.defano.wyldcard.runtime.ExecutionContext;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class FunctionHandlerExecutionTask implements Callable<Value> {
+public class FunctionHandlerExecutionTask implements Callable<Value>, MeteredTask {
 
     private final ExecutionContext context;
     private final ASTNode callingNode;
@@ -32,6 +32,7 @@ public class FunctionHandlerExecutionTask implements Callable<Value> {
 
     @Override
     public Value call() throws HtException {
+        started();
 
         HandlerInvocationCache.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), function.name, evaluatedArguments, me, true, context.getStackDepth(), true));
 
@@ -55,6 +56,8 @@ public class FunctionHandlerExecutionTask implements Callable<Value> {
             throw new HtSemanticException("Can't exit from here.");
         } catch (Preemption p) {
             // Nothing to do
+        } finally {
+            stopped();
         }
 
         Value returnValue = context.getStackFrame().getReturnValue();

@@ -7,7 +7,7 @@ import java.util.*;
 
 public class HandlerInvocationCache {
 
-    private final static HandlerInvocationCache instance = new HandlerInvocationCache();
+    private static final HandlerInvocationCache instance = new HandlerInvocationCache();
 
     private final List<HandlerInvocationObserver> handlerInvocationObservers = new ArrayList<>();
     private final Map<String, List<HandlerInvocation>> invocationMap = new HashMap<>();
