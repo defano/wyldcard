@@ -3,7 +3,6 @@ package com.defano.wyldcard.stackreader.block;
 import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.enums.StackFlag;
 import com.defano.wyldcard.stackreader.enums.StackFormat;
-import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 
 import java.awt.image.BufferedImage;
@@ -225,7 +224,7 @@ public class StackBlock extends Block {
     }
 
     @Override
-    public void unpack() throws ImportException {
+    public void unpack() throws IOException {
 
         try (StackInputStream sis = new StackInputStream(getBlockData())) {
             formatId = sis.readInt();
@@ -285,8 +284,6 @@ public class StackBlock extends Block {
                 patterns[patternIdx] = decodePattern(patternData[patternIdx]);
             }
 
-        } catch (IOException e) {
-            throw new ImportException(this, "Malformed stack block; stack is corrupt.", e);
         }
     }
 }

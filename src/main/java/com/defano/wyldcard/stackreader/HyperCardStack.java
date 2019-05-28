@@ -154,7 +154,7 @@ public class HyperCardStack {
                 blocks.add(block);
 
                 if (block instanceof StackBlock && block.getMajorVersion(((StackBlock) block).getModifyVersion()) < 2) {
-                    throw new UnsupportedVersionException("Cannot import stacks from HyperCard 1.x. Please use the \"Convert Stack...\" command in HyperCard 2.x to update this stack.");
+                    throw new UnsupportedVersionException(block, "Cannot import stacks from HyperCard 1.x. Please use the \"Convert Stack...\" command in HyperCard 2.x to update this stack.");
                 }
 
             } while (blockType != BlockType.TAIL);

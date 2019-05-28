@@ -1,7 +1,6 @@
 package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
-import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 
 import java.io.IOException;
@@ -25,13 +24,11 @@ public class TailBlock extends Block {
     }
 
     @Override
-    public void unpack() throws ImportException {
+    public void unpack() throws IOException {
 
         try (StackInputStream sis = new StackInputStream(getBlockData())) {
             tailStringLength = sis.readUnsignedByte();
             tailString = sis.readString(tailStringLength);
-        } catch (IOException e) {
-            throw new ImportException(this, "Malformed TAIL block.", e);
         }
     }
 }

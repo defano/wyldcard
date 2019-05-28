@@ -95,7 +95,7 @@ public class BackgroundBlock extends CardLayerBlock {
      * {@inheritDoc}
      */
     @Override
-    public void unpack() throws ImportException {
+    public void unpack() throws ImportException, IOException {
 
         try (StackInputStream sis = new StackInputStream(getBlockData())) {
             bitmapId = sis.readInt();
@@ -108,9 +108,6 @@ public class BackgroundBlock extends CardLayerBlock {
 
             // Unpack fields common to both cards and backgrounds
             super.unpack(sis);
-
-        } catch (IOException e) {
-            throw new ImportException(this, "Malformed BKGD (background) block.", e);
         }
 
     }

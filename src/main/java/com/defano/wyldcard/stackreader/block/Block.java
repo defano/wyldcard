@@ -9,6 +9,7 @@ import com.defano.wyldcard.stackreader.misc.ImportException;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -38,13 +39,14 @@ public abstract class Block implements PatternDecoder, VersionDecoder, WOBAImage
     }
 
     /**
-     * Unpacks (de-serializes) the block data stored in {@link #getBlockData()} into block-specific Java fields. None
+     * Unpacks (de-serializes) the data returned by {@link #getBlockData()} into block-specific Java fields. None
      * of the getter methods on the block (except for the block size, id, type and raw data) will return valid data
      * before this method has been called.
      *
-     * @throws ImportException Thrown if a fatal error occurs unpacking the data, typically caused by malformed or unexpected values in the data.
+     * @throws ImportException Thrown if a fatal error occurs unpacking the data, typically caused by malformed or
+     *                         unexpected values in the data.
      */
-    public abstract void unpack() throws ImportException;
+    public abstract void unpack() throws ImportException, IOException;
 
     /**
      * Gets the HyperCard stack object to which this block belongs.
@@ -91,19 +93,6 @@ public abstract class Block implements PatternDecoder, VersionDecoder, WOBAImage
      */
     public byte[] getBlockData() {
         return blockData;
-    }
-
-    /**
-     * Rotates the unsigned value of n, d bits to the right (bits shifted off the left of the value are appended on the
-     * right).
-     *
-     * @param n The 32-bit, unsigned value to rotate
-     * @param d The number of bits to rotate the value (should be between 1 and 32).
-     * @return The rotated value.
-     */
-    protected int rightRotate(int n, int d) {
-        long val = n & 0xffffffffL;
-        return (int) ((val >> d) | (val << (32 - d)) & 0xffffffffL);
     }
 
     /**

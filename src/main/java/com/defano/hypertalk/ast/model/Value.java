@@ -15,6 +15,7 @@ import com.defano.hypertalk.util.DateUtils;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.regex.Matcher;
  * <p>
  * Instances of this class are effectively immutable.
  */
-public class Value implements StyledComparable<Value> {
+public class Value implements StyledComparable<Value>, Serializable {
 
     private final String stringValue;
 
@@ -40,7 +41,9 @@ public class Value implements StyledComparable<Value> {
     private Double floatValue;
     private Boolean booleanValue;
 
-    private boolean parsedLong, parsedFloat, parsedBoolean;
+    private boolean parsedLong;
+    private boolean parsedFloat;
+    private boolean parsedBoolean;
 
     /**
      * Creates a new Value representing the empty string, equivalent to `new Value("")`
@@ -300,7 +303,7 @@ public class Value implements StyledComparable<Value> {
             case AFTER:
                 return new Value(mutable.toString() + mutator.toString());
             default:
-                throw new RuntimeException("Bug! Unhandled preposition.");
+                throw new IllegalArgumentException("Bug! Unhandled preposition.");
         }
     }
 
@@ -1139,7 +1142,7 @@ public class Value implements StyledComparable<Value> {
                 return new Value(this.isBoolean());
 
             default:
-                throw new RuntimeException("Bug! Unimplemented type comparison for: " + type);
+                throw new IllegalArgumentException("Bug! Unimplemented type comparison for: " + type);
         }
     }
 

@@ -39,7 +39,7 @@ public class StyleTableBlock extends Block {
     }
 
     @Override
-    public void unpack() throws ImportException {
+    public void unpack() throws ImportException, IOException {
 
         try (StackInputStream sis = new StackInputStream(getBlockData())) {
 
@@ -52,8 +52,6 @@ public class StyleTableBlock extends Block {
                 styles[styleIdx] = StyleRecord.deserialize(this, styleRecord);
             }
 
-        } catch (IOException e) {
-            throw new ImportException("Malformed style table block.", e);
         }
     }
 }

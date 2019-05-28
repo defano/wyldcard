@@ -36,7 +36,7 @@ public class Invoke {
             try {
                 return onDispatch(callable, Exception.class);
             } catch (Exception e) {
-                throw new IllegalStateException("Bug! Should not be possible.");
+                throw new IllegalStateException("Bug! Should not be possible.", e);
             }
         }
     }

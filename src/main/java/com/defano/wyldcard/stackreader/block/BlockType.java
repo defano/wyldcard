@@ -3,6 +3,7 @@ package com.defano.wyldcard.stackreader.block;
 import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -141,6 +142,8 @@ public enum BlockType {
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             // Somebody changed the Block constructor signature... tsk, tsk
             throw new IllegalStateException("Bug! Can't instantiate " + klass);
+        } catch (IOException e) {
+            throw new ImportException("Malformed block of type " + BlockType.fromBlockId(blockId) + ". Stack is corrupt.");
         }
     }
 

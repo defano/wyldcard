@@ -2,8 +2,17 @@ package com.defano.wyldcard.stackreader.decoder;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * A mixin interface used to decode a HyperCard pattern to a {@link BufferedImage}.
+ */
 public interface PatternDecoder {
 
+    /**
+     * Decodes a HyperCard pattern bitmap into an 8x8 pixel {@link BufferedImage}.
+     *
+     * @param pattern The pattern bitmap.
+     * @return An 8x8 BufferedImage containing the pattern.
+     */
     @SuppressWarnings("PointlessArithmeticExpression")
     default BufferedImage decodePattern(long pattern) {
         int[] pixels = new int[64];

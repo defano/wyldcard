@@ -1,6 +1,7 @@
 package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
+import com.defano.wyldcard.stackreader.decoder.ChecksumDecoder;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import com.defano.wyldcard.stackreader.record.PageBlockIndexRecord;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class ListBlock extends Block {
+public class ListBlock extends Block implements ChecksumDecoder {
 
     private int pageCount;
     private int pageSize;
@@ -86,11 +87,11 @@ public class ListBlock extends Block {
     }
 
     public boolean isChecksumValid() {
-        int checksum = 0x00;
+        int calculated = 0x00;
         for (PageBlockIndexRecord pi : getPageIndices()) {
-            checksum = rightRotate(pi.getPageId() + checksum, 3) + pi.getPageEntryCount();
+            calculated = rotate(pi.getPageId() + calculated) + pi.getPageEntryCount();
         }
-        return checksum == this.checksum;
+        return calculated == this.checksum;
     }
 
     public PageBlockIndexRecord[] getPageIndices() {
@@ -124,7 +125,7 @@ public class ListBlock extends Block {
     }
 
     @Override
-    public void unpack() throws ImportException {
+    public void unpack() throws IOException, ImportException {
 
         try (StackInputStream sis = new StackInputStream(getBlockData())) {
             this.pageCount = sis.readInt();
@@ -135,6 +136,7 @@ public class ListBlock extends Block {
             this.hashIntegerCount = sis.readShort();
             this.searchHashValueCount = sis.readShort();
             this.checksum = sis.readInt();
+
             this.cardsInStackCount = sis.readInt();
             sis.readInt(); // Unknown field
 
@@ -145,8 +147,9 @@ public class ListBlock extends Block {
                 pageIndices[idx] = new PageBlockIndexRecord(cardId, entryCount);
             }
 
-        } catch (IOException e) {
-            throw new ImportException(this, "Malformed list block; stack is corrupt.", e);
+            if (!isChecksumValid()) {
+                throw new ImportException("Encountered 'LIST' block with bad checksum. Stack is corrupt.");
+            }
         }
     }
 }

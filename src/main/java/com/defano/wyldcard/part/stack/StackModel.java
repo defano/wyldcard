@@ -1,9 +1,9 @@
 package com.defano.wyldcard.part.stack;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.enums.LengthAdjective;
 import com.defano.hypertalk.ast.model.enums.Owner;
 import com.defano.hypertalk.ast.model.enums.PartType;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifier.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifier.StackPartSpecifier;
 import com.defano.wyldcard.WyldCard;
@@ -54,6 +54,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     // The location where this stack was saved to, or opened from, on disk. Null if the stack has not been saved.
     private transient Subject<Optional<File>> savedStackFileProvider;
     private transient int nextPartId = new Random().nextInt();
+    private transient boolean isBeingClosed = false;
 
     public StackModel() {
         super(PartType.STACK, Owner.HYPERCARD, null);
@@ -311,6 +312,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         return this;
     }
 
+    @Override
     public PartSpecifier getPartSpecifier(ExecutionContext context) {
         return new StackPartSpecifier(getLongName(context));
     }
@@ -335,6 +337,24 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     public void setUserPattern(int patternId, BufferedImage pattern) {
         userPatterns.put(patternId, pattern);
         WyldCardPatternFactory.getInstance().invalidatePatternCache();
+    }
+
+    /**
+     * Flag this stack as in the process of being closed. This is a latched behavior; once set the flag cannot be
+     * cleared.
+     */
+    public void setBeingClosed() {
+        isBeingClosed = true;
+    }
+
+    /**
+     * Determines if this stack has been marked as being closed (that is, WyldCard is in the process of sending final
+     * messages to the stack and disposing its resources).
+     *
+     * @return True if the stack is being closed, false otherwise.
+     */
+    public boolean isBeingClosed() {
+        return isBeingClosed;
     }
 
     /**
@@ -370,10 +390,10 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         CardModel card = getCurrentCard();
 
         return getCardCount() == 1 &&                                   // Single card
-                card.getFieldModels().size() == 0 &&                    // No card fields
-                card.getButtonModels().size() == 0 &&                   // No card buttons
-                background.getFieldModels().size() == 0 &&              // No bkgnd fields
-                background.getButtonModels().size() == 0 &&             // No bkgnd buttons
+                card.getFieldModels().isEmpty() &&                      // No card fields
+                card.getButtonModels().isEmpty() &&                     // No card buttons
+                background.getFieldModels().isEmpty() &&                // No bkgnd fields
+                background.getButtonModels().isEmpty() &&               // No bkgnd buttons
                 !card.hasCardImage() &&                                 // No card graphics
                 !background.hasBackgroundImage() &&                     // No bkgnd graphics
                 card.getScriptText(null).isEmpty() &&           // No card script
@@ -403,6 +423,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isAdjectiveSupportedProperty(String propertyName) {
         return propertyName.equalsIgnoreCase(PROP_NAME);
     }

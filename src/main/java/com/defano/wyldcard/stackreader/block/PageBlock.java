@@ -1,6 +1,7 @@
 package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
+import com.defano.wyldcard.stackreader.decoder.ChecksumDecoder;
 import com.defano.wyldcard.stackreader.enums.PageFlag;
 import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
@@ -10,7 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class PageBlock extends Block {
+public class PageBlock extends Block implements ChecksumDecoder {
 
     private int listId;
     private int checksum;
@@ -33,15 +34,15 @@ public class PageBlock extends Block {
     }
 
     public boolean isChecksumValid() {
-        int checksum = 0x00;
+        int calculated = 0x00;
         for (PageEntryRecord pe : getPageEntries()) {
-            checksum = rightRotate(checksum + pe.getCardId(), 3);
+            calculated = rotate(calculated + pe.getCardId());
         }
-        return checksum == this.checksum;
+        return calculated == this.checksum;
     }
 
     @Override
-    public void unpack() throws ImportException {
+    public void unpack() throws ImportException, IOException {
 
         if (getStack().getBlocks(BlockType.LIST).size() != 1) {
             throw new ImportException(this, "Unable to cross-reference LIST block from PAGE; stack is corrupt.");
@@ -68,8 +69,9 @@ public class PageBlock extends Block {
                 pageEntries[idx] = new PageEntryRecord(cardId, flags, searchHashData);
             }
 
-        } catch (IOException e) {
-            throw new ImportException(this, "Malformed page block; stack is corrupt.", e);
+            if (!isChecksumValid()) {
+                throw new ImportException("Encountered 'PAGE' block with bad checksum. Stack is corrupt.");
+            }
         }
     }
 

@@ -25,4 +25,13 @@ public class ImportException extends Exception {
         super(message, cause);
         this.block = source;
     }
+
+    /**
+     * Gets the block where this error originated when available.
+     *
+     * @return The block that caused the exception, or null when not available.
+     */
+    public Block getBlock() {
+        return block;
+    }
 }

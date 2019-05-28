@@ -110,8 +110,10 @@ public interface StackManager {
     void closeAllStacks(ExecutionContext context);
 
     /**
-     * Attempts to close the requested stack, prompting the user to save it (when necessary) before closing. Note that
-     * the when prompted to save, the user can cancel, resulting in the stack not being closed.
+     * Attempts to close the requested stack, prompting the user to save it (when necessary) before closing.
+     *
+     * Note that the when prompted to save, the user can cancel, resulting in the stack not being closed. Further, this
+     * method does executes asynchronously; the stack is unlikely to appear closed when this method returns.
      *
      * @param context   The execution context
      * @param stackPart The stack to be closed; when null, closes the focused stack.

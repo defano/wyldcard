@@ -58,7 +58,7 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
                 fireIdleListeners();
 
                 // Notify card that system is idle
-                send(SystemMessage.IDLE, new ExecutionContext().getCurrentCard().getPartModel());
+                send(SystemMessage.IDLE, WyldCard.getInstance().getStackManager().getFocusedCard().getPartModel());
             }
 
             // Send 'within' message to any parts whose bounds the mouse is within
@@ -81,7 +81,10 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
 
     private void send(SystemMessage message, PartModel... models) {
         for (PartModel model : models) {
-            if (WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.BROWSE && deferCycles < 1) {
+            if (!model.getParentStackModel().isBeingClosed() &&
+                    WyldCard.getInstance().getPaintManager().getToolMode() == ToolMode.BROWSE &&
+                    deferCycles < 1) {
+
                 model.receiveMessage(new ExecutionContext(model), null, message, (command, wasTrapped, error) -> {
                     if (error != null) {
                         error.getStackTrace();
@@ -111,11 +114,11 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
         if (c.getBounds().contains(p)) {
 
             if (c instanceof HyperCardButton) {
-                parts.add(((HyperCardButton)c).getToolEditablePart().getPartModel());
+                parts.add(((HyperCardButton) c).getToolEditablePart().getPartModel());
             }
 
             if (c instanceof HyperCardTextField) {
-                parts.add(((HyperCardTextField)c).getToolEditablePart().getPartModel());
+                parts.add(((HyperCardTextField) c).getToolEditablePart().getPartModel());
             }
 
             if (c instanceof Container) {

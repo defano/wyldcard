@@ -1,7 +1,6 @@
 package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
-import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import com.defano.wyldcard.stackreader.record.FontRecord;
 
@@ -55,7 +54,7 @@ public class FontTableBlock extends Block {
      * {@inheritDoc}
      */
     @Override
-    public void unpack() throws ImportException {
+    public void unpack() throws IOException {
 
         try (StackInputStream sis = new StackInputStream(getBlockData())) {
             fontCount = sis.readInt();
@@ -73,9 +72,6 @@ public class FontTableBlock extends Block {
                     sis.readByte();
                 }
             }
-
-        } catch (IOException e) {
-            throw new ImportException(this, "Malformed FTBL (font table) block; stack is corrupted.", e);
         }
     }
 }

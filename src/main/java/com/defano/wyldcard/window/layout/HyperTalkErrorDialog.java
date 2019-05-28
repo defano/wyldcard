@@ -15,7 +15,7 @@ import javax.swing.*;
 
 public class HyperTalkErrorDialog {
 
-    private final static HyperTalkErrorDialog instance = new HyperTalkErrorDialog();
+    private static final HyperTalkErrorDialog instance = new HyperTalkErrorDialog();
     private boolean errorDialogVisible = false;
 
     private HyperTalkErrorDialog() {

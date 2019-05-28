@@ -27,6 +27,7 @@ import com.defano.wyldcard.window.layout.*;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +35,7 @@ import java.util.Objects;
 /**
  * A base model object for all HyperCard "parts" that Defines properties common to all part objects.
  */
-public abstract class PartModel extends SimplePropertiesModel implements Messagable {
+public abstract class PartModel extends SimplePropertiesModel implements Messagable, Serializable {
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";

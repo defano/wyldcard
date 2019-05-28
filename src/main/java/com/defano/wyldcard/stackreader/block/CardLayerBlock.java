@@ -139,44 +139,39 @@ public abstract class CardLayerBlock extends Block {
      * @param sis The StackInputStream to read
      * @throws ImportException Thrown if an error occurs unpacking data from the input stream.
      */
-    public void unpack(StackInputStream sis) throws ImportException {
+    public void unpack(StackInputStream sis) throws ImportException, IOException {
 
         int partCount = getPartCount();
 
-        try {
-            nextPartId = sis.readShort();
-            partListSize = sis.readInt();
-            partContentCount = sis.readShort();
-            partContentSize = sis.readInt();
+        nextPartId = sis.readShort();
+        partListSize = sis.readInt();
+        partContentCount = sis.readShort();
+        partContentSize = sis.readInt();
 
-            // Deserialize buttons and fields
-            parts = new PartRecord[partCount];
-            for (int partIdx = 0; partIdx < partCount; partIdx++) {
-                short entrySize = sis.readShort();
-                byte[] entryData = sis.readBytes(entrySize - 2);
+        // Deserialize buttons and fields
+        parts = new PartRecord[partCount];
+        for (int partIdx = 0; partIdx < partCount; partIdx++) {
+            short entrySize = sis.readShort();
+            byte[] entryData = sis.readBytes(entrySize - 2);
 
-                parts[partIdx] = PartRecord.deserialize(this, entrySize, entryData);
-            }
-
-            // Deserialize text formatting
-            contents = new PartContentRecord[partContentCount];
-            for (int partContentsIdx = 0; partContentsIdx < partContentCount; partContentsIdx++) {
-                short partId = sis.readShort();
-                short length = sis.readShort();
-                byte[] partContentsData = sis.readBytes(length);
-
-                contents[partContentsIdx] = PartContentRecord.deserialize(this, partId, partContentsData);
-
-                if (length % 2 != 0) {
-                    sis.readByte();
-                }
-            }
-
-            name = sis.readString();
-            script = sis.readString();
-
-        } catch (IOException e) {
-            throw new ImportException(this, "Malformed CARD or BGND block.", e);
+            parts[partIdx] = PartRecord.deserialize(this, entrySize, entryData);
         }
+
+        // Deserialize text formatting
+        contents = new PartContentRecord[partContentCount];
+        for (int partContentsIdx = 0; partContentsIdx < partContentCount; partContentsIdx++) {
+            short partId = sis.readShort();
+            short length = sis.readShort();
+            byte[] partContentsData = sis.readBytes(length);
+
+            contents[partContentsIdx] = PartContentRecord.deserialize(this, partId, partContentsData);
+
+            if (length % 2 != 0) {
+                sis.readByte();
+            }
+        }
+
+        name = sis.readString();
+        script = sis.readString();
     }
 }

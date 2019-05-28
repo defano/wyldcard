@@ -457,8 +457,10 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
      * Enqueues a request to dispose resources associated with the given stack (including its bound window, when
      * requested).
      * <p>
-     * The disposal queue is processed whenever WyldCard is idle; this allows us to dispose stack resources only after
-     * the closeCard, closeBackground and closeStack handlers have had a chance to execute.
+     * The process for disposing a stack is multi-phased: First, we must wait for the script executor to become idle
+     * to assure that we don't close this stack just as a pending script requests it. Second, we send close messages
+     * to the stack, background and card (plus all their child parts). Finally, after all of those handlers have been
+     * processed, we dispose of the stack resources.
      * <p>
      * WyldCard will quit when the last stack window is disposed.
      *
@@ -467,23 +469,33 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
      * @param disposeWindow When true, dispose the stack's window
      */
     private void disposeStack(ExecutionContext context, StackPart stack, boolean disposeWindow) {
-        LOG.debug("Enqueueing disposal task for stack {}", stack);
+        LOG.debug("Enqueueing disposal task for stack id {}", stack.getId(context));
+        stack.getStackModel().setBeingClosed();
+
+        // Phase 1: Wait for any pending handlers to finish
         disposeQueue.add(() -> Invoke.onDispatch(() -> {
-            // Clean up stack resources
+            LOG.debug("Sending 'close' messages to stack id {}.", stack.getId(context));
+
+            // Phase 2: Notify the stack, card and background that its closing
             stack.partClosed(context);
 
-            // Dispose the stack's frame when requested
-            if (disposeWindow && stack.getOwningStackWindow() != null) {
-                stack.getOwningStackWindow().dispose();
-            }
+            // Phase 3: Only after those messages have been passed should we then cleanup resources
+            disposeQueue.add(() -> Invoke.onDispatch(() -> {
+                LOG.debug("Disposing resources of stack id {}.", stack.getId(context));
 
-            // Forget about it...
-            openedStacks.remove(stack);
+                // Dispose the stack's frame when requested
+                if (disposeWindow && stack.getOwningStackWindow() != null) {
+                    stack.getOwningStackWindow().dispose();
+                }
 
-            // Finally, quit application when last stack window has closed
-            if (openedStacks.isEmpty()) {
-                System.exit(0);
-            }
+                // Forget about it...
+                openedStacks.remove(stack);
+
+                // Finally, quit application when last stack window has closed
+                if (openedStacks.isEmpty()) {
+                    System.exit(0);
+                }
+            }));
         }));
     }
 
@@ -535,7 +547,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
             model.setSavedStackFile(context, stackFile);
             return openStack(context, model, inNewWindow);
         } catch (Exception e) {
-            LOG.warn("An error occured opening the stack.", e);
+            LOG.warn("An error occurred opening the stack.", e);
         }
 
         return null;
@@ -551,7 +563,6 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         do {
             workItem = disposeQueue.poll();
             if (workItem != null) {
-                LOG.debug("Running stack disposal job.");
                 workItem.run();
             }
 

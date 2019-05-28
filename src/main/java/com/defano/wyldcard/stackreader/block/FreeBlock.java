@@ -1,7 +1,6 @@
 package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
-import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 
 import java.io.IOException;
@@ -28,15 +27,13 @@ public class FreeBlock extends Block {
      * {@inheritDoc}
      */
     @Override
-    public void unpack() throws ImportException {
+    public void unpack() throws IOException {
 
         try (StackInputStream sis = new StackInputStream(getBlockData())) {
 
             markerLength = sis.readByte();
             markerText = sis.readString(markerLength);
 
-        } catch (IOException e) {
-            throw new ImportException(this, "Malformed FREE block.", e);
         }
     }
 }

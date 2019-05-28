@@ -32,7 +32,6 @@ package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
 import com.defano.wyldcard.stackreader.decoder.WOBAImageDecoder;
-import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 
 import java.awt.*;
@@ -154,7 +153,7 @@ public class ImageBlock extends Block implements WOBAImageDecoder {
     }
 
     @Override
-    public void unpack() throws ImportException {
+    public void unpack() throws IOException {
 
         try (StackInputStream sis = new StackInputStream(getBlockData())) {
             sis.readShort(4);   // Unknown field; skip
@@ -201,9 +200,6 @@ public class ImageBlock extends Block implements WOBAImageDecoder {
             if (image == null) {
                 image = new BufferedImage(0, 0, BufferedImage.TYPE_INT_ARGB);
             }
-
-        } catch (IOException e) {
-            throw new ImportException(this, "Malformed image block; stack is corrupt.", e);
         }
     }
 }

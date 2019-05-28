@@ -88,7 +88,7 @@ public class PrintReportBlock extends Block {
     }
 
     @Override
-    public void unpack() throws ImportException {
+    public void unpack() throws ImportException, IOException {
 
         try (StackInputStream sis = new StackInputStream(getBlockData())) {
             units = PrintMeasurementUnit.fromByte(sis.readByte());
@@ -116,8 +116,6 @@ public class PrintReportBlock extends Block {
                 reportRecords[idx] = ReportRecord.deserialize(this, recordSize, recordData);
             }
 
-        } catch (IOException e) {
-            throw new ImportException(this, "Malformed PRFT block.", e);
         }
     }
 }

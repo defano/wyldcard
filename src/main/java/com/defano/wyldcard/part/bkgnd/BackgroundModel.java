@@ -30,11 +30,11 @@ import java.util.List;
  */
 public class BackgroundModel extends PartModel implements LayeredPartFinder, CardLayer {
 
-    public final static String PROP_ID = "id";
-    public final static String PROP_NAME = "name";
-    public final static String PROP_CANTDELETE = "cantdelete";
-    public final static String PROP_DONTSEARCH = "dontsearch";
-    public final static String PROP_SHOWPICT = "showpict";
+    public static final String PROP_ID = "id";
+    public static final String PROP_NAME = "name";
+    public static final String PROP_CANTDELETE = "cantdelete";
+    public static final String PROP_DONTSEARCH = "dontsearch";
+    public static final String PROP_SHOWPICT = "showpict";
     public static final String PROP_SHORTNAME = "short name";
     public static final String PROP_ABBREVNAME = "abbreviated name";
     public static final String PROP_LONGNAME = "long name";
@@ -96,6 +96,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder, Car
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isAdjectiveSupportedProperty(String propertyName) {
         return propertyName.equalsIgnoreCase(PROP_NAME);
     }
@@ -184,6 +185,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder, Car
         }
     }
 
+    @Override
     public String getShortName(ExecutionContext context) {
         return get(context, PROP_NAME).toString();
     }
@@ -196,6 +198,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder, Car
         }
     }
 
+    @Override
     public String getLongName(ExecutionContext context) {
         return getAbbrevName(context) + " of " + getStackModel().getLongName(context);
     }

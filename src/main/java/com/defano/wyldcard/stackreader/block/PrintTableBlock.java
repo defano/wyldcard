@@ -1,7 +1,6 @@
 package com.defano.wyldcard.stackreader.block;
 
 import com.defano.wyldcard.stackreader.HyperCardStack;
-import com.defano.wyldcard.stackreader.misc.ImportException;
 import com.defano.wyldcard.stackreader.misc.StackInputStream;
 import com.defano.wyldcard.stackreader.record.ReportTemplateRecord;
 
@@ -31,7 +30,7 @@ public class PrintTableBlock extends Block {
     }
 
     @Override
-    public void unpack() throws ImportException {
+    public void unpack() throws IOException {
 
         try (StackInputStream sis = new StackInputStream(getBlockData())) {
             sis.skipBytes(32);
@@ -49,8 +48,6 @@ public class PrintTableBlock extends Block {
                 sis.skipBytes(36 - nameLength - 5);
             }
 
-        } catch (IOException e) {
-            throw new ImportException(this, "Malformed PRNT block.", e);
         }
     }
 }

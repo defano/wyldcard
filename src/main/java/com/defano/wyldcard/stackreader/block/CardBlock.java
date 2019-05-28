@@ -88,7 +88,7 @@ public class CardBlock extends CardLayerBlock {
 
     /** {@inheritDoc} */
     @Override
-    public void unpack() throws ImportException {
+    public void unpack() throws ImportException, IOException {
 
         try (StackInputStream sis = new StackInputStream(getBlockData())) {
             bitmapId = sis.readInt();
@@ -100,9 +100,6 @@ public class CardBlock extends CardLayerBlock {
 
             // Unpack fields common to both cards and backgrounds
             super.unpack(sis);
-
-        } catch (IOException e) {
-            throw new ImportException(this, "Layer block is malformed; stack is corrupt.", e);
         }
     }
 
