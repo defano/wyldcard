@@ -78,6 +78,8 @@ public interface WindowManager extends WindowFinder, Themeable {
     @RunOnDispatch
     StackWindow getWindowForStack(ExecutionContext context, StackPart stackPart);
 
+    StackWindow createWindowForStack(ExecutionContext context, StackPart stackPart, boolean initiallyVisible);
+
     BehaviorSubject<List<WyldCardFrame>> getFramesProvider();
 
     BehaviorSubject<List<WyldCardFrame>> getVisibleWindowsProvider();

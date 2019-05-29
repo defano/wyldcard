@@ -4,6 +4,7 @@ import com.defano.wyldcard.message.EvaluatedMessage;
 import com.defano.wyldcard.message.MessageHandler;
 import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.runtime.ExecutionContext;
+import com.defano.wyldcard.thread.Invoke;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -33,9 +34,11 @@ public class MenuMessageHandler implements MessageHandler {
 
     @Override
     public void handleMessage(ExecutionContext context, EvaluatedMessage m) {
-        for (ActionListener action : actions) {
-            action.actionPerformed(new ActionEvent(menuItem, ActionEvent.ACTION_PERFORMED, menuItem.getActionCommand()));
-        }
+        Invoke.onDispatch(() -> {
+            for (ActionListener action : actions) {
+                action.actionPerformed(new ActionEvent(menuItem, ActionEvent.ACTION_PERFORMED, menuItem.getActionCommand()));
+            }
+        });
     }
 
 }

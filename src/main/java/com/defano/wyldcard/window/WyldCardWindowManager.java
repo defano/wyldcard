@@ -351,13 +351,23 @@ public class WyldCardWindowManager implements WindowManager {
         if (existingWindow != null) {
             return existingWindow;
         } else {
-            return (StackWindow) new WindowBuilder<>(new StackWindow())
-                    .withModel(stackPart)
-                    .withActionOnClose(window -> WyldCard.getInstance().getStackManager().closeStack(context, ((StackWindow) window).getDisplayedStack()))
-                    .ownsMenubar()
-                    .withLocationCenteredOnScreen()
-                    .build();
+            return createWindowForStack(context, stackPart, true);
         }
+    }
+
+    @Override
+    public StackWindow createWindowForStack(ExecutionContext context, StackPart stackPart, boolean initiallyVisible) {
+        WindowBuilder builder = new WindowBuilder<>(new StackWindow())
+                .withModel(stackPart)
+                .withActionOnClose(window -> WyldCard.getInstance().getStackManager().closeStack(context, ((StackWindow) window).getDisplayedStack()))
+                .ownsMenubar()
+                .withLocationCenteredOnScreen();
+
+        if (!initiallyVisible) {
+            builder.notInitiallyVisible();
+        }
+
+        return (StackWindow) builder.build();
     }
 
     @Override

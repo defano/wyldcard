@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class MenuMessageDispatcher implements MessageHandler {
 
-    private final static MenuMessageDispatcher instance = new MenuMessageDispatcher();
+    private static final MenuMessageDispatcher instance = new MenuMessageDispatcher();
     private final HashMap<String, MenuMessageHandler> handlers = new HashMap<>();
 
     private MenuMessageDispatcher() {}

@@ -37,16 +37,17 @@ import java.util.concurrent.ThreadPoolExecutor;
 @SuppressWarnings("UnstableApiUsage")
 public class ScriptExecutor {
 
+    private static final int MAX_EXECUTOR_THREADS = 8;
+
     // Executor for the message box and "evaluate expression" window
     private static final ExecutorService staticExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("script-exe-msg").build());
     private static final ListeningExecutorService listeningStaticExecutor = MoreExecutors.listeningDecorator(staticExecutor);
 
     // Executor for special messages that require guaranteed ordering
-    private static final ThreadPoolExecutor orderedExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, new ThreadFactoryBuilder().setNameFormat("script-exe-ordered").build());
+    private static final ThreadPoolExecutor orderedExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, new ThreadFactoryBuilder().setNameFormat("script-exe-" + MAX_EXECUTOR_THREADS).build());
     private static final ListeningExecutorService listeningOrderedExecutor = MoreExecutors.listeningDecorator(orderedExecutor);
 
     // Executor for all other HyperTalk scripts and handlers
-    private static final int MAX_EXECUTOR_THREADS = 8;
     private static final ThreadPoolExecutor defaultExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_EXECUTOR_THREADS, new ThreadFactoryBuilder().setNameFormat("script-exe-%d").build());
     private static final ListeningExecutorService listeningDefaultExecutor = MoreExecutors.listeningDecorator(defaultExecutor);
 

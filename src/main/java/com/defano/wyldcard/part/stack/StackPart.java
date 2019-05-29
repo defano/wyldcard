@@ -1,6 +1,6 @@
 package com.defano.wyldcard.part.stack;
 
-import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.NavigationManager;
@@ -22,6 +22,8 @@ import com.defano.wyldcard.window.layout.StackWindow;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -36,6 +38,7 @@ import java.util.Set;
  */
 public class StackPart implements Part<StackModel>, PropertyChangeObserver {
 
+    private static final Logger LOG = LoggerFactory.getLogger(StackPart.class);
     private final NavigationManager navigationManager = WyldCard.getInstance().getNavigationManager();
 
     private final StackModel stackModel;
@@ -58,8 +61,9 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
     }
 
     public static StackPart fromStackModel(ExecutionContext context, StackModel model) {
-        StackPart stackPart = new StackPart(model);
+        LOG.debug("Creating stack from model {}.", model);
 
+        StackPart stackPart = new StackPart(model);
         stackPart.cardCountProvider.onNext(model.getCardCount());
         stackPart.stackModel.addPropertyChangedObserver(stackPart);
         stackPart.currentCard = CardPart.fromPositionInStack(context, model.getCurrentCardIndex(), model);

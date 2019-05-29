@@ -1,6 +1,7 @@
 package com.defano.wyldcard.runtime.manager;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.message.SystemMessage;
 import com.defano.wyldcard.paint.ToolMode;
@@ -10,6 +11,7 @@ import com.defano.wyldcard.part.field.styles.HyperCardTextField;
 import com.defano.wyldcard.part.model.PartModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.runtime.executor.ScriptExecutor;
+import com.defano.wyldcard.thread.Invoke;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.Singleton;
 
@@ -96,18 +98,21 @@ public class WyldCardPeriodicMessageManager implements PeriodicMessageManager {
     }
 
     private PartModel[] findPartsUnderMouse() {
-        Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
+        return Invoke.onDispatch(() -> {
+            Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
 
-        if (WyldCard.getInstance().getWindowManager().getFocusedStackWindow() != null) {
-            CardPart theCard = WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getDisplayedCard();
-            SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
+            if (WyldCard.getInstance().getWindowManager().getFocusedStackWindow() != null) {
+                CardPart theCard = WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getDisplayedCard();
+                SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
 
-            return partsAt(mouseLoc, theCard).toArray(new PartModel[0]);
-        }
+                return partsAt(mouseLoc, theCard).toArray(new PartModel[0]);
+            }
 
-        return new PartModel[0];
+            return new PartModel[0];
+        });
     }
 
+    @RunOnDispatch
     private ArrayList<PartModel> partsAt(Point p, Component c) {
         ArrayList<PartModel> parts = new ArrayList<>();
 

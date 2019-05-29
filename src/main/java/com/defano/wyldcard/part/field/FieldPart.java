@@ -372,10 +372,10 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
         try {
             int clickIndex = getHyperCardTextPane().viewToModel(evt.getPoint());
             int startWordIndex = Utilities.getWordStart(getHyperCardTextPane(), clickIndex);
-            int endWordIndex = Utilities.getWordEnd(getHyperCardTextPane(), clickIndex);
+            int endWordIndex = Math.max(1, Utilities.getWordEnd(getHyperCardTextPane(), clickIndex));
 
             WyldCard.getInstance().getSelectionManager().setClickChunk(new Value(
-                    "chars " + startWordIndex + " to " + endWordIndex + " of " +
+                    "chars " + (1 + startWordIndex) + " to " + endWordIndex + " of " +
                             getPartModel().getHyperTalkAddress(new ExecutionContext(this)))
             );
         } catch (BadLocationException e) {

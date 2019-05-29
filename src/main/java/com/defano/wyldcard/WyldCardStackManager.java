@@ -15,12 +15,17 @@ import com.defano.wyldcard.part.stack.StackPart;
 import com.defano.wyldcard.pattern.WyldCardPatternFactory;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.runtime.manager.IdleObserver;
+import com.defano.wyldcard.runtime.manager.PaintManager;
+import com.defano.wyldcard.runtime.manager.PartToolManager;
+import com.defano.wyldcard.runtime.manager.PeriodicMessageManager;
 import com.defano.wyldcard.serializer.Serializer;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.util.ImageLayerUtils;
 import com.defano.wyldcard.util.ProxyObservable;
 import com.defano.wyldcard.window.WindowDock;
+import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layout.StackWindow;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -56,8 +61,14 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     private final ProxyObservable<Boolean> isSelectable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
     private final ProxyObservable<Double> canvasScale = new ProxyObservable<>(BehaviorSubject.createDefault(1.0));
 
+    @Inject private WindowManager windowManager;
+    @Inject private PeriodicMessageManager periodicMessageManager;
+    @Inject private PaintManager paintManager;
+    @Inject private PartToolManager partToolManager;
+    @Inject private NavigationManager navigationManager;
+
     public void start() {
-        WyldCard.getInstance().getPeriodicMessageManager().addIdleObserver(this);
+        periodicMessageManager.addIdleObserver(this);
     }
 
     /**
@@ -74,6 +85,8 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
      */
     @Override
     public StackModel loadStack(ExecutionContext context, File stackFile) {
+        LOG.debug("De-serializing stack file {}.", stackFile.getName());
+
         try {
             return Serializer.deserialize(stackFile, StackModel.class);
         } catch (Exception e) {
@@ -114,7 +127,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
      */
     @Override
     public StackPart findAndOpenStack(ExecutionContext context, boolean inNewWindow, String title) {
-        FileDialog fd = new FileDialog(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow(), title, FileDialog.LOAD);
+        FileDialog fd = new FileDialog(windowManager.getWindowForStack(context, context.getCurrentStack()).getWindow(), title, FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> name.endsWith(StackModel.FILE_EXTENSION));
         fd.setVisible(true);
@@ -172,7 +185,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
             defaultName = stackModel.getStackName(context);
         }
 
-        FileDialog fd = new FileDialog(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow(), "Save Stack", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(windowManager.getWindowForStack(context, context.getCurrentStack()).getWindow(), "Save Stack", FileDialog.SAVE);
         fd.setFile(defaultName);
         fd.setVisible(true);
         if (fd.getFiles().length > 0) {
@@ -205,6 +218,8 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     public void saveStack(ExecutionContext context, StackModel stackModel, File file) {
         if (file != null) {
             try {
+                LOG.debug("Serializing stack {} to file {}.", stackModel, file.getName());
+
                 Serializer.serialize(file, stackModel);
                 stackModel.setSavedStackFile(context, file);
                 context.setResult(new Value());
@@ -239,7 +254,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
             return;     // User wants to cancel
         }
 
-        disposeStack(context, stackPart, true);
+        disposeStack(context, stackPart, null);
     }
 
     /**
@@ -260,7 +275,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
 
         // Remove focus from last-focused stack when applicable
         if (focusedStack.hasValue()) {
-            WyldCard.getInstance().getPartToolManager().deselectAllParts();
+            partToolManager.deselectAllParts();
             focusedStack.blockingFirst().removeNavigationObserver(this);
 
             // Send suspendStack/resumeStack messages
@@ -278,7 +293,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         WyldCardPatternFactory.getInstance().invalidatePatternCache();
 
         // Make the selected tool active on the focused card
-        WyldCard.getInstance().getPaintManager().reactivateTool(stackPart.getDisplayedCard().getActiveCanvas());
+        paintManager.reactivateTool(stackPart.getDisplayedCard().getActiveCanvas());
 
         // Update proxied observables (so that they reference newly focused stack)
         cardCount.setSource(stackPart.getCardCountProvider());
@@ -289,7 +304,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
         canvasScale.setSource(stackPart.getDisplayedCard().getActiveCanvas().getScaleObservable());
         isSelectable.setSource(Observable.combineLatest(
                 isUndoable.getObservable(),
-                WyldCard.getInstance().getPaintManager().getSelectedImageProvider(),
+                paintManager.getSelectedImageProvider(),
 
                 // Select command is available when an undoable change is present; the user does not have an active
                 // graphic selection; there are no re-doable changes; and the last graphic change in the undo buffer
@@ -301,7 +316,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
                                 !ImageLayerUtils.layersRemovesPaint(getFocusedCard().getActiveCanvas().peek(0).getImageLayers()))
         );
 
-        WyldCard.getInstance().getNavigationManager().getNavigationStack().push(new Destination(stackPart.getStackModel(), focusedStack.blockingFirst().getDisplayedCard().getId(null)));
+        navigationManager.getNavigationStack().push(new Destination(stackPart.getStackModel(), focusedStack.blockingFirst().getDisplayedCard().getId(null)));
 
         stackPart.addNavigationObserver(this);
     }
@@ -417,37 +432,30 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
      */
     @RunOnDispatch
     private void displayStack(ExecutionContext context, StackPart stack, boolean inNewWindow) {
+        LOG.debug("Displaying stack {}, inNewWindow={}.", stack, inNewWindow);
 
         // Special case: Stack is already open, simply focus it
-        StackWindow existingWindow = WyldCard.getInstance().getWindowManager().findWindowForStack(stack.getStackModel());
+        StackWindow existingWindow = windowManager.findWindowForStack(stack.getStackModel());
         if (existingWindow != null) {
             existingWindow.requestFocus();
         }
 
         // Stack is not already open
         else {
-            if (inNewWindow) {
-                stack.bindToWindow(WyldCard.getInstance().getWindowManager().getWindowForStack(context, stack));
-                openedStacks.add(stack);
-            } else {
-                // Stack displayed in window we're about to open new stack inside of
-                StackPart oldStack = context.getCurrentStack();
-                StackWindow oldStackWindow = oldStack.getOwningStackWindow();
+            StackPart oldStack = context.getCurrentStack();
 
-                if (promptToSave(context, oldStack)) {
-                    return;     // User cancelled saving existing stack; abort open process
-                }
-
-                stack.bindToWindow(oldStackWindow);
-
-                openedStacks.add(stack);
-                context.bindStack(stack);
-
-                disposeStack(context, oldStack, false);
-            }
-
+            StackWindow window = windowManager.createWindowForStack(context, stack, false);
+            stack.bindToWindow(window);
+            openedStacks.add(stack);
             stack.addNavigationObserver(this);
             stack.partOpened(context);
+
+            if (!inNewWindow) {
+                disposeStack(context, oldStack, () -> window.setVisible(true));
+            } else {
+                window.setVisible(true);
+            }
+
         }
 
         focusStack(stack);
@@ -464,11 +472,11 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
      * <p>
      * WyldCard will quit when the last stack window is disposed.
      *
-     * @param context       The execution context
-     * @param stack         The stack to dispose
-     * @param disposeWindow When true, dispose the stack's window
+     * @param context            The execution context
+     * @param stack              The stack to dispose
+     * @param postDisposalAction Action to take when disposal is complete, may be null
      */
-    private void disposeStack(ExecutionContext context, StackPart stack, boolean disposeWindow) {
+    private void disposeStack(ExecutionContext context, StackPart stack, Runnable postDisposalAction) {
         LOG.debug("Enqueueing disposal task for stack id {}", stack.getId(context));
         stack.getStackModel().setBeingClosed();
 
@@ -484,7 +492,7 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
                 LOG.debug("Disposing resources of stack id {}.", stack.getId(context));
 
                 // Dispose the stack's frame when requested
-                if (disposeWindow && stack.getOwningStackWindow() != null) {
+                if (stack.getOwningStackWindow() != null) {
                     stack.getOwningStackWindow().dispose();
                 }
 
@@ -494,6 +502,10 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
                 // Finally, quit application when last stack window has closed
                 if (openedStacks.isEmpty()) {
                     System.exit(0);
+                }
+
+                if (postDisposalAction != null) {
+                    postDisposalAction.run();
                 }
             }));
         }));
