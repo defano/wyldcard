@@ -1,15 +1,17 @@
 buildscript {
-	repositories {
-		jcenter()
-	}
-	dependencies {
-		classpath "com.github.sedovalx.gradle:gradle-aspectj-binary:1.0.25"
-	}
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "io.freefair.gradle:aspectj-plugin:3.6.4"
+    }
 }
 
 plugins {
-	id "org.sonarqube" version "2.6"
-	id 'com.gradle.build-scan' version '1.16'
+    id "org.sonarqube" version "2.6"
+    id 'com.gradle.build-scan' version '2.0.2'
 }
 
 apply plugin: 'java'
@@ -19,139 +21,135 @@ apply plugin: 'idea'
 apply plugin: "jacoco"
 
 allprojects {
-	apply plugin: 'java'
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
+    apply plugin: 'java'
+
+    if (project.hasProperty('threadAudit')) {
+        apply plugin: "io.freefair.aspectj.post-compile-weaving"
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
 
-apply plugin: 'com.github.sedovalx.gradle-aspectj-binary'
-
 ext {
-	jdk = System.env.'JAVA_HOME'
-	aspectjVersion = '1.8.13'
+    jdk = System.env.'JAVA_HOME'
+    aspectjVersion = '1.8.13'
     weave = false
 }
 
 repositories {
-	mavenCentral()
-	jcenter()
-	mavenLocal()
+    mavenCentral()
+    jcenter()
+    mavenLocal()
 }
 
 configurations {
-	antlr
+    antlr
 }
 
 clean {
     delete 'generated-src/'
-	delete 'bundles/'
-	delete 'out/'
-	delete 'log/'
-}
-
-compileJava {
-    // Enable AspectJ-based thread auditor when '-PthreadAudit' is included on command line
-    if (project.hasProperty('threadAudit')) {
-        weaveClasses.dependsOn compileJava
-        classes.dependsOn weaveClasses
-    }
+    delete 'bundles/'
+    delete 'out/'
+    delete 'log/'
 }
 
 sourceSets {
-	main.java.srcDirs += 'generated-src/main/java'
+    main.java.srcDirs += 'generated-src/main/java'
 }
 
 idea {
-	module {
-		sourceDirs += file('generated-src/main/java')
-	}
-}
-
-jacocoTestReport {
-	afterEvaluate {
-		classDirectories = files(classDirectories.files.collect {
-			fileTree(dir: it, exclude: 'com/defano/hypertalk/parser/**')
-		})
-	}
+    module {
+        sourceDirs += file('generated-src/main/java')
+    }
 }
 
 dependencies {
-	antlr "org.antlr:antlr4:4.7.2"
+    antlr "org.antlr:antlr4:4.7.2"
 
-    compile (group: 'com.defano.jmonet', name: 'jmonet', version: '0.4.0') {changing = true}
-    compile (group: 'com.defano.jsegue', name: 'jsegue', version: '0.0.3') {changing = true}
+    compile(group: 'com.defano.jmonet', name: 'jmonet', version: '0.4.0') { changing = true }
+    compile(group: 'com.defano.jsegue', name: 'jsegue', version: '0.0.3') { changing = true }
 
-	compile group: 'com.intellij', name: 'javac2', version: '7.0.3'
-	compile group: 'com.google.code.gson', name: 'gson', version: '2.8.1'
-	compile group: 'com.google.guava', name: 'guava', version: '19.0'
-	compile group: 'org.bitbucket.cowwoc.diff-match-patch', name: 'diff-match-patch', version: '1.0'
-	compile group: 'com.l2fprod.common', name: 'l2fprod-common-fontchooser', version: '6.9.1'
-	compile group: 'de.dfki.mary', name: 'voice-cmu-slt-hsmm', version: '5.2'
-	compile group: 'de.dfki.mary', name: 'voice-cmu-bdl-hsmm', version: '5.2'
-	compile group: 'de.dfki.mary', name: 'voice-cmu-rms-hsmm', version: '5.2'
-	compile group: 'de.dfki.mary', name: 'voice-dfki-prudence-hsmm', version: '5.2'
-	compile group: 'org.aspectj', name: 'aspectjrt', version: '1.8.13'
-	compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.6.0'
-	compile group: 'com.fifesoft', name: 'autocomplete', version: '2.6.0'
-	compile group: 'com.atlassian.commonmark', name: 'commonmark', version: '0.11.0'
-	compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.8'
+    compile group: 'com.intellij', name: 'javac2', version: '7.0.3'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.1'
+    compile group: 'com.google.guava', name: 'guava', version: '19.0'
+    compile group: 'org.bitbucket.cowwoc.diff-match-patch', name: 'diff-match-patch', version: '1.0'
+    compile group: 'com.l2fprod.common', name: 'l2fprod-common-fontchooser', version: '6.9.1'
+    compile group: 'de.dfki.mary', name: 'voice-cmu-slt-hsmm', version: '5.2'
+    compile group: 'de.dfki.mary', name: 'voice-cmu-bdl-hsmm', version: '5.2'
+    compile group: 'de.dfki.mary', name: 'voice-cmu-rms-hsmm', version: '5.2'
+    compile group: 'de.dfki.mary', name: 'voice-dfki-prudence-hsmm', version: '5.2'
+    compile group: 'org.aspectj', name: 'aspectjrt', version: '1.8.13'
+    compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.6.0'
+    compile group: 'com.fifesoft', name: 'autocomplete', version: '2.6.0'
+    compile group: 'com.atlassian.commonmark', name: 'commonmark', version: '0.11.0'
+    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.8'
     compile group: 'gov.nist.math', name: 'jama', version: '1.0.3'
-	compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
-	compile group: 'com.mycila.guice.extensions', name: 'mycila-guice-injection', version: '4.0.rc1'
-	compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.11.1'
-	compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
+    compile group: 'com.mycila.guice.extensions', name: 'mycila-guice-injection', version: '4.0.rc1'
+    compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.11.1'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
-	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.1.0'
-	testCompile group: 'org.junit.vintage', name: 'junit-vintage-engine', version: '5.1.0'
-	testCompile group: 'commons-io', name: 'commons-io', version: '2.4'
-	testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+    testImplementation group: 'commons-io', name: 'commons-io', version: '2.4'
+    testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.4.2'
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
 
-	testRuntime(
-			'org.junit.jupiter:junit-jupiter-engine:5.1.0'
-	)
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.4.2")
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
+}
+
+jacocoTestReport {
+
+    // Do not report code coverage on Antlr-generated classes
+    afterEvaluate {
+        //noinspection GroovyAssignabilityCheck
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: 'com/defano/hypertalk/parser/**')
+        }))
+    }
 }
 
 buildScan {
-	termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-	termsOfServiceAgree = 'yes'
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
 }
 
 generateGrammarSource {
-	outputDirectory = file("generated-src/main/java/")
-	maxHeapSize = "64m"
-	arguments += ["-long-messages", "-no-listener", "-visitor", "-package", "com.defano.hypertalk.parser"]
+    outputDirectory = file("generated-src/main/java/")
+    maxHeapSize = "64m"
+    arguments += ["-long-messages", "-no-listener", "-visitor", "-package", "com.defano.hypertalk.parser"]
 }
 
 jar {
-	exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
 
-	from {
-		(configurations.runtime).collect {
-			it.isDirectory() ? it : zipTree(it)
-		}
-	}
+    from {
+        (configurations.runtime).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 
-	manifest {
-		attributes 'Main-Class': 'com.defano.wyldcard.WyldCard'
-	}
+    manifest {
+        attributes 'Main-Class': 'com.defano.wyldcard.WyldCard'
+    }
 }
 
 task generateBundle(type: Exec) {
-	dependsOn build
-	workingDir "${project.projectDir.absolutePath}"
-	commandLine "${jdk}/bin/javapackager",
-			"-deploy",
-			"-native",
-			"-outdir", ".",
-			"-outfile", "WyldCard.app",
-			"-srcfiles", "./build/libs/wyldcard.jar",
+    dependsOn build
+    workingDir "${project.projectDir.absolutePath}"
+    commandLine "${jdk}/bin/javapackager",
+            "-deploy",
+            "-native",
+            "-outdir", ".",
+            "-outfile", "WyldCard.app",
+            "-srcfiles", "./build/libs/wyldcard.jar",
             "-appclass", "com.defano.wyldcard.WyldCard",
-			"-name", "WyldCard",
-			"-title", "WyldCard"
+            "-name", "WyldCard",
+            "-title", "WyldCard"
 }
 
-mainClassName="com.defano.wyldcard.WyldCard"
+mainClassName = "com.defano.wyldcard.WyldCard"
