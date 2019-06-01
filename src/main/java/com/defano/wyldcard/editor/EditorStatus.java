@@ -8,8 +8,8 @@ public class EditorStatus extends JLabel {
 
     private Timer spinnerTimer;
 
-    private final static ImageIcon SPINNER_ICON = new ImageIcon(EditorStatus.class.getClassLoader().getResource("gifs/wait.gif"));
-    private final static int SPINNER_DELAY_MS = 200;
+    private static final ImageIcon SPINNER_ICON = new ImageIcon(EditorStatus.class.getClassLoader().getResource("gifs/wait.gif"));
+    private static final int SPINNER_DELAY_MS = 200;
 
     public EditorStatus() {
         super();

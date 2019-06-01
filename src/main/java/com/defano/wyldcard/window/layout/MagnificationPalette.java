@@ -16,7 +16,7 @@ import java.util.Hashtable;
 
 public class MagnificationPalette extends WyldCardDialog<Object> {
 
-    private final static MagnificationPalette instance = new MagnificationPalette();
+    private static final MagnificationPalette instance = new MagnificationPalette();
 
     private JSlider slider1;
     private JPanel windowPanel;

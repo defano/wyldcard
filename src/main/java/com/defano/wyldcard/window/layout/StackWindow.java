@@ -25,8 +25,8 @@ import java.awt.image.BufferedImage;
 
 public class StackWindow extends WyldCardWindow<StackPart> implements StackObserver, StackNavigationObserver, CurtainObserver {
 
-    private final static int CARD_LAYER = 0;
-    private final static int CURTAIN_LAYER = 1;
+    private static final int CARD_LAYER = 0;
+    private static final int CURTAIN_LAYER = 1;
 
     private final JLayeredPane cardPanel = new JLayeredPane();
     private final ScreenCurtain screenCurtain = new ScreenCurtain();

@@ -12,7 +12,7 @@ import java.awt.*;
 
 public class BrushesPalette extends WyldCardDialog<Object> implements Consumer<PaintBrush> {
 
-    private final static BrushesPalette instance = new BrushesPalette();
+    private static final BrushesPalette instance = new BrushesPalette();
 
     private JPanel brushesPanel;
 

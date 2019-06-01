@@ -22,8 +22,8 @@ import java.awt.image.BufferedImage;
 
 public class PatternEditor extends WyldCardDialog<Integer> {
 
-    private final static int EDIT_SCALE = 32;
-    private final static int PREVIEW_SIZE = 80;
+    private static final int EDIT_SCALE = 32;
+    private static final int PREVIEW_SIZE = 80;
 
     private JPanel windowPanel;
     private JPanel editorPanel;

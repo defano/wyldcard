@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class RectangularButton extends AbstractLabelButton {
 
-    private final static int HILITE_INSET = 1;          // Inset of fill hilite
+    private static final int HILITE_INSET = 1;          // Inset of fill hilite
 
     public RectangularButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);

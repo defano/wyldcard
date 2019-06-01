@@ -30,7 +30,7 @@ import javax.swing.*;
  */
 public class DebugContext {
 
-    private final static DebugContext instance = new DebugContext();
+    private static final DebugContext instance = new DebugContext();
 
     private int traceDelayMs = 500;                 // Trace delay, in milliseconds
     private boolean stepOver, stepInto, stepOut;    // Step modes

@@ -13,7 +13,7 @@ public class IconDatabase {
 
     @SuppressWarnings("unused")
     private List<HyperCardIcon> icons = new ArrayList<>();
-    private final static IconDatabase instance = new IconDatabase();
+    private static final IconDatabase instance = new IconDatabase();
 
     public static IconDatabase getInstance() {
         return instance;

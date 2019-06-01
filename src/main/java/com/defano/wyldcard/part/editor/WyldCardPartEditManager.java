@@ -20,7 +20,7 @@ import java.awt.event.MouseEvent;
 public class WyldCardPartEditManager implements PartEditManager {
 
     // Initial size of new part when user command-drags
-    private final static Dimension INITIAL_DIMENSION = new Dimension(10,10);
+    private static final Dimension INITIAL_DIMENSION = new Dimension(10,10);
     private Point clickLoc;
     private boolean isScriptEditMode = false;
 

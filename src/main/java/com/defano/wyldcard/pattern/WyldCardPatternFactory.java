@@ -12,11 +12,11 @@ import java.util.List;
 
 public class WyldCardPatternFactory {
 
-    public final static int PATTERN_WIDTH = 8;
-    public final static int PATTERN_HEIGHT = 8;
+    public static final int PATTERN_WIDTH = 8;
+    public static final int PATTERN_HEIGHT = 8;
 
     // Pattern bitmaps, base 64 encoded
-    private final static String PATTERN_DATA =
+    private static final String PATTERN_DATA =
                     "ACgAAAAAAAAAAIAAAAAIAAAAiAAiAIgAIgCIiCIiiIgiIoiq" +
                     "IqqIqiKqzKozqsyqM6ruqruq7qq7qu67u+7uu7vu/7v/7v+7" +
                     "/+7/u////7v//4AQAiABCEAE//////////+IIogiiCKIIhEi" +
@@ -27,7 +27,7 @@ public class WyldCardPatternFactory {
                     "IAACBAgAqgCAAIgAgAD/gICAgICAgAgcIsGAAQIE/4CAgP8I" +
                     "CAj4dCJHjxcicb8Av7+wsLCw/3++XaJBgAD69fr1oFCgUA==";
 
-    private final static WyldCardPatternFactory instance = new WyldCardPatternFactory();
+    private static final WyldCardPatternFactory instance = new WyldCardPatternFactory();
     byte[] patternBytes = Base64.getDecoder().decode(PATTERN_DATA);
     private List<PatternInvalidatonObserver> observers = new ArrayList<>();
     private HashMap<Integer, TexturePaint> patternCache = new HashMap<>();

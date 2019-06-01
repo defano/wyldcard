@@ -27,11 +27,11 @@ import java.util.List;
 
 public class HyperTalkTextEditor extends RTextScrollPane {
 
-    private final static Color TRACE_HILITE_COLOR = new Color(0xff, 0x00, 0x00, 0x40);
-    private final static String LANGUAGE_KEY = "text/hypertalk";
-    private final static String LANGUAGE_TOKENIZER = "com.defano.wyldcard.editor.HyperTalkTokenMaker";
-    private final static String EDITOR_THEME = "/org/fife/ui/rsyntaxtextarea/themes/eclipse.xml";
-    private final static CompletionProvider COMPLETION_PROVIDER = new HyperTalkCompletionProvider();
+    private static final Color TRACE_HILITE_COLOR = new Color(0xff, 0x00, 0x00, 0x40);
+    private static final String LANGUAGE_KEY = "text/hypertalk";
+    private static final String LANGUAGE_TOKENIZER = "com.defano.wyldcard.editor.HyperTalkTokenMaker";
+    private static final String EDITOR_THEME = "/org/fife/ui/rsyntaxtextarea/themes/eclipse.xml";
+    private static final CompletionProvider COMPLETION_PROVIDER = new HyperTalkCompletionProvider();
 
     private final RSyntaxTextArea scriptField;
     private final HyperTalkSyntaxParser scriptParser;

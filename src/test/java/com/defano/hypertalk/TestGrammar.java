@@ -8,19 +8,18 @@
 
 package com.defano.hypertalk;
 
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.compiler.ScriptCompiler;
-import com.defano.hypertalk.exception.HtException;
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-@Ignore
 public class TestGrammar {
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testGrammar() throws IOException, HtException {
         InputStream in = this.getClass().getClassLoader().getResourceAsStream("examples/Script.txt");
@@ -45,6 +44,7 @@ public class TestGrammar {
         System.out.println("Hot-compiled test script in " + (end - start) + "ms.");
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSLLParsePerformance() throws HtException, IOException {
         InputStream in = this.getClass().getClassLoader().getResourceAsStream("examples/Simple.txt");
@@ -57,7 +57,7 @@ public class TestGrammar {
         System.out.println("Cold-compiled test script in " + (end - start) + "ms.");
 
         int total = 0;
-        int count = 400;
+        int count = 20;
         for (int x = 0; x < count; x++) {
             start = System.currentTimeMillis();
             ScriptCompiler.blockingCompile(CompilationUnit.SCRIPT, testScript);

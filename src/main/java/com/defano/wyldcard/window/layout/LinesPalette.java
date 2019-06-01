@@ -12,7 +12,7 @@ import java.awt.*;
 
 public class LinesPalette extends WyldCardDialog<Object> implements Consumer<Stroke> {
 
-    private final static LinesPalette instance = new LinesPalette();
+    private static final LinesPalette instance = new LinesPalette();
 
     private JPanel linesPanel;
     private JButton px1;

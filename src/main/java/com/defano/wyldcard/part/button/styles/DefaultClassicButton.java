@@ -7,9 +7,9 @@ import javax.swing.border.Border;
 
 public class DefaultClassicButton extends ClassicButton {
 
-    private final static int INNER_BORDER_WIDTH = 1;
-    private final static int BORDER_SEPARATION = 1;
-    private final static int OUTER_BORDER_WIDTH = 4;
+    private static final int INNER_BORDER_WIDTH = 1;
+    private static final int BORDER_SEPARATION = 1;
+    private static final int OUTER_BORDER_WIDTH = 4;
 
     public DefaultClassicButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);

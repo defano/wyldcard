@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 public class RoboticTypist {
 
-    private final static RoboticTypist instance = new RoboticTypist();
+    private static final RoboticTypist instance = new RoboticTypist();
     private final HashMap<Character, KeyStroke> keystrokeMap = new HashMap<>();
 
     private Robot robot;

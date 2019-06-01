@@ -21,7 +21,7 @@ import java.util.Collection;
 
 public class VariableWatcher extends WyldCardWindow<Object> implements SymbolObserver {
 
-    private final static VariableWatcher instance = new VariableWatcher();
+    private static final VariableWatcher instance = new VariableWatcher();
 
     private JPanel windowPanel;
     private JTable variablesTable;

@@ -11,7 +11,7 @@ import java.awt.*;
 
 public class FindWindow extends WyldCardDialog<ScriptEditor> implements DeepEnable {
 
-    private final static FindWindow instance = new FindWindow();
+    private static final FindWindow instance = new FindWindow();
 
     private JTextField findField;
     private JRadioButton wholeWordRadioButton;

@@ -11,7 +11,7 @@ import java.awt.*;
 
 public class ReplaceWindow extends WyldCardDialog<ScriptEditor> implements DeepEnable {
 
-    private final static ReplaceWindow instance = new ReplaceWindow();
+    private static final ReplaceWindow instance = new ReplaceWindow();
 
     private JTextField findField;
     private JRadioButton wholeWordRadioButton;

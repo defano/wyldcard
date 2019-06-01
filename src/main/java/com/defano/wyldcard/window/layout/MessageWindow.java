@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MessageWindow extends WyldCardWindow<Object> implements PropertyChangeObserver {
 
-    private final static MessageWindow instance = new MessageWindow();
+    private static final MessageWindow instance = new MessageWindow();
 
     private MsgBoxModel partModel;
     private MessageBoxTextField messageBox;

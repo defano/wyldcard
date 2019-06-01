@@ -14,10 +14,10 @@ import java.awt.event.MouseEvent;
 
 public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
 
-    private final static PatternPalette instance = new PatternPalette();
+    private static final PatternPalette instance = new PatternPalette();
 
-    private final static int PATTERN_WIDTH = 30;
-    private final static int PATTERN_HEIGHT = 20;
+    private static final int PATTERN_WIDTH = 30;
+    private static final int PATTERN_HEIGHT = 20;
 
     private JPanel palettePanel;
     private PatternPaletteButton button1;

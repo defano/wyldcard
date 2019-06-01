@@ -21,7 +21,7 @@ import java.util.List;
 
 public class MessageWatcher extends WyldCardWindow<Object> implements HandlerInvocationObserver {
 
-    private final static MessageWatcher instance = new MessageWatcher();
+    private static final MessageWatcher instance = new MessageWatcher();
 
     private JPanel windowPanel;
     private JCheckBox suppressIdleCheckBox;

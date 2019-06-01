@@ -34,9 +34,9 @@ import java.util.stream.Collectors;
 
 public class StackModel extends PartModel implements StackPartFinder, NamedPart {
 
-    public final static String FILE_EXTENSION = ".stack";
-    public final static String PROP_CANTPEEK = "cantpeek";
-    public final static String PROP_CANTABORT = "cantabort";
+    public static final String FILE_EXTENSION = ".stack";
+    public static final String PROP_CANTPEEK = "cantpeek";
+    public static final String PROP_CANTABORT = "cantabort";
     public static final String PROP_RESIZABLE = "resizable";
     public static final String PROP_SHORTNAME = "short name";
     public static final String PROP_ABBREVNAME = "abbreviated name";
