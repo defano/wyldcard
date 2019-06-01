@@ -5,7 +5,7 @@ import com.defano.hypertalk.ast.model.specifier.VisualEffectSpecifier;
 import com.defano.jmonet.transform.image.ApplyPixelTransform;
 import com.defano.jmonet.transform.pixel.InvertPixelTransform;
 import com.defano.jsegue.AnimatedSegue;
-import com.defano.jsegue.renderers.PlainEffect;
+import com.defano.jsegue.renderers.*;
 import com.defano.wyldcard.runtime.ExecutionContext;
 
 import java.awt.*;
@@ -20,6 +20,7 @@ public class VisualEffectFactory {
         try {
             AnimatedSegue effect = effectSpecifier.effect.newInstance();
             effect.setSource(from);
+            effect.setOverlay(requiresOverlay(effect));
             effect.setDestination(effectImage(effectSpecifier.image, to));
             effect.setDurationMs(effectSpecifier.speed.durationMs);
 
@@ -64,6 +65,13 @@ public class VisualEffectFactory {
         g.fillRect(0, 0, width, height);
         g.dispose();
         return solid;
+    }
+
+    private static boolean requiresOverlay(AnimatedSegue effect) {
+        return effect instanceof WipeRightEffect ||
+                effect instanceof WipeLeftEffect ||
+                effect instanceof WipeUpEffect ||
+                effect instanceof WipeDownEffect;
     }
 
 }

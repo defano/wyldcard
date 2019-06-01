@@ -174,7 +174,7 @@ public abstract class Expression extends ASTNode {
 
         // Base case: this expression (not including parens) directly matches the requested type, then take action
         for (FactorAssociation thisEvaluation : evaluations) {
-            if (thisEvaluation.expressionType.isAssignableFrom(this.ungroup().getClass())) {
+            if (thisEvaluation.getExpressionType().isAssignableFrom(this.ungroup().getClass())) {
                 thisEvaluation.action.accept(this.ungroup());
                 return true;
             }
@@ -182,7 +182,7 @@ public abstract class Expression extends ASTNode {
 
         // If not, try to interpret this expression as each of the allowable types
         for (FactorAssociation thisEvaluation : evaluations) {
-            Expression coerced = this.evaluateAs(context, thisEvaluation.expressionType);
+            Expression coerced = this.evaluateAs(context, thisEvaluation.getExpressionType());
             if (coerced != null) {
                 thisEvaluation.action.accept(coerced);
                 return true;

@@ -3,6 +3,8 @@ package com.defano.wyldcard.editor;
 import com.defano.wyldcard.editor.help.SyntaxHelpModel;
 import org.fife.ui.autocomplete.Completion;
 import org.fife.ui.autocomplete.DefaultCompletionProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.List;
 
 public class HyperTalkCompletionProvider extends DefaultCompletionProvider {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HyperTalkCompletionProvider.class);
     private final List<Completion> completionList = new ArrayList<>();
 
     public HyperTalkCompletionProvider() {
@@ -33,7 +36,7 @@ public class HyperTalkCompletionProvider extends DefaultCompletionProvider {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("An error occurred unpacking the completion library. Malformed syntax?", e);
         }
     }
 }

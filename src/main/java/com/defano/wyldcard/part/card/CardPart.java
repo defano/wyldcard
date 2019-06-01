@@ -1,9 +1,9 @@
 package com.defano.wyldcard.part.card;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.enums.Owner;
 import com.defano.hypertalk.ast.model.enums.PartType;
 import com.defano.hypertalk.ast.model.enums.ToolType;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
@@ -36,6 +36,8 @@ import com.defano.wyldcard.property.PropertiesModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import io.reactivex.disposables.Disposable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,16 +59,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class CardPart extends CardLayeredPane implements Part<CardModel>, CanvasCommitObserver, CanvasTransferDelegate, MouseListenable, KeyListener, PropertyChangeObserver {
 
-    private final static int CANVAS_UNDO_DEPTH = 20;
+    private static final Logger LOG = LoggerFactory.getLogger(CardPart.class);
+    private static final int CANVAS_UNDO_DEPTH = 20;
+
     private final PartTable<FieldPart> fields = new PartTable<>();
     private final PartTable<ButtonPart> buttons = new PartTable<>();
     private final EditingBackgroundObserver editingBackgroundObserver = new EditingBackgroundObserver(this);
     private final ForegroundScaleObserver foregroundScaleObserver = new ForegroundScaleObserver(this);
     private final BackgroundScaleObserver backgroundScaleObserver = new BackgroundScaleObserver(this);
     private final CardModelObserver cardModelObserver = new CardPartModelObserver(this);
+
     // Sanity flag: card must be opened exactly once and closed exactly once; bad things happen if this constraint
     // is violated.
     private final AtomicBoolean isOpened = new AtomicBoolean(false);
+
     private CardModel cardModel;
     private Disposable editingBackgroundSubscription;
     private Disposable foregroundScaleSubscription;
@@ -594,7 +600,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     @RunOnDispatch
     public void partClosed(ExecutionContext context) {
         if (!isOpened.get()) {
-            new IllegalStateException("Bug! Card is not open for closing.").printStackTrace();
+            LOG.error("Bug!", new IllegalStateException("Card is not open for closing."));
             return;
         }
 
@@ -745,7 +751,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
     @Override
     @RunOnDispatch
     public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
-        if (CardModel.PROP_SHOWPICT.equals(property.toLowerCase())) {
+        if (CardModel.PROP_SHOWPICT.equalsIgnoreCase(property)) {
             if (model == getPartModel()) {
                 setCardImageVisible(newValue.booleanValue());
             } else if (model == getPartModel().getBackgroundModel()) {

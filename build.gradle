@@ -108,7 +108,11 @@ jacocoTestReport {
     afterEvaluate {
         //noinspection GroovyAssignabilityCheck
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: 'com/defano/hypertalk/parser/**')
+            fileTree(dir: it, exclude: [
+                    'com/defano/hypertalk/parser/**',
+                    'com/defano/wyldcard/window/layout/**',
+                    'com/defano/wyldcard/util/FileDrop.*'
+            ])
         }))
     }
 }
