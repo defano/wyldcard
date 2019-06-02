@@ -12,11 +12,13 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.compiler.CompilationUnit;
 import com.defano.wyldcard.runtime.compiler.ScriptCompiler;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+@Ignore     // Long test used mostly for performance, don't run as part of normal test suite
 public class TestGrammar {
 
     @SuppressWarnings("deprecation")
