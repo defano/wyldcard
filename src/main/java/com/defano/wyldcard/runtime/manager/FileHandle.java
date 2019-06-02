@@ -33,6 +33,7 @@ public class FileHandle {
 
     /**
      * Flushes the buffer and closes the file associated with this handle. Has no effect if the file is not open.
+     *
      * @throws HtSemanticException If an error occurs closing the file or writing its buffer to disk
      */
     void close() throws HtException {
@@ -49,6 +50,7 @@ public class FileHandle {
 
     /**
      * Reads and returns the entire contents of the file.
+     *
      * @param updateCursor When true, the file cursor will be updates to point to the end of the file.
      * @return The entire contents of the file
      * @throws HtSemanticException Thrown if the file does not exist or cannot be read.
@@ -70,19 +72,20 @@ public class FileHandle {
 
     /**
      * Reads a given number of characters from the file starting from the cursor position.
-     * @param count The number of characters to read.
+     *
+     * @param count        The number of characters to read.
      * @param updateCursor When true, the cursor will be incremented by count.
      * @return The characters read from the file.
      * @throws HtSemanticException Thrown if the file does not exist or cannot be read.
      */
     public String readFor(int count, boolean updateCursor) throws HtSemanticException {
-        String contents = readAll(false);
+        String allContents = readAll(false);
 
-        if (contents.length() < cursor + count) {
-            count = contents.length() - cursor;
+        if (allContents.length() < cursor + count) {
+            count = allContents.length() - cursor;
         }
 
-        String substring = contents.substring(cursor, cursor + count);
+        String substring = allContents.substring(cursor, cursor + count);
         if (updateCursor) {
             cursor += count;
         }
@@ -92,62 +95,62 @@ public class FileHandle {
     /**
      * Reads the remainder of the file starting a given position or offset.
      *
-     * @param at The position (offset) at which to start reading.
+     * @param at           The position (offset) at which to start reading.
      * @param updateCursor When true, the cursor will be updated to point to the end of the file.
      * @return The characters read from the file.
      * @throws HtSemanticException Thrown if the file does not exist or cannot be read.
      */
     public String readAt(int at, boolean updateCursor) throws HtSemanticException {
-        String contents = readAll(false);
+        String allContents = readAll(false);
 
-        if (contents.length() < at) {
-            at = contents.length();
+        if (allContents.length() < at) {
+            at = allContents.length();
         }
 
         if (updateCursor) {
-            cursor = contents.length();
+            cursor = allContents.length();
         }
 
-        return contents.substring(at);
+        return allContents.substring(at);
     }
 
     /**
      * Reads a given number of characters starting at a given position in the file.
      *
-     * @param at The position (offset) at which to start reading.
-     * @param count The number of characters to be read.
+     * @param at           The position (offset) at which to start reading.
+     * @param count        The number of characters to be read.
      * @param updateCursor When true, the cursor will be updated to point at the last character read.
      * @return The characters read from the file.
      * @throws HtSemanticException Thrown if the file does not exist or cannot be read.
      */
     public String readAt(int at, int count, boolean updateCursor) throws HtSemanticException {
-        String contents = readAt(at, false);
+        String contentsAt = readAt(at, false);
 
-        if (contents.length() < count) {
-            count = contents.length() - cursor;
+        if (contentsAt.length() < count) {
+            count = contentsAt.length() - cursor;
         }
 
         if (updateCursor) {
             cursor = at + count;
         }
 
-        return contents.substring(0, count);
+        return contentsAt.substring(0, count);
     }
 
     /**
      * Reads the file until the given string is reached or the end of the file.
      *
-     * @param until The string pattern to find (case insensitive)
+     * @param until        The string pattern to find (case insensitive)
      * @param updateCursor When true, the cursor will be updated to point at the last character read.
      * @return The characters read from the file
      * @throws HtSemanticException Thrown if the file does not exist or cannot be read.
      */
     public String readUntil(String until, boolean updateCursor) throws HtSemanticException {
-        String contents = readAt(cursor, false);
+        String contentsAt = readAt(cursor, false);
 
-        int index = contents.toLowerCase().indexOf(until.toLowerCase());
+        int index = contentsAt.toLowerCase().indexOf(until.toLowerCase());
         if (index < 0) {
-            index = contents.length();
+            index = contentsAt.length();
         } else {
             index += until.length();        // Include pattern in read data
         }
@@ -156,13 +159,13 @@ public class FileHandle {
             cursor += index;
         }
 
-        return contents.substring(0, index);
+        return contentsAt.substring(0, index);
     }
 
     /**
      * Writes a string of characters to the end of the file.
      *
-     * @param text The text to append to the file.
+     * @param text         The text to append to the file.
      * @param updateCursor When true, the cursor will be moved to the end of the file.
      * @throws HtSemanticException Thrown if the file cannot be written.
      */
@@ -178,7 +181,7 @@ public class FileHandle {
     /**
      * Inserts a string of characters to the file beginning at the current cursor location.
      *
-     * @param text The text to write to the file.
+     * @param text         The text to write to the file.
      * @param updateCursor When true, the cursor will be updated to point to the last character written to the file.
      * @throws HtSemanticException Thrown if the file cannot be written.
      */
@@ -194,8 +197,8 @@ public class FileHandle {
     /**
      * Inserts a string of characters to the file starting at a given position.
      *
-     * @param text The text to be written to the file.
-     * @param at The position at which the text should be written.
+     * @param text         The text to be written to the file.
+     * @param at           The position at which the text should be written.
      * @param updateCursor When true, the cursor is updated to point at the last character written.
      * @throws HtSemanticException Thrown if the file cannot be written.
      */
@@ -223,6 +226,7 @@ public class FileHandle {
 
     /**
      * Determines if the given file name or file path refers to the file represented by this FileHandle.
+     *
      * @param filename The name (optionally including a path) to a file
      * @return True of the filename refers to this file; false otherwise
      */
@@ -232,27 +236,24 @@ public class FileHandle {
 
     /**
      * Reads and returns the entire contents of this file.
+     *
      * @return The contents of this file
      * @throws HtSemanticException Thrown if the file does not exist.
      */
     private String getFileContents() throws HtSemanticException {
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(file).useDelimiter("\\Z");
+        try (Scanner scanner = new Scanner(file)) {
+            scanner.useDelimiter("\\Z");
             return scanner.next();
         } catch (FileNotFoundException e) {
             throw new HtSemanticException("The file " + file.getAbsolutePath() + " does not exist.");
         } catch (NoSuchElementException e) {
             return "";
-        } finally {
-            if (scanner != null) {
-                scanner.close();
-            }
         }
     }
 
     /**
      * Returns the entire contents of this file or the empty string if the file does not exist or cannot be read.
+     *
      * @return The entire contents of this file or the empty string
      */
     private String getFileContentsOrEmpty() {

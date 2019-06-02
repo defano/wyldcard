@@ -84,7 +84,7 @@ public class HyperCardIcon implements ButtonIcon {
                 int byteIdx = (col * 32 + row) / 8;
                 int bitIdx = 7 - ((col * 32 + row) % 8);
 
-                image.setRGB(row, col, (data[byteIdx] & (0x01 << bitIdx)) == 0 ? 0x00ffffff : 0xff000000);
+                image.setRGB(row, col, ((0xff & data[byteIdx]) & (0x01 << bitIdx)) == 0 ? 0x00ffffff : 0xff000000);
             }
         }
 

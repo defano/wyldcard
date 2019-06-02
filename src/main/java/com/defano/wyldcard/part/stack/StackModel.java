@@ -363,14 +363,14 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
      * @return True if the stack has changes; false otherwise
      */
     public boolean isDirty() {
-        if (savedStackFileProvider.blockingFirst().isPresent()) {
+        Optional<File> stackFile = savedStackFileProvider.blockingFirst();
 
+        if (stackFile.isPresent()) {
             try {
-                String savedStack = new String(Files.readAllBytes(savedStackFileProvider.blockingFirst().get().toPath()), StandardCharsets.UTF_8);
+                String savedStack = new String(Files.readAllBytes(stackFile.get().toPath()), StandardCharsets.UTF_8);
                 String currentStack = Serializer.serialize(this);
 
                 return !isEmpty() && !savedStack.equalsIgnoreCase(currentStack);
-
             } catch (Exception e) {
                 return true;
             }
