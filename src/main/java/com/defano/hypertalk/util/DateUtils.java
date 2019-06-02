@@ -130,13 +130,14 @@ public class DateUtils {
                 updated.setYear(second.getYear());
                 updated.setMonth(second.getMonth());
                 updated.setDate(second.getDate());
-                break;
+                cal.setTime(updated);
+                cal.set(Calendar.HOUR_OF_DAY, second.getHours());
+                cal.set(Calendar.MINUTE, second.getMinutes());
+                cal.set(Calendar.SECOND, second.getSeconds());
+                cal.set(Calendar.MILLISECOND, 0);
+                return cal.getTime();
             case LONG_TIME:
             case SHORT_TIME:
-                updated.setYear(second.getYear());
-                updated.setMonth(second.getMonth());
-                updated.setDate(second.getDate());
-
                 cal.setTime(updated);
                 cal.set(Calendar.HOUR_OF_DAY, second.getHours());
                 cal.set(Calendar.MINUTE, second.getMinutes());
