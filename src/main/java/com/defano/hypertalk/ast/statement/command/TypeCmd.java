@@ -7,12 +7,16 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.awt.keyboard.ModifierKey;
 import com.defano.wyldcard.awt.keyboard.RoboticTypist;
 import com.defano.wyldcard.runtime.ExecutionContext;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TypeCmd extends Command {
+
+    @Inject
+    private RoboticTypist roboticTypist;
 
     public final Expression expression;
     public final Expression withModifierKeysExpr;
@@ -35,6 +39,6 @@ public class TypeCmd extends Command {
             }
         }
         
-        RoboticTypist.getInstance().type(stringToType, modifierKeyList.toArray(new ModifierKey[0]));
+        roboticTypist.type(stringToType, modifierKeyList.toArray(new ModifierKey[0]));
     }
 }

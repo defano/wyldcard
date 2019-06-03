@@ -5,6 +5,7 @@ import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.window.WyldCardFrame;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class WindowNameSpecifier extends WindowSpecifier {
@@ -31,5 +32,18 @@ public class WindowNameSpecifier extends WindowSpecifier {
     @Override
     public Object getValue() {
         return windowName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WindowNameSpecifier that = (WindowNameSpecifier) o;
+        return windowName.equals(that.windowName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(windowName);
     }
 }

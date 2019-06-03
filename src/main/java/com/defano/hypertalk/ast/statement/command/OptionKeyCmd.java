@@ -7,9 +7,13 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.awt.keyboard.ModifierKey;
 import com.defano.wyldcard.awt.keyboard.RoboticTypist;
 import com.defano.wyldcard.runtime.ExecutionContext;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class OptionKeyCmd extends Command {
+
+    @Inject
+    private RoboticTypist roboticTypist;
 
     private final Expression keyExpr;
 
@@ -20,6 +24,6 @@ public class OptionKeyCmd extends Command {
 
     @Override
     protected void onExecute(ExecutionContext context) throws HtException, Preemption {
-        RoboticTypist.getInstance().type(keyExpr.evaluate(context).toString(), ModifierKey.OPTION);
+        roboticTypist.type(keyExpr.evaluate(context).toString(), ModifierKey.OPTION);
     }
 }

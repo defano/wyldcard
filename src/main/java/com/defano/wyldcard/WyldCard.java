@@ -3,7 +3,9 @@ package com.defano.wyldcard;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import com.defano.wyldcard.awt.keyboard.KeyboardManager;
+import com.defano.wyldcard.awt.keyboard.RoboticTypist;
 import com.defano.wyldcard.awt.keyboard.WyldCardKeyboardManager;
+import com.defano.wyldcard.awt.keyboard.WyldCardRoboticTypist;
 import com.defano.wyldcard.awt.mouse.MouseManager;
 import com.defano.wyldcard.awt.mouse.WyldCardMouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
@@ -26,7 +28,9 @@ import com.defano.wyldcard.sound.SpeechPlaybackManager;
 import com.defano.wyldcard.sound.WyldCardSoundManager;
 import com.defano.wyldcard.sound.WyldCardSpeechPlaybackManager;
 import com.defano.wyldcard.thread.Invoke;
+import com.defano.wyldcard.window.DialogManager;
 import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.window.WyldCardDialogManager;
 import com.defano.wyldcard.window.WyldCardWindowManager;
 import com.defano.wyldcard.window.layout.HyperTalkErrorDialog;
 import com.google.inject.*;
@@ -49,7 +53,7 @@ import javax.swing.*;
 @Singleton
 public class WyldCard implements PartFinder {
 
-    private static Logger LOG = LoggerFactory.getLogger(WyldCard.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WyldCard.class);
 
     private static WyldCard instance;                                   // Application object graph
     private static Injector injector;                                   // Google Guice injector that built the app
@@ -73,6 +77,9 @@ public class WyldCard implements PartFinder {
     @Inject private SpeechPlaybackManager speechPlaybackManager;        // Text to speech management
     @Inject private WyldCardMenuBar wyldCardMenuBar;                    // Main menubar
     @Inject private WyldCardPart wyldCardPart;                          // WyldCard script-addressable properties
+    @Inject private DialogManager dialogManager;                        // Standard ask, answer and error dialogs
+
+    @Inject private RoboticTypist roboticTypist;                        // Utility for programmatic typing/
 
     /**
      * Returns the singleton instance of the WyldCard application.
@@ -112,6 +119,29 @@ public class WyldCard implements PartFinder {
 
         // We're ready to go... startup all the managers
         instance.startup();
+    }
+
+    /**
+     * Returns the Google Guice injector used to assemble this object.
+     *
+     * @return The Guice injector
+     */
+    public static Injector getInjector() {
+        return injector;
+    }
+
+    /**
+     * Sets the Guice Injector used to assemble WyldCard, then creates the singleton WyldCard application instance
+     * using the Injector.
+     * <p>
+     * Primarily intended for test use to create a WyldCard instance injected with mock objects. Typically this method
+     * should only be invoked once, prior to executing any code which depends on the WyldCard singleton.
+     *
+     * @param injector The Google Guice injector to use when assembling this managed Singleton.
+     */
+    public static void setInjector(Injector injector) {
+        WyldCard.injector = injector;
+        WyldCard.instance = injector.getInstance(WyldCard.class);
     }
 
     /**
@@ -347,6 +377,26 @@ public class WyldCard implements PartFinder {
     }
 
     /**
+     * Gets the {@link RoboticTypist} object (singleton). This utility provides the methods for performing programmatic
+     * typing and key presses.
+     *
+     * @return The RoboticTypist object.
+     */
+    public RoboticTypist getRoboticTypist() {
+        return roboticTypist;
+    }
+
+    /**
+     * Gets the {@link DialogManager} object (singleton). The {@link DialogManager} provides routines for displaying
+     * standard 'ask', 'answer' and error dialogs.
+     *
+     * @return The DialogManager object.
+     */
+    public DialogManager getDialogManager() {
+        return dialogManager;
+    }
+
+    /**
      * Returns the {@link WyldCardMenuBar} object (singleton). The {@link WyldCardMenuBar} object represents the normal
      * system menu bar. That is, the set of menus displayed when viewing a stack (distinct from the menus shown when
      * editing or debugging a script).
@@ -355,29 +405,6 @@ public class WyldCard implements PartFinder {
      */
     public WyldCardMenuBar getWyldCardMenuBar() {
         return wyldCardMenuBar;
-    }
-
-    /**
-     * Returns the Google Guice injector used to assemble this object.
-     *
-     * @return The Guice injector
-     */
-    public static Injector getInjector() {
-        return injector;
-    }
-
-    /**
-     * Sets the Guice Injector used to assemble WyldCard, then creates the singleton WyldCard application instance
-     * using the Injector.
-     *
-     * Primarily intended for test use to create a WyldCard instance injected with mock objects. Typically this method
-     * should only be invoked once, prior to executing any code which depends on the WyldCard singleton.
-     *
-     * @param injector The Google Guice injector to use when assembling this managed Singleton.
-     */
-    public static void setInjector(Injector injector) {
-        WyldCard.injector = injector;
-        WyldCard.instance = injector.getInstance(WyldCard.class);
     }
 
     /**
@@ -406,6 +433,8 @@ public class WyldCard implements PartFinder {
             bind(WyldCardMenuBar.class).to(MainWyldCardMenuBar.class);
             bind(WyldCardProperties.class).to(WyldCardPart.class);
             bind(NavigationManager.class).to(WyldCardNavigationManager.class);
+            bind(RoboticTypist.class).to(WyldCardRoboticTypist.class);
+            bind(DialogManager.class).to(WyldCardDialogManager.class);
         }
     }
 }

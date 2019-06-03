@@ -4,6 +4,7 @@ import com.defano.wyldcard.NavigationManager;
 import com.defano.wyldcard.StackManager;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.keyboard.KeyboardManager;
+import com.defano.wyldcard.awt.keyboard.RoboticTypist;
 import com.defano.wyldcard.awt.mouse.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.menu.main.WyldCardMenuBar;
@@ -16,6 +17,7 @@ import com.defano.wyldcard.runtime.manager.*;
 import com.defano.wyldcard.search.SearchManager;
 import com.defano.wyldcard.sound.SoundManager;
 import com.defano.wyldcard.sound.SpeechPlaybackManager;
+import com.defano.wyldcard.window.DialogManager;
 import com.defano.wyldcard.window.WindowManager;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -52,6 +54,8 @@ public class GuiceTest<T> implements TestDataGenerator {
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected WyldCardMenuBar mockWyldCardMenuBar;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected WyldCardPart mockWyldCardPart;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected NavigationManager mockNavigationManager;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected RoboticTypist mockRoboticTypist;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS) protected DialogManager mockDialogManager;
 
     // Statically initialize these so they can be referenced before call to initialize()
     protected ExecutionContext mockExecutionContext = Mockito.mock(ExecutionContext.class, Mockito.RETURNS_DEEP_STUBS);
@@ -90,6 +94,7 @@ public class GuiceTest<T> implements TestDataGenerator {
         initialize(null);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public T inject(T uut) {
         injector.injectMembers(uut);
         return uut;
@@ -117,6 +122,8 @@ public class GuiceTest<T> implements TestDataGenerator {
             bind(WyldCardMenuBar.class).toInstance(mockWyldCardMenuBar);
             bind(WyldCardPart.class).toInstance(mockWyldCardPart);
             bind(NavigationManager.class).toInstance(mockNavigationManager);
+            bind(RoboticTypist.class).toInstance(mockRoboticTypist);
+            bind(DialogManager.class).toInstance(mockDialogManager);
         }
     }
 

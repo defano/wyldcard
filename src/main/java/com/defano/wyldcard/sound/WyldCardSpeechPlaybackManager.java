@@ -72,8 +72,10 @@ public class WyldCardSpeechPlaybackManager extends ThreadPoolExecutor implements
 
                 latch.await();
 
-            } catch (SynthesisException | IOException | LineUnavailableException | InterruptedException e) {
+            } catch (SynthesisException | IOException | LineUnavailableException e) {
                 LOG.error("An error occurred trying to speak text.", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         });
     }

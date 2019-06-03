@@ -6,9 +6,13 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.awt.keyboard.ModifierKey;
 import com.defano.wyldcard.awt.keyboard.RoboticTypist;
 import com.defano.wyldcard.runtime.ExecutionContext;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class CommandKeyDownCmd extends Statement {
+
+    @Inject
+    private RoboticTypist typist;
 
     private final Expression keyExpr;
 
@@ -19,6 +23,6 @@ public class CommandKeyDownCmd extends Statement {
 
     @Override
     protected void onExecute(ExecutionContext context) throws HtException {
-        RoboticTypist.getInstance().type(keyExpr.evaluate(context).toString(), ModifierKey.COMMAND);
+        typist.type(keyExpr.evaluate(context).toString(), ModifierKey.COMMAND);
     }
 }
