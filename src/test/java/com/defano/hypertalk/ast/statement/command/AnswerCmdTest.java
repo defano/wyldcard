@@ -4,6 +4,7 @@ import com.defano.hypertalk.GuiceTest;
 import com.defano.hypertalk.ast.expression.Expression;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.window.DialogResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -19,7 +20,8 @@ class AnswerCmdTest extends GuiceTest<AnswerCmd> {
         // Setup
         initialize(new AnswerCmd(mockParserRuleContext, mockMsgExpr));
         Mockito.when(mockMsgExpr.evaluate(mockExecutionContext)).thenReturn(new Value("The message"));
-        Mockito.when(mockDialogManager.answer(mockExecutionContext, new Value("The message"), new Value("OK"), null, null)).thenReturn(new Value("OK"));
+        Mockito.when(mockDialogManager.answer(mockExecutionContext, new Value("The message"), new Value("OK"), null, null))
+                .thenReturn(new DialogResponse(new Value("OK"), null));
 
         // Execute
         uut.onExecute(mockExecutionContext);
@@ -34,7 +36,8 @@ class AnswerCmdTest extends GuiceTest<AnswerCmd> {
         initialize(new AnswerCmd(mockParserRuleContext, mockMsgExpr, mockChoice1Expr));
         Mockito.when(mockMsgExpr.evaluate(mockExecutionContext)).thenReturn(new Value("The message"));
         Mockito.when(mockChoice1Expr.evaluate(mockExecutionContext)).thenReturn(new Value("Choice 1"));
-        Mockito.when(mockDialogManager.answer(mockExecutionContext, new Value("The message"), new Value("Choice 1"), null, null)).thenReturn(new Value("Choice 1"));
+        Mockito.when(mockDialogManager.answer(mockExecutionContext, new Value("The message"), new Value("Choice 1"), null, null))
+                .thenReturn(new DialogResponse(new Value("Choice 1"), null));
 
         // Execute
         uut.onExecute(mockExecutionContext);
@@ -51,7 +54,8 @@ class AnswerCmdTest extends GuiceTest<AnswerCmd> {
         Mockito.when(mockMsgExpr.evaluate(mockExecutionContext)).thenReturn(new Value("The message"));
         Mockito.when(mockChoice1Expr.evaluate(mockExecutionContext)).thenReturn(new Value("Choice 1"));
         Mockito.when(mockChoice2Expr.evaluate(mockExecutionContext)).thenReturn(new Value("Choice 2"));
-        Mockito.when(mockDialogManager.answer(mockExecutionContext, new Value("The message"), new Value("Choice 1"), new Value("Choice 2"), null)).thenReturn(new Value("Choice 2"));
+        Mockito.when(mockDialogManager.answer(mockExecutionContext, new Value("The message"), new Value("Choice 1"), new Value("Choice 2"), null))
+                .thenReturn(new DialogResponse(new Value("Choice 2"), null));
 
         // Execute
         uut.onExecute(mockExecutionContext);
@@ -68,7 +72,8 @@ class AnswerCmdTest extends GuiceTest<AnswerCmd> {
         Mockito.when(mockChoice1Expr.evaluate(mockExecutionContext)).thenReturn(new Value("Choice 1"));
         Mockito.when(mockChoice2Expr.evaluate(mockExecutionContext)).thenReturn(new Value("Choice 2"));
         Mockito.when(mockChoice3Expr.evaluate(mockExecutionContext)).thenReturn(new Value("Choice 3"));
-        Mockito.when(mockDialogManager.answer(mockExecutionContext, new Value("The message"), new Value("Choice 1"), new Value("Choice 2"), new Value("Choice 3"))).thenReturn(new Value("Choice 3"));
+        Mockito.when(mockDialogManager.answer(mockExecutionContext, new Value("The message"), new Value("Choice 1"), new Value("Choice 2"), new Value("Choice 3")))
+                .thenReturn(new DialogResponse(new Value("Choice 3"), null));
 
         // Execute
         uut.onExecute(mockExecutionContext);

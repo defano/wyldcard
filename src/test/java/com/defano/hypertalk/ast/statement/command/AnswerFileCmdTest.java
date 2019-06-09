@@ -4,6 +4,7 @@ import com.defano.hypertalk.GuiceTest;
 import com.defano.hypertalk.ast.expression.Expression;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.window.DialogResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -23,7 +24,8 @@ class AnswerFileCmdTest extends GuiceTest<AnswerFileCmd> {
         // Setup
         Mockito.when(mockPromptExpr.evaluate(mockExecutionContext)).thenReturn(new Value("The prompt"));
         Mockito.when(mockFilterExpr.evaluate(mockExecutionContext)).thenReturn(new Value("The filter"));
-        Mockito.when(mockDialogManager.answerFile(mockExecutionContext, new Value("The prompt"), new Value("The filter"))).thenReturn(new Value("The choice"));
+        Mockito.when(mockDialogManager.answerFile(mockExecutionContext, new Value("The prompt"), new Value("The filter")))
+                .thenReturn(new DialogResponse(new Value(), new Value("The choice")));
 
         // Execute
         uut.onExecute(mockExecutionContext);
@@ -38,7 +40,8 @@ class AnswerFileCmdTest extends GuiceTest<AnswerFileCmd> {
         // Setup
         Mockito.when(mockPromptExpr.evaluate(mockExecutionContext)).thenReturn(new Value("The prompt"));
         Mockito.when(mockFilterExpr.evaluate(mockExecutionContext)).thenReturn(new Value("The filter"));
-        Mockito.when(mockDialogManager.answerFile(mockExecutionContext, new Value("The prompt"), new Value("The filter"))).thenReturn(null);
+        Mockito.when(mockDialogManager.answerFile(mockExecutionContext, new Value("The prompt"), new Value("The filter")))
+                .thenReturn(new DialogResponse(new Value("Cancel"), null));
 
         // Execute
         uut.onExecute(mockExecutionContext);

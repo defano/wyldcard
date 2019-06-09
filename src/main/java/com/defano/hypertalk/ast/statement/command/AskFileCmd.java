@@ -4,19 +4,16 @@ import com.defano.hypertalk.ast.expression.Expression;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statement.Command;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.part.stack.StackModel;
 import com.defano.wyldcard.runtime.ExecutionContext;
-import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.window.DialogManager;
+import com.defano.wyldcard.window.DialogResponse;
 import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.awt.*;
-import java.io.File;
 
 public class AskFileCmd extends Command {
 
     @Inject
-    private WindowManager windowManager;
+    private DialogManager dialogManager;
 
     private final Expression promptExpression;
     private final Expression fileExpression;
@@ -33,24 +30,14 @@ public class AskFileCmd extends Command {
 
     @Override
     protected void onExecute(ExecutionContext context) throws HtException {
-        String prompt = promptExpression.evaluate(context).toString();
-        FileDialog fd = new FileDialog(windowManager.getWindowForStack(context, context.getCurrentStack()).getWindow(), prompt, FileDialog.SAVE);
+        Value prompt = promptExpression.evaluate(context);
+        Value file = fileExpression != null ? fileExpression.evaluate(context) : null;
 
-        if (fileExpression != null) {
-            fd.setFile(fileExpression.evaluate(context).toString());
-        }
+        DialogResponse response = dialogManager.askFile(context, prompt, file);
 
-        fd.setVisible(true);
-        if (fd.getFiles().length > 0) {
-            File f = fd.getFiles()[0];
-            String path = f.getAbsolutePath().endsWith(StackModel.FILE_EXTENSION) ?
-                    f.getAbsolutePath() :
-                    f.getAbsolutePath() + StackModel.FILE_EXTENSION;
-
-            context.setIt(new Value(path));
-            context.setResult(new Value());
-        } else {
-            context.setResult(new Value("Cancel"));
+        context.setResult(response.getButtonResponse());
+        if (response.getFieldResponse() != null) {
+            context.setIt(response.getFieldResponse());
         }
     }
 }

@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.statement.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.window.DialogManager;
+import com.defano.wyldcard.window.DialogResponse;
 import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -15,6 +16,7 @@ public class AnswerCmd extends Command {
     public final Expression ch1;
     public final Expression ch2;
     public final Expression ch3;
+
     @Inject
     private DialogManager dialogManager;
 
@@ -40,18 +42,18 @@ public class AnswerCmd extends Command {
     }
 
     public void onExecute(ExecutionContext context) throws HtException {
-        Value selection;
+        DialogResponse response;
 
         if (ch1 != null && ch2 != null && ch3 != null) {
-            selection = dialogManager.answer(context, message.evaluate(context), ch1.evaluate(context), ch2.evaluate(context), ch3.evaluate(context));
+            response = dialogManager.answer(context, message.evaluate(context), ch1.evaluate(context), ch2.evaluate(context), ch3.evaluate(context));
         } else if (ch1 != null && ch2 != null) {
-            selection = dialogManager.answer(context, message.evaluate(context), ch1.evaluate(context), ch2.evaluate(context), null);
+            response = dialogManager.answer(context, message.evaluate(context), ch1.evaluate(context), ch2.evaluate(context), null);
         } else if (ch1 != null) {
-            selection = dialogManager.answer(context, message.evaluate(context), ch1.evaluate(context), null, null);
+            response = dialogManager.answer(context, message.evaluate(context), ch1.evaluate(context), null, null);
         } else {
-            selection = dialogManager.answer(context, message.evaluate(context), new Value("OK"), null, null);
+            response = dialogManager.answer(context, message.evaluate(context), new Value("OK"), null, null);
         }
 
-        context.setIt(selection);
+        context.setIt(response.getButtonResponse());
     }
 }
