@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 public interface ActionBindable {
 
     @RunOnDispatch
-    default void bindActions(ActionListener actionListener, JComponent... components) {
+    default void addActionListenerToComponents(ActionListener actionListener, JComponent... components) {
         for (JComponent component : components) {
 
             if (component instanceof JSpinner) {

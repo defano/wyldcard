@@ -37,7 +37,7 @@ public enum LocalFont {
             Font font = Font.createFont(Font.TRUETYPE_FONT, is);
             return font.deriveFont(size).deriveFont(style);
         } catch (FontFormatException | IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("An error occurred trying to load font.", e);
         }
     }
 

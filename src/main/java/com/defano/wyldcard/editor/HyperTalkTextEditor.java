@@ -13,6 +13,8 @@ import org.fife.ui.rsyntaxtextarea.parser.Parser;
 import org.fife.ui.rtextarea.GutterIconInfo;
 import org.fife.ui.rtextarea.IconRowHeader;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -27,6 +29,7 @@ import java.util.List;
 
 public class HyperTalkTextEditor extends RTextScrollPane {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HyperTalkTextEditor.class);
     private static final Color TRACE_HILITE_COLOR = new Color(0xff, 0x00, 0x00, 0x40);
     private static final String LANGUAGE_KEY = "text/hypertalk";
     private static final String LANGUAGE_TOKENIZER = "com.defano.wyldcard.editor.HyperTalkTokenMaker";
@@ -121,7 +124,7 @@ public class HyperTalkTextEditor extends RTextScrollPane {
             try {
                 breakpoints.add(scriptField.getLineOfOffset(thisMark.getMarkedOffset()));
             } catch (BadLocationException e) {
-                e.printStackTrace();
+                LOG.error("An error occurred trying to get breakpoints.", e);
             }
         }
         return breakpoints;
@@ -163,7 +166,7 @@ public class HyperTalkTextEditor extends RTextScrollPane {
             traceHighlightTag = scriptField.addLineHighlight(line, TRACE_HILITE_COLOR);
             scriptField.setCaretPosition(scriptField.getLineStartOffset(line));
         } catch (BadLocationException e) {
-            e.printStackTrace();
+            LOG.error("An error occurred trying to show trace highlight.", e);
         }
     }
 
@@ -189,7 +192,7 @@ public class HyperTalkTextEditor extends RTextScrollPane {
 
     @RunOnDispatch
     public void addBreakpointToggleObserver(BreakpointToggleObserver observer) {
-        if (breakpointToggleObservers.size() == 0) {
+        if (breakpointToggleObservers.isEmpty()) {
             installBreakpointToggleObserver();
         }
         breakpointToggleObservers.add(observer);

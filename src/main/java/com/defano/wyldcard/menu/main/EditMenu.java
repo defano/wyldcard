@@ -164,7 +164,7 @@ public class EditMenu extends WyldCardMenu {
         }
     }
 
-    public void reset() {
+    public static void reset() {
         instance = new EditMenu();
     }
 }

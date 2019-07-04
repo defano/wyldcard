@@ -19,6 +19,7 @@ apply plugin: 'application'
 apply plugin: 'antlr'
 apply plugin: 'idea'
 apply plugin: "jacoco"
+apply plugin: 'org.sonarqube'
 
 allprojects {
     apply plugin: 'java'
