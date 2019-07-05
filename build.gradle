@@ -120,8 +120,8 @@ jacocoTestReport {
 
 sonarqube {
     properties {
-        property "sonar.login", $ { SONAR_KEY }
-        property "sonar.branch", $ { TRAVIS_BRANCH }
+        property "sonar.login", "$System.env.SONAR_KEY"
+        property "sonar.branch", "$System.env.TRAVIS_BRANCH"
     }
 }
 
