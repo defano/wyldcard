@@ -121,7 +121,16 @@ jacocoTestReport {
 sonarqube {
     properties {
         property "sonar.login", "$System.env.SONAR_KEY"
-        property "sonar.branch", "$System.env.TRAVIS_BRANCH"
+        property "sonar.branch.name", "$System.env.TRAVIS_BRANCH"
+
+        property "sonar.projectKey", "wyldcard"
+        property "sonar.organization", "defano-github"
+        property "sonar.host.url", "https://sonarcloud.io"
+
+        properties["sonar.exclusions"] += "generated-src/**/*"
+        properties["sonar.exclusions"] += "src/main/java/com/defano/hypertalk/parser/**/*"
+        properties["sonar.exclusions"] += "src/main/java/com/defano/wyldcard/window/layout/**/*"
+        properties["sonar.exclusions"] += "src/main/java/com/defano/wyldcard/util/FileDrop.*"
     }
 }
 
