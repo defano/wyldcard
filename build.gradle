@@ -118,6 +118,13 @@ jacocoTestReport {
     }
 }
 
+sonarqube {
+    properties {
+        property "sonar.login", $ { SONAR_KEY }
+        property "sonar.branch", $ { TRAVIS_BRANCH }
+    }
+}
+
 buildScan {
     termsOfServiceUrl = 'https://gradle.com/terms-of-service'
     termsOfServiceAgree = 'yes'
