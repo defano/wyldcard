@@ -12,7 +12,7 @@ import java.awt.*;
 
 public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<Integer> {
 
-    private final static ShapesPalette instance = new ShapesPalette();
+    private static final ShapesPalette instance = new ShapesPalette();
 
     private JPanel shapesPanel;
     private JButton triangle;

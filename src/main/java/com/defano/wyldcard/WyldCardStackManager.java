@@ -178,9 +178,10 @@ public class WyldCardStackManager implements StackNavigationObserver, StackManag
     @Override
     public void saveStackAs(ExecutionContext context, StackModel stackModel) {
         String defaultName = "Untitled";
+        Optional<File> theSavedStackFile = getSavedStackFileProvider().blockingFirst();
 
-        if (getSavedStackFileProvider().blockingFirst().isPresent()) {
-            defaultName = getSavedStackFileProvider().blockingFirst().get().getName();
+        if (theSavedStackFile.isPresent()) {
+            defaultName = theSavedStackFile.get().getName();
         } else if (stackModel.getStackName(context) != null && !stackModel.getStackName(context).isEmpty()) {
             defaultName = stackModel.getStackName(context);
         }

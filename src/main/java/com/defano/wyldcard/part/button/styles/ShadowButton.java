@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class ShadowButton extends AbstractLabelButton {
 
-    private final static int HILITE_INSET = 1;      // Inset of fill-hilite
+    private static final int HILITE_INSET = 1;      // Inset of fill-hilite
 
     public ShadowButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);

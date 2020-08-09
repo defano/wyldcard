@@ -39,12 +39,11 @@ public class PartRecord {
 
     public static PartRecord deserialize(Block parent, short entrySize, byte[] data) throws ImportException {
         PartRecord part = new PartRecord();
-        StackInputStream sis = new StackInputStream(data);
 
         part.stack = parent.getStack();
         part.size = entrySize;
 
-        try {
+        try (StackInputStream sis = new StackInputStream(data)) {
             part.partId = sis.readShort();
             part.partType = PartType.fromTypeId(sis.readByte());
             part.flags = PartFlag.fromBitmask(sis.readByte());

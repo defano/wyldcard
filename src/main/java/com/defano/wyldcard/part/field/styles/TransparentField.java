@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class TransparentField extends HyperCardTextField {
 
-    private final static Color TRANSPARENT = new Color(0, 0, 0, 0);
+    private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 
     public TransparentField(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);

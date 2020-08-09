@@ -33,7 +33,7 @@ public enum VisualEffectName {
         return Arrays.stream(values())
                 .filter(v -> v.hypertalkName.equals(name))
                 .findFirst()
-                .orElseThrow(() -> new HtSemanticException("Not the name of a visual effect."));
+                .orElseThrow(() -> new HtSemanticException("Not a visual effect."));
     }
 
     public Class<? extends AnimatedSegue> toAnimatedSegueClass(VisualEffectDirection direction) throws HtSemanticException {
@@ -41,86 +41,111 @@ public enum VisualEffectName {
             case DISSOLVE:
                 return PixelDissolveEffect.class;
             case BARN_DOOR:
-                if (direction == VisualEffectDirection.OPEN) {
-                    return BarnDoorOpenEffect.class;
-                } else if (direction == VisualEffectDirection.CLOSE) {
-                    return BarnDoorCloseEffect.class;
-                }
-                break;
+                return getBarnDoorEffect(direction);
             case CHECKERBOARD:
                 return CheckerboardEffect.class;
             case IRIS:
-                if (direction == VisualEffectDirection.OPEN) {
-                    return IrisOpenEffect.class;
-                } else if (direction == VisualEffectDirection.CLOSE) {
-                    return IrisCloseEffect.class;
-                }
-                break;
+                return getIrisEffect(direction);
             case PLAIN:
                 return PlainEffect.class;
             case PUSH:
-                // TODO: Push effect not implemented; delegate to scroll
-                if (direction == VisualEffectDirection.UP) {
-                    return ScrollUpEffect.class;
-                } else if (direction == VisualEffectDirection.DOWN) {
-                    return ScrollDownEffect.class;
-                } else if (direction == VisualEffectDirection.LEFT) {
-                    return ScrollLeftEffect.class;
-                } else if (direction == VisualEffectDirection.RIGHT) {
-                    return ScrollRightEffect.class;
-                }
-                break;
             case SCROLL:
-                if (direction == VisualEffectDirection.UP) {
-                    return ScrollUpEffect.class;
-                } else if (direction == VisualEffectDirection.DOWN) {
-                    return ScrollDownEffect.class;
-                } else if (direction == VisualEffectDirection.LEFT) {
-                    return ScrollLeftEffect.class;
-                } else if (direction == VisualEffectDirection.RIGHT) {
-                    return ScrollRightEffect.class;
-                }
-                break;
+                return getScrollEffect(direction);
             case SHRINK:
-                if (direction == VisualEffectDirection.TOP) {
-                    return ShrinkToTopEffect.class;
-                } else if (direction == VisualEffectDirection.CENTER) {
-                    return ShrinkToCenterEffect.class;
-                } else if (direction == VisualEffectDirection.BOTTOM) {
-                    return ShrinkToBottomEffect.class;
-                }
-                break;
+                return getShrinkEffect(direction);
             case STRETCH:
-                if (direction == VisualEffectDirection.TOP) {
-                    return StretchFromTopEffect.class;
-                } else if (direction == VisualEffectDirection.CENTER) {
-                    return StretchFromCenterEffect.class;
-                } else if (direction == VisualEffectDirection.BOTTOM) {
-                    return StretchFromBottomEffect.class;
-                }
-                break;
+                return getStretchEffect(direction);
             case VENETIAN_BLINDS:
                 return BlindsEffect.class;
             case WIPE:
-                if (direction == VisualEffectDirection.UP) {
-                    return WipeUpEffect.class;
-                } else if (direction == VisualEffectDirection.DOWN) {
-                    return WipeDownEffect.class;
-                } else if (direction == VisualEffectDirection.LEFT) {
-                    return WipeLeftEffect.class;
-                } else if (direction == VisualEffectDirection.RIGHT) {
-                    return WipeRightEffect.class;
-                }
-                break;
+                return getWipeEffect(direction);
             case ZOOM:
-                if (direction == VisualEffectDirection.IN || direction == VisualEffectDirection.OPEN) {
-                    return ZoomInEffect.class;
-                } else if (direction == VisualEffectDirection.OUT || direction == VisualEffectDirection.CLOSE) {
-                    return ZoomOutEffect.class;
-                }
-                break;
+                return getZoomEffect(direction);
         }
 
         throw new HtSemanticException("Not a visual effect.");
     }
+
+    private Class<? extends AnimatedSegue> getBarnDoorEffect(VisualEffectDirection direction) throws HtSemanticException {
+        if (direction == VisualEffectDirection.OPEN) {
+            return BarnDoorOpenEffect.class;
+        } else if (direction == VisualEffectDirection.CLOSE) {
+            return BarnDoorCloseEffect.class;
+        }
+
+        throw new HtSemanticException("Not a valid direction for barn door effect.");
+    }
+
+    private Class<? extends AnimatedSegue> getIrisEffect(VisualEffectDirection direction) throws HtSemanticException {
+        if (direction == VisualEffectDirection.OPEN) {
+            return IrisOpenEffect.class;
+        } else if (direction == VisualEffectDirection.CLOSE) {
+            return IrisCloseEffect.class;
+        }
+
+        throw new HtSemanticException("Not a valid direction for iris effect.");
+    }
+
+    private Class<? extends AnimatedSegue> getScrollEffect(VisualEffectDirection direction) throws HtSemanticException {
+        if (direction == VisualEffectDirection.UP) {
+            return ScrollUpEffect.class;
+        } else if (direction == VisualEffectDirection.DOWN) {
+            return ScrollDownEffect.class;
+        } else if (direction == VisualEffectDirection.LEFT) {
+            return ScrollLeftEffect.class;
+        } else if (direction == VisualEffectDirection.RIGHT) {
+            return ScrollRightEffect.class;
+        }
+
+        throw new HtSemanticException("Not a valid direction for scroll or push effect.");
+    }
+
+    private Class<? extends AnimatedSegue> getShrinkEffect(VisualEffectDirection direction) throws HtSemanticException {
+        if (direction == VisualEffectDirection.TOP) {
+            return ShrinkToTopEffect.class;
+        } else if (direction == VisualEffectDirection.CENTER) {
+            return ShrinkToCenterEffect.class;
+        } else if (direction == VisualEffectDirection.BOTTOM) {
+            return ShrinkToBottomEffect.class;
+        }
+
+        throw new HtSemanticException("Not a valid direction for shrink effect.");
+    }
+
+    private Class<? extends AnimatedSegue> getStretchEffect(VisualEffectDirection direction) throws HtSemanticException {
+        if (direction == VisualEffectDirection.TOP) {
+            return StretchFromTopEffect.class;
+        } else if (direction == VisualEffectDirection.CENTER) {
+            return StretchFromCenterEffect.class;
+        } else if (direction == VisualEffectDirection.BOTTOM) {
+            return StretchFromBottomEffect.class;
+        }
+
+        throw new HtSemanticException("Not a valid direction for stretch effect.");
+    }
+
+    private Class<? extends AnimatedSegue> getWipeEffect(VisualEffectDirection direction) throws HtSemanticException {
+        if (direction == VisualEffectDirection.UP) {
+            return WipeUpEffect.class;
+        } else if (direction == VisualEffectDirection.DOWN) {
+            return WipeDownEffect.class;
+        } else if (direction == VisualEffectDirection.LEFT) {
+            return WipeLeftEffect.class;
+        } else if (direction == VisualEffectDirection.RIGHT) {
+            return WipeRightEffect.class;
+        }
+
+        throw new HtSemanticException("Not a valid direction for wipe effect.");
+    }
+
+    private Class<? extends AnimatedSegue> getZoomEffect(VisualEffectDirection direction) throws HtSemanticException {
+        if (direction == VisualEffectDirection.IN || direction == VisualEffectDirection.OPEN) {
+            return ZoomInEffect.class;
+        } else if (direction == VisualEffectDirection.OUT || direction == VisualEffectDirection.CLOSE) {
+            return ZoomOutEffect.class;
+        }
+
+        throw new HtSemanticException("Not a valid direction for zoom effect.");
+    }
+
 }

@@ -8,6 +8,8 @@ import com.defano.wyldcard.window.layout.StackWindow;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.List;
 
 public interface Themeable {
 
+    Logger LOG = LoggerFactory.getLogger(Themeable.class);
     Subject<String> themeProvider = BehaviorSubject.create();
 
     @RunOnDispatch
@@ -73,7 +76,7 @@ public interface Themeable {
                     }
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LOG.error("An error occurred while setting the theme.", e);
                 }
             });
         }

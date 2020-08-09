@@ -41,19 +41,17 @@ public class GoCmd extends Command {
 
     public void onExecute(ExecutionContext context) throws HtException {
 
-        boolean success =
-                attemptToGoDirection(context) ||
-                attemptToGoToCardInThisStack(context) ||
-                attemptToGoToBkgndInThisStack(context) ||
-                attemptToGoToDestinationInRemoteStack(context) ||
-                attemptToGoToStack(context);
+        if (tryGoDirectionFailed(context) &&
+                tryGoToCardInThisStackFailed(context) &&
+                tryGoToBkgndInThisStackFailed(context) &&
+                tryGoToDestinationInRemoteStackFailed(context)) {
 
-        if (!success) {
-            context.setResult(new Value("No such card."));
+            goToStack(context);
         }
+
     }
 
-    private boolean attemptToGoToDestinationInRemoteStack(ExecutionContext context) throws HtException {
+    private boolean tryGoToDestinationInRemoteStackFailed(ExecutionContext context) throws HtException {
         CompositePartExp cpe = destinationExp.factor(context, CompositePartExp.class);
         if (cpe != null) {
             CompositePartSpecifier cps = (CompositePartSpecifier) cpe.evaluateAsSpecifier(context);
@@ -66,7 +64,7 @@ public class GoCmd extends Command {
                 StackModel model = WyldCard.getInstance().getStackManager().findStack(context, (StackPartSpecifier) rps, navigationOptions);
                 if (model == null) {
                     context.setResult(new Value("No such stack."));
-                    return true;
+                    return false;
                 }
 
                 // We found the remote stack, now try to find the card
@@ -76,41 +74,41 @@ public class GoCmd extends Command {
                     return true;
                 } else {
                     context.setResult(new Value("No such card."));
-                    return true;
+                    return false;
                 }
             }
         }
 
-        return false;
+        return true;
     }
 
-    private boolean attemptToGoToBkgndInThisStack(ExecutionContext context) throws HtSemanticException {
+    private boolean tryGoToBkgndInThisStackFailed(ExecutionContext context) throws HtSemanticException {
         Destination destination = Destination.ofPart(context, destinationExp.partFactor(context, BackgroundModel.class));
         if (destination != null) {
             navigationManager.goDestination(context, destination);
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
 
-    private boolean attemptToGoToCardInThisStack(ExecutionContext context) throws HtSemanticException {
+    private boolean tryGoToCardInThisStackFailed(ExecutionContext context) throws HtSemanticException {
         Destination destination = Destination.ofPart(context, destinationExp.partFactor(context, CardModel.class));
         if (destination != null) {
             navigationManager.goDestination(context, destination);
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
 
-    private boolean attemptToGoToStack(ExecutionContext context) throws HtException {
+    private void goToStack(ExecutionContext context) throws HtException {
 
         StackPartSpecifier stackPartSpecifier;
         StackPartExp stackPartExp = destinationExp.factor(context, StackPartExp.class);
         if (stackPartExp != null) {
             stackPartSpecifier = (StackPartSpecifier) stackPartExp.evaluateAsSpecifier(context);
-        } else  {
+        } else {
             stackPartSpecifier = new StackPartSpecifier(destinationExp.evaluate(context).toString());
         }
 
@@ -119,7 +117,7 @@ public class GoCmd extends Command {
 
         if (destination != null) {
             navigationManager.goDestination(context, destination);
-            return true;
+            return;
         }
 
         if (navigationOptions.withoutDialog) {
@@ -127,11 +125,9 @@ public class GoCmd extends Command {
         } else {
             context.setResult(new Value());
         }
-
-        return true;
     }
 
-    private boolean attemptToGoDirection(ExecutionContext context) {
+    private boolean tryGoDirectionFailed(ExecutionContext context) {
         PartDirectionExp directionExp = destinationExp.factor(context, PartDirectionExp.class);
 
         if (directionExp != null) {
@@ -143,9 +139,9 @@ public class GoCmd extends Command {
                 navigationManager.goForth(context);
             }
 
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
 

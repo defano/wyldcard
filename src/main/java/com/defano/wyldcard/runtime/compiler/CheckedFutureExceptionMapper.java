@@ -15,6 +15,7 @@ import com.google.common.base.Function;
  * This class simply attempts to remove the ExecutionException wrapper.
  */
 public class CheckedFutureExceptionMapper implements Function<Exception, HtException> {
+
     @Override
     public HtException apply(Exception input) {
         if (input instanceof HtException) {
@@ -22,7 +23,6 @@ public class CheckedFutureExceptionMapper implements Function<Exception, HtExcep
         } else if (input.getCause() instanceof HtException) {
             return (HtException) input.getCause();
         } else {
-            input.printStackTrace();
             return new HtException("An unexpected error occurred while executing the script: " + input.getMessage());
         }
     }

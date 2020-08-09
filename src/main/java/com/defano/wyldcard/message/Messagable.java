@@ -103,7 +103,7 @@ public interface Messagable {
         try {
             cdl.await();
         } catch (InterruptedException e) {
-            throw new HtException("Script execution interrupted.");
+            Thread.currentThread().interrupt();
         }
 
         if (exception[0] != null) {

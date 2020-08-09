@@ -105,7 +105,7 @@ public class CardPartTransferHandler extends TransferHandler {
 
     private static class TransferablePart implements Transferable {
 
-        private final static DataFlavor partFlavor = new DataFlavor(ToolEditablePart.class, DataFlavor.javaJVMLocalObjectMimeType);
+        private static final DataFlavor partFlavor = new DataFlavor(ToolEditablePart.class, DataFlavor.javaJVMLocalObjectMimeType);
         private final ToolEditablePart part;
 
         private TransferablePart(ToolEditablePart part) {

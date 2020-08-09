@@ -41,22 +41,24 @@ public class ClickCmd extends Command {
         boolean withCommand = false;
 
         if (modifierKeys != null) {
-            for (Value thisModifier : modifierKeys.evaluate(context).getItems(context)) {
-                withShift = thisModifier.equals(new Value("shiftKey")) || withShift;
-                withOption = thisModifier.equals(new Value("optionKey")) || withOption;
-                withCommand = (thisModifier.equals(new Value("commandKey")) || thisModifier.contains(new Value("cmdKey"))) || withCommand;
+            for (Value thisModifier : modifierKeys.evaluate(context).getListItems()) {
+                String modifier = thisModifier.toString().trim();
+
+                withShift = modifier.equalsIgnoreCase("shiftKey") || withShift;
+                withOption = modifier.equalsIgnoreCase("optionKey") || withOption;
+                withCommand = (modifier.equalsIgnoreCase("commandKey") || modifier.equalsIgnoreCase("cmdKey")) || withCommand;
             }
         }
 
-        Value clickLoc = this.clickLoc.evaluate(context);
+        Value theClickLoc = this.clickLoc.evaluate(context);
 
-        if (clickLoc.isPoint()) {
-            int xLoc = clickLoc.getItems(context).get(0).integerValue();
-            int yLoc = clickLoc.getItems(context).get(1).integerValue();
+        if (theClickLoc.isPoint()) {
+            int xLoc = theClickLoc.getListItems().get(0).integerValue();
+            int yLoc = theClickLoc.getListItems().get(1).integerValue();
 
             mouseManager.clickAt(new Point(xLoc, yLoc), withShift, withOption, withCommand);
         } else {
-            throw new HtSemanticException(clickLoc.toString() + " is not a valid location.");
+            throw new HtSemanticException(theClickLoc.toString() + " is not a valid location.");
         }
     }
 }

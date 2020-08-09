@@ -7,12 +7,18 @@ import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.Invoke;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layout.StackImportProgress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
 public class StackImporter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StackImporter.class);
+
+    private StackImporter() {}
 
     public static void importStack(ExecutionContext context) {
         importStack(context, findFile(context));
@@ -39,7 +45,7 @@ public class StackImporter {
                     progressWindow.dispose();
                     if (!progressWindow.isCancelled()) {
                         WyldCard.getInstance().showErrorDialog(new HtException(message));
-                        cause.printStackTrace();
+                        LOG.warn("HyperCard stack conversion failed.", cause);
                     }
                 });
             }

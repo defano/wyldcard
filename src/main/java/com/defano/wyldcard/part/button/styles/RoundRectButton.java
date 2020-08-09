@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class RoundRectButton extends AbstractLabelButton implements HyperCardButton {
 
-    private final static int ARC_DIAMETER = 14;     // Rounded corner diameter
+    private static final int ARC_DIAMETER = 14;     // Rounded corner diameter
 
     public RoundRectButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);

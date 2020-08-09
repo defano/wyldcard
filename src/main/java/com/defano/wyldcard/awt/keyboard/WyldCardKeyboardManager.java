@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Provides an AWT-level view of keyboard events; see {@link RoboticTypist} for a utility to produce keystroke events
+ * Provides an AWT-level view of keyboard events; see {@link WyldCardRoboticTypist} for a utility to produce keystroke events
  * from a String.
  */
 @Singleton

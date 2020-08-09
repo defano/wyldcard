@@ -26,7 +26,6 @@ public class RepeatStatement extends Statement {
     }
 
     @Override
-    @SuppressWarnings("InfiniteLoopStatement")
     public void onExecute(ExecutionContext context) throws HtException, Preemption {
         try {
             if (range instanceof RepeatForever) {
@@ -57,10 +56,10 @@ public class RepeatStatement extends Statement {
     private void executeRepeatWith(ExecutionContext context) throws HtException, Preemption {
         RepeatWith with = (RepeatWith) range;
         String symbol = with.symbol;
-        RepeatRange range = with.range;
+        RepeatRange withRange = with.range;
 
-        Value fromValue = range.from.evaluate(context);
-        Value toValue = range.to.evaluate(context);
+        Value fromValue = withRange.from.evaluate(context);
+        Value toValue = withRange.to.evaluate(context);
 
         if (!fromValue.isInteger())
             throw new HtSemanticException("Start of repeat range is not an integer value: '" + fromValue + "'");
@@ -70,7 +69,7 @@ public class RepeatStatement extends Statement {
         int from = fromValue.integerValue();
         int to = toValue.integerValue();
 
-        if (range.polarity == RepeatRange.POLARITY_UPTO) {
+        if (withRange.polarity == RepeatRange.POLARITY_UPTO) {
 
             if (from > to)
                 throw new HtSemanticException("Start of repeat range is greater than end: " + from + " > " + to);
@@ -81,7 +80,7 @@ public class RepeatStatement extends Statement {
             }
         }
 
-        else if (range.polarity == RepeatRange.POLARITY_DOWNTO) {
+        else if (withRange.polarity == RepeatRange.POLARITY_DOWNTO) {
             if (to > from)
                 throw new HtSemanticException("End of repeat range is less than start: " + to + " > " + from);
 
@@ -125,7 +124,7 @@ public class RepeatStatement extends Statement {
 
     @SuppressWarnings("InfiniteLoopStatement")
     private void executeRepeatForever(ExecutionContext context) throws HtException, Preemption {
-        while (true) {
+        while (!context.didAbort()) {
             iterate(context);
         }
     }

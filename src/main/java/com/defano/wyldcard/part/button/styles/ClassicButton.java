@@ -10,7 +10,7 @@ import java.awt.geom.RoundRectangle2D;
 
 public class ClassicButton extends AbstractLabelButton implements HyperCardButton {
 
-    private final static int ARC_DIAMETER = 6;      // Rounded corner diameter
+    private static final int ARC_DIAMETER = 6;      // Rounded corner diameter
 
     public ClassicButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);

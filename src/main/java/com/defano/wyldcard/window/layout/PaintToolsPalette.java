@@ -18,7 +18,7 @@ import java.awt.*;
 
 public class PaintToolsPalette extends WyldCardWindow<Object> implements Consumer {
 
-    private final static PaintToolsPalette instance = new PaintToolsPalette();
+    private static final PaintToolsPalette instance = new PaintToolsPalette();
 
     private JPanel palettePanel;
     private JButton selection;

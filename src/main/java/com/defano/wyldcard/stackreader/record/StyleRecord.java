@@ -59,9 +59,8 @@ public class StyleRecord {
 
     public static StyleRecord deserialize(Block parent, byte[] data) throws ImportException {
         StyleRecord style = new StyleRecord();
-        StackInputStream sis = new StackInputStream(data);
 
-        try {
+        try (StackInputStream sis = new StackInputStream(data)) {
             style.styleId = sis.readInt();
             sis.readBytes(4);
             style.lineHeight = sis.readShort();

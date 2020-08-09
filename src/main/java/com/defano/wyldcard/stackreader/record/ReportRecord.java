@@ -81,12 +81,10 @@ public class ReportRecord {
     }
 
     public static ReportRecord deserialize(Block block, int recordSize, byte[] recordData) throws ImportException {
-        StackInputStream sis = new StackInputStream(recordData);
         ReportRecord reportRecord = new ReportRecord();
-
         reportRecord.recordSize = recordSize;
 
-        try {
+        try (StackInputStream sis = new StackInputStream(recordData)) {
             reportRecord.top = sis.readShort();
             reportRecord.left = sis.readShort();
             reportRecord.bottom = sis.readShort();

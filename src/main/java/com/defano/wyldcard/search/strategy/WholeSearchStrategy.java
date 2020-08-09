@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  */
 public class WholeSearchStrategy implements SearchStrategy {
 
-    private final static Pattern words = Pattern.compile("\\w+");
+    private static final Pattern words = Pattern.compile("\\w+");
 
     /** {@inheritDoc} */
     @Override

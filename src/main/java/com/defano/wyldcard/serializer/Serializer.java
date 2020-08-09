@@ -20,7 +20,7 @@ public class Serializer {
     private Serializer() {
     }
 
-    private final static Gson gson = new GsonBuilder()
+    private static final Gson gson = new GsonBuilder()
             .registerTypeAdapterFactory(new PostConstructAdapterFactory())
             .registerTypeAdapter(Value.class, new ValueSerializer())
             .registerTypeAdapter(byte[].class, new ByteArraySerializer())

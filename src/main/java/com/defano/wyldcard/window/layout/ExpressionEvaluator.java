@@ -19,7 +19,7 @@ import java.awt.*;
 
 public class ExpressionEvaluator extends WyldCardDialog<Object> implements SyntaxParserDelegate {
 
-    private final static ExpressionEvaluator instance = new ExpressionEvaluator();
+    private static final ExpressionEvaluator instance = new ExpressionEvaluator();
 
     private JButton evaluateButton;
     private JTextArea resultField;

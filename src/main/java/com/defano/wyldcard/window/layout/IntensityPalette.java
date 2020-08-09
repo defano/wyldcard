@@ -12,7 +12,7 @@ import java.awt.*;
 
 public class IntensityPalette extends WyldCardDialog<Object> {
 
-    private final static IntensityPalette instance = new IntensityPalette();
+    private static final IntensityPalette instance = new IntensityPalette();
 
     private JSlider intensitySlider;
     private JPanel intensityPanel;

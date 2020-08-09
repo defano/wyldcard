@@ -133,7 +133,7 @@ public class WyldCardPart extends PartModel implements WyldCardProperties {
     }
 
     @Override
-    public Script getScript(ExecutionContext context) {
+    public synchronized Script getScript(ExecutionContext context) {
         throw new IllegalStateException("Bug! WyldCard does not have a script.");
     }
 

@@ -11,6 +11,8 @@ import java.util.Date;
 
 public class DateUtils {
 
+    private DateUtils() {}
+
     public static Value valueOf(Date d, LengthAdjective format) {
         switch (format) {
             case LONG:
@@ -29,7 +31,7 @@ public class DateUtils {
         DateFormat firstFormat = format.first.dateFormat;
         DateFormat secondFormat = format.second == null ? null : format.second.dateFormat;
 
-        if (format.second != null) {
+        if (secondFormat != null) {
             return new Value(firstFormat.format(d) + " " + secondFormat.format(d));
         } else {
             return new Value(firstFormat.format(d));
@@ -119,9 +121,8 @@ public class DateUtils {
         Calendar cal = Calendar.getInstance();
 
         switch (secondFormat) {
-            case SECONDS:
-                return second;
             case DATE_ITEMS:
+            case SECONDS:
                 return second;
             case LONG_DATE:
             case SHORT_DATE:
@@ -129,7 +130,12 @@ public class DateUtils {
                 updated.setYear(second.getYear());
                 updated.setMonth(second.getMonth());
                 updated.setDate(second.getDate());
-
+                cal.setTime(updated);
+                cal.set(Calendar.HOUR_OF_DAY, second.getHours());
+                cal.set(Calendar.MINUTE, second.getMinutes());
+                cal.set(Calendar.SECOND, second.getSeconds());
+                cal.set(Calendar.MILLISECOND, 0);
+                return cal.getTime();
             case LONG_TIME:
             case SHORT_TIME:
                 cal.setTime(updated);

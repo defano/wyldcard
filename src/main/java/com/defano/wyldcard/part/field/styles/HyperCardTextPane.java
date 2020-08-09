@@ -34,8 +34,8 @@ import java.util.Set;
  */
 public class HyperCardTextPane extends JTextPane {
 
-    private final static Throttle lineCalculationThrottle = new Throttle("line-calculation-throttle", 50);
-    private final static Stroke dottedLine = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{1}, 0);
+    private static final Throttle lineCalculationThrottle = new Throttle("line-calculation-throttle", 50);
+    private static final Stroke dottedLine = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{1}, 0);
     private final Set<Integer> autoSelection = new HashSet<>();
     private final Highlighter highlighter = new DefaultHighlighter();
     private final JViewport viewport;

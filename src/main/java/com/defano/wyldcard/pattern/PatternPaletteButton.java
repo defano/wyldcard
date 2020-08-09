@@ -127,7 +127,7 @@ public class PatternPaletteButton extends JLabel {
      */
     private class SelectedBorder extends UnselectedBorder {
 
-        final static int FRAME_WIDTH = 4;
+        static final int FRAME_WIDTH = 4;
 
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
@@ -161,7 +161,7 @@ public class PatternPaletteButton extends JLabel {
      */
     private class UnselectedBorder implements Border {
 
-        final static int FRAME_WIDTH = 1;
+        static final int FRAME_WIDTH = 1;
 
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {

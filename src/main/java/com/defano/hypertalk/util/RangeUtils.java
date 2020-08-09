@@ -51,7 +51,7 @@ public class RangeUtils {
      * @param value     The value whose chunk should be ranged.
      * @param chunkType The type of chunk; character, item, word, line or range thereof.
      * @param count     The first requested chunk, inclusive, counting from 1.
-     * @return
+     * @return The range of characters identified by this chunk.
      */
     public static Range getRange(ExecutionContext context, String value, ChunkType chunkType, int count) {
         Pattern pattern = ChunkUtils.getRegexForChunkType(context, chunkType);
@@ -92,6 +92,10 @@ public class RangeUtils {
             startVal = c.start.evaluate(context);
         if (c.end != null)
             endVal = c.end.evaluate(context);
+
+        if (startVal == null) {
+            throw new IllegalStateException("Bug! Chunk start expression produced null.");
+        }
 
         if (!startVal.isNatural() && !Ordinal.isReservedValue(startVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + startVal + "' instead");

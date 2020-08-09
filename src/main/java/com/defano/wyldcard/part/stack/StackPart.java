@@ -204,10 +204,12 @@ public class StackPart implements Part<StackModel>, PropertyChangeObserver {
      */
     @RunOnDispatch
     public void pasteCard(ExecutionContext context) {
-        if (cardClipboardProvider.blockingFirst().isPresent()) {
+        Optional<CardPart> clipboard = cardClipboardProvider.blockingFirst();
+
+        if (clipboard.isPresent()) {
             WyldCard.getInstance().getPaintManager().setIsEditingBackground(false);
 
-            CardModel card = cardClipboardProvider.blockingFirst().get().getPartModel().copyOf();
+            CardModel card = clipboard.get().getPartModel().copyOf();
             card.relinkParentPartModel(getStackModel());
             card.define(CardModel.PROP_ID).asConstant(new Value(getStackModel().getNextCardId()));
 

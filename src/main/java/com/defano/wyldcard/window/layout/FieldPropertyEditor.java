@@ -148,7 +148,7 @@ public class FieldPropertyEditor extends WyldCardDialog<FieldModel> implements A
         onEnabledChanged();
         onAutoSelectChanged();
 
-        bindActions(a -> updateProperties(),
+        addActionListenerToComponents(a -> updateProperties(),
                 fieldTop,
                 fieldLeft,
                 fieldHeight,

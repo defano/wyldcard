@@ -18,10 +18,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class PartResizer {
 
-    private final static int SNAP_TO_GRID_SIZE = 10;
-    private final static int RESIZER_REFRESH_MS = 10;
-    private final static int MIN_WIDTH = 20;
-    private final static int MIN_HEIGHT = 20;
+    private static final int SNAP_TO_GRID_SIZE = 10;
+    private static final int RESIZER_REFRESH_MS = 10;
+    private static final int MIN_WIDTH = 20;
+    private static final int MIN_HEIGHT = 20;
 
     private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 

@@ -58,6 +58,7 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
     private JCheckBox sharedHilite;
     private JPanel previewPanel;
     private JLabel previewImage;
+    private JCheckBox hilite;
 
     @SuppressWarnings("unchecked")
     public ButtonPropertyEditor() {
@@ -69,7 +70,7 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         contents.addActionListener(e -> showContentsEditor());
 
         saveButton.addActionListener(e -> {
-            updateProperties();
+            onPropertiesChanged();
             dispose();
         });
 
@@ -142,26 +143,31 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         family.setSelectedItem(model.get(context, ButtonModel.PROP_FAMILY).toString());
         autoHilite.setSelected(model.get(context, ButtonModel.ALIAS_AUTOHILIGHT).booleanValue());
         sharedHilite.setSelected(model.get(context, ButtonModel.PROP_SHAREDHILITE).booleanValue());
+        hilite.setSelected(model.get(context, ButtonModel.PROP_HIGHLIGHT).booleanValue());
 
         // Shared hilite option only available on background buttons
         sharedHilite.setEnabled(model.getOwner() != Owner.CARD);
 
-        bindActions(a -> updateProperties(),
+        addActionListenerToComponents(
+                a -> onPropertiesChanged(),
                 isEnabled,
                 isShowTitle,
                 isVisible,
                 style,
                 sharedHilite,
+                autoHilite,
+                hilite,
                 buttonName,
                 buttonHeight,
                 buttonLeft,
                 buttonTop,
-                buttonWidth);
+                buttonWidth
+        );
 
-        updateProperties();
+        onPropertiesChanged();
     }
 
-    private void updateProperties() {
+    private void onPropertiesChanged() {
         ExecutionContext context = new ExecutionContext();
 
         model.set(context, ButtonModel.PROP_NAME, new Value(buttonName.getText()));
@@ -176,6 +182,9 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         model.set(context, ButtonModel.PROP_FAMILY, new Value(String.valueOf(family.getSelectedItem())));
         model.set(context, ButtonModel.ALIAS_AUTOHILIGHT, new Value(autoHilite.isSelected()));
         model.set(context, ButtonModel.PROP_SHAREDHILITE, new Value(sharedHilite.isSelected()));
+        model.set(context, ButtonModel.PROP_HIGHLIGHT, new Value(hilite.isSelected()));
+
+        hilite.setEnabled(!autoHilite.isSelected());
 
         updatePreviewImage();
     }
@@ -302,6 +311,11 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         sharedHilite = new JCheckBox();
         sharedHilite.setText("Shared Hilite");
         panel1.add(sharedHilite, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        hilite = new JCheckBox();
+        hilite.setMargin(new Insets(0, 1, 0, 1));
+        hilite.setText("Hilite");
+        hilite.setToolTipText("Automatically hilite this button when the user clicks on it.");
+        panel1.add(hilite, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editScriptButton = new JButton();
         editScriptButton.setText("Edit Script...");
         editScriptButton.setToolTipText("");

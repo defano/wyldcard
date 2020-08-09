@@ -2,16 +2,18 @@ package com.defano.hypertalk.ast.statement.command;
 
 import com.defano.hypertalk.ast.expression.Expression;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.preemption.Preemption;
 import com.defano.hypertalk.ast.statement.Command;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.ExecutionContext;
+import com.defano.wyldcard.window.DialogManager;
+import com.defano.wyldcard.window.DialogResponse;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.awt.*;
-
 public class AnswerFileCmd extends Command {
+
+    @Inject
+    private DialogManager dialogManager;
 
     private final Expression promptExpr;
     private final Expression filterExpr;
@@ -27,27 +29,17 @@ public class AnswerFileCmd extends Command {
     }
 
     @Override
-    protected void onExecute(ExecutionContext context) throws HtException, Preemption {
-        String promptString = promptExpr.evaluate(context).toString();
+    protected void onExecute(ExecutionContext context) throws HtException {
+        Value promptString = promptExpr.evaluate(context);
+        Value fileFilter = filterExpr == null ? null : filterExpr.evaluate(context);
+        DialogResponse response = dialogManager.answerFile(context, promptString, fileFilter);
 
-        FileDialog fd = new FileDialog(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow(), promptString, FileDialog.LOAD);
-        fd.setMultipleMode(false);
-
-        // TODO: Support for file types and signatures, not just extensions
-        if (filterExpr != null) {
-            String fileExtension = filterExpr.evaluate(context).toString();
-            fd.setFilenameFilter((dir, name) -> name.endsWith(fileExtension));
-        }
-
-        fd.setVisible(true);
-
-        if (fd.getFiles().length > 0) {
-            context.setIt(new Value(fd.getFiles()[0].getAbsolutePath()));
+        if (response.getFieldResponse() != null) {
+            context.setIt(response.getFieldResponse());
             context.setResult(new Value());
         } else {
             context.setIt(new Value());
             context.setResult(new Value("Cancel"));
         }
-
     }
 }

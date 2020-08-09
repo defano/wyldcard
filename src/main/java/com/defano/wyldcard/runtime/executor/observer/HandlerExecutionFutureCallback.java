@@ -6,8 +6,12 @@ import com.defano.hypertalk.ast.preemption.ExitToHyperCard;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.common.util.concurrent.FutureCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HandlerExecutionFutureCallback implements FutureCallback<Boolean> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HandlerExecutionFutureCallback.class);
 
     private final PartSpecifier me;
     private final Script script;
@@ -41,7 +45,7 @@ public class HandlerExecutionFutureCallback implements FutureCallback<Boolean> {
 
         // Other error occurred that we're ill-equipped to deal with
         else {
-            t.printStackTrace();
+            LOG.error("Encountered an unexpected error executing handler.", t);
             completionObserver.onHandlerRan(me, script, message, true, new HtSemanticException("Bug! An unexpected error occurred:" + t.getMessage()));
         }
     }

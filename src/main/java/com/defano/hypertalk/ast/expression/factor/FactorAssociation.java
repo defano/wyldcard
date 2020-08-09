@@ -10,11 +10,19 @@ import com.defano.hypertalk.ast.expression.Expression;
  * @param <ExpressionType> The type of expression this action should be associated with.
  */
 public class FactorAssociation<ExpressionType extends Expression> {
-    public Class<? extends Expression> expressionType;
-    public FactorAction<ExpressionType> action;
+    public final Class<? extends Expression> expressionType;
+    public final FactorAction<ExpressionType> action;
 
     public FactorAssociation(Class<ExpressionType> expressionType, FactorAction<ExpressionType> action) {
         this.expressionType = expressionType;
         this.action = action;
+    }
+
+    public Class<? extends Expression> getExpressionType() {
+        return expressionType;
+    }
+
+    public FactorAction<ExpressionType> getAction() {
+        return action;
     }
 }

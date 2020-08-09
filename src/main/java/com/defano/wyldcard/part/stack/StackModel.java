@@ -34,9 +34,9 @@ import java.util.stream.Collectors;
 
 public class StackModel extends PartModel implements StackPartFinder, NamedPart {
 
-    public final static String FILE_EXTENSION = ".stack";
-    public final static String PROP_CANTPEEK = "cantpeek";
-    public final static String PROP_CANTABORT = "cantabort";
+    public static final String FILE_EXTENSION = ".stack";
+    public static final String PROP_CANTPEEK = "cantpeek";
+    public static final String PROP_CANTABORT = "cantabort";
     public static final String PROP_RESIZABLE = "resizable";
     public static final String PROP_SHORTNAME = "short name";
     public static final String PROP_ABBREVNAME = "abbreviated name";
@@ -363,14 +363,14 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
      * @return True if the stack has changes; false otherwise
      */
     public boolean isDirty() {
-        if (savedStackFileProvider.blockingFirst().isPresent()) {
+        Optional<File> stackFile = savedStackFileProvider.blockingFirst();
 
+        if (stackFile.isPresent()) {
             try {
-                String savedStack = new String(Files.readAllBytes(savedStackFileProvider.blockingFirst().get().toPath()), StandardCharsets.UTF_8);
+                String savedStack = new String(Files.readAllBytes(stackFile.get().toPath()), StandardCharsets.UTF_8);
                 String currentStack = Serializer.serialize(this);
 
                 return !isEmpty() && !savedStack.equalsIgnoreCase(currentStack);
-
             } catch (Exception e) {
                 return true;
             }

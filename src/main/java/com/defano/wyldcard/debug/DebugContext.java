@@ -30,7 +30,7 @@ import javax.swing.*;
  */
 public class DebugContext {
 
-    private final static DebugContext instance = new DebugContext();
+    private static final DebugContext instance = new DebugContext();
 
     private int traceDelayMs = 500;                 // Trace delay, in milliseconds
     private boolean stepOver, stepInto, stepOut;    // Step modes
@@ -102,7 +102,7 @@ public class DebugContext {
                 Thread.sleep(traceDelayMs);
                 Invoke.onDispatch(() -> editor.getEditor().clearTraceHighlights());
             } catch (InterruptedException e) {
-                // Nothing to do
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -163,12 +163,7 @@ public class DebugContext {
     public void toggleTrace() {
         if (isDebugging()) {
             isTracing.onNext(!isTracing.blockingFirst());
-
-            if (isTracing.blockingFirst()) {
-                resume(false);
-            } else {
-                resume(true);
-            }
+            resume(!isTracing.blockingFirst());
         }
     }
 
@@ -238,7 +233,7 @@ public class DebugContext {
      * Gets an observable indicating when the debugger has paused execution of a script (i.e., a breakpoint has been
      * reached and we're waiting for user input to step or resume execution).
      *
-     * @return
+     * @return An observable indication of whether script execution is paused
      */
     public Observable<Boolean> getExecutionIsPausedProvider() {
         return isExecutionPaused;
@@ -325,6 +320,7 @@ public class DebugContext {
         stepOver = false;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isActiveDebugThread() {
         return Thread.currentThread().equals(debugThread);
     }

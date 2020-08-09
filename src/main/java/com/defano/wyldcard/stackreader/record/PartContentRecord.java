@@ -18,14 +18,13 @@ public class PartContentRecord {
 
     public static PartContentRecord deserialize(Block parent, short partId, byte[] data) throws ImportException {
         PartContentRecord partContent = new PartContentRecord();
-        StackInputStream sis = new StackInputStream(data);
 
         partContent.partId = partId;
 
         int length = data.length;
         int styleLength = 1;
 
-        try {
+        try (StackInputStream sis = new StackInputStream(data)) {
             byte highByte = sis.readByte();
 
             // When high bit is set, data provides a table of style spans

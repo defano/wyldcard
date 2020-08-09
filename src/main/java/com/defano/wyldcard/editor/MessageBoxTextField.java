@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 public class MessageBoxTextField extends JTextField implements MessageEvaluationObserver {
 
-    private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new SquigglePainter(Color.RED);
+    private static final Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new SquigglePainter(Color.RED);
 
     private final ArrayList<String> messageStack = new ArrayList<>();
     private int messageStackIndex = -1;
