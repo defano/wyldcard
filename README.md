@@ -19,8 +19,9 @@ WyldCard strives to offer a high-fidelity reproduction of Apple's original Hyper
 
 #### What's missing?
 
-* WyldCard can't open or import old HyperCard stacks and has no concept of external commands or functions (XCMDs/XFCNs).
-* No home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
+* No home stack and no ability to inherit behavior from other stacks (i.e., `start using ...`).
+* No concept of user levels and no report printing.
+* Some parts of the HyperTalk language, especially those related to obsolete operating system or hardware capabilities (like AppleTalk), are missing.
 
 ## Getting started
 
@@ -42,7 +43,19 @@ Use the SheepShaver emulator to run Macintosh System Software on modern Macs and
 
 This project represents a homework assignment gone awry and is in no way associated with Apple's long-obsolete HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of FileMaker, Inc., Apple, Inc. and/or their rightful owner(s).
 
-## Remind me, what's HyperCard?
+## Can I use this to open or edit old HyperCard stacks?
+
+You can! Use the "Import HyperCard Stack..." command from the File menu. 
+
+There are, of course, a few caveats:
+
+* WyldCard can only import stacks produced by HyperCard 2.x. 1.x stacks can be converted to 2.x format simply by opening them with HyperCard 2.x (of course, you'll need an old Mac or SheepShaver to do so).
+* WyldCard cannot import resources embedded in the stack file's resource fork (such as XCMDs, XFCNs, PICTs, SNDs or ICONs). Stacks that rely on these resources will not function correctly.
+* Later versions of HyperCard shipped with several XCMDs and XFCNs that offered features like palette windows, picture viewers, and color images. The capabilities provided by these externals are not implemented in WyldCard.
+
+**Bottom line:** WyldCard is not a perfect replica of HyperCard. Some functions are missing or behave differently than their HyperCard counterparts, and, as a result, some stacks (especially the most complex ones) will not behave correctly when imported into WyldCard. Your milage may vary.
+
+## What's HyperCard? I wasn't around back then. 
 
 Apple called HyperCard "programming for the rest of us." Steve Wozniak called it ["the best program ever written"](https://www.macworld.com/article/1018126/woz.html).
 
