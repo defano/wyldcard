@@ -23,6 +23,7 @@ import com.defano.wyldcard.runtime.executor.task.*;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.thread.ThreadChecker;
 import com.google.common.util.concurrent.*;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.swing.*;
 import java.util.List;
@@ -34,7 +35,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  * A facade and thread model for executing HyperTalk scripts. All script compilation and execution should flow through
  * this class to assure proper threading.
  */
-@SuppressWarnings("UnstableApiUsage")
 public class ScriptExecutor {
 
     private static final int MAX_EXECUTOR_THREADS = 8;
@@ -159,7 +159,7 @@ public class ScriptExecutor {
 
         // Find handler for message in the script
         NamedBlock handler = script == null ? null : script.getHandler(message.getMessageName());
-        CheckedFuture<Boolean, HtException> future;
+        ListenableFuture<Boolean> future;
 
         // Script implements handler for message; execute it
         if (handler != null) {
@@ -191,7 +191,7 @@ public class ScriptExecutor {
             });
         }
 
-        Futures.addCallback(future, new HandlerExecutionFutureCallback(me, script, message.getMessageName(), completionObserver));
+        Futures.addCallback(future, new HandlerExecutionFutureCallback(me, script, message.getMessageName(), completionObserver), getExecutorForMessage(message));
     }
 
     /**
@@ -224,17 +224,17 @@ public class ScriptExecutor {
      */
     public static void asyncStaticContextEvaluate(ExecutionContext staticContext, String message, MessageEvaluationObserver evaluationObserver) {
 
-        Futures.addCallback(Futures.makeChecked(listeningStaticExecutor.submit(new StaticContextEvaluationTask(staticContext, message)), new CheckedFutureExceptionMapper()), new FutureCallback<String>() {
+        Futures.addCallback(listeningStaticExecutor.submit(new StaticContextEvaluationTask(staticContext, message)), new FutureCallback<String>() {
             @Override
-            public void onSuccess(String result) {
+            public void onSuccess(@Nullable String result) {
                 SwingUtilities.invokeLater(() -> evaluationObserver.onMessageEvaluated(result));
             }
 
             @Override
             public void onFailure(Throwable t) {
-                SwingUtilities.invokeLater(() -> evaluationObserver.onEvaluationError(new CheckedFutureExceptionMapper().apply((Exception) t)));
+                SwingUtilities.invokeLater(() -> evaluationObserver.onEvaluationError(new CheckedFutureExceptionMapper().apply(t)));
             }
-        });
+        }, staticExecutor);
     }
 
     /**
@@ -249,7 +249,7 @@ public class ScriptExecutor {
      * HtException if an error occurs while executing the script.
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
-    public static CheckedFuture<Boolean, HtException> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
+    public static ListenableFuture<Boolean> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
         return submit(listeningDefaultExecutor, new MessageHandlerExecutionTask(context, null, me, NamedBlock.anonymousBlock(((Script) ScriptCompiler.blockingCompile(CompilationUnit.SCRIPTLET, statementList)).getStatements()), MessageBuilder.emptyMessage()));
     }
 
@@ -289,15 +289,15 @@ public class ScriptExecutor {
      * success disposition provides a boolean indicating whether the handler "trapped" the message; the failure
      * disposition provides a {@link HtException} describing why the handler failed to execute.
      */
-    private static CheckedFuture<Boolean, HtException> submit(ListeningExecutorService executor, HandlerExecutionTask handlerTask) {
+    private static ListenableFuture<Boolean> submit(ListeningExecutorService executor, HandlerExecutionTask handlerTask) {
         if (isScriptExecutorThread()) {
             try {
-                return Futures.makeChecked(Futures.immediateFuture(handlerTask.call()), new CheckedFutureExceptionMapper());
+                return Futures.immediateFuture(handlerTask.call());
             } catch (HtException e) {
-                return Futures.makeChecked(Futures.immediateFailedCheckedFuture(e), new CheckedFutureExceptionMapper());
+                return Futures.immediateFailedFuture(e);
             }
         } else {
-            return Futures.makeChecked(executor.submit(handlerTask), new CheckedFutureExceptionMapper());
+            return executor.submit(handlerTask);
         }
     }
 

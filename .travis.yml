@@ -6,7 +6,7 @@ jdk:
   - oraclejdk8
 
 script:
-  - ./gradlew test jacocoTestReport --scan -s
+  - ./gradlew test jacocoTestReport -s
 
 after_success:
   - ./gradlew sonarqube
