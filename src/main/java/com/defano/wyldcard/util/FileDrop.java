@@ -430,7 +430,7 @@ public class FileDrop
             catch( Exception e )
             {   support = false;
             }   // end catch
-            supportsDnD = new Boolean( support );
+            supportsDnD = support;
         }   // end if: first time through
         return supportsDnD.booleanValue();
     }   // end supportsDnD

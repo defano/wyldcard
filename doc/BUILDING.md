@@ -1,6 +1,6 @@
 # Building the application
 
-WyldCard is built with Gradle 4.6 and should easily import into any IDE with Gradle integration, like Eclipse or IntelliJ. As is customary, [it's recommended](https://docs.gradle.org/current/userguide/gradle_wrapper.html) that you use the provided `gradlew` wrapper to guarantee a compatible build environment.
+WyldCard is built with Gradle 7.3.3 and targets Java 8 and above. It has been tested on a variety of JVMs, up to Oracle 17.0.1 and should easily import into any IDE with Gradle integration, like Eclipse or IntelliJ. As is customary, [it's recommended](https://docs.gradle.org/current/userguide/gradle_wrapper.html) that you use the provided `gradlew` wrapper to guarantee a compatible build environment. Please open an issue in Github should you encounter problems building or running the application. 
 
 **WyldCard makes use of generated source code.** The application will not compile (or import into Eclipse) until these sources are generated via `gradlew generateGrammarSource`.
 
@@ -8,7 +8,7 @@ The following Gradle tasks are defined by the project's build file:
 
 Task                     | Description
 -------------------------|----------------------------
-`run`                    | Build, test and run the application
+`run`                    | Generates grammar source, compiles Java classes, executes unit tests, and finally runs the application 
 `generateGrammarSource`  | Re-generate the HyperTalk parser with Antlr4 (executes automatically as part of the `gradle build` task)
 `generateBundle`         | Generates installation packages for the current OS (i.e., a `.dmg` disk image and `.pkg` installer on macOS), plus an executable JAR file and JNLP (network launch) files.
 `clean`                  | Removes generated Antlr source and install bundles created by the `generateGrammarSource` and `generateBundle` tasks.

@@ -1,17 +1,12 @@
 buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
     dependencies {
-        classpath "io.freefair.gradle:aspectj-plugin:3.6.4"
+        classpath 'io.github.fvarrui:javapackager:1.6.2'
+        classpath "io.freefair.gradle:aspectj-plugin:6.3.0"
     }
 }
 
 plugins {
     id "org.sonarqube" version "2.6"
-    id 'com.gradle.build-scan' version '2.0.2'
 }
 
 apply plugin: 'java'
@@ -20,6 +15,7 @@ apply plugin: 'antlr'
 apply plugin: 'idea'
 apply plugin: "jacoco"
 apply plugin: 'org.sonarqube'
+apply plugin: 'io.github.fvarrui.javapackager.plugin'
 
 allprojects {
     apply plugin: 'java'
@@ -40,8 +36,12 @@ ext {
 
 repositories {
     mavenCentral()
-    jcenter()
     mavenLocal()
+
+    // Required for MaryTTS libraries
+    maven {
+        url "https://public.nexus.pentaho.org/content/groups/omni/"
+    }
 }
 
 configurations {
@@ -53,6 +53,7 @@ clean {
     delete 'bundles/'
     delete 'out/'
     delete 'log/'
+    delete 'build/'
 }
 
 sourceSets {
@@ -66,37 +67,37 @@ idea {
 }
 
 dependencies {
-    antlr "org.antlr:antlr4:4.7.2"
+    antlr 'org.antlr:antlr4:4.9.3'
 
-    compile(group: 'com.defano.jmonet', name: 'jmonet', version: '0.4.0') { changing = true }
-    compile(group: 'com.defano.jsegue', name: 'jsegue', version: '0.0.3') { changing = true }
+    implementation 'com.defano.jmonet:jmonet:0.4.1'
+    implementation 'com.defano.jsegue:jsegue:0.0.3'
+    implementation 'com.intellij:javac2:7.0.3'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'com.google.guava:guava:31.0.1-jre'
+    implementation 'org.bitbucket.cowwoc.diff-match-patch:diff-match-patch:1.0'
+    implementation 'com.l2fprod.common:l2fprod-common-fontchooser:6.9.1'
+    implementation 'commons-lang:commons-lang:2.6'
+    implementation 'de.dfki.mary:voice-cmu-slt-hsmm:5.2'
+    implementation 'de.dfki.mary:voice-cmu-bdl-hsmm:5.2'
+    implementation 'de.dfki.mary:voice-cmu-rms-hsmm:5.2'
+    implementation 'de.dfki.mary:voice-dfki-prudence-hsmm:5.2'
+    implementation 'org.aspectj:aspectjrt:1.9.7'
+    implementation 'com.fifesoft:rsyntaxtextarea:3.1.4'
+    implementation 'com.fifesoft:autocomplete:3.1.3'
+    implementation 'com.atlassian.commonmark:commonmark:0.17.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
+    implementation 'gov.nist.math:jama:1.0.3'
+    implementation 'com.google.inject:guice:5.0.1'
+    implementation 'com.mycila.guice.extensions:mycila-guice-injection:5.0'
+    implementation 'com.thoughtworks.xstream:xstream:1.4.18'
+    implementation 'ch.qos.logback:logback-classic:1.2.9'
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
 
-    compile group: 'com.intellij', name: 'javac2', version: '7.0.3'
-    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.1'
-    compile group: 'com.google.guava', name: 'guava', version: '19.0'
-    compile group: 'org.bitbucket.cowwoc.diff-match-patch', name: 'diff-match-patch', version: '1.0'
-    compile group: 'com.l2fprod.common', name: 'l2fprod-common-fontchooser', version: '6.9.1'
-    compile group: 'de.dfki.mary', name: 'voice-cmu-slt-hsmm', version: '5.2'
-    compile group: 'de.dfki.mary', name: 'voice-cmu-bdl-hsmm', version: '5.2'
-    compile group: 'de.dfki.mary', name: 'voice-cmu-rms-hsmm', version: '5.2'
-    compile group: 'de.dfki.mary', name: 'voice-dfki-prudence-hsmm', version: '5.2'
-    compile group: 'org.aspectj', name: 'aspectjrt', version: '1.8.13'
-    compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.6.0'
-    compile group: 'com.fifesoft', name: 'autocomplete', version: '2.6.0'
-    compile group: 'com.atlassian.commonmark', name: 'commonmark', version: '0.11.0'
-    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.8'
-    compile group: 'gov.nist.math', name: 'jama', version: '1.0.3'
-    compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
-    compile group: 'com.mycila.guice.extensions', name: 'mycila-guice-injection', version: '4.0.rc1'
-    compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.11.1'
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-
-    testImplementation group: 'commons-io', name: 'commons-io', version: '2.4'
-    testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.4.2'
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
-
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.4.2")
+    testImplementation 'commons-io:commons-io:2.4'
+    testImplementation 'org.mockito:mockito-all:1.10.19'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testImplementation 'junit:junit:4.13.2'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.2'
 }
 
 test {
@@ -134,43 +135,20 @@ sonarqube {
     }
 }
 
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
-}
-
 generateGrammarSource {
     outputDirectory = file("generated-src/main/java/")
     maxHeapSize = "64m"
     arguments += ["-long-messages", "-no-listener", "-visitor", "-package", "com.defano.hypertalk.parser"]
 }
 
-jar {
-    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
-
-    from {
-        (configurations.runtime).collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-
-    manifest {
-        attributes 'Main-Class': 'com.defano.wyldcard.WyldCard'
-    }
-}
-
-task generateBundle(type: Exec) {
-    dependsOn build
-    workingDir "${project.projectDir.absolutePath}"
-    commandLine "${jdk}/bin/javapackager",
-            "-deploy",
-            "-native",
-            "-outdir", ".",
-            "-outfile", "WyldCard.app",
-            "-srcfiles", "./build/libs/wyldcard.jar",
-            "-appclass", "com.defano.wyldcard.WyldCard",
-            "-name", "WyldCard",
-            "-title", "WyldCard"
+task generateBundle(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: build) {
+    mainClass = 'com.defano.wyldcard.WyldCard'
+    bundleJre = true
+    generateInstaller = true
+    administratorRequired = false
+    platform = 'auto'
 }
 
 mainClassName = "com.defano.wyldcard.WyldCard"
+version = "1.0.0"
+group = "com.defano.wyldcard"

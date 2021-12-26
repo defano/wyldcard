@@ -14,10 +14,10 @@ import com.google.common.base.Function;
  * <p>
  * This class simply attempts to remove the ExecutionException wrapper.
  */
-public class CheckedFutureExceptionMapper implements Function<Exception, HtException> {
+public class CheckedFutureExceptionMapper implements Function<Throwable, HtException> {
 
     @Override
-    public HtException apply(Exception input) {
+    public HtException apply(Throwable input) {
         if (input instanceof HtException) {
             return (HtException) input;
         } else if (input.getCause() instanceof HtException) {
