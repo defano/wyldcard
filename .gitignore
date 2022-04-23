@@ -16,3 +16,5 @@ bundles/
 /wyldcard.jar
 /.scannerwork
 Thumbs.db
+
+.DS_Store
