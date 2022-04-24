@@ -12,7 +12,7 @@ public enum BuiltInFunction {
     MOUSELOC, MOUSEV, NUM_TO_CHAR, NUMBER, SOUND, SYSTEMVERSION, OFFSET, OPTION_KEY, PARAM, PARAMS, PARAM_COUNT, RANDOM,
     RESULT, SCREENRECT, SECONDS, SELECTEDBUTTON, SELECTEDCHUNK, SELECTEDFIELD, SELECTEDLINE, SELECTEDLOC, SELECTEDTEXT,
     SHIFT_KEY, SHORT_DATE, SHORT_TIME, SIN, SPEECH, SQRT, STACKS, STACKSPACE, SUM, TAN, TARGET, TICKS, TOOL, TRUNC,
-    VALUE, VOICES, WINDOWS, ROUND;
+    VALUE, VOICES, WINDOWS, ROUND, OSNAME, OSVERSION;
 
     public Object asListFunction(ParserRuleContext ctx, Expression listArg) {
         switch (this) {
@@ -129,6 +129,10 @@ public enum BuiltInFunction {
                 return new SoundFunc(ctx);
             case SYSTEMVERSION:
                 return new SystemVersionFunc(ctx);
+            case OSNAME:
+                return new OSNameFunc(ctx);
+            case OSVERSION:
+                return new OSVersionFunc(ctx);
 
             case DESTINATION:
             case SELECTEDBUTTON:
