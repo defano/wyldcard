@@ -557,6 +557,8 @@ zeroArgFunc
     | 'mouseclick'                                                                                                      # mouseClickFunc
     | 'mouseloc'                                                                                                        # mouseLocFunc
     | 'optionkey'                                                                                                       # optionKeyFunc
+    | 'osname'                                                                                                          # OSNameFunc
+    | 'osversion'                                                                                                       # OSVersionFunc
     | 'result'                                                                                                          # resultFunc
     | 'screenrect'                                                                                                      # screenRectFunc
     | seconds                                                                                                           # secondsFunc
@@ -775,7 +777,7 @@ keyword
     | 'white' | 'dissolve' | 'barn' | 'door' | 'checkerboard' | 'iris' | 'shrink' | 'stretch' | 'venetian' | 'blinds'
     | 'wipe' | 'zoom' | 'in' | 'out' | 'tick' | 'prev' | 'previous' | 'msg' | 'box' | 'cards' | 'cds' | 'cd'
     | 'background' | 'backgrounds' | 'bkgnd' | 'bkgnds' | 'bg' | 'bgs' | 'buttons' | 'btn' | 'btns' | 'fields' | 'fld'
-    | 'flds' | 'character' | 'characters' | 'char' | 'words' | 'lines' | 'item' | 'items' | 'of'
+    | 'flds' | 'character' | 'characters' | 'char' | 'words' | 'lines' | 'item' | 'items' | 'of' | 'osname' | 'osversion'
     ;
 
 picture
