@@ -86,7 +86,7 @@ public class ExecuteCmd extends Command {
         context.setResult(new Value(""));
       } else {
         context.setIt(new Value(stderr.toString()));
-        context.setResult(new Value(exitCode + "\n" + stderr.toString()));
+        context.setResult(new Value(exitCode + ""));
       }
     } catch (Exception signal) {
       context.setIt(new Value(""));
