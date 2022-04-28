@@ -37,6 +37,8 @@ import com.google.inject.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Locale;
+
 import javax.swing.*;
 
 /**
@@ -101,6 +103,7 @@ public class WyldCard implements PartFinder {
      * @param argv Arguments passed to WyldCard (not used)
      */
     public static void main(String[] argv) {
+        Locale.setDefault(Locale.ENGLISH);
 
         // Configure macOS environment (must occur before any AWT calls are made)
         try {
