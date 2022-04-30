@@ -2588,4 +2588,14 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     public Object visitTerminal(TerminalNode node) {
         return node.getText();
     }
+
+    @Override
+    public Object visitExecuteExpWithCmd(HyperTalkParser.ExecuteExpWithCmdContext ctx) {
+        return new ExecuteCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+    }
+
+    @Override
+    public Object visitExecuteExpCmd(HyperTalkParser.ExecuteExpCmdContext ctx) {
+        return new ExecuteCmd(ctx, (Expression) visit(ctx.expression()));
+    }
 }

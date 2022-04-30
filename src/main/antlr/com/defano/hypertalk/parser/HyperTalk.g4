@@ -165,6 +165,8 @@ commandStatement
     | 'enable' expression                                                                                               # enableCmd
     | 'enterinfield'                                                                                                    # enterInFieldCmd
     | 'enterkey'                                                                                                        # enterKeyCmd
+    | 'execute' expression 'with' expression                                                                            # executeExpWithCmd
+    | 'execute' expression                                                                                              # executeExpCmd
     | 'exit' symbol                                                                                                     # exitCmd
     | 'exit' 'repeat'                                                                                                   # exitRepeatCmd
     | 'exit' 'to' hypercard                                                                                             # exitToHyperCardCmd
