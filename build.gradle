@@ -144,6 +144,7 @@ generateGrammarSource {
 task generateBundle(type: io.github.fvarrui.javapackager.gradle.PackageTask, dependsOn: build) {
     mainClass = 'com.defano.wyldcard.WyldCard'
     bundleJre = true
+    jrePath = file('/Library/Java/JavaVirtualMachines/openjdk-8.jdk/Contents/Home/jre/')
     generateInstaller = true
     administratorRequired = false
     platform = 'auto'
