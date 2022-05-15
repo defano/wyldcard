@@ -68,7 +68,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder, Car
             }
         });
 
-        define(PROP_NUMBER).asComputedReadOnlyValue((context, model) -> new Value(((OrderedPartFinder) ((BackgroundModel) model).getParentPartModel()).getPartNumber(context, (BackgroundModel) model, PartType.CARD)));
+        define(PROP_NUMBER).asComputedReadOnlyValue((context, model) -> new Value(((OrderedPartFinder) ((BackgroundModel) model).getParentPartModel()).getPartNumber(context, (BackgroundModel) model, PartType.BACKGROUND)));
         define(PROP_LONGNAME).asComputedReadOnlyValue((context, model) -> new Value(getLongName(context)));
         define(PROP_ABBREVNAME).asComputedReadOnlyValue((context, model) -> new Value(getAbbrevName(context)));
         define(PROP_SHORTNAME).asComputedReadOnlyValue((context, model) -> new Value(getShortName(context)));
