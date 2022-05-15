@@ -38,4 +38,24 @@ public class StringUtils {
         }
         return values;
     }
+
+    public static String adorn(String what, String withWhat, int repeat) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(appendRepeat(buffer, withWhat, repeat));
+
+        // put the title in the middle
+        buffer.insert(buffer.length()/2, what);
+        return buffer.toString();
+    }
+
+    public static StringBuffer appendRepeat(StringBuffer buffer, String withWhat, int repeat) throws IndexOutOfBoundsException {
+        if (repeat < 0) {
+            throw new IndexOutOfBoundsException("Cannot pad a negative amount: " + repeat);
+        }
+        for (int i = 0; i < repeat; i++) {
+            buffer.append(withWhat);
+        }
+        return buffer;
+    }
+
 }

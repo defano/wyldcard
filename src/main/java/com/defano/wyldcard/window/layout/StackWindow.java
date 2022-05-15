@@ -1,18 +1,24 @@
 package com.defano.wyldcard.window.layout;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.enums.PartType;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.effect.CurtainObserver;
 import com.defano.wyldcard.paint.ArtVandelay;
+import com.defano.wyldcard.part.bkgnd.BackgroundModel;
 import com.defano.wyldcard.part.card.CardModel;
 import com.defano.wyldcard.part.card.CardPart;
+import com.defano.wyldcard.part.finder.LayeredPartFinder;
+import com.defano.wyldcard.part.model.PartModel;
 import com.defano.wyldcard.part.stack.ScreenCurtain;
 import com.defano.wyldcard.part.stack.StackNavigationObserver;
 import com.defano.wyldcard.part.stack.StackObserver;
 import com.defano.wyldcard.part.stack.StackPart;
 import com.defano.wyldcard.runtime.ExecutionContext;
 import com.defano.wyldcard.util.FileDrop;
+import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.WyldCardWindow;
 
 import javax.swing.*;
@@ -27,6 +33,8 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
 
     private static final int CARD_LAYER = 0;
     private static final int CURTAIN_LAYER = 1;
+    public static final int FIXED_WIDTH = 136;
+    public static final int WINDOW_CHAR_LEN = 80;
 
     private final JLayeredPane cardPanel = new JLayeredPane();
     private final ScreenCurtain screenCurtain = new ScreenCurtain();
@@ -58,15 +66,34 @@ public class StackWindow extends WyldCardWindow<StackPart> implements StackObser
         if (screenCurtain.isVisible()) {
             return;
         }
+        ExecutionContext context = new ExecutionContext();
+        String stackName = displayedCard.getPartModel().getStackModel().getStackName(context);
 
-        String stackName = displayedCard.getPartModel().getStackModel().getStackName(new ExecutionContext());
-        int cardNumber = displayedCard.getPartModel().getCardIndexInStack() + 1;
-        int cardCount = displayedStack.getCardCountProvider().blockingFirst();
 
         if (displayedCard.isEditingBackground()) {
-            getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount + " (Background)");
+            BackgroundModel bgModel = displayedCard.getPartModel().getBackgroundModel();
+            int bkgCount = displayedStack.getPartModel().getBackgroundCount();
+            long bgNumber = displayedStack.getPartModel().getPartNumber(context, bgModel, PartType.BACKGROUND);
+            String what = "| ";
+            String paddedTitle = (" " + stackName + " - Background " + bgNumber +
+                    " of " + bkgCount + " ");
+            int titleLen = paddedTitle.length();
+
+            // TODO: should be dynamically calculated, based on window width and font size
+            int windowCharLen = WINDOW_CHAR_LEN;
+
+            // find the number of remaining chars to adorn on each side, taking into account the length of
+            // the pertaining adorning string
+            int eachSide = ((windowCharLen - titleLen)/2)/what.length();
+
+            // Then, set the title with the adorned set of chars (repeated for sides)
+            getWindow().setTitle(StringUtils.adorn(paddedTitle, what,
+                    eachSide*2));
         } else {
-            getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount);
+            int cardNumber = displayedCard.getPartModel().getCardIndexInStack() + 1;
+            int cardCount = displayedStack.getCardCountProvider().blockingFirst();
+            getWindow().setTitle(stackName + " - Card " + cardNumber +
+                    " of " + cardCount);
         }
     }
 
