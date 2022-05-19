@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 /**
@@ -153,10 +152,7 @@ public class HyperCardStack {
                 Block block = blockType.instantiate(this, blockId, blockSize, blockData);
 
                 blocks.add(block);
-                if (block instanceof StackBlock) {
-                    System.out.println("Carl version:" + block.getMajorVersion(((StackBlock) block).getModifyVersion()));
 
-                }
                 if (block instanceof StackBlock && block.getMajorVersion(((StackBlock) block).getModifyVersion()) < 2) {
                     throw new UnsupportedVersionException(block, "Cannot import stacks from HyperCard 1.x. Please use the \"Convert Stack...\" command in HyperCard 2.x to update this stack.");
                 }
@@ -173,3 +169,4 @@ public class HyperCardStack {
         return ToStringBuilder.reflectionToString(blocks.stream().map(Block::getBlockType).toArray(), ToStringStyle.SIMPLE_STYLE);
     }
 }
+
