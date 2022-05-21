@@ -15,6 +15,6 @@ public class VersionFunc extends Expression {
 
     @Override
     protected Value onEvaluate(ExecutionContext context) {
-        return new Value("2.4.1");
+        return new Value("2.41");
     }
 }
