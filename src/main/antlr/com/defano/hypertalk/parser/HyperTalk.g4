@@ -561,6 +561,7 @@ zeroArgFunc
     | 'optionkey'                                                                                                       # optionKeyFunc
     | 'osname'                                                                                                          # OSNameFunc
     | 'osversion'                                                                                                       # OSVersionFunc
+    | 'version'                                                                                                         # VersionFunc
     | 'result'                                                                                                          # resultFunc
     | 'screenrect'                                                                                                      # screenRectFunc
     | seconds                                                                                                           # secondsFunc
@@ -780,7 +781,7 @@ keyword
     | 'wipe' | 'zoom' | 'in' | 'out' | 'tick' | 'prev' | 'previous' | 'msg' | 'box' | 'cards' | 'cds' | 'cd'
     | 'background' | 'backgrounds' | 'bkgnd' | 'bkgnds' | 'bg' | 'bgs' | 'buttons' | 'btn' | 'btns' | 'fields' | 'fld'
     | 'flds' | 'character' | 'characters' | 'char' | 'words' | 'lines' | 'item' | 'items' | 'of' | 'osname' | 'osversion'
-    ;
+    | 'version';
 
 picture
     : 'picture'

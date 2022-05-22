@@ -169,3 +169,4 @@ public class HyperCardStack {
         return ToStringBuilder.reflectionToString(blocks.stream().map(Block::getBlockType).toArray(), ToStringStyle.SIMPLE_STYLE);
     }
 }
+

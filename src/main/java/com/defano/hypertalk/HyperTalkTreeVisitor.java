@@ -2465,6 +2465,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitVersionFunc(HyperTalkParser.VersionFuncContext ctx) {
+        return BuiltInFunction.VERSION;
+    }
+
+    @Override
     public Object visitLongTimeFormat(HyperTalkParser.LongTimeFormatContext ctx) {
         return LengthAdjective.LONG;
     }
