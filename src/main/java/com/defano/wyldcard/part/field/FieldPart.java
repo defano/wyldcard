@@ -363,9 +363,12 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
 
     private void setClickLine(MouseEvent evt) {
         int clickIndex = getHyperCardTextPane().viewToModel(evt.getPoint());
-        int clickLine = FieldUtilities.getLineOfChar(clickIndex, getText(new ExecutionContext(this)));
+        ExecutionContext executionContext = new ExecutionContext(this);
+        int clickLine = FieldUtilities.getLineOfChar(clickIndex, getText(executionContext));
 
-        WyldCard.getInstance().getSelectionManager().setClickLine(new Value(clickLine));
+        String partAddress = getPartModel().getHyperTalkAddress(executionContext);
+        String clickAddr = "line " + clickLine + " of " + partAddress;
+        WyldCard.getInstance().getSelectionManager().setClickLine(new Value(clickAddr));
     }
 
     private void setClickChunk(MouseEvent evt) {
