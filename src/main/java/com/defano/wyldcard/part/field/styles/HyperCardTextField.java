@@ -132,6 +132,7 @@ public abstract class HyperCardTextField extends JScrollPane implements
     private void documentUpdate() {
         syncModelToView(new ExecutionContext());
         textPane.invalidateViewport(getViewport());
+        this.textPane.setDirty(true);
     }
 
     /**

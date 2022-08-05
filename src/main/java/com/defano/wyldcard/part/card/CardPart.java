@@ -294,7 +294,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * @param buttonModel The button to be removed.
      */
     @RunOnDispatch
-    void closeButton(ExecutionContext context, ButtonModel buttonModel) {
+    void removeButton(ExecutionContext context, ButtonModel buttonModel) {
         ButtonPart button = buttons.get(buttonModel);
 
         if (button != null) {
@@ -312,7 +312,7 @@ public class CardPart extends CardLayeredPane implements Part<CardModel>, Canvas
      * @param fieldModel The field to be removed.
      */
     @RunOnDispatch
-    void closeField(ExecutionContext context, FieldModel fieldModel) {
+    void removeField(ExecutionContext context, FieldModel fieldModel) {
         FieldPart field = fields.get(fieldModel);
 
         if (field != null) {

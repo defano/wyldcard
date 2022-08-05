@@ -16,9 +16,9 @@ class CardPartModelObserver implements CardModelObserver {
     @Override
     public void onPartRemoved(ExecutionContext context, PartModel removedPartModel) {
         if (removedPartModel instanceof ButtonModel) {
-            cardPart.closeButton(context, (ButtonModel) removedPartModel);
+            cardPart.removeButton(context, (ButtonModel) removedPartModel);
         } else if (removedPartModel instanceof FieldModel) {
-            cardPart.closeField(context, (FieldModel) removedPartModel);
+            cardPart.removeField(context, (FieldModel) removedPartModel);
         }
     }
 }

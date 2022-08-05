@@ -68,6 +68,8 @@ public enum SystemMessage implements Message {
             new PartType[]{PartType.FIELD}),
     OPEN_FIELD("openField", "Sent to a field when it gains focus.",
             new PartType[]{PartType.FIELD}),
+    CLOSE_FIELD("closeField", "Sent to a field when the field has been changed and loses focus.",
+            new PartType[]{PartType.FIELD}),
     RETURN_IN_FIELD("returnInField", "Sent to fields when the user types return in the field.",
             new PartType[]{PartType.FIELD}),
     FUNCTION_KEY("functionKey", "Sent when the user presses a function key.",
