@@ -446,7 +446,13 @@ public class FieldPart extends StyleableField implements CardLayerPart<FieldMode
     @Override
     public void focusLost(FocusEvent e) {
         if (getHyperCardTextPane().isEditable()) {
-            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.EXIT_FIELD);
-        }
+            if (getHyperCardTextPane().isDirty()) {
+                getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.CLOSE_FIELD);
+                getHyperCardTextPane().setDirty(false);
+            } else {
+                getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.EXIT_FIELD);
+            }
+    }
+
     }
 }

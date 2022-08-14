@@ -47,6 +47,7 @@ public class HyperCardTextPane extends JTextPane {
     private final AutoSelectionHighlighterPainter hilitePainter = new AutoSelectionHighlighterPainter();
     private final FoundSelectionHighlightPainter foundPainter = new FoundSelectionHighlightPainter();
     private final SimulatedSelectionHighlightPainter selectionPainter = new SimulatedSelectionHighlightPainter();
+    private boolean dirty= false;
 
     HyperCardTextPane(StyledDocument doc, JViewport viewport) {
         super(doc);
@@ -461,6 +462,15 @@ public class HyperCardTextPane extends JTextPane {
                 autoSelectLine(thisLine);
             }
         }
+    }
+    @RunOnDispatch
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
+
+    @RunOnDispatch
+    public boolean isDirty() {
+        return dirty;
     }
 
     @RunOnDispatch
