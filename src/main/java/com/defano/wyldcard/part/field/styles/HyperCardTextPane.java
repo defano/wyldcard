@@ -473,6 +473,14 @@ public class HyperCardTextPane extends JTextPane {
         return dirty;
     }
 
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
     @RunOnDispatch
     private void autoSelectLine(int selectedLine) {
         Range clickRange = FieldUtilities.getLineRange(this, selectedLine);
