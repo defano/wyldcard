@@ -463,15 +463,6 @@ public class HyperCardTextPane extends JTextPane {
             }
         }
     }
-    @RunOnDispatch
-    public void setDirty(boolean dirty) {
-        this.dirty = dirty;
-    }
-
-    @RunOnDispatch
-    public boolean isDirty() {
-        return dirty;
-    }
 
     public void setDirty(boolean dirty) {
         this.dirty = dirty;
