@@ -40,7 +40,7 @@ repositories {
 
     // Required for MaryTTS libraries
     maven {
-        url "https://public.nexus.pentaho.org/content/groups/omni/"
+        url "https://maven.scijava.org/content/repositories/public/"
     }
 }
 
